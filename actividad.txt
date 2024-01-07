@@ -4107,3 +4107,4 @@ Commit 2024-01-02T15:29:45-06:00 - chore(deps): bump dependencies to latest stab
 Commit 2024-01-04T10:26:37-06:00 - refactor(db): optimize aggregate query with CTE
 Commit 2024-01-04T10:52:27-06:00 - docs: add troubleshooting section for docker container setup
 Commit 2024-01-04T11:38:41-06:00 - style(theme): update typography and spacing variables
+Commit 2024-01-05T15:12:20-06:00 - docs: update architecture diagrams and component specs

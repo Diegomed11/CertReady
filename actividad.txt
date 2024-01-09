@@ -4108,3 +4108,4 @@ Commit 2024-01-04T10:26:37-06:00 - refactor(db): optimize aggregate query with C
 Commit 2024-01-04T10:52:27-06:00 - docs: add troubleshooting section for docker container setup
 Commit 2024-01-04T11:38:41-06:00 - style(theme): update typography and spacing variables
 Commit 2024-01-05T15:12:20-06:00 - docs: update architecture diagrams and component specs
+Commit 2024-01-06T20:20:59-06:00 - feat(auth): add password recovery email notification

@@ -4117,3 +4117,4 @@ Commit 2024-01-10T21:19:01-06:00 - chore(lint): fix linter warnings across scrip
 Commit 2024-01-11T10:02:09-06:00 - fix(mobile): prevent keyboard overlap on input forms
 Commit 2024-01-11T10:52:57-06:00 - fix(api): correct CORS headers for staging environment
 Commit 2024-01-11T11:27:33-06:00 - test(unit): add coverage for authentication token validator
+Commit 2024-01-11T15:04:58-06:00 - style(theme): update typography and spacing variables

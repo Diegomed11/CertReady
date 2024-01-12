@@ -4120,3 +4120,4 @@ Commit 2024-01-11T11:27:33-06:00 - test(unit): add coverage for authentication t
 Commit 2024-01-11T15:04:58-06:00 - style(theme): update typography and spacing variables
 Commit 2024-01-11T15:24:47-06:00 - fix(cache): invalidate user profile cache upon update
 Commit 2024-01-11T15:40:20-06:00 - test(e2e): add test case for user registration flow
+Commit 2024-01-12T10:07:51-06:00 - docs: add setup instructions for local development environment

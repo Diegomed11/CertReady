@@ -4124,3 +4124,4 @@ Commit 2024-01-12T10:07:51-06:00 - docs: add setup instructions for local develo
 Commit 2024-01-12T10:38:23-06:00 - refactor(config): centralize environment variable parsing
 Commit 2024-01-12T10:55:09-06:00 - refactor(api): standardize error response payload format
 Commit 2024-01-13T15:01:12-06:00 - fix(db): resolve deadlock on concurrent transaction commits
+Commit 2024-01-13T15:44:45-06:00 - feat(services): integrate background worker for async exports

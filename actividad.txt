@@ -4139,3 +4139,4 @@ Commit 2024-01-21T15:18:59-06:00 - fix(etl): handle malformed timestamp records 
 Commit 2024-01-21T15:53:02-06:00 - fix(db): resolve deadlock on concurrent transaction commits
 Commit 2024-01-22T20:30:33-06:00 - fix(cache): invalidate user profile cache upon update
 Commit 2024-01-22T21:02:13-06:00 - test(unit): add coverage for authentication token validator
+Commit 2024-01-22T21:45:18-06:00 - refactor(config): centralize environment variable parsing

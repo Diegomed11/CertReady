@@ -4147,3 +4147,4 @@ Commit 2024-01-23T20:20:39-06:00 - feat(ui): implement responsive dashboard grid
 Commit 2024-01-23T20:37:02-06:00 - chore: cleanup unused imports and dead code
 Commit 2024-01-23T21:03:09-06:00 - style(theme): update typography and spacing variables
 Commit 2024-01-23T21:51:17-06:00 - fix(db): handle edge case with empty foreign relations
+Commit 2024-01-24T15:15:56-06:00 - feat(db): add migration for certification metadata schema

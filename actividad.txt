@@ -4146,3 +4146,4 @@ Commit 2024-01-23T11:06:27-06:00 - perf(api): reduce payload size by omitting re
 Commit 2024-01-23T20:20:39-06:00 - feat(ui): implement responsive dashboard grid layout
 Commit 2024-01-23T20:37:02-06:00 - chore: cleanup unused imports and dead code
 Commit 2024-01-23T21:03:09-06:00 - style(theme): update typography and spacing variables
+Commit 2024-01-23T21:51:17-06:00 - fix(db): handle edge case with empty foreign relations

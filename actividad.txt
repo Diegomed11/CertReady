@@ -4150,3 +4150,4 @@ Commit 2024-01-23T21:51:17-06:00 - fix(db): handle edge case with empty foreign 
 Commit 2024-01-24T15:15:56-06:00 - feat(db): add migration for certification metadata schema
 Commit 2024-01-24T15:55:11-06:00 - docs: update architecture diagrams and component specs
 Commit 2024-01-24T16:24:41-06:00 - fix(auth): handle expired session token gracefully
+Commit 2024-01-25T10:29:27-06:00 - feat(mobile): add pull-to-refresh on cert list view

@@ -4152,3 +4152,4 @@ Commit 2024-01-24T15:55:11-06:00 - docs: update architecture diagrams and compon
 Commit 2024-01-24T16:24:41-06:00 - fix(auth): handle expired session token gracefully
 Commit 2024-01-25T10:29:27-06:00 - feat(mobile): add pull-to-refresh on cert list view
 Commit 2024-01-25T11:17:58-06:00 - feat(ui): implement responsive dashboard grid layout
+Commit 2024-01-25T12:01:09-06:00 - fix(ui): fix modal z-index layering issue

@@ -4158,3 +4158,4 @@ Commit 2024-01-26T16:00:11-06:00 - fix(etl): handle malformed timestamp records 
 Commit 2024-01-26T20:06:38-06:00 - docs: add setup instructions for local development environment
 Commit 2024-01-26T20:31:59-06:00 - feat(ui): add loading skeleton indicators for cards
 Commit 2024-01-26T21:19:28-06:00 - style: format code according to project style guide
+Commit 2024-01-27T10:28:06-06:00 - docs: update API documentation and endpoint examples

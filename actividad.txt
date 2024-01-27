@@ -4155,3 +4155,4 @@ Commit 2024-01-25T11:17:58-06:00 - feat(ui): implement responsive dashboard grid
 Commit 2024-01-25T12:01:09-06:00 - fix(ui): fix modal z-index layering issue
 Commit 2024-01-26T15:29:58-06:00 - docs: update architecture diagrams and component specs
 Commit 2024-01-26T16:00:11-06:00 - fix(etl): handle malformed timestamp records in input stream
+Commit 2024-01-26T20:06:38-06:00 - docs: add setup instructions for local development environment

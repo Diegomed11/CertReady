@@ -4161,3 +4161,4 @@ Commit 2024-01-26T21:19:28-06:00 - style: format code according to project style
 Commit 2024-01-27T10:28:06-06:00 - docs: update API documentation and endpoint examples
 Commit 2024-01-27T11:02:03-06:00 - fix(ui): correct button alignment on mobile viewport
 Commit 2024-01-29T15:21:25-06:00 - fix(auth): handle expired session token gracefully
+Commit 2024-01-29T15:50:47-06:00 - perf(api): reduce payload size by omitting redundant fields

@@ -4159,3 +4159,4 @@ Commit 2024-01-26T20:06:38-06:00 - docs: add setup instructions for local develo
 Commit 2024-01-26T20:31:59-06:00 - feat(ui): add loading skeleton indicators for cards
 Commit 2024-01-26T21:19:28-06:00 - style: format code according to project style guide
 Commit 2024-01-27T10:28:06-06:00 - docs: update API documentation and endpoint examples
+Commit 2024-01-27T11:02:03-06:00 - fix(ui): correct button alignment on mobile viewport

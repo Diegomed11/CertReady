@@ -4163,3 +4163,4 @@ Commit 2024-01-27T11:02:03-06:00 - fix(ui): correct button alignment on mobile v
 Commit 2024-01-29T15:21:25-06:00 - fix(auth): handle expired session token gracefully
 Commit 2024-01-29T15:50:47-06:00 - perf(api): reduce payload size by omitting redundant fields
 Commit 2024-01-29T16:07:45-06:00 - perf(ui): memoize heavy component renders
+Commit 2024-01-30T15:25:20-06:00 - docs: add troubleshooting section for docker container setup

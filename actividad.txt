@@ -4166,3 +4166,4 @@ Commit 2024-01-29T16:07:45-06:00 - perf(ui): memoize heavy component renders
 Commit 2024-01-30T15:25:20-06:00 - docs: add troubleshooting section for docker container setup
 Commit 2024-01-31T10:22:30-06:00 - perf(db): add composite index on user_id and created_at
 Commit 2024-01-31T10:48:04-06:00 - refactor(api): standardize error response payload format
+Commit 2024-02-02T15:25:57-06:00 - fix(ui): fix modal z-index layering issue

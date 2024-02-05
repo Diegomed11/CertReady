@@ -4167,3 +4167,4 @@ Commit 2024-01-30T15:25:20-06:00 - docs: add troubleshooting section for docker 
 Commit 2024-01-31T10:22:30-06:00 - perf(db): add composite index on user_id and created_at
 Commit 2024-01-31T10:48:04-06:00 - refactor(api): standardize error response payload format
 Commit 2024-02-02T15:25:57-06:00 - fix(ui): fix modal z-index layering issue
+Commit 2024-02-03T10:28:32-06:00 - feat(db): add migration for certification metadata schema

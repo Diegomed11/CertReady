@@ -4174,3 +4174,4 @@ Commit 2024-02-06T20:49:51-06:00 - fix(judge): fix timeout exception on heavy ev
 Commit 2024-02-06T21:17:21-06:00 - refactor: replace deprecated API calls with current standard
 Commit 2024-02-07T10:01:41-06:00 - feat(mobile): implement dark mode color palette
 Commit 2024-02-07T10:41:38-06:00 - feat(mobile): implement dark mode color palette
+Commit 2024-02-07T15:21:10-06:00 - docs: update API documentation and endpoint examples

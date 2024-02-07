@@ -4171,3 +4171,4 @@ Commit 2024-02-03T10:28:32-06:00 - feat(db): add migration for certification met
 Commit 2024-02-05T10:10:01-06:00 - fix(api): resolve 500 error on null query parameters
 Commit 2024-02-06T20:25:50-06:00 - fix(cache): invalidate user profile cache upon update
 Commit 2024-02-06T20:49:51-06:00 - fix(judge): fix timeout exception on heavy evaluation payloads
+Commit 2024-02-06T21:17:21-06:00 - refactor: replace deprecated API calls with current standard

@@ -4193,3 +4193,4 @@ Commit 2024-02-14T20:02:16-06:00 - fix(ui): correct button alignment on mobile v
 Commit 2024-02-14T20:27:14-06:00 - feat(ui): add loading skeleton indicators for cards
 Commit 2024-02-16T10:23:43-06:00 - fix: resolve race condition in state management handler
 Commit 2024-02-16T10:51:57-06:00 - style(theme): update typography and spacing variables
+Commit 2024-02-16T11:22:31-06:00 - fix(db): handle edge case with empty foreign relations

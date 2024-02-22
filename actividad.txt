@@ -4194,3 +4194,4 @@ Commit 2024-02-14T20:27:14-06:00 - feat(ui): add loading skeleton indicators for
 Commit 2024-02-16T10:23:43-06:00 - fix: resolve race condition in state management handler
 Commit 2024-02-16T10:51:57-06:00 - style(theme): update typography and spacing variables
 Commit 2024-02-16T11:22:31-06:00 - fix(db): handle edge case with empty foreign relations
+Commit 2024-02-18T20:03:01-06:00 - feat(search): add fuzzy search matching for course titles

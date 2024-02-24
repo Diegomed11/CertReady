@@ -4203,3 +4203,4 @@ Commit 2024-02-23T15:07:13-06:00 - docs: document database schema and migration 
 Commit 2024-02-23T15:28:38-06:00 - refactor(core): extract common validation logic into helper
 Commit 2024-02-23T15:56:26-06:00 - test(api): add integration tests for certification workflow
 Commit 2024-02-23T20:26:33-06:00 - feat(api): implement filtering and sorting for catalog items
+Commit 2024-02-23T20:52:41-06:00 - test(e2e): add test case for user registration flow

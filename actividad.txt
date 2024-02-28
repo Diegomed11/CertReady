@@ -4213,3 +4213,4 @@ Commit 2024-02-27T15:43:58-06:00 - fix(db): handle edge case with empty foreign 
 Commit 2024-02-27T20:29:59-06:00 - perf(ui): memoize heavy component renders
 Commit 2024-02-27T21:05:28-06:00 - feat(mobile): add pull-to-refresh on cert list view
 Commit 2024-02-27T21:50:31-06:00 - perf(api): reduce payload size by omitting redundant fields
+Commit 2024-02-28T10:13:32-06:00 - fix(ui): correct button alignment on mobile viewport

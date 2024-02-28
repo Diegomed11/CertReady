@@ -4212,3 +4212,4 @@ Commit 2024-02-27T15:26:58-06:00 - refactor(core): extract common validation log
 Commit 2024-02-27T15:43:58-06:00 - fix(db): handle edge case with empty foreign relations
 Commit 2024-02-27T20:29:59-06:00 - perf(ui): memoize heavy component renders
 Commit 2024-02-27T21:05:28-06:00 - feat(mobile): add pull-to-refresh on cert list view
+Commit 2024-02-27T21:50:31-06:00 - perf(api): reduce payload size by omitting redundant fields

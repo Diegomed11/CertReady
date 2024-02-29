@@ -4216,3 +4216,4 @@ Commit 2024-02-27T21:50:31-06:00 - perf(api): reduce payload size by omitting re
 Commit 2024-02-28T10:13:32-06:00 - fix(ui): correct button alignment on mobile viewport
 Commit 2024-02-28T10:44:14-06:00 - chore(config): update Dockerfile build arguments
 Commit 2024-02-28T15:00:07-06:00 - refactor(api): standardize error response payload format
+Commit 2024-02-28T15:44:50-06:00 - feat(db): add migration for certification metadata schema

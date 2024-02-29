@@ -4217,3 +4217,4 @@ Commit 2024-02-28T10:13:32-06:00 - fix(ui): correct button alignment on mobile v
 Commit 2024-02-28T10:44:14-06:00 - chore(config): update Dockerfile build arguments
 Commit 2024-02-28T15:00:07-06:00 - refactor(api): standardize error response payload format
 Commit 2024-02-28T15:44:50-06:00 - feat(db): add migration for certification metadata schema
+Commit 2024-02-29T10:22:21-06:00 - feat(mobile): implement dark mode color palette

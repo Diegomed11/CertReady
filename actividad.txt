@@ -4221,3 +4221,4 @@ Commit 2024-02-29T10:22:21-06:00 - feat(mobile): implement dark mode color palet
 Commit 2024-02-29T10:44:27-06:00 - fix(ui): correct button alignment on mobile viewport
 Commit 2024-02-29T20:25:20-06:00 - feat(api): implement filtering and sorting for catalog items
 Commit 2024-02-29T21:07:53-06:00 - refactor: replace deprecated API calls with current standard
+Commit 2024-03-01T15:17:46-06:00 - test(api): add integration tests for certification workflow

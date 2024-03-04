@@ -4223,3 +4223,4 @@ Commit 2024-02-29T20:25:20-06:00 - feat(api): implement filtering and sorting fo
 Commit 2024-02-29T21:07:53-06:00 - refactor: replace deprecated API calls with current standard
 Commit 2024-03-01T15:17:46-06:00 - test(api): add integration tests for certification workflow
 Commit 2024-03-01T15:41:23-06:00 - feat(db): index foreign keys for query acceleration
+Commit 2024-03-01T16:14:12-06:00 - docs: update API documentation and endpoint examples

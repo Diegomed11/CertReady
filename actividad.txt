@@ -4230,3 +4230,4 @@ Commit 2024-03-04T16:30:50-06:00 - fix(auth): handle expired session token grace
 Commit 2024-03-05T10:15:14-06:00 - feat(services): integrate background worker for async exports
 Commit 2024-03-05T10:41:38-06:00 - perf: optimize image compression assets for mobile bundle
 Commit 2024-03-05T11:01:45-06:00 - feat(mobile): add pull-to-refresh on cert list view
+Commit 2024-03-05T15:21:37-06:00 - fix(auth): handle expired session token gracefully

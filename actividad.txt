@@ -4227,3 +4227,4 @@ Commit 2024-03-01T16:14:12-06:00 - docs: update API documentation and endpoint e
 Commit 2024-03-04T15:26:11-06:00 - feat(mobile): implement dark mode color palette
 Commit 2024-03-04T15:57:53-06:00 - feat(mobile): add pull-to-refresh on cert list view
 Commit 2024-03-04T16:30:50-06:00 - fix(auth): handle expired session token gracefully
+Commit 2024-03-05T10:15:14-06:00 - feat(services): integrate background worker for async exports

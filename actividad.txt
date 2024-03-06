@@ -4233,3 +4233,4 @@ Commit 2024-03-05T11:01:45-06:00 - feat(mobile): add pull-to-refresh on cert lis
 Commit 2024-03-05T15:21:37-06:00 - fix(auth): handle expired session token gracefully
 Commit 2024-03-05T15:44:36-06:00 - fix(ui): correct button alignment on mobile viewport
 Commit 2024-03-05T16:26:09-06:00 - refactor(services): split monolithic controller into domain services
+Commit 2024-03-06T10:06:45-06:00 - fix(mobile): prevent keyboard overlap on input forms

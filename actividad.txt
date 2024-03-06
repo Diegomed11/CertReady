@@ -4232,3 +4232,4 @@ Commit 2024-03-05T10:41:38-06:00 - perf: optimize image compression assets for m
 Commit 2024-03-05T11:01:45-06:00 - feat(mobile): add pull-to-refresh on cert list view
 Commit 2024-03-05T15:21:37-06:00 - fix(auth): handle expired session token gracefully
 Commit 2024-03-05T15:44:36-06:00 - fix(ui): correct button alignment on mobile viewport
+Commit 2024-03-05T16:26:09-06:00 - refactor(services): split monolithic controller into domain services

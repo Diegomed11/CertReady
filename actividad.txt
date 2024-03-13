@@ -4248,3 +4248,4 @@ Commit 2024-03-08T11:13:46-06:00 - style(theme): update typography and spacing v
 Commit 2024-03-08T11:28:11-06:00 - feat(api): add pagination support to user listing endpoint
 Commit 2024-03-11T15:21:07-06:00 - docs: add setup instructions for local development environment
 Commit 2024-03-12T20:06:55-06:00 - test: add unit tests for data transformation helpers
+Commit 2024-03-13T15:28:42-06:00 - fix(ui): fix modal z-index layering issue

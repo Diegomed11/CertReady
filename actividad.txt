@@ -4246,3 +4246,4 @@ Commit 2024-03-07T21:13:00-06:00 - fix(db): handle edge case with empty foreign 
 Commit 2024-03-08T10:28:05-06:00 - feat(mobile): add pull-to-refresh on cert list view
 Commit 2024-03-08T11:13:46-06:00 - style(theme): update typography and spacing variables
 Commit 2024-03-08T11:28:11-06:00 - feat(api): add pagination support to user listing endpoint
+Commit 2024-03-11T15:21:07-06:00 - docs: add setup instructions for local development environment

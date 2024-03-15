@@ -4251,3 +4251,4 @@ Commit 2024-03-12T20:06:55-06:00 - test: add unit tests for data transformation 
 Commit 2024-03-13T15:28:42-06:00 - fix(ui): fix modal z-index layering issue
 Commit 2024-03-13T16:10:37-06:00 - perf: optimize image compression assets for mobile bundle
 Commit 2024-03-13T16:50:52-06:00 - feat(db): index foreign keys for query acceleration
+Commit 2024-03-15T10:21:48-06:00 - fix(mobile): prevent keyboard overlap on input forms

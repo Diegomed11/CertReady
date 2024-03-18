@@ -4255,3 +4255,4 @@ Commit 2024-03-15T10:21:48-06:00 - fix(mobile): prevent keyboard overlap on inpu
 Commit 2024-03-15T10:41:00-06:00 - feat(search): add fuzzy search matching for course titles
 Commit 2024-03-15T11:11:45-06:00 - docs: add setup instructions for local development environment
 Commit 2024-03-16T10:26:01-06:00 - fix(judge): fix timeout exception on heavy evaluation payloads
+Commit 2024-03-18T15:01:31-06:00 - test(e2e): add test case for user registration flow

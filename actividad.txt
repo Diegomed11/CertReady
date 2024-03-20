@@ -4260,3 +4260,4 @@ Commit 2024-03-18T15:22:54-06:00 - refactor(api): standardize error response pay
 Commit 2024-03-18T20:18:15-06:00 - test(api): add integration tests for certification workflow
 Commit 2024-03-18T20:39:31-06:00 - docs: add setup instructions for local development environment
 Commit 2024-03-19T20:28:10-06:00 - style(theme): update typography and spacing variables
+Commit 2024-03-19T20:46:12-06:00 - refactor: simplify conditional logic in calculation service

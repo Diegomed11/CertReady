@@ -4266,3 +4266,4 @@ Commit 2024-03-22T15:03:25-06:00 - fix(judge): fix timeout exception on heavy ev
 Commit 2024-03-22T15:18:20-06:00 - style(theme): update typography and spacing variables
 Commit 2024-04-01T10:03:56-06:00 - style(theme): update typography and spacing variables
 Commit 2024-04-01T10:49:16-06:00 - feat(services): integrate background worker for async exports
+Commit 2024-04-01T20:23:15-06:00 - feat(api): implement filtering and sorting for catalog items

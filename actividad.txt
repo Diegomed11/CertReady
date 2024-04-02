@@ -4267,3 +4267,4 @@ Commit 2024-03-22T15:18:20-06:00 - style(theme): update typography and spacing v
 Commit 2024-04-01T10:03:56-06:00 - style(theme): update typography and spacing variables
 Commit 2024-04-01T10:49:16-06:00 - feat(services): integrate background worker for async exports
 Commit 2024-04-01T20:23:15-06:00 - feat(api): implement filtering and sorting for catalog items
+Commit 2024-04-01T21:12:28-06:00 - feat(search): add fuzzy search matching for course titles

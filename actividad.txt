@@ -4270,3 +4270,4 @@ Commit 2024-04-01T20:23:15-06:00 - feat(api): implement filtering and sorting fo
 Commit 2024-04-01T21:12:28-06:00 - feat(search): add fuzzy search matching for course titles
 Commit 2024-04-01T21:27:00-06:00 - refactor: simplify conditional logic in calculation service
 Commit 2024-04-03T15:08:15-06:00 - fix(api): resolve 500 error on null query parameters
+Commit 2024-04-03T15:52:25-06:00 - feat(auth): add password recovery email notification

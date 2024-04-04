@@ -4271,3 +4271,4 @@ Commit 2024-04-01T21:12:28-06:00 - feat(search): add fuzzy search matching for c
 Commit 2024-04-01T21:27:00-06:00 - refactor: simplify conditional logic in calculation service
 Commit 2024-04-03T15:08:15-06:00 - fix(api): resolve 500 error on null query parameters
 Commit 2024-04-03T15:52:25-06:00 - feat(auth): add password recovery email notification
+Commit 2024-04-03T16:40:45-06:00 - refactor(config): centralize environment variable parsing

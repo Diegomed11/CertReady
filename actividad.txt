@@ -4278,3 +4278,4 @@ Commit 2024-04-03T20:45:23-06:00 - test(unit): add coverage for authentication t
 Commit 2024-04-03T21:19:33-06:00 - feat(db): add migration for certification metadata schema
 Commit 2024-04-05T15:16:37-06:00 - feat(api): implement filtering and sorting for catalog items
 Commit 2024-04-06T15:30:37-06:00 - fix(auth): handle expired session token gracefully
+Commit 2024-04-06T16:20:16-06:00 - perf(api): reduce payload size by omitting redundant fields

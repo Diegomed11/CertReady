@@ -4288,3 +4288,4 @@ Commit 2024-04-09T15:02:46-06:00 - feat(mobile): implement dark mode color palet
 Commit 2024-04-09T15:50:18-06:00 - feat(auth): implement JWT token refresh flow
 Commit 2024-04-10T20:03:02-06:00 - refactor(ui): convert stateful widget to stateless component
 Commit 2024-04-12T15:24:20-06:00 - docs: document database schema and migration conventions
+Commit 2024-04-12T15:43:32-06:00 - feat(db): index foreign keys for query acceleration

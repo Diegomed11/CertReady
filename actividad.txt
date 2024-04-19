@@ -4299,3 +4299,4 @@ Commit 2024-04-16T20:18:32-06:00 - refactor(ui): convert stateful widget to stat
 Commit 2024-04-18T15:22:33-06:00 - fix(mobile): prevent keyboard overlap on input forms
 Commit 2024-04-18T16:03:17-06:00 - fix(api): correct CORS headers for staging environment
 Commit 2024-04-18T16:28:14-06:00 - feat(search): add fuzzy search matching for course titles
+Commit 2024-04-19T10:22:43-06:00 - fix(ui): correct button alignment on mobile viewport

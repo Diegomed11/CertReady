@@ -4301,3 +4301,4 @@ Commit 2024-04-18T16:03:17-06:00 - fix(api): correct CORS headers for staging en
 Commit 2024-04-18T16:28:14-06:00 - feat(search): add fuzzy search matching for course titles
 Commit 2024-04-19T10:22:43-06:00 - fix(ui): correct button alignment on mobile viewport
 Commit 2024-04-19T11:05:41-06:00 - perf(db): add composite index on user_id and created_at
+Commit 2024-04-19T11:46:12-06:00 - feat(mobile): implement dark mode color palette

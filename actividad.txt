@@ -4305,3 +4305,4 @@ Commit 2024-04-19T11:46:12-06:00 - feat(mobile): implement dark mode color palet
 Commit 2024-04-20T20:00:53-06:00 - fix(mobile): prevent keyboard overlap on input forms
 Commit 2024-04-21T10:24:59-06:00 - chore(deps): bump dependencies to latest stable versions
 Commit 2024-04-21T10:50:59-06:00 - chore(deps): bump dependencies to latest stable versions
+Commit 2024-04-22T10:30:28-06:00 - feat(auth): add password recovery email notification

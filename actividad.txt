@@ -4309,3 +4309,4 @@ Commit 2024-04-22T10:30:28-06:00 - feat(auth): add password recovery email notif
 Commit 2024-04-22T11:11:00-06:00 - chore(config): update Dockerfile build arguments
 Commit 2024-04-23T15:22:56-06:00 - fix(etl): handle malformed timestamp records in input stream
 Commit 2024-04-23T16:09:20-06:00 - perf(api): reduce payload size by omitting redundant fields
+Commit 2024-04-25T20:10:49-06:00 - docs: update API documentation and endpoint examples

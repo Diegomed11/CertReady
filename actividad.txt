@@ -4313,3 +4313,4 @@ Commit 2024-04-25T20:10:49-06:00 - docs: update API documentation and endpoint e
 Commit 2024-04-25T20:52:58-06:00 - chore(lint): fix linter warnings across scripts directory
 Commit 2024-04-26T20:09:55-06:00 - feat(ui): add loading skeleton indicators for cards
 Commit 2024-04-26T20:47:10-06:00 - feat(mobile): add pull-to-refresh on cert list view
+Commit 2024-04-29T10:22:34-06:00 - refactor(db): optimize aggregate query with CTE

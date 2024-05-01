@@ -4427,3 +4427,4 @@ Commit 2024-04-24T15:13:25-06:00 - docs: add troubleshooting section for docker 
 Commit 2024-04-24T15:43:10-06:00 - feat(auth): implement JWT token refresh flow
 Commit 2024-04-24T16:30:42-06:00 - style: format code according to project style guide
 Commit 2024-04-28T15:11:53-06:00 - test: add unit tests for data transformation helpers
+Commit 2024-04-28T15:50:41-06:00 - style(theme): update typography and spacing variables

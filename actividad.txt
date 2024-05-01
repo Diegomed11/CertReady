@@ -4317,3 +4317,4 @@ Commit 2024-04-29T10:22:34-06:00 - refactor(db): optimize aggregate query with C
 Commit 2024-04-29T10:47:58-06:00 - fix(ui): fix modal z-index layering issue
 Commit 2024-04-29T15:22:27-06:00 - perf(api): reduce payload size by omitting redundant fields
 Commit 2024-04-29T15:38:12-06:00 - refactor(services): split monolithic controller into domain services
+Commit 2024-04-30T20:11:22-06:00 - fix(api): correct CORS headers for staging environment

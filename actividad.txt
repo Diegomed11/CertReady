@@ -4320,3 +4320,4 @@ Commit 2024-04-29T15:38:12-06:00 - refactor(services): split monolithic controll
 Commit 2024-04-30T20:11:22-06:00 - fix(api): correct CORS headers for staging environment
 Commit 2024-04-30T20:36:20-06:00 - feat(auth): add password recovery email notification
 Commit 2024-04-30T20:51:28-06:00 - chore(deps): bump dependencies to latest stable versions
+Commit 2024-05-02T15:13:08-06:00 - feat(api): add pagination support to user listing endpoint

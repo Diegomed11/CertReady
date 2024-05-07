@@ -4322,3 +4322,4 @@ Commit 2024-04-30T20:36:20-06:00 - feat(auth): add password recovery email notif
 Commit 2024-04-30T20:51:28-06:00 - chore(deps): bump dependencies to latest stable versions
 Commit 2024-05-02T15:13:08-06:00 - feat(api): add pagination support to user listing endpoint
 Commit 2024-05-02T15:28:55-06:00 - style: format code according to project style guide
+Commit 2024-05-03T20:01:42-06:00 - style(theme): update typography and spacing variables

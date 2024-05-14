@@ -4447,3 +4447,4 @@ Commit 2024-05-09T20:49:53-06:00 - perf(cache): add redis caching for frequent c
 Commit 2024-05-10T15:24:38-06:00 - docs: update architecture diagrams and component specs
 Commit 2024-05-10T15:42:02-06:00 - fix(api): correct CORS headers for staging environment
 Commit 2024-05-10T16:03:17-06:00 - perf(ui): memoize heavy component renders
+Commit 2024-05-14T15:24:00-06:00 - fix(db): resolve deadlock on concurrent transaction commits

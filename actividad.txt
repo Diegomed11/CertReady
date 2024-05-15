@@ -4450,3 +4450,4 @@ Commit 2024-05-10T16:03:17-06:00 - perf(ui): memoize heavy component renders
 Commit 2024-05-14T15:24:00-06:00 - fix(db): resolve deadlock on concurrent transaction commits
 Commit 2024-05-14T15:58:58-06:00 - fix(ui): fix modal z-index layering issue
 Commit 2024-05-14T16:27:56-06:00 - fix(db): resolve deadlock on concurrent transaction commits
+Commit 2024-05-15T15:11:12-06:00 - fix(api): resolve 500 error on null query parameters

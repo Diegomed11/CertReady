@@ -4454,3 +4454,4 @@ Commit 2024-05-15T15:11:12-06:00 - fix(api): resolve 500 error on null query par
 Commit 2024-05-15T15:33:11-06:00 - refactor(db): optimize aggregate query with CTE
 Commit 2024-05-16T10:19:56-06:00 - fix(ui): fix modal z-index layering issue
 Commit 2024-05-16T10:39:16-06:00 - docs: add troubleshooting section for docker container setup
+Commit 2024-05-16T10:58:10-06:00 - refactor: simplify conditional logic in calculation service

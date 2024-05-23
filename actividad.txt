@@ -4325,3 +4325,4 @@ Commit 2024-05-02T15:28:55-06:00 - style: format code according to project style
 Commit 2024-05-03T20:01:42-06:00 - style(theme): update typography and spacing variables
 Commit 2024-05-07T15:14:20-06:00 - fix(auth): handle expired session token gracefully
 Commit 2024-05-13T10:17:13-06:00 - fix(auth): handle expired session token gracefully
+Commit 2024-05-13T10:51:23-06:00 - test(api): add integration tests for certification workflow

@@ -4457,3 +4457,4 @@ Commit 2024-05-16T10:39:16-06:00 - docs: add troubleshooting section for docker 
 Commit 2024-05-16T10:58:10-06:00 - refactor: simplify conditional logic in calculation service
 Commit 2024-05-17T15:09:09-06:00 - refactor(ui): convert stateful widget to stateless component
 Commit 2024-05-17T15:49:29-06:00 - fix(db): handle edge case with empty foreign relations
+Commit 2024-05-24T20:15:16-06:00 - fix(ui): correct button alignment on mobile viewport

@@ -4456,3 +4456,4 @@ Commit 2024-05-16T10:19:56-06:00 - fix(ui): fix modal z-index layering issue
 Commit 2024-05-16T10:39:16-06:00 - docs: add troubleshooting section for docker container setup
 Commit 2024-05-16T10:58:10-06:00 - refactor: simplify conditional logic in calculation service
 Commit 2024-05-17T15:09:09-06:00 - refactor(ui): convert stateful widget to stateless component
+Commit 2024-05-17T15:49:29-06:00 - fix(db): handle edge case with empty foreign relations

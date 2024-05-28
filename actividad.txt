@@ -4462,3 +4462,4 @@ Commit 2024-05-24T20:47:53-06:00 - feat(auth): implement JWT token refresh flow
 Commit 2024-05-24T21:35:59-06:00 - test: add unit tests for data transformation helpers
 Commit 2024-05-26T15:19:39-06:00 - style: format code according to project style guide
 Commit 2024-05-27T15:03:37-06:00 - feat(api): implement filtering and sorting for catalog items
+Commit 2024-05-27T15:21:07-06:00 - docs: add setup instructions for local development environment

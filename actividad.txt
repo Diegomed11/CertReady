@@ -4466,3 +4466,4 @@ Commit 2024-05-27T15:21:07-06:00 - docs: add setup instructions for local develo
 Commit 2024-05-27T20:27:26-06:00 - test: add unit tests for data transformation helpers
 Commit 2024-05-27T21:09:43-06:00 - refactor(services): split monolithic controller into domain services
 Commit 2024-05-27T21:54:12-06:00 - refactor: replace deprecated API calls with current standard
+Commit 2024-05-28T20:07:39-06:00 - docs: add setup instructions for local development environment

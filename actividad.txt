@@ -4473,3 +4473,4 @@ Commit 2024-05-29T15:46:46-06:00 - perf(cache): add redis caching for frequent c
 Commit 2024-06-05T10:21:42-06:00 - docs: update architecture diagrams and component specs
 Commit 2024-06-05T10:51:46-06:00 - refactor(api): standardize error response payload format
 Commit 2024-06-05T15:05:56-06:00 - style(theme): update typography and spacing variables
+Commit 2024-06-05T15:32:44-06:00 - fix(mobile): prevent keyboard overlap on input forms

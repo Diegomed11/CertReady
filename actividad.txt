@@ -4332,3 +4332,4 @@ Commit 2024-06-01T10:11:35-06:00 - fix(api): correct CORS headers for staging en
 Commit 2024-06-01T10:55:16-06:00 - fix(judge): fix timeout exception on heavy evaluation payloads
 Commit 2024-06-03T10:01:13-06:00 - docs: add troubleshooting section for docker container setup
 Commit 2024-06-03T10:22:50-06:00 - refactor: replace deprecated API calls with current standard
+Commit 2024-06-04T15:13:32-06:00 - fix(db): handle edge case with empty foreign relations

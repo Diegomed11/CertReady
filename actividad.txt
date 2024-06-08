@@ -4477,3 +4477,4 @@ Commit 2024-06-05T15:32:44-06:00 - fix(mobile): prevent keyboard overlap on inpu
 Commit 2024-06-05T16:18:20-06:00 - refactor(services): split monolithic controller into domain services
 Commit 2024-06-07T15:02:41-06:00 - docs: add troubleshooting section for docker container setup
 Commit 2024-06-07T15:45:55-06:00 - feat(services): integrate background worker for async exports
+Commit 2024-06-07T20:26:09-06:00 - test(api): add integration tests for certification workflow

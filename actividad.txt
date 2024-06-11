@@ -4483,3 +4483,4 @@ Commit 2024-06-10T15:07:24-06:00 - perf: optimize image compression assets for m
 Commit 2024-06-10T15:43:49-06:00 - style: format code according to project style guide
 Commit 2024-06-10T20:22:57-06:00 - refactor: replace deprecated API calls with current standard
 Commit 2024-06-10T20:48:40-06:00 - fix(judge): fix timeout exception on heavy evaluation payloads
+Commit 2024-06-11T10:21:21-06:00 - fix(ui): correct button alignment on mobile viewport

@@ -4487,3 +4487,4 @@ Commit 2024-06-11T10:21:21-06:00 - fix(ui): correct button alignment on mobile v
 Commit 2024-06-11T10:42:59-06:00 - feat(db): index foreign keys for query acceleration
 Commit 2024-06-12T10:08:08-06:00 - feat(api): add pagination support to user listing endpoint
 Commit 2024-06-12T10:52:45-06:00 - test: add unit tests for data transformation helpers
+Commit 2024-06-12T15:23:33-06:00 - feat(db): add migration for certification metadata schema

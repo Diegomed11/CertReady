@@ -4491,3 +4491,4 @@ Commit 2024-06-12T15:23:33-06:00 - feat(db): add migration for certification met
 Commit 2024-06-12T16:13:17-06:00 - fix(db): resolve deadlock on concurrent transaction commits
 Commit 2024-06-13T10:06:06-06:00 - fix(api): correct CORS headers for staging environment
 Commit 2024-06-13T10:50:11-06:00 - fix(ui): correct button alignment on mobile viewport
+Commit 2024-06-14T15:11:38-06:00 - perf: optimize image compression assets for mobile bundle

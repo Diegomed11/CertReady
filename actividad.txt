@@ -4492,3 +4492,4 @@ Commit 2024-06-12T16:13:17-06:00 - fix(db): resolve deadlock on concurrent trans
 Commit 2024-06-13T10:06:06-06:00 - fix(api): correct CORS headers for staging environment
 Commit 2024-06-13T10:50:11-06:00 - fix(ui): correct button alignment on mobile viewport
 Commit 2024-06-14T15:11:38-06:00 - perf: optimize image compression assets for mobile bundle
+Commit 2024-06-14T15:56:58-06:00 - feat(services): integrate background worker for async exports

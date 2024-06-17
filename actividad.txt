@@ -4493,3 +4493,4 @@ Commit 2024-06-13T10:06:06-06:00 - fix(api): correct CORS headers for staging en
 Commit 2024-06-13T10:50:11-06:00 - fix(ui): correct button alignment on mobile viewport
 Commit 2024-06-14T15:11:38-06:00 - perf: optimize image compression assets for mobile bundle
 Commit 2024-06-14T15:56:58-06:00 - feat(services): integrate background worker for async exports
+Commit 2024-06-14T16:45:39-06:00 - feat(db): index foreign keys for query acceleration

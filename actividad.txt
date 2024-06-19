@@ -4495,3 +4495,4 @@ Commit 2024-06-14T15:11:38-06:00 - perf: optimize image compression assets for m
 Commit 2024-06-14T15:56:58-06:00 - feat(services): integrate background worker for async exports
 Commit 2024-06-14T16:45:39-06:00 - feat(db): index foreign keys for query acceleration
 Commit 2024-06-16T20:08:30-06:00 - perf(api): reduce payload size by omitting redundant fields
+Commit 2024-06-16T20:41:56-06:00 - test(api): add integration tests for certification workflow

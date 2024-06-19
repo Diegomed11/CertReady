@@ -4497,3 +4497,4 @@ Commit 2024-06-14T16:45:39-06:00 - feat(db): index foreign keys for query accele
 Commit 2024-06-16T20:08:30-06:00 - perf(api): reduce payload size by omitting redundant fields
 Commit 2024-06-16T20:41:56-06:00 - test(api): add integration tests for certification workflow
 Commit 2024-06-19T10:15:08-06:00 - fix(etl): handle malformed timestamp records in input stream
+Commit 2024-06-19T10:54:41-06:00 - perf(api): reduce payload size by omitting redundant fields

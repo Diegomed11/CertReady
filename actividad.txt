@@ -4341,3 +4341,4 @@ Commit 2024-06-18T15:19:03-06:00 - perf(api): reduce payload size by omitting re
 Commit 2024-06-18T15:36:48-06:00 - chore(config): update Dockerfile build arguments
 Commit 2024-06-20T10:21:42-06:00 - fix(api): resolve 500 error on null query parameters
 Commit 2024-06-20T11:04:10-06:00 - fix(cache): invalidate user profile cache upon update
+Commit 2024-06-20T20:04:15-06:00 - fix(db): resolve deadlock on concurrent transaction commits

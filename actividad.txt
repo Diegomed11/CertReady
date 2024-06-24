@@ -4500,3 +4500,4 @@ Commit 2024-06-19T10:15:08-06:00 - fix(etl): handle malformed timestamp records 
 Commit 2024-06-19T10:54:41-06:00 - perf(api): reduce payload size by omitting redundant fields
 Commit 2024-06-19T11:23:35-06:00 - feat(api): add pagination support to user listing endpoint
 Commit 2024-06-21T20:05:40-06:00 - chore: cleanup unused imports and dead code
+Commit 2024-06-21T20:41:45-06:00 - feat(ui): add loading skeleton indicators for cards

@@ -4345,3 +4345,4 @@ Commit 2024-06-20T20:04:15-06:00 - fix(db): resolve deadlock on concurrent trans
 Commit 2024-06-20T20:51:12-06:00 - fix(db): handle edge case with empty foreign relations
 Commit 2024-06-20T21:18:26-06:00 - refactor(config): centralize environment variable parsing
 Commit 2024-06-22T15:29:03-06:00 - feat(services): integrate background worker for async exports
+Commit 2024-06-25T15:08:41-06:00 - feat(mobile): add pull-to-refresh on cert list view

@@ -4505,3 +4505,4 @@ Commit 2024-06-24T15:17:35-06:00 - docs: update API documentation and endpoint e
 Commit 2024-06-26T10:29:25-06:00 - fix(db): handle edge case with empty foreign relations
 Commit 2024-06-26T10:45:20-06:00 - feat(mobile): implement dark mode color palette
 Commit 2024-06-26T15:11:20-06:00 - feat(auth): implement JWT token refresh flow
+Commit 2024-06-26T15:33:02-06:00 - test(api): add integration tests for certification workflow

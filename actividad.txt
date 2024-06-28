@@ -4509,3 +4509,4 @@ Commit 2024-06-26T15:33:02-06:00 - test(api): add integration tests for certific
 Commit 2024-06-27T10:17:32-06:00 - fix(db): resolve deadlock on concurrent transaction commits
 Commit 2024-06-27T10:38:46-06:00 - feat(api): add pagination support to user listing endpoint
 Commit 2024-06-27T15:28:10-06:00 - perf(ui): memoize heavy component renders
+Commit 2024-06-27T15:43:01-06:00 - fix(api): resolve 500 error on null query parameters

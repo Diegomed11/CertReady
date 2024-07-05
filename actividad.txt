@@ -4524,3 +4524,4 @@ Commit 2024-07-03T20:45:08-06:00 - test: mock external service dependencies in C
 Commit 2024-07-03T21:24:37-06:00 - fix(etl): handle malformed timestamp records in input stream
 Commit 2024-07-04T15:24:48-06:00 - refactor: replace deprecated API calls with current standard
 Commit 2024-07-04T16:11:45-06:00 - refactor(services): split monolithic controller into domain services
+Commit 2024-07-04T16:56:00-06:00 - docs: add setup instructions for local development environment

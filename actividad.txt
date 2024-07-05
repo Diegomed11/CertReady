@@ -4526,3 +4526,4 @@ Commit 2024-07-04T15:24:48-06:00 - refactor: replace deprecated API calls with c
 Commit 2024-07-04T16:11:45-06:00 - refactor(services): split monolithic controller into domain services
 Commit 2024-07-04T16:56:00-06:00 - docs: add setup instructions for local development environment
 Commit 2024-07-05T15:28:25-06:00 - chore: cleanup unused imports and dead code
+Commit 2024-07-05T16:18:40-06:00 - feat(mobile): add pull-to-refresh on cert list view

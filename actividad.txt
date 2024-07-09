@@ -4530,3 +4530,4 @@ Commit 2024-07-05T16:18:40-06:00 - feat(mobile): add pull-to-refresh on cert lis
 Commit 2024-07-05T17:08:27-06:00 - fix(auth): handle expired session token gracefully
 Commit 2024-07-08T10:14:50-06:00 - docs: update architecture diagrams and component specs
 Commit 2024-07-08T11:03:32-06:00 - fix: resolve race condition in state management handler
+Commit 2024-07-08T11:34:04-06:00 - docs: update architecture diagrams and component specs

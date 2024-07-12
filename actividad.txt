@@ -4540,3 +4540,4 @@ Commit 2024-07-10T16:11:23-06:00 - fix(etl): handle malformed timestamp records 
 Commit 2024-07-11T15:18:22-06:00 - chore(config): update Dockerfile build arguments
 Commit 2024-07-11T15:46:32-06:00 - fix(db): resolve deadlock on concurrent transaction commits
 Commit 2024-07-11T20:29:08-06:00 - fix(ui): correct button alignment on mobile viewport
+Commit 2024-07-11T20:50:58-06:00 - fix(db): handle edge case with empty foreign relations

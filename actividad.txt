@@ -4547,3 +4547,4 @@ Commit 2024-07-13T15:12:58-06:00 - feat(db): index foreign keys for query accele
 Commit 2024-07-15T10:14:33-06:00 - test: add unit tests for data transformation helpers
 Commit 2024-07-15T10:38:18-06:00 - feat(api): implement filtering and sorting for catalog items
 Commit 2024-07-15T15:10:58-06:00 - test: mock external service dependencies in CI pipeline
+Commit 2024-07-15T15:51:16-06:00 - feat(search): add fuzzy search matching for course titles

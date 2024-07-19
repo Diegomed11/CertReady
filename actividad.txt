@@ -4554,3 +4554,4 @@ Commit 2024-07-17T15:59:05-06:00 - style(theme): update typography and spacing v
 Commit 2024-07-17T16:30:47-06:00 - docs: document database schema and migration conventions
 Commit 2024-07-18T20:15:31-06:00 - feat(mobile): add pull-to-refresh on cert list view
 Commit 2024-07-18T20:55:30-06:00 - feat(mobile): add pull-to-refresh on cert list view
+Commit 2024-07-18T21:37:43-06:00 - refactor(ui): convert stateful widget to stateless component

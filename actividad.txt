@@ -4552,3 +4552,4 @@ Commit 2024-07-15T16:33:02-06:00 - fix(etl): handle malformed timestamp records 
 Commit 2024-07-17T15:18:47-06:00 - fix(db): handle edge case with empty foreign relations
 Commit 2024-07-17T15:59:05-06:00 - style(theme): update typography and spacing variables
 Commit 2024-07-17T16:30:47-06:00 - docs: document database schema and migration conventions
+Commit 2024-07-18T20:15:31-06:00 - feat(mobile): add pull-to-refresh on cert list view

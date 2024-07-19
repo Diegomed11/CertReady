@@ -4551,3 +4551,4 @@ Commit 2024-07-15T15:51:16-06:00 - feat(search): add fuzzy search matching for c
 Commit 2024-07-15T16:33:02-06:00 - fix(etl): handle malformed timestamp records in input stream
 Commit 2024-07-17T15:18:47-06:00 - fix(db): handle edge case with empty foreign relations
 Commit 2024-07-17T15:59:05-06:00 - style(theme): update typography and spacing variables
+Commit 2024-07-17T16:30:47-06:00 - docs: document database schema and migration conventions

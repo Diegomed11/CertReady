@@ -3697,3 +3697,4 @@ Patch Enero-Abril 74-7: 2024-07-17T22:57:04-06:00
 Patch Enero-Abril 75-0: 2024-07-18T14:57:01-06:00
 Patch Enero-Abril 75-1: 2024-07-18T19:17:27-06:00
 Patch Enero-Abril 76-0: 2024-07-19T22:25:23-06:00
+Patch Enero-Abril 77-0: 2024-07-20T11:46:42-06:00

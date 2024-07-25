@@ -4556,3 +4556,4 @@ Commit 2024-07-18T20:15:31-06:00 - feat(mobile): add pull-to-refresh on cert lis
 Commit 2024-07-18T20:55:30-06:00 - feat(mobile): add pull-to-refresh on cert list view
 Commit 2024-07-18T21:37:43-06:00 - refactor(ui): convert stateful widget to stateless component
 Commit 2024-07-19T15:12:19-06:00 - test: add unit tests for data transformation helpers
+Commit 2024-07-24T20:00:07-06:00 - refactor(services): split monolithic controller into domain services

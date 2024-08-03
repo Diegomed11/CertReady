@@ -4564,3 +4564,4 @@ Commit 2024-07-31T10:18:56-06:00 - fix(mobile): prevent keyboard overlap on inpu
 Commit 2024-07-31T20:29:09-06:00 - feat(auth): add password recovery email notification
 Commit 2024-07-31T20:48:31-06:00 - docs: add setup instructions for local development environment
 Commit 2024-07-31T21:36:44-06:00 - perf: optimize image compression assets for mobile bundle
+Commit 2024-08-02T20:29:40-06:00 - docs: update API documentation and endpoint examples

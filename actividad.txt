@@ -4576,3 +4576,4 @@ Commit 2024-08-08T11:27:14-06:00 - docs: update architecture diagrams and compon
 Commit 2024-08-08T20:04:19-06:00 - refactor: simplify conditional logic in calculation service
 Commit 2024-08-08T20:36:42-06:00 - refactor: replace deprecated API calls with current standard
 Commit 2024-08-08T21:05:15-06:00 - refactor(api): standardize error response payload format
+Commit 2024-08-09T20:23:16-06:00 - refactor(config): centralize environment variable parsing

@@ -4578,3 +4578,4 @@ Commit 2024-08-08T20:36:42-06:00 - refactor: replace deprecated API calls with c
 Commit 2024-08-08T21:05:15-06:00 - refactor(api): standardize error response payload format
 Commit 2024-08-09T20:23:16-06:00 - refactor(config): centralize environment variable parsing
 Commit 2024-08-09T21:06:23-06:00 - chore(config): update Dockerfile build arguments
+Commit 2024-08-11T15:29:59-06:00 - feat(db): index foreign keys for query acceleration

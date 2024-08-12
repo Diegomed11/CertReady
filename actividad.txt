@@ -4579,3 +4579,4 @@ Commit 2024-08-08T21:05:15-06:00 - refactor(api): standardize error response pay
 Commit 2024-08-09T20:23:16-06:00 - refactor(config): centralize environment variable parsing
 Commit 2024-08-09T21:06:23-06:00 - chore(config): update Dockerfile build arguments
 Commit 2024-08-11T15:29:59-06:00 - feat(db): index foreign keys for query acceleration
+Commit 2024-08-11T15:48:06-06:00 - fix(cache): invalidate user profile cache upon update

@@ -4586,3 +4586,4 @@ Commit 2024-08-12T16:11:29-06:00 - perf: optimize image compression assets for m
 Commit 2024-08-12T20:09:15-06:00 - refactor(ui): convert stateful widget to stateless component
 Commit 2024-08-12T20:34:52-06:00 - perf: optimize image compression assets for mobile bundle
 Commit 2024-08-12T20:59:03-06:00 - feat(search): add fuzzy search matching for course titles
+Commit 2024-08-14T15:12:41-06:00 - refactor(db): optimize aggregate query with CTE

@@ -4588,3 +4588,4 @@ Commit 2024-08-12T20:34:52-06:00 - perf: optimize image compression assets for m
 Commit 2024-08-12T20:59:03-06:00 - feat(search): add fuzzy search matching for course titles
 Commit 2024-08-14T15:12:41-06:00 - refactor(db): optimize aggregate query with CTE
 Commit 2024-08-14T15:47:31-06:00 - fix(auth): handle expired session token gracefully
+Commit 2024-08-16T10:27:17-06:00 - feat(mobile): add pull-to-refresh on cert list view

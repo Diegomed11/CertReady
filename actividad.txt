@@ -4592,3 +4592,4 @@ Commit 2024-08-16T10:27:17-06:00 - feat(mobile): add pull-to-refresh on cert lis
 Commit 2024-08-16T11:17:37-06:00 - style: format code according to project style guide
 Commit 2024-08-16T11:37:47-06:00 - fix(auth): handle expired session token gracefully
 Commit 2024-08-16T20:23:41-06:00 - feat(db): add migration for certification metadata schema
+Commit 2024-08-16T20:38:38-06:00 - feat(api): add pagination support to user listing endpoint

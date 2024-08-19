@@ -4595,3 +4595,4 @@ Commit 2024-08-16T20:23:41-06:00 - feat(db): add migration for certification met
 Commit 2024-08-16T20:38:38-06:00 - feat(api): add pagination support to user listing endpoint
 Commit 2024-08-16T21:14:00-06:00 - chore(lint): fix linter warnings across scripts directory
 Commit 2024-08-16T21:50:20-06:00 - feat(ui): add loading skeleton indicators for cards
+Commit 2024-08-19T15:13:09-06:00 - fix(ui): fix modal z-index layering issue

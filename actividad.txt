@@ -4601,3 +4601,4 @@ Commit 2024-08-19T20:21:34-06:00 - feat(ui): add loading skeleton indicators for
 Commit 2024-08-19T21:05:49-06:00 - chore(deps): bump dependencies to latest stable versions
 Commit 2024-08-20T15:19:17-06:00 - fix(api): resolve 500 error on null query parameters
 Commit 2024-08-20T15:53:52-06:00 - docs: add setup instructions for local development environment
+Commit 2024-08-21T10:10:21-06:00 - feat(auth): add password recovery email notification

@@ -4604,3 +4604,4 @@ Commit 2024-08-20T15:53:52-06:00 - docs: add setup instructions for local develo
 Commit 2024-08-21T10:10:21-06:00 - feat(auth): add password recovery email notification
 Commit 2024-08-21T10:30:17-06:00 - perf(cache): add redis caching for frequent catalog lookups
 Commit 2024-08-21T20:20:04-06:00 - fix(cache): invalidate user profile cache upon update
+Commit 2024-08-21T20:40:07-06:00 - feat(ui): add loading skeleton indicators for cards

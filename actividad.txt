@@ -4608,3 +4608,4 @@ Commit 2024-08-21T20:40:07-06:00 - feat(ui): add loading skeleton indicators for
 Commit 2024-08-23T15:22:52-06:00 - refactor(services): split monolithic controller into domain services
 Commit 2024-08-23T15:43:52-06:00 - feat(auth): add password recovery email notification
 Commit 2024-08-23T20:30:36-06:00 - chore(deps): bump dependencies to latest stable versions
+Commit 2024-08-23T20:52:07-06:00 - style: format code according to project style guide

@@ -4615,3 +4615,4 @@ Commit 2024-08-29T10:18:06-06:00 - test(unit): add coverage for authentication t
 Commit 2024-08-29T10:50:47-06:00 - docs: update architecture diagrams and component specs
 Commit 2024-08-29T20:10:39-06:00 - fix(ui): fix modal z-index layering issue
 Commit 2024-08-29T20:56:12-06:00 - feat(mobile): add pull-to-refresh on cert list view
+Commit 2024-08-30T20:24:43-06:00 - perf(ui): memoize heavy component renders

@@ -4623,3 +4623,4 @@ Commit 2024-08-31T11:32:19-06:00 - fix(judge): fix timeout exception on heavy ev
 Commit 2024-09-02T20:11:30-06:00 - refactor(core): extract common validation logic into helper
 Commit 2024-09-02T20:41:18-06:00 - chore(deps): bump dependencies to latest stable versions
 Commit 2024-09-03T10:15:35-06:00 - perf(api): reduce payload size by omitting redundant fields
+Commit 2024-09-03T10:47:02-06:00 - docs: update API documentation and endpoint examples

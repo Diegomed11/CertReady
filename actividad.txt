@@ -4361,3 +4361,4 @@ Commit 2024-08-26T15:44:16-06:00 - feat(auth): add password recovery email notif
 Commit 2024-08-26T16:13:27-06:00 - feat(services): integrate background worker for async exports
 Commit 2024-08-26T20:00:01-06:00 - feat(db): add migration for certification metadata schema
 Commit 2024-08-26T20:21:00-06:00 - refactor: simplify conditional logic in calculation service
+Commit 2024-08-26T20:38:23-06:00 - perf: optimize image compression assets for mobile bundle

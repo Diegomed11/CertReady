@@ -4632,3 +4632,4 @@ Commit 2024-09-04T16:52:02-06:00 - refactor(ui): convert stateful widget to stat
 Commit 2024-09-06T15:28:37-06:00 - feat(ui): add loading skeleton indicators for cards
 Commit 2024-09-06T15:59:45-06:00 - test(unit): add coverage for authentication token validator
 Commit 2024-09-06T16:15:12-06:00 - test(unit): add coverage for authentication token validator
+Commit 2024-09-09T20:19:35-06:00 - docs: update API documentation and endpoint examples

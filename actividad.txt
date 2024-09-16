@@ -4644,3 +4644,4 @@ Commit 2024-09-12T15:42:51-06:00 - refactor(core): extract common validation log
 Commit 2024-09-13T10:19:48-06:00 - refactor(core): extract common validation logic into helper
 Commit 2024-09-13T10:38:47-06:00 - perf(cache): add redis caching for frequent catalog lookups
 Commit 2024-09-16T10:15:02-06:00 - refactor(api): standardize error response payload format
+Commit 2024-09-16T10:59:39-06:00 - test(api): add integration tests for certification workflow

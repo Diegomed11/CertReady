@@ -4652,3 +4652,4 @@ Commit 2024-09-18T10:08:02-06:00 - chore(lint): fix linter warnings across scrip
 Commit 2024-09-18T10:36:12-06:00 - chore: cleanup unused imports and dead code
 Commit 2024-09-18T11:25:18-06:00 - perf: optimize image compression assets for mobile bundle
 Commit 2024-09-18T20:03:33-06:00 - refactor(core): extract common validation logic into helper
+Commit 2024-09-18T20:30:06-06:00 - perf(db): add composite index on user_id and created_at

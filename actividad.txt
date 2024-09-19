@@ -4651,3 +4651,4 @@ Commit 2024-09-17T11:04:49-06:00 - refactor(core): extract common validation log
 Commit 2024-09-18T10:08:02-06:00 - chore(lint): fix linter warnings across scripts directory
 Commit 2024-09-18T10:36:12-06:00 - chore: cleanup unused imports and dead code
 Commit 2024-09-18T11:25:18-06:00 - perf: optimize image compression assets for mobile bundle
+Commit 2024-09-18T20:03:33-06:00 - refactor(core): extract common validation logic into helper

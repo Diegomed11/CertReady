@@ -4664,3 +4664,4 @@ Commit 2024-09-19T16:03:27-06:00 - feat(db): index foreign keys for query accele
 Commit 2024-09-19T20:26:16-06:00 - docs: update API documentation and endpoint examples
 Commit 2024-09-19T21:10:14-06:00 - fix(etl): handle malformed timestamp records in input stream
 Commit 2024-09-19T21:37:59-06:00 - fix(judge): fix timeout exception on heavy evaluation payloads
+Commit 2024-09-20T15:04:26-06:00 - feat(auth): add password recovery email notification

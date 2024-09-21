@@ -4668,3 +4668,4 @@ Commit 2024-09-20T15:04:26-06:00 - feat(auth): add password recovery email notif
 Commit 2024-09-20T15:39:19-06:00 - refactor(core): extract common validation logic into helper
 Commit 2024-09-20T15:56:05-06:00 - feat(auth): implement JWT token refresh flow
 Commit 2024-09-20T20:20:06-06:00 - docs: add troubleshooting section for docker container setup
+Commit 2024-09-20T21:09:25-06:00 - test: add unit tests for data transformation helpers

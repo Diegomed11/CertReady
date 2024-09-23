@@ -4365,3 +4365,4 @@ Commit 2024-08-26T20:38:23-06:00 - perf: optimize image compression assets for m
 Commit 2024-09-05T10:03:53-06:00 - feat(ui): implement responsive dashboard grid layout
 Commit 2024-09-05T10:34:13-06:00 - fix(etl): handle malformed timestamp records in input stream
 Commit 2024-09-05T11:06:31-06:00 - chore(deps): bump dependencies to latest stable versions
+Commit 2024-09-19T20:24:33-06:00 - perf(api): reduce payload size by omitting redundant fields

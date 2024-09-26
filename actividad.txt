@@ -4674,3 +4674,4 @@ Commit 2024-09-23T20:08:34-06:00 - style(theme): update typography and spacing v
 Commit 2024-09-24T10:09:17-06:00 - fix(judge): fix timeout exception on heavy evaluation payloads
 Commit 2024-09-24T10:41:26-06:00 - fix(ui): correct button alignment on mobile viewport
 Commit 2024-09-24T11:08:03-06:00 - fix(ui): correct button alignment on mobile viewport
+Commit 2024-09-25T20:03:32-06:00 - feat(db): index foreign keys for query acceleration

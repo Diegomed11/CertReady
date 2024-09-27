@@ -4367,3 +4367,4 @@ Commit 2024-09-05T10:34:13-06:00 - fix(etl): handle malformed timestamp records 
 Commit 2024-09-05T11:06:31-06:00 - chore(deps): bump dependencies to latest stable versions
 Commit 2024-09-19T20:24:33-06:00 - perf(api): reduce payload size by omitting redundant fields
 Commit 2024-09-22T20:13:06-06:00 - feat(db): add migration for certification metadata schema
+Commit 2024-09-22T20:57:31-06:00 - perf(db): add composite index on user_id and created_at

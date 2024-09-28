@@ -4371,3 +4371,4 @@ Commit 2024-09-22T20:57:31-06:00 - perf(db): add composite index on user_id and 
 Commit 2024-09-27T15:01:42-06:00 - refactor(api): standardize error response payload format
 Commit 2024-09-27T15:17:38-06:00 - perf(api): reduce payload size by omitting redundant fields
 Commit 2024-09-27T20:04:12-06:00 - feat(api): implement filtering and sorting for catalog items
+Commit 2024-09-27T20:50:04-06:00 - feat(mobile): add pull-to-refresh on cert list view

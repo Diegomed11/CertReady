@@ -4369,3 +4369,4 @@ Commit 2024-09-19T20:24:33-06:00 - perf(api): reduce payload size by omitting re
 Commit 2024-09-22T20:13:06-06:00 - feat(db): add migration for certification metadata schema
 Commit 2024-09-22T20:57:31-06:00 - perf(db): add composite index on user_id and created_at
 Commit 2024-09-27T15:01:42-06:00 - refactor(api): standardize error response payload format
+Commit 2024-09-27T15:17:38-06:00 - perf(api): reduce payload size by omitting redundant fields

@@ -4679,3 +4679,4 @@ Commit 2024-09-25T20:23:58-06:00 - refactor: simplify conditional logic in calcu
 Commit 2024-09-25T20:44:10-06:00 - refactor: replace deprecated API calls with current standard
 Commit 2024-09-26T15:02:07-06:00 - perf(cache): add redis caching for frequent catalog lookups
 Commit 2024-09-30T20:02:47-06:00 - style(theme): update typography and spacing variables
+Commit 2024-09-30T20:19:20-06:00 - docs: update architecture diagrams and component specs

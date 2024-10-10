@@ -4688,3 +4688,4 @@ Commit 2024-10-03T20:14:59-06:00 - refactor: replace deprecated API calls with c
 Commit 2024-10-03T20:41:24-06:00 - fix(etl): handle malformed timestamp records in input stream
 Commit 2024-10-07T15:27:31-06:00 - feat(db): add migration for certification metadata schema
 Commit 2024-10-10T10:03:15-06:00 - fix(db): resolve deadlock on concurrent transaction commits
+Commit 2024-10-10T10:42:53-06:00 - refactor(db): optimize aggregate query with CTE

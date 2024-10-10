@@ -4686,3 +4686,4 @@ Commit 2024-10-03T15:08:27-06:00 - test(unit): add coverage for authentication t
 Commit 2024-10-03T15:42:40-06:00 - style(theme): update typography and spacing variables
 Commit 2024-10-03T20:14:59-06:00 - refactor: replace deprecated API calls with current standard
 Commit 2024-10-03T20:41:24-06:00 - fix(etl): handle malformed timestamp records in input stream
+Commit 2024-10-07T15:27:31-06:00 - feat(db): add migration for certification metadata schema

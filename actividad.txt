@@ -4691,3 +4691,4 @@ Commit 2024-10-10T10:03:15-06:00 - fix(db): resolve deadlock on concurrent trans
 Commit 2024-10-10T10:42:53-06:00 - refactor(db): optimize aggregate query with CTE
 Commit 2024-10-10T11:09:10-06:00 - feat(ui): add loading skeleton indicators for cards
 Commit 2024-10-11T10:30:45-06:00 - refactor(api): standardize error response payload format
+Commit 2024-10-11T11:13:40-06:00 - test: add unit tests for data transformation helpers

@@ -4694,3 +4694,4 @@ Commit 2024-10-11T10:30:45-06:00 - refactor(api): standardize error response pay
 Commit 2024-10-11T11:13:40-06:00 - test: add unit tests for data transformation helpers
 Commit 2024-10-11T20:09:06-06:00 - chore(lint): fix linter warnings across scripts directory
 Commit 2024-10-11T20:39:36-06:00 - feat(mobile): implement dark mode color palette
+Commit 2024-10-12T15:30:20-06:00 - fix(api): resolve 500 error on null query parameters

@@ -4696,3 +4696,4 @@ Commit 2024-10-11T20:09:06-06:00 - chore(lint): fix linter warnings across scrip
 Commit 2024-10-11T20:39:36-06:00 - feat(mobile): implement dark mode color palette
 Commit 2024-10-12T15:30:20-06:00 - fix(api): resolve 500 error on null query parameters
 Commit 2024-10-12T15:56:46-06:00 - docs: document database schema and migration conventions
+Commit 2024-10-13T10:24:35-06:00 - chore(config): update Dockerfile build arguments

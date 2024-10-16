@@ -4701,3 +4701,4 @@ Commit 2024-10-15T10:30:00-06:00 - feat(services): integrate background worker f
 Commit 2024-10-15T10:59:20-06:00 - feat(mobile): add pull-to-refresh on cert list view
 Commit 2024-10-15T11:28:43-06:00 - fix(judge): fix timeout exception on heavy evaluation payloads
 Commit 2024-10-15T20:12:55-06:00 - refactor(services): split monolithic controller into domain services
+Commit 2024-10-15T20:30:47-06:00 - refactor: replace deprecated API calls with current standard

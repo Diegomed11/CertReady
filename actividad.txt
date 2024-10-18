@@ -4704,3 +4704,4 @@ Commit 2024-10-15T20:12:55-06:00 - refactor(services): split monolithic controll
 Commit 2024-10-15T20:30:47-06:00 - refactor: replace deprecated API calls with current standard
 Commit 2024-10-15T20:59:48-06:00 - fix(ui): fix modal z-index layering issue
 Commit 2024-10-17T20:04:44-06:00 - refactor(ui): convert stateful widget to stateless component
+Commit 2024-10-17T20:37:35-06:00 - refactor(services): split monolithic controller into domain services

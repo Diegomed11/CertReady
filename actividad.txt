@@ -4711,3 +4711,4 @@ Commit 2024-10-18T11:17:05-06:00 - fix(db): handle edge case with empty foreign 
 Commit 2024-10-20T20:02:28-06:00 - chore: cleanup unused imports and dead code
 Commit 2024-10-20T20:28:26-06:00 - chore(config): update Dockerfile build arguments
 Commit 2024-10-21T10:18:23-06:00 - chore(config): update Dockerfile build arguments
+Commit 2024-10-21T10:38:18-06:00 - docs: update architecture diagrams and component specs

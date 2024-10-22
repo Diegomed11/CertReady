@@ -4712,3 +4712,4 @@ Commit 2024-10-20T20:02:28-06:00 - chore: cleanup unused imports and dead code
 Commit 2024-10-20T20:28:26-06:00 - chore(config): update Dockerfile build arguments
 Commit 2024-10-21T10:18:23-06:00 - chore(config): update Dockerfile build arguments
 Commit 2024-10-21T10:38:18-06:00 - docs: update architecture diagrams and component specs
+Commit 2024-10-22T10:30:06-06:00 - fix(ui): fix modal z-index layering issue

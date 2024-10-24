@@ -4717,3 +4717,4 @@ Commit 2024-10-22T11:09:56-06:00 - test: mock external service dependencies in C
 Commit 2024-10-22T11:27:20-06:00 - feat(ui): implement responsive dashboard grid layout
 Commit 2024-10-23T20:20:22-06:00 - perf(cache): add redis caching for frequent catalog lookups
 Commit 2024-10-23T20:44:22-06:00 - perf(ui): memoize heavy component renders
+Commit 2024-10-23T21:00:22-06:00 - feat(mobile): add pull-to-refresh on cert list view

@@ -4385,3 +4385,4 @@ Commit 2024-10-09T21:53:10-06:00 - fix(api): resolve 500 error on null query par
 Commit 2024-10-14T15:15:37-06:00 - docs: update architecture diagrams and component specs
 Commit 2024-10-14T15:59:30-06:00 - feat(search): add fuzzy search matching for course titles
 Commit 2024-10-14T20:12:13-06:00 - refactor(core): extract common validation logic into helper
+Commit 2024-10-14T20:36:13-06:00 - test: mock external service dependencies in CI pipeline

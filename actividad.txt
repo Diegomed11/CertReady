@@ -4721,3 +4721,4 @@ Commit 2024-10-23T21:00:22-06:00 - feat(mobile): add pull-to-refresh on cert lis
 Commit 2024-10-24T10:02:22-06:00 - perf(cache): add redis caching for frequent catalog lookups
 Commit 2024-10-25T15:03:19-06:00 - refactor(ui): convert stateful widget to stateless component
 Commit 2024-10-25T15:36:31-06:00 - refactor(config): centralize environment variable parsing
+Commit 2024-10-25T15:52:33-06:00 - perf: optimize image compression assets for mobile bundle

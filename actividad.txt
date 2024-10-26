@@ -4387,3 +4387,4 @@ Commit 2024-10-14T15:59:30-06:00 - feat(search): add fuzzy search matching for c
 Commit 2024-10-14T20:12:13-06:00 - refactor(core): extract common validation logic into helper
 Commit 2024-10-14T20:36:13-06:00 - test: mock external service dependencies in CI pipeline
 Commit 2024-10-26T10:28:53-06:00 - style(theme): update typography and spacing variables
+Commit 2024-10-26T11:16:17-06:00 - feat(mobile): add pull-to-refresh on cert list view

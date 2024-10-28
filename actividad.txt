@@ -4725,3 +4725,4 @@ Commit 2024-10-25T15:52:33-06:00 - perf: optimize image compression assets for m
 Commit 2024-10-25T20:12:00-06:00 - fix(mobile): prevent keyboard overlap on input forms
 Commit 2024-10-25T21:01:00-06:00 - feat(mobile): add pull-to-refresh on cert list view
 Commit 2024-10-25T21:27:20-06:00 - refactor(core): extract common validation logic into helper
+Commit 2024-10-27T20:28:15-06:00 - docs: document database schema and migration conventions

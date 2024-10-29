@@ -4727,3 +4727,4 @@ Commit 2024-10-25T21:01:00-06:00 - feat(mobile): add pull-to-refresh on cert lis
 Commit 2024-10-25T21:27:20-06:00 - refactor(core): extract common validation logic into helper
 Commit 2024-10-27T20:28:15-06:00 - docs: document database schema and migration conventions
 Commit 2024-10-27T21:10:12-06:00 - feat(ui): add loading skeleton indicators for cards
+Commit 2024-10-29T10:29:13-06:00 - chore: cleanup unused imports and dead code

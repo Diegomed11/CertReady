@@ -4740,3 +4740,4 @@ Commit 2024-11-01T20:23:03-06:00 - fix(auth): handle expired session token grace
 Commit 2024-11-01T21:01:51-06:00 - feat(ui): implement responsive dashboard grid layout
 Commit 2024-11-06T15:23:41-06:00 - test(api): add integration tests for certification workflow
 Commit 2024-11-06T15:51:59-06:00 - fix(db): handle edge case with empty foreign relations
+Commit 2024-11-06T20:25:37-06:00 - feat(search): add fuzzy search matching for course titles

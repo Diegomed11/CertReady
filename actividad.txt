@@ -4744,3 +4744,4 @@ Commit 2024-11-06T20:25:37-06:00 - feat(search): add fuzzy search matching for c
 Commit 2024-11-06T21:00:09-06:00 - refactor(db): optimize aggregate query with CTE
 Commit 2024-11-07T20:07:40-06:00 - docs: add setup instructions for local development environment
 Commit 2024-11-07T20:31:47-06:00 - docs: update API documentation and endpoint examples
+Commit 2024-11-08T10:14:36-06:00 - feat(search): add fuzzy search matching for course titles

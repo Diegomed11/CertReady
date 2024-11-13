@@ -4748,3 +4748,4 @@ Commit 2024-11-08T10:14:36-06:00 - feat(search): add fuzzy search matching for c
 Commit 2024-11-08T10:43:32-06:00 - feat(db): add migration for certification metadata schema
 Commit 2024-11-08T20:18:26-06:00 - docs: update API documentation and endpoint examples
 Commit 2024-11-08T20:35:57-06:00 - feat(ui): add loading skeleton indicators for cards
+Commit 2024-11-12T20:18:35-06:00 - docs: add setup instructions for local development environment

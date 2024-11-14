@@ -4750,3 +4750,4 @@ Commit 2024-11-08T20:18:26-06:00 - docs: update API documentation and endpoint e
 Commit 2024-11-08T20:35:57-06:00 - feat(ui): add loading skeleton indicators for cards
 Commit 2024-11-12T20:18:35-06:00 - docs: add setup instructions for local development environment
 Commit 2024-11-12T20:48:39-06:00 - chore: cleanup unused imports and dead code
+Commit 2024-11-12T21:10:54-06:00 - feat(mobile): implement dark mode color palette

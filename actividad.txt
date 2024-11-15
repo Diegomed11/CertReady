@@ -4755,3 +4755,4 @@ Commit 2024-11-13T20:00:23-06:00 - refactor: replace deprecated API calls with c
 Commit 2024-11-14T15:19:48-06:00 - style: format code according to project style guide
 Commit 2024-11-14T15:39:25-06:00 - style: format code according to project style guide
 Commit 2024-11-14T20:20:21-06:00 - perf(cache): add redis caching for frequent catalog lookups
+Commit 2024-11-14T20:44:36-06:00 - feat(db): index foreign keys for query acceleration

@@ -4399,3 +4399,4 @@ Commit 2024-11-09T15:06:55-06:00 - test(e2e): add test case for user registratio
 Commit 2024-11-09T15:52:21-06:00 - style(theme): update typography and spacing variables
 Commit 2024-11-15T20:12:25-06:00 - fix(mobile): prevent keyboard overlap on input forms
 Commit 2024-11-15T20:37:54-06:00 - feat(api): implement filtering and sorting for catalog items
+Commit 2024-11-19T10:15:06-06:00 - refactor(core): extract common validation logic into helper

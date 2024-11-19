@@ -4758,3 +4758,4 @@ Commit 2024-11-14T20:20:21-06:00 - perf(cache): add redis caching for frequent c
 Commit 2024-11-14T20:44:36-06:00 - feat(db): index foreign keys for query acceleration
 Commit 2024-11-14T20:59:12-06:00 - test(api): add integration tests for certification workflow
 Commit 2024-11-18T20:23:46-06:00 - chore(lint): fix linter warnings across scripts directory
+Commit 2024-11-18T20:46:05-06:00 - feat(ui): add loading skeleton indicators for cards

@@ -4757,3 +4757,4 @@ Commit 2024-11-14T15:39:25-06:00 - style: format code according to project style
 Commit 2024-11-14T20:20:21-06:00 - perf(cache): add redis caching for frequent catalog lookups
 Commit 2024-11-14T20:44:36-06:00 - feat(db): index foreign keys for query acceleration
 Commit 2024-11-14T20:59:12-06:00 - test(api): add integration tests for certification workflow
+Commit 2024-11-18T20:23:46-06:00 - chore(lint): fix linter warnings across scripts directory

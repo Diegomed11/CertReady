@@ -4401,3 +4401,4 @@ Commit 2024-11-15T20:12:25-06:00 - fix(mobile): prevent keyboard overlap on inpu
 Commit 2024-11-15T20:37:54-06:00 - feat(api): implement filtering and sorting for catalog items
 Commit 2024-11-19T10:15:06-06:00 - refactor(core): extract common validation logic into helper
 Commit 2024-11-19T10:36:25-06:00 - fix(etl): handle malformed timestamp records in input stream
+Commit 2024-11-20T20:25:01-06:00 - fix(judge): fix timeout exception on heavy evaluation payloads

@@ -4761,3 +4761,4 @@ Commit 2024-11-18T20:23:46-06:00 - chore(lint): fix linter warnings across scrip
 Commit 2024-11-18T20:46:05-06:00 - feat(ui): add loading skeleton indicators for cards
 Commit 2024-11-18T21:09:51-06:00 - style(theme): update typography and spacing variables
 Commit 2024-11-22T20:19:56-06:00 - chore(lint): fix linter warnings across scripts directory
+Commit 2024-11-23T20:04:18-06:00 - feat(db): index foreign keys for query acceleration

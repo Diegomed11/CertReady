@@ -4403,3 +4403,4 @@ Commit 2024-11-19T10:15:06-06:00 - refactor(core): extract common validation log
 Commit 2024-11-19T10:36:25-06:00 - fix(etl): handle malformed timestamp records in input stream
 Commit 2024-11-20T20:25:01-06:00 - fix(judge): fix timeout exception on heavy evaluation payloads
 Commit 2024-11-20T21:11:52-06:00 - perf(db): add composite index on user_id and created_at
+Commit 2024-11-20T21:40:59-06:00 - feat(db): index foreign keys for query acceleration

@@ -4766,3 +4766,4 @@ Commit 2024-11-25T10:22:46-06:00 - refactor: simplify conditional logic in calcu
 Commit 2024-11-27T10:19:29-06:00 - feat(db): add migration for certification metadata schema
 Commit 2024-11-27T10:57:09-06:00 - fix(auth): handle expired session token gracefully
 Commit 2024-11-27T15:02:32-06:00 - feat(auth): implement JWT token refresh flow
+Commit 2024-11-27T15:23:45-06:00 - docs: add setup instructions for local development environment

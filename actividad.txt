@@ -4405,3 +4405,4 @@ Commit 2024-11-20T20:25:01-06:00 - fix(judge): fix timeout exception on heavy ev
 Commit 2024-11-20T21:11:52-06:00 - perf(db): add composite index on user_id and created_at
 Commit 2024-11-20T21:40:59-06:00 - feat(db): index foreign keys for query acceleration
 Commit 2024-11-26T15:26:34-06:00 - refactor(db): optimize aggregate query with CTE
+Commit 2024-11-26T15:44:50-06:00 - fix(mobile): prevent keyboard overlap on input forms

@@ -4773,3 +4773,4 @@ Commit 2024-11-28T16:06:55-06:00 - docs: add troubleshooting section for docker 
 Commit 2024-12-02T10:02:51-06:00 - docs: add setup instructions for local development environment
 Commit 2024-12-02T10:45:31-06:00 - refactor: replace deprecated API calls with current standard
 Commit 2024-12-02T20:07:46-06:00 - fix(ui): correct button alignment on mobile viewport
+Commit 2024-12-02T20:40:02-06:00 - feat(mobile): add pull-to-refresh on cert list view

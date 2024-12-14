@@ -4789,3 +4789,4 @@ Commit 2024-12-10T15:25:21-06:00 - fix(judge): fix timeout exception on heavy ev
 Commit 2024-12-11T10:10:31-06:00 - chore(config): update Dockerfile build arguments
 Commit 2024-12-11T11:00:12-06:00 - refactor(db): optimize aggregate query with CTE
 Commit 2024-12-12T15:08:43-06:00 - fix(api): resolve 500 error on null query parameters
+Commit 2024-12-12T15:37:16-06:00 - feat(services): integrate background worker for async exports

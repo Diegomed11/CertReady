@@ -4410,3 +4410,4 @@ Commit 2024-11-29T10:06:03-06:00 - perf(ui): memoize heavy component renders
 Commit 2024-11-29T10:49:51-06:00 - docs: update architecture diagrams and component specs
 Commit 2024-12-17T10:25:50-06:00 - test(e2e): add test case for user registration flow
 Commit 2024-12-17T10:54:32-06:00 - feat(mobile): implement dark mode color palette
+Commit 2024-12-17T11:34:19-06:00 - fix(api): resolve 500 error on null query parameters

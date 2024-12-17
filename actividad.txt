@@ -4793,3 +4793,4 @@ Commit 2024-12-12T15:37:16-06:00 - feat(services): integrate background worker f
 Commit 2024-12-13T20:17:18-06:00 - fix(cache): invalidate user profile cache upon update
 Commit 2024-12-13T20:43:12-06:00 - docs: add troubleshooting section for docker container setup
 Commit 2024-12-16T15:22:43-06:00 - test: add unit tests for data transformation helpers
+Commit 2024-12-16T15:58:33-06:00 - fix(mobile): prevent keyboard overlap on input forms

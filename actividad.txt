@@ -4407,3 +4407,4 @@ Commit 2024-11-20T21:40:59-06:00 - feat(db): index foreign keys for query accele
 Commit 2024-11-26T15:26:34-06:00 - refactor(db): optimize aggregate query with CTE
 Commit 2024-11-26T15:44:50-06:00 - fix(mobile): prevent keyboard overlap on input forms
 Commit 2024-11-29T10:06:03-06:00 - perf(ui): memoize heavy component renders
+Commit 2024-11-29T10:49:51-06:00 - docs: update architecture diagrams and component specs

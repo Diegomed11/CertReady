@@ -4794,3 +4794,4 @@ Commit 2024-12-13T20:17:18-06:00 - fix(cache): invalidate user profile cache upo
 Commit 2024-12-13T20:43:12-06:00 - docs: add troubleshooting section for docker container setup
 Commit 2024-12-16T15:22:43-06:00 - test: add unit tests for data transformation helpers
 Commit 2024-12-16T15:58:33-06:00 - fix(mobile): prevent keyboard overlap on input forms
+Commit 2024-12-16T20:12:44-06:00 - test(api): add integration tests for certification workflow

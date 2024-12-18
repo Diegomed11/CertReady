@@ -4413,3 +4413,4 @@ Commit 2024-12-17T10:54:32-06:00 - feat(mobile): implement dark mode color palet
 Commit 2024-12-17T11:34:19-06:00 - fix(api): resolve 500 error on null query parameters
 Commit 2024-12-17T15:20:45-06:00 - feat(api): implement filtering and sorting for catalog items
 Commit 2024-12-17T15:56:52-06:00 - fix(judge): fix timeout exception on heavy evaluation payloads
+Commit 2024-12-17T16:15:07-06:00 - fix(api): correct CORS headers for staging environment

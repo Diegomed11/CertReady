@@ -4418,3 +4418,4 @@ Commit 2024-12-17T20:16:48-06:00 - refactor(config): centralize environment vari
 Commit 2024-12-17T20:37:33-06:00 - perf(api): reduce payload size by omitting redundant fields
 Commit 2024-12-17T21:03:46-06:00 - refactor(db): optimize aggregate query with CTE
 Commit 2024-12-20T15:27:12-06:00 - chore: cleanup unused imports and dead code
+Commit 2024-12-20T16:13:41-06:00 - docs: document database schema and migration conventions

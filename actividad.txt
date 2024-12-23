@@ -4419,3 +4419,4 @@ Commit 2024-12-17T20:37:33-06:00 - perf(api): reduce payload size by omitting re
 Commit 2024-12-17T21:03:46-06:00 - refactor(db): optimize aggregate query with CTE
 Commit 2024-12-20T15:27:12-06:00 - chore: cleanup unused imports and dead code
 Commit 2024-12-20T16:13:41-06:00 - docs: document database schema and migration conventions
+Commit 2024-12-20T16:50:50-06:00 - perf(db): add composite index on user_id and created_at

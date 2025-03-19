@@ -3427,3 +3427,4 @@ Patch Enero-Abril 75-0: Mon Mar 17 11:45:42 2025 -0600
 Patch Enero-Abril 75-1: Mon Mar 17 21:54:45 2025 -0600
 Patch Enero-Abril 75-2: Mon Mar 17 21:50:22 2025 -0600
 Patch Enero-Abril 75-3: Mon Mar 17 20:29:46 2025 -0600
+Patch Enero-Abril 76-0: Tue Mar 18 22:31:12 2025 -0600

@@ -3471,3 +3471,4 @@ Patch Enero-Abril 94-1: Sat Apr 05 10:46:47 2025 -0600
 Patch Enero-Abril 94-2: Sat Apr 05 19:41:02 2025 -0600
 Patch Enero-Abril 94-3: Sat Apr 05 10:21:41 2025 -0600
 Patch Enero-Abril 95-0: Sun Apr 06 12:34:10 2025 -0600
+Patch Enero-Abril 96-0: Mon Apr 07 13:59:14 2025 -0600

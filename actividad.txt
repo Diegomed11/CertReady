@@ -3478,3 +3478,4 @@ Patch Enero-Abril 98-0: Wed Apr 09 22:31:57 2025 -0600
 Patch Enero-Abril 98-1: Wed Apr 09 18:04:12 2025 -0600
 Patch Enero-Abril 99-0: Thu Apr 10 12:36:26 2025 -0600
 Patch Enero-Abril 99-1: Thu Apr 10 19:50:54 2025 -0600
+Patch Enero-Abril 99-2: Thu Apr 10 13:35:32 2025 -0600

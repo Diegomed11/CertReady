@@ -3495,3 +3495,4 @@ Patch Enero-Abril 105-2: Wed Apr 16 13:06:18 2025 -0600
 Patch Enero-Abril 106-0: Thu Apr 17 15:03:09 2025 -0600
 Patch Enero-Abril 107-0: Fri Apr 18 21:38:10 2025 -0600
 Patch Enero-Abril 107-1: Fri Apr 18 10:58:44 2025 -0600
+Patch Enero-Abril 107-2: Fri Apr 18 15:04:39 2025 -0600

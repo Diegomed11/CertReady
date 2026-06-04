@@ -1,0 +1,9 @@
+# Mantiene el contexto de build mínimo: solo el código fuente necesario.
+.git
+.gitignore
+Dockerfile
+.dockerignore
+README.md
+Makefile
+bin/
+*.md

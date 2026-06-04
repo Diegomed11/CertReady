@@ -1,0 +1,29 @@
+# Normaliza saltos de línea: el repositorio guarda LF; cada quien hace checkout
+# según su SO. Evita el ruido de CRLF↔LF en Windows y mantiene reproducibles los
+# builds de Docker/CI (que esperan LF).
+
+# Por defecto, normaliza texto a LF en el repositorio.
+* text=auto eol=lf
+
+# Código y configuración: siempre LF.
+*.go      text eol=lf
+*.mod      text eol=lf
+*.sum      text eol=lf
+*.py      text eol=lf
+*.ts      text eol=lf
+*.tsx      text eol=lf
+*.dart    text eol=lf
+*.tf      text eol=lf
+*.sh      text eol=lf
+*.md      text eol=lf
+*.json    text eol=lf
+*.yml      text eol=lf
+*.yaml    text eol=lf
+Dockerfile text eol=lf
+Makefile   text eol=lf
+
+# Binarios: nunca tocar.
+*.png     binary
+*.jpg     binary
+*.pdf     binary
+*.ico     binary

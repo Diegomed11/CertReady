@@ -1,0 +1,29 @@
+# Configuración de golangci-lint para los servicios Go del monorepo.
+# Conjunto conservador y determinista: prioriza señales de alto valor y bajo ruido.
+# Doc: https://golangci-lint.run/usage/configuration/
+
+run:
+  timeout: 5m
+  tests: true
+
+linters:
+  disable-all: true
+  enable:
+    - errcheck      # errores no comprobados
+    - govet         # análisis estándar (go vet)
+    - ineffassign   # asignaciones sin efecto
+    - staticcheck   # análisis estático profundo
+    - unused        # código muerto
+    - gofmt         # formato canónico
+    - misspell      # erratas en comentarios/identificadores
+    - revive        # estilo idiomático (reemplazo de golint)
+
+linters-settings:
+  gofmt:
+    simplify: true
+  misspell:
+    locale: US
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0

@@ -1,0 +1,4 @@
+{"time":"2026-06-03T21:52:42.7093173-06:00","level":"WARN","msg":"OIDC no configurado: las rutas protegidas responderán 501","service":"enrollments","env":"dev"}
+{"time":"2026-06-03T21:52:42.7441545-06:00","level":"INFO","msg":"servicio escuchando","service":"enrollments","env":"dev","addr":":18091","version":"dev","catalog_url":"http://127.0.0.1:18090"}
+{"time":"2026-06-03T21:52:44.0625475-06:00","level":"INFO","msg":"http_request","service":"enrollments","env":"dev","method":"GET","path":"/v1/ready","status":200,"duration":531900,"request_id":"f1681e40f968a8b4742a3468cda37fb7"}
+{"time":"2026-06-03T21:52:44.0866891-06:00","level":"INFO","msg":"http_request","service":"enrollments","env":"dev","method":"POST","path":"/v1/enrollments","status":501,"duration":0,"request_id":"c282f7f30efe16199fdf4fb4c64e1566"}

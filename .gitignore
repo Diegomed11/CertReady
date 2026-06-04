@@ -1,0 +1,60 @@
+# ---------------------------------------------------------------------------
+# CertReady — .gitignore (raíz del monorepo)
+# Cada subproyecto puede añadir reglas propias en su carpeta si lo necesita.
+# ---------------------------------------------------------------------------
+
+# Go ------------------------------------------------------------------------
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+/services/**/bin/
+/judge/**/bin/
+vendor/
+
+# Python (capa de datos) ----------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+
+# Node / Next.js (web) ------------------------------------------------------
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+
+# Flutter / Dart (mobile) ---------------------------------------------------
+.dart_tool/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Terraform (infra) ---------------------------------------------------------
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfvars
+!*.tfvars.example
+# .terraform.lock.hcl SÍ se versiona (fija versiones de provider de forma reproducible).
+
+# Secretos / entorno — NUNCA versionar (principio: cero secretos en código) --
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Sistema / editores --------------------------------------------------------
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp

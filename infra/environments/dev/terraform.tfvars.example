@@ -1,0 +1,9 @@
+# Copia este archivo como terraform.tfvars (no versionar) y ajusta los valores.
+
+aws_region       = "us-east-1"
+azs              = ["us-east-1a", "us-east-1b"]
+health_image_tag = "latest"
+
+# Tu usuario u organización de GitHub (el que aparece en github.com/<aquí>/certready).
+github_org  = "<tu-usuario-o-org>"
+github_repo = "certready"

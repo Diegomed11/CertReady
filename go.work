@@ -1,0 +1,19 @@
+// Workspace Go del monorepo CertReady.
+//
+// Permite que los servicios y la librería compartida (libs/platform) se
+// resuelvan localmente entre sí sin publicar versiones. Cada carpeta listada en
+// `use` es un módulo independiente con su propio go.mod.
+//
+// Versión del workspace >= la mayor versión `go` de sus módulos (pgx v5 arrastra
+// dependencias que requieren go 1.25). `services/health` se queda en go 1.23
+// (sin deps): el workspace lo admite por ser una versión menor.
+go 1.25.0
+
+use (
+	./libs/platform
+	./services/catalog
+	./services/enrollments
+	./services/health
+	./services/users
+	./tools/oidc-mock
+)

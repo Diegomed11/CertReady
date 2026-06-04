@@ -1,0 +1,25 @@
+# Dependencias y cachés ----------------------------------------------------
+node_modules/
+.pnp/
+.pnp.js
+
+# Build de Next ------------------------------------------------------------
+.next/
+out/
+build/
+
+# Tipos generados ----------------------------------------------------------
+next-env.d.ts
+
+# Variables de entorno locales (NEVER commit secrets) ----------------------
+.env
+.env.local
+.env.*.local
+
+# Cobertura ----------------------------------------------------------------
+coverage/
+*.lcov
+
+# Sistema / editores -------------------------------------------------------
+.DS_Store
+*.log

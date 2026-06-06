@@ -7,13 +7,13 @@ están en [`arquitectura-y-fases-certready.md`](arquitectura-y-fases-certready.m
 
 ## Resumen
 
-El proyecto está al final de la fase 1. Toda la base del backend de identidad y
-catálogo está implementada y verificada en local contra PostgreSQL real, con
-pruebas unitarias y de integración. La aplicación web tiene lista su fundación
-(patrón BFF, autenticación OIDC, cliente de los servicios) y faltan las vistas.
-El despliegue en AWS está escrito en Terraform y validado, pero pospuesto de
-forma deliberada hasta disponer de cuenta; el desarrollo ocurre por completo en
-local.
+La fase 1 está completa: identidad y catálogo, backend y web. Todo el backend
+está implementado y verificado en local contra PostgreSQL real (pruebas
+unitarias y de integración), y la web (patrón BFF) se verificó de extremo a
+extremo con el stack completo levantado: login OIDC, inscripción y panel del
+estudiante. El despliegue en AWS está escrito en Terraform y validado, pero
+pospuesto de forma deliberada hasta disponer de cuenta; el desarrollo ocurre por
+completo en local. El siguiente paso es la fase 2.
 
 ## Completado
 
@@ -46,20 +46,52 @@ local.
   manipulación de tokens cubierta por diseño y por pruebas.
 - **Infraestructura de Cognito** escrita en Terraform y validada (User Pool, App
   Client con PKCE, grupos de roles, Hosted UI). Parqueada hasta el despliegue.
-- **Web (incremento inicial):** fundación del BFF en Next.js. Autenticación OIDC
-  con PKCE, sesión cifrada, cliente HTTP tipado de los servicios y rutas de auth.
-  Sin vistas todavía.
+- **Web (Next.js, patrón BFF):** fundación (autenticación OIDC con PKCE, sesión
+  cifrada, cliente HTTP tipado de los servicios) y vistas completas: inicio de
+  sesión y callback, catálogo de certificaciones con inscripción, y panel del
+  estudiante con sus inscripciones. Verificada de extremo a extremo con el stack
+  completo en local.
+
+Con esto se cumple el criterio de salida de la fase 1: el estudiante se registra,
+elige varias certificaciones y ve su panel.
+
+## Fase 2 — Contenido y exámenes (backend completo)
+
+- **Servicio `content`** (Go + MongoDB): material de estudio, con lecturas
+  públicas y creación administrada. Primer servicio sobre MongoDB.
+- **Servicio `exams`** (Go + MongoDB + PostgreSQL): banco de preguntas en Mongo;
+  simulacros, calificación e intentos en Postgres. Ciclo "simulacro → score →
+  repaso" para preguntas de opción múltiple. Verificado de extremo a extremo en
+  local (creación de preguntas, examen sin fuga de respuestas, calificación,
+  repaso, control de reintento).
+
+Pendiente de la fase: el **frontend** (estudiar, presentar simulacro, repasar),
+pospuesto por decisión hasta hacer un pase de diseño único más adelante.
+
+## Fase 3 — Entrevistas y juez de código (backend construido)
+
+- **Servicio `problems`** (Go + MongoDB): banco de **problemas** tipo LeetCode
+  (con casos de prueba ocultos y límites) y banco de **Q&A** por puesto/área.
+  Lectura pública con anti-fuga (nunca expone casos ocultos) y creación admin.
+- **Servicio `judge`** (Go + Docker + MongoDB + PostgreSQL): el subsistema de
+  mayor riesgo. Ejecuta código no confiable en **contenedores Docker efímeros
+  endurecidos** (sin red, FS de solo lectura, límites de CPU/memoria/PIDs/tiempo,
+  sin privilegios), califica contra los casos del problema y registra la corrida.
+  Primer lenguaje: Python (interfaz `Runner` extensible). Decisiones en ADR-11.
+
+Verificado de extremo a extremo: build y pruebas de los diez módulos, calificación,
+persistencia (con BOLA) y API (RBAC y anti-fuga), e2e en vivo de `problems`, y
+—con Docker— la **suite de escape del sandbox** (red, FS, fork-bomb, memoria,
+tiempo) y el **e2e en vivo del juez** (accepted / wrong sin fuga / TLE / 401 /
+BOLA). El juez se despliega en **Fargate** (no Lambda).
+
+Pendiente de la fase: el **frontend** (editor de código + correr contra casos),
+pospuesto con el resto del front.
 
 ## En curso / inmediato
 
-Vistas de la aplicación web (fase 1):
-
-- Pantalla de inicio de sesión y callback.
-- Vista de catálogo: listar certificaciones e inscribirse.
-- Panel del estudiante: datos de la cuenta e inscripciones.
-
-Criterio de salida de la fase 1: el estudiante se registra, elige varias
-certificaciones y ve su panel.
+Backend de la Fase 3 completo y verificado. Después: frontend de las fases 2–3
+cuando se retome el front, o la **fase 4 — capa analítica (OLAP)**.
 
 ## Planeado
 

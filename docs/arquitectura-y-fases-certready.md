@@ -179,6 +179,22 @@ Formato corto por decisión: **contexto → opciones → decisión → justifica
 - **Decisión (responsable, 2026-06-03):** servicio **`enrollments`** independiente, con su esquema `enrollments`. `catalog` queda como contenido puro y `users` como identidad pura; `enrollments` referencia a ambos de forma **lógica** (sin FKs entre servicios).
 - **Justificación:** fronteras de dominio más limpias y menor acoplamiento; coherente con el estilo de microservicios del proyecto. Costo cero (mismo Postgres, otro esquema).
 
+### ADR-10 — MongoDB en dev/costo-cero: Atlas free (enmienda contextual a la fila "MongoDB (Atlas)")
+- **Contexto:** la Fase 2 introduce MongoDB para contenido y preguntas. Bajo ADR-07 (Lambda, $0), se necesita un MongoDB accesible por TLS público (sin VPC/NAT) y sin costo fijo.
+- **Opciones:** (a) MongoDB local (solo dev); (b) **MongoDB Atlas M0** (gratis, TLS público); (c) Amazon DocumentDB (descartado en ADR-03 por compatibilidad y porque exige VPC).
+- **Decisión (2026-06-06):** **MongoDB local** en desarrollo y **Atlas M0** para el despliegue $0. Es el mismo patrón que Postgres→Neon (ADR-08) y reafirma el ADR-03 (Atlas, no DocumentDB).
+- **Aislamiento del código:** 12-factor, todo vía `MONGO_URI`. El servicio no sabe si habla con un Mongo local o con Atlas. El driver es `go.mongodb.org/mongo-driver/v2`.
+- **Trade-offs honestos:** el M0 de Atlas tiene límites (almacenamiento, conexiones, *throughput*); suficiente para dev y un MVP pequeño. La data de contenido vive fuera de AWS (como ya ocurre con Atlas en el diseño base).
+
+### ADR-11 — Aislamiento del juez de código: contenedores Docker efímeros (refinamiento de la §10.1 y enmienda a ADR-07)
+- **Contexto:** la Fase 3 introduce el **juez de código**, que ejecuta código de terceros. Es el subsistema de **mayor riesgo** (la "fuga del sandbox" es la prueba estrella de pentest, §11). Necesita aislamiento fuerte: sin red, sistema de archivos de solo lectura, límites de CPU/memoria/tiempo y sin privilegios. Bajo ADR-07 (Lambda, $0), el juez **no encaja en Lambda**: necesita un daemon de contenedores para lanzar runners.
+- **Opciones:** (a) sandbox a nivel de proceso en Go (rlimits/namespaces a mano) — **rechazada**: aislamiento débil para código no confiable; (b) **contenedores Docker efímeros endurecidos** — uno por ejecución; (c) micro-VMs gVisor/Firecracker — el aislamiento más fuerte, pero mayor complejidad operativa.
+- **Decisión (2026-06-06):** **(b)** para esta fase. Cada caso de prueba corre en un contenedor efímero con: `--network none`, raíz `--read-only` + `/tmp` en tmpfs (`noexec,nosuid`), código montado de **solo lectura** en `/sandbox`, `--memory`/`--memory-swap` (sin swap), `--cpus`, `--pids-limit` (anti fork-bomb), `--user` sin privilegios, `--cap-drop ALL`, `--security-opt no-new-privileges` y corte de tiempo con `timeout` + backstop por context. La ejecución es **síncrona** (cola y resultados por evento diferidos a escala). **(c)** se programa para el endurecimiento de la **Fase 7**.
+- **Despliegue:** el juez es **la única excepción** a la ruta Lambda del ADR-07: se despliega en **ECS Fargate** (recupera la fila de cómputo de ADR-05 para este servicio). En desarrollo corre con **Docker Desktop** local.
+- **Multi-lenguaje:** primera ronda **Python**; la interfaz `Runner` permite añadir lenguajes (Go, JS) sin tocar la calificación.
+- **Anti-fuga:** los problemas guardan los casos **ocultos** y sus salidas esperadas en MongoDB; el juez los lee del lado del servidor para calificar y **nunca** los devuelve al cliente (ni el servicio `problems` los expone). Las corridas se registran en Postgres (esquema `judge`) para historial y analítica (Fase 4).
+- **Trade-offs honestos:** el seccomp por defecto de Docker es razonable pero no equivale al aislamiento de gVisor/Firecracker; por eso la Fase 3 incluye una **suite de pruebas de escape** (red, FS, fork-bomb, memoria, tiempo) y la Fase 7 endurece con micro-VMs y una cola de trabajos. Ejecutar Docker desde el contenedor del juez en Fargate exige configuración específica de la tarea (documentada al desplegar).
+
 Lo transaccional y con integridad relacional fuerte. Grano: una fila por entidad de negocio.
 
 ```mermaid

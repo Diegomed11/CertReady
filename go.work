@@ -12,8 +12,12 @@ go 1.25.0
 use (
 	./libs/platform
 	./services/catalog
+	./services/content
 	./services/enrollments
+	./services/exams
 	./services/health
+	./services/problems
 	./services/users
 	./tools/oidc-mock
+	./judge
 )

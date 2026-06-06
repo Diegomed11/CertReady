@@ -583,3 +583,145 @@ documentado para onboarding y listo para subir a un repositorio remoto.
 
 **Siguiente:** crear el repositorio remoto y subir; luego continuar con el
 incremento 3b (vistas de la web).
+
+---
+
+## 2026-06-06 · Fase 1 — Incrementos 3b/3c/3d (vistas web) · construido y verificado en vivo
+
+**Hecho:** se completaron las vistas de la web (patrón BFF) y con ello el
+criterio de salida de la Fase 1.
+- **Capa de servicios y guard:** `lib/api/services.ts` (llamadas tipadas a
+  catalog/users/enrollments) y `lib/auth/guard.ts` (`requireSession`, redirige a
+  login si no hay sesión).
+- **Rutas BFF de mutación:** `POST /api/enrollments` y `DELETE /api/enrollments/{id}`
+  (el `usuario_id` lo pone el backend desde el token; el navegador nunca lo envía).
+- **3b — Login/callback:** landing según sesión, `/auth/error`, y el callback
+  redirige a esa página ante fallo (en vez de devolver JSON).
+- **3c — Catálogo:** `/certifications` lista certificaciones y permite inscribirse;
+  marca "Inscrito" lo ya inscrito (componente cliente `EnrollButton`).
+- **3d — Panel:** `/panel` muestra la cuenta y las inscripciones, con baja
+  (`UnenrollButton`). Layout protegido con barra de navegación y logout.
+
+**Verificación (estática):** `npm run check` (typecheck + lint + formato + 9
+tests) y `next build` → ambos en verde (11 rutas).
+
+**Verificación EN VIVO (stack completo: web + emisor OIDC mock + catalog + users
++ enrollments + PostgreSQL):**
+- Flujo de login real `/api/auth/login` → mock → callback → `/panel` (200), con
+  el usuario provisionado (JIT) y su panel renderizado.
+- `POST /api/enrollments` → 201 (BFF → enrollments → validación del objetivo
+  contra catalog → alta).
+- `/certifications` refleja "Inscrito" tras la inscripción.
+
+**Bugs encontrados por la prueba en vivo (no por build/tests) y corregidos:**
+- El emisor OIDC de desarrollo no reflejaba el claim `nonce`; `openid-client` lo
+  valida. Se añadió el `nonce` al token del mock.
+- `openid-client` v6 exige HTTPS por defecto; el emisor de desarrollo es
+  `http://localhost`. Se permite HTTP **solo** cuando el issuer es http (nunca en
+  producción, donde el emisor es Cognito sobre https).
+- Nota operativa: `users` y `enrollments` hacen *discovery* OIDC al arrancar, así
+  que el emisor debe estar listo antes que ellos (orden de arranque en local).
+
+**Estado:** Fase 1 completa (identidad y catálogo, backend + web). El despliegue
+en AWS sigue diferido; todo verificado en local.
+
+**Siguiente:** Fase 2 — Contenido y exámenes (MongoDB, servicio de contenido,
+servicio de exámenes con simulacros y scoring).
+
+---
+
+## 2026-06-06 · Fase 2 — Backend (content + exams) · construido y verificado
+
+**Decisiones (vía preguntas):** MongoDB local + **Atlas M0** para deploy (ADR-10);
+construir los dos servicios de backend en una tanda; el frontend se pospone.
+
+**Hecho:**
+- **`libs/platform/mongo`**: helper de conexión a MongoDB (driver oficial v2).
+- **`services/content`** (Go + MongoDB): material de estudio. Lecturas públicas
+  (`/v1/content`, filtros) y creación admin. Consultas con BSON parametrizado
+  (defensa anti-NoSQLi).
+- **`services/exams`** (Go + MongoDB + PostgreSQL):
+  - Preguntas en Mongo (banco); `$sample` para muestrear simulacros.
+  - Sesiones e intentos en Postgres (refs de preguntas en jsonb).
+  - Flujo: `POST /v1/exams/sessions` (genera simulacro sin respuestas),
+    `.../submit` (califica + registra intentos + cierra, en transacción),
+    `GET .../{id}` (repaso con respuestas y explicaciones si finalizada),
+    `GET /v1/me/exams`, `POST /v1/questions` (admin).
+  - Scoring por conjuntos (orden-independiente); puntaje [0,100].
+  - Anti-IDOR/BOLA: sesiones acotadas al `sub`; ajena/inexistente → 404.
+
+**Verificación:**
+- `gofmt` ✓ · `go vet` ✓ · `go build` ✓ en libs + ambos servicios.
+- Tests: scoring (unitario), content store (Mongo: crear/obtener/conflict/filtro),
+  exams store (preguntas Mongo: crear/porRefs/muestrear/dup; sesiones Postgres:
+  crear/obtener/finalizar/roundtrip jsonb/re-finalizar/BOLA).
+- **Prueba en vivo de exams** (servicio real + Mongo + Postgres + OIDC mock):
+  admin crea preguntas (201); sin token → 401; crear simulacro → 201 **sin fuga
+  de respuesta_correcta**; entregar → puntaje 50 (1/2); repaso → respuestas
+  visibles; re-entregar → 409.
+- CI actualizada: añade `content` y `exams` al recorrido y un servicio MongoDB
+  (más Postgres) con las variables de test de integración.
+
+**Estado:** backend de la Fase 2 completo. Falta el frontend de la fase (estudiar,
+simulacro, repaso), pospuesto por decisión. Despliegue AWS diferido.
+
+**Siguiente:** frontend de Fase 2 cuando se retome el front, o Fase 3 (entrevistas
++ juez de código).
+
+---
+
+## 2026-06-06 · Fase 3 — Entrevistas + juez de código · backend construido
+
+**Decisiones (vía preguntas):** sandbox real con **Docker Desktop** (instalar y
+construir el runner seguro ya); primer lenguaje **Python**; incluir **Q&A** por
+puesto/área además de los problemas; ejecución **síncrona** (cola diferida);
+frontend (editor) pospuesto. Formalizado en **ADR-11**.
+
+**Hecho — Incremento 3a · `services/problems` (Go + MongoDB):**
+- Banco de **problemas** tipo LeetCode (con casos de prueba, incluidos ocultos +
+  límites) y banco de **Q&A** por puesto/área (autoestudio), en dos colecciones.
+- Lecturas públicas con filtros y creación admin. BSON parametrizado (anti-NoSQLi).
+- **Anti-fuga:** la lectura pública pasa por `VistaPublica`, que elimina los casos
+  ocultos; nunca se expone su entrada/salida esperada.
+
+**Hecho — Incremento 3b · `judge/` (juez de código):**
+- Orquestador Go + **runner Docker endurecido** (Python): `--network none`,
+  `--read-only` + tmpfs, código montado solo-lectura, límites de
+  memoria/CPU/PIDs, usuario sin privilegios, `cap-drop ALL`, `no-new-privileges`,
+  corte por `timeout` + backstop por context. Imagen en `judge/runners/python`.
+- Interfaz `Runner` conectable (extensible a más lenguajes).
+- Calificación contra casos del problema (leídos de Mongo, con ocultos);
+  veredicto global + por caso; **anti-fuga** (casos ocultos sin entrada/salida).
+- Corridas persistidas en Postgres (esquema `judge`); historial propio; BOLA.
+- Endpoints: `POST /v1/judge/runs`, `GET /v1/judge/runs/{id}`, `GET /v1/me/judge/runs`.
+- El juez se despliega en **Fargate** (no Lambda): es la excepción a ADR-07.
+
+**Verificación (sin Docker):**
+- `gofmt` ✓ · `go vet` ✓ · `go build` ✓ · barrido de los **10 módulos** en verde.
+- `problems`: unit de `VistaPublica`/`Validar`, store Mongo (CRUD problemas + Q&A),
+  y test de API (RBAC 401/403/201 + **anti-fuga** vía router real).
+- `judge`: calificación con runner falso (veredicto + anti-fuga), store de corridas
+  en Postgres (crear/obtener/listar + **BOLA**), y API (sin auth 501, sin token
+  401, problema inexistente 404, lenguaje no permitido 422, **anti-fuga** vía HTTP,
+  BOLA 404).
+- **Prueba en vivo de `problems`** (servicio real + Mongo + OIDC mock): gate
+  401/403/201; el detalle y el listado **no** exponen el caso oculto; Q&A OK.
+
+**Verificación con Docker (tras instalar Docker Desktop):**
+- Imagen del sandbox construida (`certready/judge-python`).
+- **Suite de escape del sandbox** (`JUDGE_DOCKER_TESTS=1`) en verde: red
+  bloqueada, `/etc` y `/sandbox` de solo lectura, fork-bomb contenida
+  (`--pids-limit`), OOM contenido y bucle infinito → TLE.
+- **E2E en vivo del juez** (oidc-mock + problems + judge + Mongo + Postgres +
+  Docker): solución correcta → `accepted` (2/2, sin fuga); incorrecta →
+  `wrong_answer` (sin fuga del caso oculto); bucle → `time_limit_exceeded`; sin
+  token → 401; corrida ajena → 404 (BOLA); historial propio OK.
+- **Hallazgo y ajuste:** con `timeout -s KILL`, en este Docker la salida al
+  expirar era 137 (igual que un OOM), confundible con MLE. Se cambió a SIGTERM
+  (salida 124 limpia para timeout) con SIGKILL de respaldo (`-k`), y el 137 se
+  desambigua por duración. Tras el ajuste, la suite quedó completa en verde.
+- CI: nuevo job `sandbox` que construye la imagen y corre la suite de escape.
+
+**Estado:** **backend de la Fase 3 completo y verificado**, incluida la contención
+del sandbox del juez (suite de escape + e2e en vivo). Frontend (editor de código)
+pospuesto. Despliegue AWS diferido.

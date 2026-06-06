@@ -43,13 +43,27 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      mongo:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.runCommand({ping:1})'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
 
     env:
-      # Cadena de conexión a la base de pruebas. Las pruebas de integración del
+      # Conexiones a las bases de pruebas. Las pruebas de integración del
       # repositorio se ejecutan solo si estas variables están definidas.
       CATALOG_TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/certready_test?sslmode=disable
       USERS_TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/certready_test?sslmode=disable
       ENROLLMENTS_TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/certready_test?sslmode=disable
+      EXAMS_TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/certready_test?sslmode=disable
+      JUDGE_TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/certready_test?sslmode=disable
+      CONTENT_TEST_MONGO_URI: mongodb://localhost:27017
+      EXAMS_TEST_MONGO_URI: mongodb://localhost:27017
+      PROBLEMS_TEST_MONGO_URI: mongodb://localhost:27017
 
     steps:
       - uses: actions/checkout@v4
@@ -71,10 +85,32 @@ jobs:
       - name: Vet y pruebas por módulo
         run: |
           set -e
-          for dir in libs/platform services/health services/catalog services/users services/enrollments tools/oidc-mock; do
+          for dir in libs/platform services/health services/catalog services/users services/enrollments services/content services/exams services/problems tools/oidc-mock judge; do
             echo "===== $dir ====="
             (cd "$dir" && go vet ./... && go test -cover ./...)
           done
+
+  sandbox:
+    name: sandbox (escape del juez de código)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+
+      - name: Construir la imagen del sandbox de Python
+        run: docker build -t certready/judge-python:latest judge/runners/python
+
+      - name: Suite de escape del sandbox
+        # La "prueba estrella": exige contención de red, FS, fork-bomb, memoria y
+        # tiempo. Requiere Docker (disponible en los runners de GitHub).
+        env:
+          JUDGE_DOCKER_TESTS: "1"
+        run: cd judge && go test ./internal/runner/...
 
   web:
     name: web (typecheck, lint y build)

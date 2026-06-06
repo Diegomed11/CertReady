@@ -58,3 +58,6 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+
+# Entorno local de desarrollo (scripts/dev-up.ps1) --------------------------
+.devlogs/

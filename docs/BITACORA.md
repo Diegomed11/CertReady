@@ -720,6 +720,12 @@ frontend (editor) pospuesto. Formalizado en **ADR-11**.
   expirar era 137 (igual que un OOM), confundible con MLE. Se cambió a SIGTERM
   (salida 124 limpia para timeout) con SIGKILL de respaldo (`-k`), y el 137 se
   desambigua por duración. Tras el ajuste, la suite quedó completa en verde.
+- **Segundo hallazgo (en CI):** en Docker nativo de Linux (a diferencia de Docker
+  Desktop) los permisos del host se aplican dentro del contenedor; con la fuente
+  en `0600` y el dir temporal en `0700`, el usuario sin privilegios (65534) no
+  podía leer `/sandbox/solucion.py` (Errno 13). Se ajustó a dir `0755` / archivo
+  `0644` (es código del usuario, sin secretos, en un dir efímero de solo lectura).
+  Reproducido con un volumen Docker y corregido.
 - CI: nuevo job `sandbox` que construye la imagen y corre la suite de escape.
 
 **Estado:** **backend de la Fase 3 completo y verificado**, incluida la contención

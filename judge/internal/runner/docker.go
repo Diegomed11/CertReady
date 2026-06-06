@@ -70,7 +70,15 @@ func (d *DockerRunner) Run(ctx context.Context, req RunRequest) (RunResult, erro
 	}
 	defer func() { _ = os.RemoveAll(dir) }()
 
-	if err := os.WriteFile(filepath.Join(dir, archivo), []byte(req.Fuente), 0o600); err != nil {
+	// El contenedor corre como un usuario sin privilegios (65534) distinto del
+	// dueño del directorio. En Docker nativo (Linux) los permisos del host aplican
+	// dentro del contenedor, así que el dir debe ser atravesable y la fuente
+	// legible por ese usuario. No hay secretos: es el propio código del usuario en
+	// un directorio efímero montado de solo lectura.
+	if err := os.Chmod(dir, 0o755); err != nil {
+		return RunResult{}, fmt.Errorf("permisos del directorio temporal: %w", err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, archivo), []byte(req.Fuente), 0o644); err != nil {
 		return RunResult{}, fmt.Errorf("escribir fuente: %w", err)
 	}
 

@@ -58,6 +58,7 @@ type pendingCode struct {
 	email         string
 	name          string
 	groups        []string
+	nonce         string
 	codeChallenge string
 	method        string // "S256" o "plain"
 	expira        time.Time
@@ -180,6 +181,7 @@ func (s *server) authorize(w http.ResponseWriter, r *http.Request) {
 		email:         email,
 		name:          name,
 		groups:        groups,
+		nonce:         q.Get("nonce"),
 		codeChallenge: q.Get("code_challenge"),
 		method:        method,
 		expira:        time.Now().Add(codeTTL),
@@ -312,6 +314,9 @@ func (s *server) firmar(pc pendingCode, clientID string) (string, error) {
 	}
 	if pc.name != "" {
 		claims["name"] = pc.name
+	}
+	if pc.nonce != "" {
+		claims["nonce"] = pc.nonce
 	}
 	if len(pc.groups) > 0 {
 		claims["cognito:groups"] = pc.groups

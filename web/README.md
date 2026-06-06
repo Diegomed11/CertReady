@@ -10,23 +10,22 @@ y proxean a los servicios Go (`catalog`, `users`, `enrollments`) inyectando
 
 ## Estado
 
-**Fase 1 · Incremento 3a — Esqueleto del BFF (sin UI todavía).**
-
-Lo implementado:
+**Fase 1 completa.** La web cubre el flujo del estudiante de extremo a extremo.
 
 - Auth OIDC con PKCE (`openid-client` v6): `/api/auth/login`, `/api/auth/callback`,
-  `/api/auth/logout`.
-- Sesión cifrada con `iron-session` (cookie HttpOnly).
-- Cliente HTTP server-side tipado para los 3 servicios (`lib/api/`).
-- Proxy ejemplar `/api/me` → users.
+  `/api/auth/logout`. Sesión cifrada con `iron-session` (cookie HttpOnly); el
+  token nunca llega al navegador.
+- Cliente HTTP server-side tipado de los servicios (`lib/api/`) y rutas BFF de
+  mutación (`/api/enrollments`, `/api/enrollments/{id}`, `/api/me`).
+- Vistas: inicio de sesión (landing + `/auth/error`), catálogo
+  (`/certifications`, con inscripción) y panel del estudiante (`/panel`, con
+  baja). Rutas protegidas por un guard de sesión.
 - Tailwind, TypeScript estricto (`strict`, `noUncheckedIndexedAccess`,
   `noImplicitOverride`), ESLint + Prettier, Vitest.
 
-Lo pendiente (3b–3d):
-
-- Vista de login y callback (UI).
-- Vista de catálogo (listar y elegir certificaciones).
-- Vista del panel del estudiante.
+Verificado de extremo a extremo con el stack completo levantado (web + emisor
+OIDC de desarrollo + catalog + users + enrollments + PostgreSQL): login,
+inscripción y panel.
 
 ## Desarrollo
 

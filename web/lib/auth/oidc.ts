@@ -15,12 +15,26 @@ let cached: oidc.Configuration | undefined
 export async function configuration(): Promise<oidc.Configuration> {
   if (cached) return cached
   const cfg = env()
+  const issuer = new URL(cfg.OIDC_ISSUER)
+
+  // openid-client exige HTTPS por defecto. En desarrollo el emisor es un mock en
+  // http://localhost, así que se permite HTTP solo cuando el issuer es http
+  // (nunca en producción, donde el emisor es Cognito sobre https).
+  const insecure = issuer.protocol === 'http:'
+
   cached = await oidc.discovery(
-    new URL(cfg.OIDC_ISSUER),
+    issuer,
     cfg.OIDC_CLIENT_ID,
     cfg.OIDC_CLIENT_SECRET ? { client_secret: cfg.OIDC_CLIENT_SECRET } : undefined,
     cfg.OIDC_CLIENT_SECRET ? undefined : oidc.None(),
+    insecure ? { execute: [oidc.allowInsecureRequests] } : undefined,
   )
+
+  // Habilita HTTP también para las llamadas posteriores (token endpoint) sobre
+  // la configuración ya descubierta.
+  if (insecure) {
+    oidc.allowInsecureRequests(cached)
+  }
   return cached
 }
 

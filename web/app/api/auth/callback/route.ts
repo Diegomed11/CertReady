@@ -14,10 +14,7 @@ import { getSession } from '@/lib/auth/session'
 export async function GET(req: Request) {
   const session = await getSession()
   if (!session.pkce) {
-    return NextResponse.json(
-      { error: { code: 'sin_pkce', message: 'no hay un flow OIDC en curso' } },
-      { status: 400 },
-    )
+    return NextResponse.redirect(new URL('/auth/error', req.url))
   }
 
   try {
@@ -34,19 +31,11 @@ export async function GET(req: Request) {
 
     await session.save()
     return NextResponse.redirect(new URL('/panel', req.url))
-  } catch (err) {
-    // Limpiamos el PKCE pendiente para evitar reusos de un flow inválido.
+  } catch {
+    // Limpiamos el PKCE pendiente para evitar reusos de un flow inválido y
+    // enviamos al usuario a la página de error de autenticación.
     delete session.pkce
     await session.save()
-    return NextResponse.json(
-      {
-        error: {
-          code: 'callback_invalido',
-          message: 'no se pudo completar el inicio de sesión',
-          detail: err instanceof Error ? err.message : 'error desconocido',
-        },
-      },
-      { status: 400 },
-    )
+    return NextResponse.redirect(new URL('/auth/error', req.url))
   }
 }

@@ -1,0 +1,41 @@
+cubes:
+  - name: intentos
+    sql_table: fact_intento
+    description: Intentos de preguntas de examen (hecho fact_intento).
+
+    measures:
+      - name: count
+        type: count
+        description: Número de intentos.
+      - name: correctos
+        type: sum
+        sql: es_correcto
+        description: Intentos correctos.
+      - name: accuracy
+        type: number
+        sql: "{correctos} * 1.0 / nullif({count}, 0)"
+        description: Proporción de aciertos [0,1].
+
+    dimensions:
+      - name: certificacion
+        sql: certificacion
+        type: string
+      - name: tema
+        sql: tema
+        type: string
+      - name: dificultad
+        sql: dificultad
+        type: string
+      - name: tipo_pregunta
+        sql: tipo_pregunta
+        type: string
+      - name: modo
+        sql: modo
+        type: string
+      - name: creado_en
+        sql: creado_en
+        type: time
+
+    # Pre-agregaciones: diferidas. En ClickHouse, Cube las materializa vía Cube
+    # Store (servicio aparte) con índices; se habilitarán con el despliegue
+    # gestionado (ADR-12). El modelo semántico de abajo ya es funcional sin ellas.

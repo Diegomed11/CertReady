@@ -1,0 +1,47 @@
+# Stack OLAP local de CertReady: ClickHouse (almacén dimensional) + Cube (capa
+# semántica). Solo para desarrollo; el despliegue (ClickHouse Cloud / Cube) está
+# diferido (ADR-12).
+#
+#   docker compose up -d clickhouse   # para el ETL (incremento 4a)
+#   docker compose up -d              # + Cube (incremento 4b)
+
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.8
+    # La imagen deshabilita el acceso de red del usuario 'default' si no se define
+    # un usuario; creamos uno propio para dev.
+    environment:
+      CLICKHOUSE_USER: certready
+      CLICKHOUSE_PASSWORD: certready
+      CLICKHOUSE_DB: analytics
+    ports:
+      - "8123:8123" # HTTP (lo usan el ETL y Cube)
+      - "9000:9000" # nativo
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+
+  cube:
+    image: cubejs/cube:latest
+    ports:
+      - "4000:4000" # API REST/SQL y playground
+    environment:
+      CUBEJS_DEV_MODE: "true"
+      CUBEJS_DB_TYPE: clickhouse
+      CUBEJS_DB_HOST: clickhouse
+      CUBEJS_DB_PORT: "8123"
+      CUBEJS_DB_NAME: analytics
+      CUBEJS_DB_USER: certready
+      CUBEJS_DB_PASS: certready
+      CUBEJS_API_SECRET: dev-secret-no-usar-en-prod
+    volumes:
+      - ./cube/model:/cube/conf/model
+      - ./cube/cube.js:/cube/conf/cube.js
+    depends_on:
+      - clickhouse
+
+volumes:
+  clickhouse-data:

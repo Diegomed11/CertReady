@@ -195,6 +195,22 @@ Formato corto por decisión: **contexto → opciones → decisión → justifica
 - **Anti-fuga:** los problemas guardan los casos **ocultos** y sus salidas esperadas en MongoDB; el juez los lee del lado del servidor para calificar y **nunca** los devuelve al cliente (ni el servicio `problems` los expone). Las corridas se registran en Postgres (esquema `judge`) para historial y analítica (Fase 4).
 - **Trade-offs honestos:** el seccomp por defecto de Docker es razonable pero no equivale al aislamiento de gVisor/Firecracker; por eso la Fase 3 incluye una **suite de pruebas de escape** (red, FS, fork-bomb, memoria, tiempo) y la Fase 7 endurece con micro-VMs y una cola de trabajos. Ejecutar Docker desde el contenedor del juez en Fargate exige configuración específica de la tarea (documentada al desplegar).
 
+### ADR-12 — Capa analítica local-first: ClickHouse + Cube en Docker (refinamiento de la §9 y enmienda contextual a la §12)
+- **Contexto:** la Fase 4 lleva los hechos operativos (intentos de examen, corridas del juez) a un modelo dimensional y los expone como API. Bajo costo cero se necesita OLAP sin servicios gestionados de pago.
+- **Opciones:** (a) ClickHouse Cloud + Cube Cloud desde ya (trial, no "siempre gratis"); (b) **ClickHouse + Cube en Docker local**, nube diferida.
+- **Decisión (2026-06-07):** **(b)**. Mismo patrón que Postgres→Neon (ADR-08) y Mongo→Atlas (ADR-10): en local todo con Docker; el despliegue (ClickHouse Cloud / Cube gestionado) se difiere. Aislamiento por entorno vía variables (`DATABASE_URL`, `MONGO_URI`, `CLICKHOUSE_*`).
+- **Modelo:** **estrella "plana"** idiomática de ClickHouse — el hecho denormaliza las dimensiones como columnas (`MergeTree`/`ReplacingMergeTree`); las dimensiones son lógicas y las define Cube. Evita claves subrogadas y joins en el ETL. Hechos: `fact_intento` y `fact_corrida`.
+- **ETL (Python, único lugar con Python):** batch **incremental por watermark** e **idempotente** (ReplacingMergeTree por id). Sólo drivers (`clickhouse-connect`, `pymongo`, `psycopg`), sin pandas/numpy. `creado_en` y el watermark usan `DateTime64(6)` (microsegundos) para que el filtro incremental no reprocese filas del mismo segundo.
+- **Diferido:** la **orquestación** (EventBridge/Step Functions) y las **pre-agregaciones** de Cube (en ClickHouse requieren Cube Store con índices) se habilitan con el despliegue gestionado; el modelo semántico (medidas/dimensiones/API) ya es funcional sin ellas. Los **dashboards web** se posponen con el resto del front.
+- **Trade-offs honestos:** sin Cube Store no hay pre-agregación materializada (las consultas van al hecho); suficiente para el volumen de dev/MVP. `tiempo_seg`/`puntos` por intento aún no se instrumentan; la medida central (`accuracy`) sí es calculable.
+
+### ADR-13 — DSS de readiness: IRT Rasch (1PL) calibrado por población (refinamiento de la §10.2)
+- **Contexto:** la Fase 5 convierte los hechos en decisiones para el estudiante: readiness por certificación, probabilidad de aprobar y siguiente mejor acción. El doc pide IRT / knowledge tracing.
+- **Opciones:** (a) **IRT Rasch (1PL)**; (b) heurístico de accuracy ponderada; (c) knowledge tracing (BKT).
+- **Decisión (2026-06-07):** **(a)**, calibrado por población, con **numpy puro** (sin scipy, para evitar riesgos de wheels en Python 3.14). Servicio **FastAPI** local que lee ClickHouse; despliegue diferido.
+- **Modelo:** celda = `(certificación, tema, dificultad)` (el grano de `fact_intento`). Dificultad `b = -logit(p_global)` de la población; habilidad `theta` por **MAP** (Newton 1D) con prior `N(0,σ²)` que estabiliza el arranque en frío. **readiness** = media ponderada de `sigmoid(theta - b)`; **probabilidad de aprobar** = aproximación normal del puntaje de un examen de N ítems vs umbral; **siguiente acción** = celda de menor dominio. Todo en funciones puras testeables.
+- **Trade-offs honestos:** la readiness es una **estimación** (análisis eventual), no una garantía. El grano por celda (no por pregunta individual) sacrifica resolución a cambio de robustez ante la dispersión y el arranque en frío. Sin `pregunta_ref` en el hecho, la calibración item-level queda como mejora futura (instrumentar el hecho).
+
 Lo transaccional y con integridad relacional fuerte. Grano: una fila por entidad de negocio.
 
 ```mermaid

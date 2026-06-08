@@ -1,0 +1,40 @@
+cubes:
+  - name: corridas
+    sql_table: fact_corrida
+    description: Corridas del juez de código (hecho fact_corrida).
+
+    measures:
+      - name: count
+        type: count
+        description: Número de corridas.
+      - name: aceptadas
+        type: sum
+        sql: aceptado
+        description: Corridas aceptadas.
+      - name: tasa_aceptacion
+        type: number
+        sql: "{aceptadas} * 1.0 / nullif({count}, 0)"
+        description: Proporción de corridas aceptadas [0,1].
+      - name: duracion_media
+        type: avg
+        sql: duracion_ms
+        description: Duración media de ejecución (ms).
+
+    dimensions:
+      - name: area
+        sql: area
+        type: string
+      - name: dificultad
+        sql: dificultad
+        type: string
+      - name: lenguaje
+        sql: lenguaje
+        type: string
+      - name: veredicto
+        sql: veredicto
+        type: string
+      - name: creado_en
+        sql: creado_en
+        type: time
+
+    # Pre-agregaciones: diferidas (ver intentos.yml y ADR-12).

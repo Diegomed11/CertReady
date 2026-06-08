@@ -731,3 +731,89 @@ frontend (editor) pospuesto. Formalizado en **ADR-11**.
 **Estado:** **backend de la Fase 3 completo y verificado**, incluida la contención
 del sandbox del juez (suite de escape + e2e en vivo). Frontend (editor de código)
 pospuesto. Despliegue AWS diferido.
+
+---
+
+## 2026-06-07 · Fase 4 — Capa analítica (OLAP) · construida y verificada
+
+**Decisiones (vía preguntas):** ClickHouse + Cube en **Docker local**, nube
+diferida (ADR-12); alcance **ETL + ClickHouse + Cube** (dashboards web pospuestos);
+hechos de **exámenes + código**. Capa de datos en Python (único lugar permitido).
+
+**Hecho — Incremento 4a · ETL + esquema estrella (`data/`):**
+- Modelo dimensional en ClickHouse, **estrella plana** (hecho denormaliza
+  dimensiones como columnas): `fact_intento` y `fact_corrida` (`ReplacingMergeTree`).
+- ETL en Python (`etl/`): `config` (12-factor), `schema.sql`, `sources`
+  (Postgres parametrizado + enriquecimiento desde Mongo), `transform` (puro),
+  `load` (clickhouse-connect + watermark), `run` (CLI). **Incremental por
+  watermark** e **idempotente**. Solo drivers (clickhouse-connect, pymongo,
+  psycopg), sin pandas. `docker-compose` del stack OLAP local.
+
+**Hecho — Incremento 4b · capa semántica (Cube):**
+- Cubos `intentos` y `corridas` sobre los hechos: medidas (`accuracy`,
+  `tasa_aceptacion`, conteos, duración media) y dimensiones (certificación, tema,
+  dificultad, tipo, modo / área, lenguaje, veredicto, tiempo). Expone API REST.
+
+**Verificación:**
+- `ruff` ✓ · `black --check` ✓ · `pytest` (unit de `transform`, puro) ✓.
+- Integración contra ClickHouse real (gated `DATA_ETL_IT=1`): esquema, inserción,
+  **accuracy**, idempotencia (ReplacingMergeTree) y roundtrip del watermark.
+- **ETL en vivo de extremo a extremo** (Postgres con esquemas reales vía las
+  migraciones de exams/judge + Mongo + ClickHouse): carga 2 intentos y 1 corrida;
+  `accuracy` redes = 0.5; `tasa_aceptacion` python = 1.0; **idempotencia**
+  confirmada (segunda pasada: 0 nuevos, sin duplicar).
+- **Cube en vivo:** `accuracy` por tema y `tasa_aceptacion` por lenguaje vía la
+  API de Cube **coinciden** con la consulta directa a ClickHouse.
+- CI: nuevo job `data` (ruff + black + pytest). Nombres de jobs simplificados
+  (`go`, `sandbox`, `data`, `web`).
+
+**Hallazgos y ajustes (de ejecutar de verdad):**
+- ClickHouse Docker deshabilita el acceso de red del usuario `default` sin
+  credenciales → se crea un usuario propio en el compose.
+- `clickhouse-connect` interpretaba `datetime` naive en hora local → corrimiento
+  de 6 h. Se trabaja en **UTC** consciente de zona en todo el ETL.
+- `DateTime` (segundos) truncaba el watermark por debajo del instante real y
+  reprocesaba filas del mismo segundo → se usa **`DateTime64(6)`** (microsegundos).
+- En ClickHouse las **pre-agregaciones** de Cube requieren Cube Store con índices
+  → se difieren; el modelo semántico ya es funcional sin ellas (ADR-12).
+
+**Estado:** **Fase 4 (backend OLAP) completa y verificada**. Pre-agregaciones,
+orquestación y dashboards web diferidos. Despliegue AWS diferido.
+
+**Siguiente:** Fase 5 (DSS / readiness) sobre los hechos, o retomar el frontend
+(dashboards de las fases 1–4) con un pase de diseño.
+
+---
+
+## 2026-06-07 · Fase 5 — DSS (readiness + recomendaciones) · construida y verificada
+
+**Decisión (vía pregunta):** modelo **IRT Rasch (1PL) calibrado por población**,
+en **numpy puro** (sin scipy, por wheels de Python 3.14). Servicio **FastAPI** que
+lee ClickHouse. Frontend (panel) diferido. Formalizado en **ADR-13**.
+
+**Hecho — `data/dss/`:**
+- `modelo` (puro, numpy): celda = `(certificación, tema, dificultad)`; dificultad
+  `b = -logit(p_global)`; habilidad `theta` por **MAP** (Newton 1D) con prior
+  `N(0,σ²)`; `readiness` = media ponderada de `sigmoid(theta-b)`; probabilidad de
+  aprobar por aproximación normal vs umbral; siguiente acción = celda más débil.
+- `repo` (ClickHouse, parametrizado), `config` (12-factor), `api` (FastAPI:
+  `GET /v1/health`, `GET /v1/readiness/{usuario_id}?certificacion=...`). Conexión
+  perezosa (no conecta al importar). Respuestas con Pydantic.
+- Dependencias nuevas (instaladas en 3.14): numpy 2.4, fastapi 0.136, uvicorn 0.49.
+
+**Verificación:**
+- `ruff` ✓ · `black --check` ✓ · `pytest` unit del modelo (orden de theta,
+  monotonía de readiness, rango de probabilidad, siguiente acción) ✓.
+- Integración con ClickHouse real (gated, FastAPI `TestClient`): estudiante
+  **fuerte** > **débil** en readiness y theta; campos en rango; usuario sin
+  intentos → 404.
+- **E2E en vivo** (uvicorn + ClickHouse sembrado): fuerte readiness 87 % /
+  prob 0.99; débil 63 % / prob 0.16; sin intentos → 404.
+- CI: el job `data` ya cubre `dss/` y `test_modelo` (la integración va gated).
+
+**Estado:** **Fase 5 (DSS) completa y verificada**. Integración en el panel del
+estudiante (frontend) diferida. Despliegue AWS diferido.
+
+**Siguiente:** retomar el **frontend** (panel + dashboards + readiness de las
+fases 1–5) con un pase de diseño, o **Fase 6 (móvil Flutter)** / **Fase 7
+(endurecimiento, pentesting y producción)**.

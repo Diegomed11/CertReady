@@ -88,10 +88,40 @@ BOLA). El juez se despliega en **Fargate** (no Lambda).
 Pendiente de la fase: el **frontend** (editor de código + correr contra casos),
 pospuesto con el resto del front.
 
+## Fase 4 — Capa analítica / OLAP (backend construido)
+
+- **`data/`** (Python, única capa con Python): ETL que lleva los hechos operativos
+  (`exams.intentos`, `judge.corridas`) a un **modelo dimensional en ClickHouse**
+  (estrella plana: `fact_intento`, `fact_corrida`), enriquecidos desde MongoDB.
+  Incremental por watermark e idempotente.
+- **Cube**: capa semántica sobre ClickHouse con medidas (`accuracy`,
+  `tasa_aceptacion`, …) y dimensiones, expuesta como API. Decisiones en ADR-12.
+
+Verificado de extremo a extremo: `ruff`/`black`/`pytest`; integración contra
+ClickHouse real; **ETL en vivo** (Postgres+Mongo→ClickHouse) con `accuracy` y
+`tasa_aceptacion` correctas e idempotencia; y la **API de Cube** coincidiendo con
+ClickHouse. ClickHouse y Cube corren en **Docker local**; la nube, las
+pre-agregaciones, la orquestación y los **dashboards web** quedan diferidos.
+
+## Fase 5 — DSS / readiness (backend construido)
+
+- **`data/dss/`** (FastAPI, capa de datos): estima la preparación del estudiante
+  con **IRT Rasch (1PL) calibrado por población** (numpy puro). Expone
+  `readiness`, `probabilidad_aprobar`, dominio por celda y **siguiente mejor
+  acción** vía `GET /v1/readiness/{usuario_id}?certificacion=...`. Lee de
+  ClickHouse. Decisiones en ADR-13.
+
+Verificado: `ruff`/`black`/`pytest` (modelo puro); integración con ClickHouse
+(estudiante fuerte > débil) vía `TestClient`; y **e2e en vivo** con uvicorn
+(readiness y probabilidad sensatas, 404 sin historial). La integración en el panel
+del estudiante (frontend) queda diferida.
+
 ## En curso / inmediato
 
-Backend de la Fase 3 completo y verificado. Después: frontend de las fases 2–3
-cuando se retome el front, o la **fase 4 — capa analítica (OLAP)**.
+Backend de las Fases 1–5 completo y verificado (todo en local, sin costo). El
+siguiente paso natural es retomar el **frontend** (panel, dashboards y readiness de
+las fases 1–5) con un pase de diseño, o avanzar a **Fase 6 (móvil)** / **Fase 7
+(endurecimiento, pentesting y producción)**.
 
 ## Planeado
 

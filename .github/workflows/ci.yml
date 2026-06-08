@@ -157,7 +157,10 @@ jobs:
           cache-dependency-path: web/package-lock.json
 
       - name: Instalar dependencias
-        run: npm ci
+        # npm install (no npm ci): tolera el desfase del lockfile por versiones
+        # de npm distintas (local vs runner) y por dependencias opcionales de
+        # plataforma (p. ej. @emnapi/*) que se resuelven distinto en Linux.
+        run: npm install --no-audit --no-fund
 
       - name: Verificación
         run: npm run check

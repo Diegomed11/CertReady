@@ -1,25 +1,37 @@
 import type { Metadata } from 'next'
+import { Fredoka, IBM_Plex_Mono, Nunito } from 'next/font/google'
+
 import './globals.css'
 
-/**
- * Metadata estática del sitio. La descripción y el título se reemplazarán por
- * vistas concretas a medida que se construyan los paneles.
- */
+const display = Fredoka({
+  subsets: ['latin'],
+  variable: '--font-display',
+  display: 'swap',
+})
+
+const body = Nunito({
+  subsets: ['latin'],
+  variable: '--font-body',
+  display: 'swap',
+})
+
+const mono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  weight: ['400', '500', '600'],
+  display: 'swap',
+})
+
 export const metadata: Metadata = {
-  title: 'CertReady',
-  description: 'Plataforma de preparación de certificaciones y entrevistas técnicas.',
+  title: 'CertReady — Aprende, practica y certifícate',
+  description:
+    'Estudia, simula exámenes de certificación y practica entrevistas de programación con evaluación automática.',
 }
 
-/**
- * RootLayout es el envoltorio común de todas las páginas. Mantiene el HTML
- * mínimo y delega el estilo a Tailwind (clases utilitarias).
- */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es">
-      <body className="min-h-screen bg-white text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100">
-        {children}
-      </body>
+    <html lang="es" className={`${display.variable} ${body.variable} ${mono.variable}`}>
+      <body className="min-h-screen bg-bg font-body text-ink antialiased">{children}</body>
     </html>
   )
 }

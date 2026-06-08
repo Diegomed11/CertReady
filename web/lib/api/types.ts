@@ -42,6 +42,21 @@ export interface Pista {
   actualizado_en: string
 }
 
+// --- content ---------------------------------------------------------------
+
+export type FormatoMaterial = 'markdown' | 'html' | 'texto'
+
+export interface Material {
+  id: string
+  certificacion: string
+  tema: string
+  titulo: string
+  formato: FormatoMaterial
+  contenido: string
+  recursos: string[]
+  creado_en: string
+}
+
 /** Envoltura de listas con paginación: catalog, users.listar, enrollments. */
 export interface PaginatedList<T> {
   data: T[]

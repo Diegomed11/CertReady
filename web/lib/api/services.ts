@@ -6,12 +6,27 @@
  * cliente) usen las mismas funciones. Solo se ejecuta en el servidor.
  */
 import { env } from '@/lib/env'
-import { fetchJSON } from './client'
-import type { Certificacion, Cuenta, Inscripcion, PaginatedList } from './types'
+import { ApiError, fetchJSON } from './client'
+import type { Certificacion, Cuenta, Inscripcion, Material, PaginatedList } from './types'
 
 /** Lista vacía reutilizable cuando un endpoint responde 204/sin cuerpo. */
 function listaVacia<T>(): PaginatedList<T> {
   return { data: [], count: 0, next_offset: null }
+}
+
+/** requireUrl devuelve la base URL de un servicio opcional o falla con claridad. */
+function requireUrl(nombre: string, valor: string | undefined): string {
+  if (!valor) throw new Error(`falta la variable ${nombre} (servicio no configurado)`)
+  return valor
+}
+
+function querystring(params: Record<string, string | number | undefined>): string {
+  const qs = new URLSearchParams()
+  for (const [k, v] of Object.entries(params)) {
+    if (v !== undefined && v !== '') qs.set(k, String(v))
+  }
+  const s = qs.toString()
+  return s ? `?${s}` : ''
 }
 
 /** Opciones de filtrado y paginación del catálogo. */
@@ -93,4 +108,45 @@ export async function deleteEnrollment(accessToken: string, id: string): Promise
     method: 'DELETE',
     accessToken,
   })
+}
+
+// --- content ---------------------------------------------------------------
+
+/** Opciones de filtrado y paginación del material de estudio. */
+export interface ListContentOptions {
+  accessToken?: string
+  certificacion?: string
+  tema?: string
+  limit?: number
+  offset?: number
+}
+
+/** listContent devuelve la página de material de estudio (servicio content). */
+export async function listContent(opts: ListContentOptions = {}): Promise<PaginatedList<Material>> {
+  const suffix = querystring({
+    certificacion: opts.certificacion,
+    tema: opts.tema,
+    limit: opts.limit,
+    offset: opts.offset,
+  })
+  const data = await fetchJSON<PaginatedList<Material>>({
+    baseURL: requireUrl('CONTENT_BASE_URL', env().CONTENT_BASE_URL),
+    path: `/v1/content${suffix}`,
+    accessToken: opts.accessToken,
+  })
+  return data ?? listaVacia<Material>()
+}
+
+/** getContent devuelve un material por id, o null si no existe (404). */
+export async function getContent(id: string, accessToken?: string): Promise<Material | null> {
+  try {
+    return await fetchJSON<Material>({
+      baseURL: requireUrl('CONTENT_BASE_URL', env().CONTENT_BASE_URL),
+      path: `/v1/content/${encodeURIComponent(id)}`,
+      accessToken,
+    })
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) return null
+    throw e
+  }
 }

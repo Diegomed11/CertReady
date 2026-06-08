@@ -22,6 +22,11 @@ const Schema = z.object({
   USERS_BASE_URL: z.string().url(),
   ENROLLMENTS_BASE_URL: z.string().url(),
 
+  // Servicios añadidos por incrementos del front; opcionales para no romper el
+  // resto de la app si su backend aún no está configurado. Las funciones que los
+  // usan fallan con un error claro si faltan.
+  CONTENT_BASE_URL: z.string().url().optional(),
+
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
 })
 

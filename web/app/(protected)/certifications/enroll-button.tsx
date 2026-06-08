@@ -3,10 +3,12 @@
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+import { Badge } from '@/components/ui/badge'
+import { buttonStyles } from '@/components/ui/button'
+
 /**
  * EnrollButton inscribe al usuario en una certificación llamando a la ruta del
- * BFF y refresca la vista. Si ya está inscrito, muestra un indicador en vez del
- * botón.
+ * BFF y refresca la vista. Si ya está inscrito, muestra un indicador.
  */
 export function EnrollButton({ certId, enrolled }: { certId: string; enrolled: boolean }) {
   const router = useRouter()
@@ -14,11 +16,7 @@ export function EnrollButton({ certId, enrolled }: { certId: string; enrolled: b
   const [error, setError] = useState<string | null>(null)
 
   if (enrolled) {
-    return (
-      <span className="inline-flex w-fit items-center rounded-md bg-green-100 px-3 py-1.5 text-sm font-medium text-green-800 dark:bg-green-900/40 dark:text-green-300">
-        Inscrito
-      </span>
-    )
+    return <Badge tone="good">✓ Inscrito</Badge>
   }
 
   async function enroll() {
@@ -43,15 +41,11 @@ export function EnrollButton({ certId, enrolled }: { certId: string; enrolled: b
   }
 
   return (
-    <div className="flex items-center gap-2">
-      <button
-        onClick={enroll}
-        disabled={loading}
-        className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-60 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
-      >
+    <div className="flex items-center gap-3">
+      <button onClick={enroll} disabled={loading} className={buttonStyles('primary', 'sm')}>
         {loading ? 'Inscribiendo…' : 'Inscribirme'}
       </button>
-      {error ? <span className="text-xs text-red-600 dark:text-red-400">{error}</span> : null}
+      {error ? <span className="text-sm font-semibold text-bad">{error}</span> : null}
     </div>
   )
 }

@@ -7,7 +7,22 @@
  */
 import { env } from '@/lib/env'
 import { ApiError, fetchJSON } from './client'
-import type { Certificacion, Cuenta, Inscripcion, Material, PaginatedList } from './types'
+import type {
+  Certificacion,
+  Corrida,
+  Cuenta,
+  Inscripcion,
+  Material,
+  PaginatedList,
+  Problema,
+  PreguntaQA,
+  Readiness,
+  RespuestaCorrida,
+  ResultadoExamen,
+  RevisionSesion,
+  SesionConPreguntas,
+  SesionExamen,
+} from './types'
 
 /** Lista vacía reutilizable cuando un endpoint responde 204/sin cuerpo. */
 function listaVacia<T>(): PaginatedList<T> {
@@ -148,5 +163,239 @@ export async function getContent(id: string, accessToken?: string): Promise<Mate
   } catch (e) {
     if (e instanceof ApiError && e.status === 404) return null
     throw e
+  }
+}
+
+// --- exams -----------------------------------------------------------------
+
+/** listMyExams devuelve las sesiones de examen del usuario autenticado. */
+export async function listMyExams(
+  accessToken: string,
+  opts: { limit?: number; offset?: number } = {},
+): Promise<PaginatedList<SesionExamen>> {
+  const suffix = querystring({ limit: opts.limit, offset: opts.offset })
+  const data = await fetchJSON<PaginatedList<SesionExamen>>({
+    baseURL: requireUrl('EXAMS_BASE_URL', env().EXAMS_BASE_URL),
+    path: `/v1/me/exams${suffix}`,
+    accessToken,
+  })
+  return data ?? listaVacia<SesionExamen>()
+}
+
+/** Cuerpo para iniciar un simulacro. */
+export interface NuevaSesionExamen {
+  certificacion: string
+  num_preguntas?: number
+  modo?: 'simulacro' | 'practica'
+}
+
+/** createExamSession inicia un simulacro y devuelve la sesión con sus preguntas. */
+export async function createExamSession(
+  accessToken: string,
+  body: NuevaSesionExamen,
+): Promise<SesionConPreguntas> {
+  const data = await fetchJSON<SesionConPreguntas>({
+    baseURL: requireUrl('EXAMS_BASE_URL', env().EXAMS_BASE_URL),
+    path: '/v1/exams/sessions',
+    method: 'POST',
+    accessToken,
+    body,
+  })
+  if (!data) throw new Error('respuesta vacía al crear la sesión de examen')
+  return data
+}
+
+/** getExamSession devuelve una sesión propia (preguntas si en curso, resultado si finalizada). */
+export async function getExamSession(
+  accessToken: string,
+  id: string,
+): Promise<RevisionSesion | null> {
+  try {
+    return await fetchJSON<RevisionSesion>({
+      baseURL: requireUrl('EXAMS_BASE_URL', env().EXAMS_BASE_URL),
+      path: `/v1/exams/sessions/${encodeURIComponent(id)}`,
+      accessToken,
+    })
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) return null
+    throw e
+  }
+}
+
+/** submitExam entrega las respuestas de una sesión y devuelve el resultado calificado. */
+export async function submitExam(
+  accessToken: string,
+  id: string,
+  respuestas: { ref: string; seleccion: string[] }[],
+): Promise<ResultadoExamen> {
+  const data = await fetchJSON<ResultadoExamen>({
+    baseURL: requireUrl('EXAMS_BASE_URL', env().EXAMS_BASE_URL),
+    path: `/v1/exams/sessions/${encodeURIComponent(id)}/submit`,
+    method: 'POST',
+    accessToken,
+    body: { respuestas },
+  })
+  if (!data) throw new Error('respuesta vacía al entregar el examen')
+  return data
+}
+
+// --- problems / qa ---------------------------------------------------------
+
+/** Opciones de filtrado y paginación del listado de problemas. */
+export interface ListProblemsOptions {
+  accessToken?: string
+  area?: string
+  dificultad?: string
+  etiqueta?: string
+  limit?: number
+  offset?: number
+}
+
+/** listProblems devuelve la página de problemas de código (vista pública). */
+export async function listProblems(
+  opts: ListProblemsOptions = {},
+): Promise<PaginatedList<Problema>> {
+  const suffix = querystring({
+    area: opts.area,
+    dificultad: opts.dificultad,
+    etiqueta: opts.etiqueta,
+    limit: opts.limit,
+    offset: opts.offset,
+  })
+  const data = await fetchJSON<PaginatedList<Problema>>({
+    baseURL: requireUrl('PROBLEMS_BASE_URL', env().PROBLEMS_BASE_URL),
+    path: `/v1/problems${suffix}`,
+    accessToken: opts.accessToken,
+  })
+  return data ?? listaVacia<Problema>()
+}
+
+/** getProblem devuelve un problema por id (vista pública), o null si no existe. */
+export async function getProblem(id: string, accessToken?: string): Promise<Problema | null> {
+  try {
+    return await fetchJSON<Problema>({
+      baseURL: requireUrl('PROBLEMS_BASE_URL', env().PROBLEMS_BASE_URL),
+      path: `/v1/problems/${encodeURIComponent(id)}`,
+      accessToken,
+    })
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) return null
+    throw e
+  }
+}
+
+/** Opciones de filtrado y paginación del listado de Q&A. */
+export interface ListQAOptions {
+  accessToken?: string
+  puesto?: string
+  area?: string
+  categoria?: string
+  limit?: number
+  offset?: number
+}
+
+/** listQA devuelve la página de preguntas de Q&A de entrevista. */
+export async function listQA(opts: ListQAOptions = {}): Promise<PaginatedList<PreguntaQA>> {
+  const suffix = querystring({
+    puesto: opts.puesto,
+    area: opts.area,
+    categoria: opts.categoria,
+    limit: opts.limit,
+    offset: opts.offset,
+  })
+  const data = await fetchJSON<PaginatedList<PreguntaQA>>({
+    baseURL: requireUrl('PROBLEMS_BASE_URL', env().PROBLEMS_BASE_URL),
+    path: `/v1/qa${suffix}`,
+    accessToken: opts.accessToken,
+  })
+  return data ?? listaVacia<PreguntaQA>()
+}
+
+/** getQA devuelve una pregunta de Q&A por id, o null si no existe. */
+export async function getQA(id: string, accessToken?: string): Promise<PreguntaQA | null> {
+  try {
+    return await fetchJSON<PreguntaQA>({
+      baseURL: requireUrl('PROBLEMS_BASE_URL', env().PROBLEMS_BASE_URL),
+      path: `/v1/qa/${encodeURIComponent(id)}`,
+      accessToken,
+    })
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) return null
+    throw e
+  }
+}
+
+// --- judge -----------------------------------------------------------------
+
+/** Cuerpo para enviar código al juez. */
+export interface EnvioCodigo {
+  problema_ref: string
+  lenguaje: string
+  fuente: string
+}
+
+/**
+ * submitJudge envía código al juez y devuelve la corrida con su resultado.
+ *
+ * El juez ejecuta el código en un sandbox (un contenedor por caso), así que la
+ * latencia puede superar el timeout por defecto: se usa uno amplio (30 s).
+ */
+export async function submitJudge(
+  accessToken: string,
+  body: EnvioCodigo,
+): Promise<RespuestaCorrida> {
+  const data = await fetchJSON<RespuestaCorrida>({
+    baseURL: requireUrl('JUDGE_BASE_URL', env().JUDGE_BASE_URL),
+    path: '/v1/judge/runs',
+    method: 'POST',
+    accessToken,
+    body,
+    timeoutMs: 30000,
+  })
+  if (!data) throw new Error('respuesta vacía del juez')
+  return data
+}
+
+/** listMyRuns devuelve el historial de corridas del usuario autenticado. */
+export async function listMyRuns(
+  accessToken: string,
+  opts: { limit?: number; offset?: number } = {},
+): Promise<PaginatedList<Corrida>> {
+  const suffix = querystring({ limit: opts.limit, offset: opts.offset })
+  const data = await fetchJSON<PaginatedList<Corrida>>({
+    baseURL: requireUrl('JUDGE_BASE_URL', env().JUDGE_BASE_URL),
+    path: `/v1/me/judge/runs${suffix}`,
+    accessToken,
+  })
+  return data ?? listaVacia<Corrida>()
+}
+
+// --- dss / readiness -------------------------------------------------------
+
+/**
+ * getReadiness devuelve la preparación estimada del usuario para una
+ * certificación, o null si aún no hay datos/intentos (404). El DSS es un servicio
+ * de análisis sin auth; el BFF le pasa el subject de la sesión como usuario_id.
+ */
+export async function getReadiness(
+  usuarioId: string,
+  certificacion: string,
+): Promise<Readiness | null> {
+  const suffix = querystring({ certificacion })
+  try {
+    return await fetchJSON<Readiness>({
+      baseURL: requireUrl('DSS_BASE_URL', env().DSS_BASE_URL),
+      path: `/v1/readiness/${encodeURIComponent(usuarioId)}${suffix}`,
+      timeoutMs: 8000,
+    })
+  } catch (e) {
+    // 404: aún no hay datos/intentos. Si el DSS no está levantado (servicio de
+    // análisis opcional, requiere ClickHouse), degradamos a "sin datos" en vez
+    // de romper la página: el resto de la app no depende de él.
+    if (e instanceof ApiError) {
+      if (e.status === 404) return null
+      throw e
+    }
+    return null
   }
 }

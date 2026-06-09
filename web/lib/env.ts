@@ -26,6 +26,10 @@ const Schema = z.object({
   // resto de la app si su backend aún no está configurado. Las funciones que los
   // usan fallan con un error claro si faltan.
   CONTENT_BASE_URL: z.string().url().optional(),
+  EXAMS_BASE_URL: z.string().url().optional(),
+  PROBLEMS_BASE_URL: z.string().url().optional(),
+  JUDGE_BASE_URL: z.string().url().optional(),
+  DSS_BASE_URL: z.string().url().optional(),
 
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
 })

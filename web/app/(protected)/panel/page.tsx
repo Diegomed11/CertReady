@@ -30,6 +30,13 @@ export default async function PanelPage() {
     listMyEnrollments(accessToken),
   ])
 
+  const accesos = [
+    { href: '/estudiar', emoji: '📖', titulo: 'Estudiar' },
+    { href: '/examenes', emoji: '📝', titulo: 'Simulacros' },
+    { href: '/entrevistas', emoji: '💻', titulo: 'Entrevistas' },
+    { href: '/progreso', emoji: '📊', titulo: 'Progreso' },
+  ]
+
   return (
     <div className="space-y-10">
       <PageHeader
@@ -37,6 +44,24 @@ export default async function PanelPage() {
         title={`Hola${cuenta.nombre ? `, ${cuenta.nombre}` : ''} 👋`}
         lead={`${cuenta.email} · rol ${cuenta.rol}`}
       />
+
+      <section>
+        <ul className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {accesos.map((a) => (
+            <li key={a.href}>
+              <Link href={a.href} className="block h-full">
+                <Card
+                  interactive
+                  className="flex h-full flex-col items-center gap-2 p-5 text-center"
+                >
+                  <span className="text-3xl">{a.emoji}</span>
+                  <span className="font-display text-sm font-semibold text-ink">{a.titulo}</span>
+                </Card>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       <section>
         <div className="mb-4 flex items-center justify-between">

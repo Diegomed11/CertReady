@@ -151,3 +151,8 @@ Según el plan de fases del documento de arquitectura:
   exista la cuenta de AWS y el repositorio remoto.
 - **Capas `judge/`, `data/` y `mobile/`:** marcadores de carpeta; se materializan
   en sus fases correspondientes.
+- **Contenido y marcas:** se opta por el camino seguro (contenido original o con
+  licencia abierta; sin logos oficiales, identidad propia). Los avisos legales a
+  publicar antes de lanzar (disclaimer de marcas, política de contenido,
+  atribuciones, Términos y Privacidad) están en
+  [`contenido-y-marcas.md`](contenido-y-marcas.md).

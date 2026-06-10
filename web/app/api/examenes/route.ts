@@ -8,7 +8,7 @@
 import { NextResponse } from 'next/server'
 
 import { ApiError } from '@/lib/api/client'
-import { createExamSession } from '@/lib/api/services'
+import { createExamSession, createSimulacroPonderado } from '@/lib/api/services'
 import { getSession } from '@/lib/auth/session'
 
 export async function POST(req: Request) {
@@ -29,13 +29,24 @@ export async function POST(req: Request) {
   }
 
   try {
-    const sesion = await createExamSession(session.accessToken, {
-      certificacion: body.certificacion,
-      tema: body.tema,
-      temas: body.temas,
-      num_preguntas: body.num_preguntas,
-      modo: body.modo,
-    })
+    // Examen completo (sin tema/temas) → muestreo ponderado por dominio y rotatorio.
+    const esSimulacro =
+      (body.modo === 'simulacro' || body.modo === undefined) &&
+      !body.tema &&
+      (!body.temas || body.temas.length === 0)
+    const sesion = esSimulacro
+      ? await createSimulacroPonderado(
+          session.accessToken,
+          body.certificacion,
+          body.num_preguntas ?? 65,
+        )
+      : await createExamSession(session.accessToken, {
+          certificacion: body.certificacion,
+          tema: body.tema,
+          temas: body.temas,
+          num_preguntas: body.num_preguntas,
+          modo: body.modo,
+        })
     return NextResponse.json(sesion, { status: 201 })
   } catch (err) {
     if (err instanceof ApiError) {

@@ -3,6 +3,7 @@ package httpapi
 import (
 	"errors"
 	"log/slog"
+	"math/rand"
 	"net/http"
 	"strconv"
 
@@ -48,22 +49,49 @@ func (a *API) crearSesion(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteError(w, http.StatusUnprocessableEntity, "validacion", "datos inválidos", "modo: simulacro | practica")
 		return
 	}
-	n := in.NumPreguntas
-	if n < minPreguntas {
-		n = a.numPorDefecto
-	}
-	if n > maxPreguntas {
-		n = maxPreguntas
-	}
-
-	temas := in.Temas
-	if len(temas) == 0 && in.Tema != "" {
-		temas = []string{in.Tema}
-	}
-	preguntas, err := a.preguntas.Muestrear(r.Context(), in.Certificacion, temas, n)
-	if err != nil {
-		a.errorInterno(w, r, "muestrear preguntas", err)
-		return
+	var preguntas []exams.Pregunta
+	if len(in.Grupos) > 0 {
+		// Examen ponderado por dominio: una cuota de preguntas por grupo de temas.
+		for _, g := range in.Grupos {
+			gn := g.N
+			if gn < 1 {
+				continue
+			}
+			if gn > maxPreguntas {
+				gn = maxPreguntas
+			}
+			ps, err := a.preguntas.Muestrear(r.Context(), in.Certificacion, g.Temas, gn)
+			if err != nil {
+				a.errorInterno(w, r, "muestrear preguntas", err)
+				return
+			}
+			preguntas = append(preguntas, ps...)
+		}
+		// Mezcla para que no salgan agrupadas por dominio.
+		rand.Shuffle(len(preguntas), func(i, j int) {
+			preguntas[i], preguntas[j] = preguntas[j], preguntas[i]
+		})
+		if len(preguntas) > maxPreguntas {
+			preguntas = preguntas[:maxPreguntas]
+		}
+	} else {
+		n := in.NumPreguntas
+		if n < minPreguntas {
+			n = a.numPorDefecto
+		}
+		if n > maxPreguntas {
+			n = maxPreguntas
+		}
+		temas := in.Temas
+		if len(temas) == 0 && in.Tema != "" {
+			temas = []string{in.Tema}
+		}
+		var err error
+		preguntas, err = a.preguntas.Muestrear(r.Context(), in.Certificacion, temas, n)
+		if err != nil {
+			a.errorInterno(w, r, "muestrear preguntas", err)
+			return
+		}
 	}
 	if len(preguntas) == 0 {
 		httpx.WriteError(w, http.StatusUnprocessableEntity, "sin_preguntas",

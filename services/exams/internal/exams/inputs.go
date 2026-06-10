@@ -52,17 +52,26 @@ func (n NuevaPregunta) Validar() []string {
 	return errs
 }
 
+// GrupoMuestreo pide N preguntas de un conjunto de temas. Sirve para armar un
+// examen ponderado por dominio (un grupo por dominio, con su cuota de preguntas).
+type GrupoMuestreo struct {
+	Temas []string `json:"temas"`
+	N     int      `json:"n"`
+}
+
 // CrearSesion son los parámetros para iniciar un simulacro.
 //
-// Acotación opcional de las preguntas: `Tema` (un tema, mini-quiz) o `Temas`
-// (varios temas, quiz de sección/dominio). Si ambos están vacíos, se muestrea toda
-// la certificación.
+// Acotación de las preguntas (en orden de prioridad): `Grupos` (muestreo ponderado
+// por dominio, cada grupo con su cuota), `Temas` (varios temas, quiz de sección),
+// `Tema` (un tema, mini-quiz). Si todo está vacío, se muestrea toda la
+// certificación con `NumPreguntas`.
 type CrearSesion struct {
-	Certificacion string   `json:"certificacion"`
-	Tema          string   `json:"tema"`
-	Temas         []string `json:"temas"`
-	NumPreguntas  int      `json:"num_preguntas"`
-	Modo          string   `json:"modo"`
+	Certificacion string          `json:"certificacion"`
+	Tema          string          `json:"tema"`
+	Temas         []string        `json:"temas"`
+	Grupos        []GrupoMuestreo `json:"grupos"`
+	NumPreguntas  int             `json:"num_preguntas"`
+	Modo          string          `json:"modo"`
 }
 
 // RespuestaEntrada es una respuesta del estudiante a una pregunta.

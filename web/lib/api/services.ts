@@ -190,8 +190,55 @@ export interface NuevaSesionExamen {
   certificacion: string
   tema?: string
   temas?: string[]
+  /** Muestreo ponderado por dominio: una cuota de preguntas por grupo de temas. */
+  grupos?: { temas: string[]; n: number }[]
   num_preguntas?: number
   modo?: 'simulacro' | 'practica'
+}
+
+/** Pesos oficiales de los dominios del examen SAA-C03. */
+const PESOS_DOMINIO: Record<string, number> = {
+  Seguridad: 0.3,
+  Resiliencia: 0.26,
+  Rendimiento: 0.24,
+  Costos: 0.2,
+}
+
+/**
+ * gruposPonderados reparte `total` preguntas entre los dominios según su peso real
+ * (los temas se agrupan por su `dominio`). Ajusta el redondeo para que la suma dé
+ * exactamente `total`.
+ */
+export function gruposPonderados(temas: Tema[], total: number): { temas: string[]; n: number }[] {
+  const orden: string[] = []
+  const porDom = new Map<string, string[]>()
+  for (const t of temas) {
+    const d = t.dominio ?? 'General'
+    if (!porDom.has(d)) {
+      porDom.set(d, [])
+      orden.push(d)
+    }
+    porDom.get(d)!.push(t.slug)
+  }
+  if (orden.length === 0) return []
+
+  const grupos = orden.map((d) => ({
+    temas: porDom.get(d)!,
+    n: Math.max(1, Math.round((PESOS_DOMINIO[d] ?? 1 / orden.length) * total)),
+  }))
+  // Ajusta el redondeo para cuadrar la suma con `total`.
+  let suma = grupos.reduce((s, g) => s + g.n, 0)
+  for (let i = 0; suma !== total && i < 1000; i++) {
+    const g = grupos[i % grupos.length]!
+    if (suma < total) {
+      g.n++
+      suma++
+    } else if (g.n > 1) {
+      g.n--
+      suma--
+    }
+  }
+  return grupos
 }
 
 /** createExamSession inicia un simulacro y devuelve la sesión con sus preguntas. */
@@ -208,6 +255,28 @@ export async function createExamSession(
   })
   if (!data) throw new Error('respuesta vacía al crear la sesión de examen')
   return data
+}
+
+/**
+ * createSimulacroPonderado crea un examen con el reparto de preguntas por dominio
+ * del examen real (pesos SAA-C03 30/26/24/20). Resuelve los temas de la
+ * certificación y arma los grupos; si no hay temas, cae a un muestreo uniforme. El
+ * muestreo es aleatorio (`$sample`), así que cada examen rota las preguntas.
+ */
+export async function createSimulacroPonderado(
+  accessToken: string,
+  certSlug: string,
+  total: number,
+): Promise<SesionConPreguntas> {
+  const cert = await getCertification(certSlug, accessToken)
+  const temas = cert ? await listTopics(cert.id, accessToken) : []
+  const grupos = gruposPonderados(temas, total)
+  return createExamSession(accessToken, {
+    certificacion: certSlug,
+    grupos: grupos.length > 0 ? grupos : undefined,
+    num_preguntas: total,
+    modo: 'simulacro',
+  })
 }
 
 /** getExamSession devuelve una sesión propia (preguntas si en curso, resultado si finalizada). */

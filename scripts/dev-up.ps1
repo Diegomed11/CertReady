@@ -131,8 +131,15 @@ Start-Svc 'problems'    "$root\services\problems\build\problems.exe"       'http
 Start-Svc 'progress'    "$root\services\progress\build\progress.exe"       'http://localhost:18093/v1/health'
 Start-Svc 'judge'       "$root\judge\build\judge.exe"                      'http://localhost:18097/v1/health'
 
-Write-Host 'Arrancando la web (Next.js dev)...'
-Start-Process -FilePath 'node' -ArgumentList 'node_modules/next/dist/bin/next', 'dev' -WorkingDirectory "$root\web" -RedirectStandardOutput "$logs\web.log" -RedirectStandardError "$logs\web.err"
+Write-Host 'Compilando la web (build de producción, para que responda rápido)...'
+Push-Location "$root\web"
+& node 'node_modules/next/dist/bin/next' build
+$webBuildOk = $?
+Pop-Location
+if (-not $webBuildOk) { throw 'falló el build de la web; revisa la salida de arriba' }
+
+Write-Host 'Arrancando la web (Next.js start)...'
+Start-Process -FilePath 'node' -ArgumentList 'node_modules/next/dist/bin/next', 'start' -WorkingDirectory "$root\web" -RedirectStandardOutput "$logs\web.log" -RedirectStandardError "$logs\web.err"
 
 if (Wait-Url 'http://localhost:3000/' 80) {
   Write-Host ''

@@ -16,8 +16,10 @@ Uso (con el venv de data, que ya trae pymongo):
 
 from __future__ import annotations
 
+import json
 import os
 from datetime import UTC, datetime
+from pathlib import Path
 
 from pymongo import MongoClient
 
@@ -784,6 +786,83 @@ def pregunta(tema: str, q: tuple) -> dict:
     }
 
 
+# --- Contenido extendido: hojas y preguntas generadas (scripts/content/) ------
+CONTENIDO_DIR = Path(__file__).resolve().parent / "content"
+
+
+def material_pagina(tema: str, n: int, titulo: str, md: str) -> dict:
+    """Hoja adicional (n>=2) de un tema; la hoja 1 la crea ``material``."""
+    return {
+        "_id": f"m_{tema.replace('-', '_')}_{n}",
+        "certificacion": CERT,
+        "tema": tema,
+        "titulo": titulo,
+        "formato": "markdown",
+        "contenido": md,
+        "recursos": [],
+        "creado_en": AHORA,
+    }
+
+
+def _pregunta_json(tema: str, n: int, q: dict) -> dict | None:
+    """Convierte una pregunta del JSON generado al documento de Mongo, o None si es inválida."""
+    tipo = q.get("tipo")
+    if tipo not in ("opcion_multiple", "respuesta_multiple"):
+        return None
+    opts = q.get("opciones") or []
+    correctos = q.get("correctas") or []
+    if not 2 <= len(opts) <= len(LETRAS):
+        return None
+    if not correctos or any(
+        not isinstance(i, int) or i < 0 or i >= len(opts) for i in correctos
+    ):
+        return None
+    return {
+        "_id": f"q_{tema.replace('-', '_')}_w{n}",
+        "certificacion": CERT,
+        "tema": tema,
+        "dificultad": q.get("dificultad", "media"),
+        "tipo": tipo,
+        "enunciado": (q.get("enunciado") or "").strip(),
+        "opciones": [{"id": LETRAS[i], "texto": t} for i, t in enumerate(opts)],
+        "respuesta_correcta": [LETRAS[i] for i in correctos],
+        "explicacion": (q.get("explicacion") or "").strip(),
+        "tags": [tema],
+    }
+
+
+def cargar_contenido_extra(slugs: list[str]) -> tuple[list[dict], list[dict]]:
+    """Carga hojas y preguntas adicionales de ``scripts/content/<slug>.json``.
+
+    Forma del archivo: ``{"slug", "pages":[{"titulo","markdown"}], "questions":[...]}``.
+    Se omite en silencio lo que falte o no parsee: el seed base sigue funcionando aunque
+    no se haya generado el contenido extendido.
+    """
+    materiales: list[dict] = []
+    preguntas: list[dict] = []
+    if not CONTENIDO_DIR.is_dir():
+        return materiales, preguntas
+    for slug in slugs:
+        ruta = CONTENIDO_DIR / f"{slug}.json"
+        if not ruta.is_file():
+            continue
+        try:
+            data = json.loads(ruta.read_text(encoding="utf-8"))
+        except (ValueError, OSError) as e:
+            print(f"  [aviso] {ruta.name}: no se pudo leer ({e}); se omite")
+            continue
+        for i, page in enumerate(data.get("pages") or []):
+            titulo = (page.get("titulo") or "").strip()
+            md = (page.get("markdown") or "").strip()
+            if titulo and md:
+                materiales.append(material_pagina(slug, i + 2, titulo, md))
+        for j, q in enumerate(data.get("questions") or []):
+            pq = _pregunta_json(slug, j + 1, q)
+            if pq:
+                preguntas.append(pq)
+    return materiales, preguntas
+
+
 # --- Entrevistas: problemas de código y Q&A (sin cambios de clave) ------------
 PLANTILLA_PY = (
     "import sys\n\n\n"
@@ -864,6 +943,13 @@ def main() -> None:
             preguntas.append(pregunta(tema, q))
     preguntas.extend(pregunta_ex(e) for e in EXTRA)
     preguntas.extend(pregunta_ex(e) for e in EXTRA2)
+
+    # Hojas y preguntas adicionales generadas (profundizan cada tema).
+    extra_m, extra_q = cargar_contenido_extra(slugs)
+    materiales.extend(extra_m)
+    preguntas.extend(extra_q)
+    if extra_m or extra_q:
+        print(f"  contenido extendido: +{len(extra_m)} hojas, +{len(extra_q)} preguntas")
 
     def upsert(coll: str, docs: list[dict]) -> None:
         c = db[coll]

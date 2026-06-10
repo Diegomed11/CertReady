@@ -1,0 +1,66 @@
+{
+  "slug": "bases-datos",
+  "pages": [
+    {
+      "titulo": "Bases · RDS vs Aurora y Serverless",
+      "markdown": "## Bases · RDS vs Aurora (y Aurora Serverless)\n\nCuando el escenario es **relacional** y \"gestionado\", el examen casi siempre te hace elegir entre el motor estandar gestionado y la variante de alto rendimiento compatible. Lo importante no es memorizar features, sino el **criterio de decision**.\n\n### El motor relacional gestionado clasico\n- Ejecuta motores conocidos (MySQL, PostgreSQL, MariaDB, Oracle, SQL Server) con parches, backups y monitoreo administrados.\n- **Multi-AZ** = una replica **sincrona** en otra zona, pensada para **failover** (alta disponibilidad), **no** para servir lecturas.\n- **Read replicas** = replicas **asincronas** para **escalar lecturas**; pueden estar en otra Region.\n- Lo eliges cuando necesitas un motor o version concretos, o licenciamiento especifico (p. ej. Oracle/SQL Server).\n\n### La variante de alto rendimiento (compatible MySQL/PostgreSQL)\n- Reescribe la capa de almacenamiento: los datos se **replican en seis copias a traves de tres zonas**, con auto-reparacion.\n- Mayor rendimiento de escritura/lectura que el motor base con el mismo hardware, y hasta **15 replicas de lectura** que comparten el mismo volumen (menor *lag*).\n- Failover mas rapido porque las replicas leen el mismo almacenamiento compartido.\n- **Endpoint de lectura** unico que reparte automaticamente entre replicas: no tienes que balancear a mano.\n\n### La opcion serverless (escalado automatico de capacidad)\n- Ajusta la capacidad de computo **sola**, hacia arriba y hacia abajo, segun la demanda.\n- Encaja con cargas **intermitentes, impredecibles o de desarrollo/pruebas** donde aprovisionar una instancia fija desperdicia dinero.\n- **No** es la respuesta por defecto para una carga estable 24/7 de alto trafico: ahi una instancia aprovisionada suele rendir y costar mejor.\n\n### Tabla de decision rapida\n\n| Necesidad | Eleccion tipica |\n|---|---|\n| Motor/version o licencia especificos (Oracle, SQL Server) | Motor relacional gestionado clasico |\n| Maximo rendimiento compatible MySQL/PostgreSQL | Variante de alto rendimiento |\n| Failover automatico de la BD | Replica **sincrona** Multi-AZ |\n| Escalar **lecturas** | **Read replicas** (asincronas) |\n| Trafico intermitente / impredecible / dev | Variante **serverless** |\n| Carga estable 24/7 de alto trafico | Instancia **aprovisionada** |\n\n### Errores comunes en el examen\n- Confundir **Multi-AZ** (disponibilidad, replica sincrona que **no** sirve lecturas) con **read replicas** (escalado de lecturas, asincronas).\n- Elegir serverless solo porque \"suena moderno\": para carga constante alta, suele ser mas caro que aprovisionar.\n- Asumir que la variante de alto rendimiento sirve para **cualquier** motor: solo es compatible con MySQL y PostgreSQL.\n\n> **En el examen:** *failover* -> replica **sincrona Multi-AZ**; *escalar lecturas* -> **read replicas**; *trafico intermitente/impredecible* -> **serverless**; *necesito Oracle/SQL Server* -> motor gestionado clasico, no la variante de alto rendimiento."
+    },
+    {
+      "titulo": "Bases · DynamoDB a fondo (clave, GSI/LSI, capacidad, DAX)",
+      "markdown": "## Bases · DynamoDB: clave de particion, GSI vs LSI, capacidad y DAX\n\nEl almacen **clave-valor / documento** gestionado es serverless y de latencia de milisegundos a cualquier escala, **siempre que el diseno de la clave sea correcto**. El examen castiga el mal diseno de clave y la eleccion equivocada de indice o de modo de capacidad.\n\n### Diseno de la clave de particion\n- La **clave de particion** decide en que particion fisica vive cada item; el servicio reparte la carga por el **hash** de esa clave.\n- Una clave con **pocos valores o muy desbalanceada** crea una *hot partition*: el trafico se concentra y aparece *throttling* aunque la tabla en conjunto tenga capacidad de sobra.\n- Regla practica: elige una clave de **alta cardinalidad** y con acceso **uniforme** (p. ej. un id de usuario, no un estado con tres valores).\n- La **clave de ordenacion (sort key)** permite agrupar items relacionados bajo la misma particion y hacer consultas por rango.\n\n### GSI vs LSI\n\n| Aspecto | Indice secundario **global** (GSI) | Indice secundario **local** (LSI) |\n|---|---|---|\n| Clave de particion | **Distinta** de la tabla | **La misma** que la tabla |\n| Cuando se crea | En cualquier momento | **Solo** al crear la tabla |\n| Consistencia | Solo **eventual** | Permite lectura **fuertemente consistente** |\n| Capacidad | Propia (separada de la tabla) | Comparte la de la tabla |\n| Limite de tamano por clave | Sin limite de 10 GB por particion logica | Item collection limitada (~10 GB) |\n\n- Usa **GSI** cuando necesitas consultar por un atributo **distinto** de la clave de la tabla.\n- Usa **LSI** cuando quieres **otra sort key** sobre la **misma** clave de particion y necesitas consistencia fuerte. Recuerda: el LSI hay que definirlo al crear la tabla.\n\n### Capacidad: bajo demanda vs aprovisionada\n- **Bajo demanda**: pagas por peticion, escala instantaneo; ideal para trafico **impredecible, nuevo o muy variable**, y para evitar gestionar capacidad.\n- **Aprovisionada**: defines unidades de lectura/escritura; mas barata para trafico **estable y predecible**, sobre todo con **auto scaling** para acompanar picos suaves.\n\n### DAX (cache en memoria para el almacen clave-valor)\n- Cache gestionada que pone latencia de **microsegundos** delante de la tabla para **lecturas** muy repetidas.\n- Es **write-through** y especifica de este almacen: no requiere reescribir la logica de cache.\n- No ayuda con cargas dominadas por **escritura** ni con lecturas siempre distintas; ahi no aporta.\n\n> **En el examen:** *throttling pese a capacidad suficiente* -> **hot partition**, rediseña la **clave de particion**; *consultar por otro atributo* -> **GSI**; *otra sort key con consistencia fuerte* -> **LSI** (al crear la tabla); *trafico impredecible* -> **bajo demanda**; *microsegundos en lecturas repetidas* -> **DAX**."
+    },
+    {
+      "titulo": "Bases · Cache y replicas para rendimiento",
+      "markdown": "## Bases · Cache para rendimiento: Redis vs Memcached y estrategias\n\nUna capa de cache **en memoria** acelera las lecturas y **descarga** la base de datos, bajando latencia y costo. El examen pregunta **cual motor** y **que estrategia** de cache encaja en cada escenario.\n\n### Redis vs Memcached (el almacen en memoria gestionado)\n\n| Necesidad | Motor adecuado |\n|---|---|\n| Estructuras de datos ricas (listas, conjuntos, sorted sets) | **Redis** |\n| Persistencia / snapshots y recuperacion | **Redis** |\n| Replicas de lectura y failover (alta disponibilidad) | **Redis** |\n| Pub/sub, geoespacial, leaderboards, rate limiting | **Redis** |\n| Cache simple, plana, y maxima sencillez | **Memcached** |\n| Escalado horizontal multihilo con sharding sencillo | **Memcached** |\n\n- **Redis** es la respuesta por defecto cuando el escenario pide **alta disponibilidad**, **persistencia**, **replicas** o **estructuras avanzadas**.\n- **Memcached** encaja en cache **efimera y simple** donde solo quieres un *key-value* plano y multihilo, sin replicacion ni durabilidad.\n\n### Estrategias de cache\n\n- **Lazy loading (cache-aside)**: la app consulta la cache; si falla (*miss*), lee la BD y **guarda** el resultado. Solo cachea lo que se pide, pero el primer acceso es lento y los datos pueden quedar **obsoletos**.\n- **Write-through**: cada escritura actualiza **cache y BD a la vez**. La cache siempre esta fresca, pero escribes datos que quiza nunca se lean y cada escritura cuesta mas.\n- **TTL (time to live)**: caduca las entradas tras un tiempo para acotar la obsolescencia; suele combinarse con las dos anteriores.\n- Patron habitual: **lazy loading + TTL** para datos de lectura intensiva que toleran algo de desfase.\n\n### Replicas de lectura vs cache: cuando cada una\n- **Read replicas**: descargan lecturas **manteniendo el modelo relacional** y datos relativamente frescos; buenas para *reporting* y consultas pesadas.\n- **Cache en memoria**: latencia mucho menor para lecturas **repetidas** de los mismos datos; ideal para *hot keys*, sesiones y catalogos consultados sin cesar.\n- A menudo se combinan: cache para lo muy repetido, replicas para escalar el resto de lecturas.\n\n### Elegir la base por modelo de datos\n- **Relacional** (joins, transacciones, esquema fijo) -> motor relacional gestionado / su variante de alto rendimiento.\n- **Clave-valor / documento** a gran escala y baja latencia -> almacen NoSQL serverless.\n- **En memoria** (sesiones, contadores, *leaderboards*, cache) -> almacen en memoria gestionado.\n\n> **En el examen:** *cache con HA, persistencia o estructuras avanzadas* -> **Redis**; *cache simple y plana* -> **Memcached**; *primer acceso lento pero solo cachea lo usado* -> **lazy loading**; *cache siempre fresca a costa de mas escrituras* -> **write-through**; *acotar obsolescencia* -> **TTL**; *descargar lecturas sin perder lo relacional* -> **read replicas**."
+    }
+  ],
+  "questions": [
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "media",
+      "enunciado": "Una tabla del almacen NoSQL serverless tiene capacidad de sobra a nivel global, pero un grupo de items sufre throttling constante. Al revisar el diseno, la clave de particion es un campo 'estado' con solo tres valores posibles. Cual es la causa mas probable y la mejor correccion?",
+      "opciones": [
+        "Una particion caliente por baja cardinalidad de la clave; rediseñar la clave de particion con un atributo de alta cardinalidad",
+        "Falta de read replicas; añadir replicas de lectura a la tabla",
+        "La cache no esta activada; habilitar DAX para resolver el throttling de escritura",
+        "El modo de capacidad es bajo demanda; cambiar a aprovisionado para eliminar el throttling"
+      ],
+      "correctas": [
+        0
+      ],
+      "explicacion": "Una clave de particion con muy pocos valores concentra el trafico en pocas particiones fisicas (hot partition), causando throttling aunque la tabla tenga capacidad agregada. La solucion es elegir una clave de alta cardinalidad y acceso uniforme. DAX solo ayuda a lecturas repetidas (no a escrituras) y cambiar el modo de capacidad no corrige una clave mal diseñada."
+    },
+    {
+      "tipo": "respuesta_multiple",
+      "dificultad": "dificil",
+      "enunciado": "Un equipo necesita una capa de cache en memoria delante de su base de datos relacional. Los requisitos son: alta disponibilidad con failover, persistencia de los datos cacheados y soporte de estructuras como sorted sets para un leaderboard. Que afirmaciones reflejan la decision correcta? (elige 2)",
+      "opciones": [
+        "El motor en memoria adecuado es Redis, por sus replicas, failover, persistencia y estructuras avanzadas",
+        "Memcached es la mejor opcion porque su simplicidad multihilo cubre estos requisitos",
+        "Una estrategia de lazy loading con TTL es razonable para datos de lectura intensiva que toleran algo de desfase",
+        "Conviene cachear con write-through siempre, ya que nunca sirve datos obsoletos y no tiene desventajas",
+        "Activar read replicas en la cache en memoria es lo que aporta el failover requerido"
+      ],
+      "correctas": [
+        0,
+        2
+      ],
+      "explicacion": "Redis es el motor en memoria que ofrece replicas, failover, persistencia y estructuras avanzadas (sorted sets), justo lo que pide el escenario; Memcached es plano y efimero. Lazy loading + TTL es un patron valido para lecturas intensivas con tolerancia a desfase. Write-through no esta 'siempre' libre de desventajas (encarece cada escritura y cachea datos que quiza nunca se lean) y 'read replicas en la cache' no es lo que se configura para el failover descrito."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "media",
+      "enunciado": "Una aplicacion relacional gestionada (compatible MySQL) recibe trafico muy intermitente: picos cortos varias veces al dia y largos periodos casi sin actividad. El equipo quiere evitar pagar capacidad fija cuando no se usa, sin renunciar al modelo relacional. Que opcion encaja mejor?",
+      "opciones": [
+        "La variante relacional serverless, que escala la capacidad de computo automaticamente segun la demanda",
+        "Una instancia aprovisionada grande con read replicas permanentes en varias AZ",
+        "Migrar a un almacen clave-valor con capacidad aprovisionada fija",
+        "Una instancia reservada a 3 años para minimizar el costo del pico"
+      ],
+      "correctas": [
+        0
+      ],
+      "explicacion": "El trafico intermitente e impredecible es el caso ideal de la variante serverless: ajusta el computo solo y evita pagar capacidad fija en los valles. Una instancia aprovisionada grande o reservada desperdicia dinero cuando no hay actividad, y migrar a clave-valor cambia el modelo de datos relacional que el equipo quiere conservar."
+    }
+  ]
+}

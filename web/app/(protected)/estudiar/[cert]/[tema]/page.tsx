@@ -3,16 +3,14 @@ import { notFound, redirect } from 'next/navigation'
 
 import { Badge } from '@/components/ui/badge'
 import { buttonStyles } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
-import { Markdown } from '@/components/ui/markdown'
 import { SectionLabel } from '@/components/ui/section-label'
 import { getCertification, getMyProgress, listContent, listTopics } from '@/lib/api/services'
 import { requireSession } from '@/lib/auth/guard'
 
 import { QuizRunner } from '@/components/quiz-runner'
 
-import { MarkRead } from './mark-read'
+import { LessonReader } from './lesson-reader'
 
 /**
  * Tema de la ruta: sus lecciones (markdown, marcables como leídas) y el mini-quiz
@@ -50,9 +48,9 @@ export default async function TemaPage({
     accessToken,
     limit: 50,
   })
-  const leidas = new Set(prog.lecciones.map((l) => l.material_id))
   const yaAprobado = aprobados.has(tema.slug)
   const siguiente = temas[idx + 1]?.slug ?? null
+  const anterior = temas[idx - 1]?.slug ?? null
 
   return (
     <div className="mx-auto max-w-3xl space-y-8">
@@ -76,24 +74,12 @@ export default async function TemaPage({
           Pronto añadiremos material para este tema. Puedes intentar el quiz igualmente.
         </EmptyState>
       ) : (
-        <div className="space-y-5">
-          {lecciones.data.map((m) => (
-            <Card key={m.id} className="p-6">
-              <div className="flex items-start justify-between gap-4">
-                <h2 className="font-display text-xl font-semibold">{m.titulo}</h2>
-                <MarkRead
-                  cert={cert.slug}
-                  tema={tema.slug}
-                  materialId={m.id}
-                  leida={leidas.has(m.id)}
-                />
-              </div>
-              <div className="mt-3">
-                <Markdown>{m.contenido}</Markdown>
-              </div>
-            </Card>
-          ))}
-        </div>
+        <LessonReader
+          cert={cert.slug}
+          tema={tema.slug}
+          lecciones={lecciones.data}
+          leidasIds={prog.lecciones.map((l) => l.material_id)}
+        />
       )}
 
       <QuizRunner
@@ -106,6 +92,33 @@ export default async function TemaPage({
         nextHref={siguiente ? `/estudiar/${cert.slug}/${siguiente}` : null}
         nextLabel="Siguiente tema →"
       />
+
+      {/* Navegación entre temas (siempre visible; el siguiente se desbloquea al aprobar). */}
+      <nav className="flex items-center justify-between gap-3 border-t-2 border-line pt-6">
+        {anterior ? (
+          <Link href={`/estudiar/${cert.slug}/${anterior}`} className={buttonStyles('ghost', 'sm')}>
+            ← Tema anterior
+          </Link>
+        ) : (
+          <span />
+        )}
+        {siguiente ? (
+          yaAprobado ? (
+            <Link
+              href={`/estudiar/${cert.slug}/${siguiente}`}
+              className={buttonStyles('primary', 'sm')}
+            >
+              Siguiente tema →
+            </Link>
+          ) : (
+            <span className="text-right text-sm text-faint">
+              Aprueba el quiz para desbloquear el siguiente tema
+            </span>
+          )
+        ) : (
+          <span className="text-sm font-semibold text-good">Último tema 🎉</span>
+        )}
+      </nav>
     </div>
   )
 }

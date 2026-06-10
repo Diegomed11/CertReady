@@ -980,3 +980,78 @@ viewport renderizan contenido 3D real de marca (las de abajo cargan al entrar en
 pantalla, por el render perezoso de `Scene3D`). Nota: el screenshot del preview no
 captura por la animación WebGL continua (limitación de la herramienta), no es un
 fallo de la página.
+
+---
+
+## 2026-06-10 · Panel + shell tipo app (diseño de Claude Design)
+
+**Contexto:** el responsable diseñó en **Claude Design** un nuevo panel post-login
+(handoff `Panel CertReady.html`: sidebar tipo app + inscripciones con avance +
+columna de gamificación moderada). Se importó el bundle y se implementó en Next.
+
+**Hecho:**
+- **`components/sidebar.tsx`** (cliente): navegación lateral tipo app con iconos 3D
+  y etiquetas Fredoka en mayúsculas; item activo por ruta (`usePathname`), usuario
+  al pie (avatar + email + Salir). Colapsa a solo-iconos en pantallas estrechas.
+- **`app/(protected)/layout.tsx`**: nuevo *shell* — grid `sidebar + main`
+  desplazable a altura completa; sustituye la `NavBar` superior. El pie lleva el
+  **aviso de marcas** (antes no estaba).
+- **`app/(protected)/panel/page.tsx`** reescrito con **datos reales**:
+  - **Mis inscripciones** con barra de progreso degradada, badge de proveedor +
+    estado, "X de Y temas · Siguiente: …" y botón **Continuar** (calcula el avance
+    desde `progress` + `catalog`).
+  - **Columna derecha (gamificación moderada, sin XP):** *racha* y *meta semanal*
+    **derivadas de las lecciones reales** (timestamps de `progress.lecciones`), y
+    *último simulacro* (de `exams`). Nada inventado.
+  - Estado vacío (sin inscripciones) con CTA al catálogo.
+- **Iconos 3D** del handoff copiados a `public/icons/` (genéricos: casa, libro,
+  fuego, diana, trofeo… sin logos de proveedor).
+- Se eliminaron `nav-bar.tsx`, `mobile-menu.tsx`, `logout-button.tsx` y
+  `panel/unenroll-button.tsx` (quedaron sin uso al pasar al sidebar).
+
+**Decisión:** se adoptó el **sidebar como shell de toda el área autenticada** (no
+solo del panel), que es la esencia del diseño; los `NAV_LINKS` ya coincidían. La
+gamificación se calcula de datos reales para no mostrar cifras falsas.
+
+**Verificación:** `npm run check` (typecheck + lint + formato + tests) y
+`npm run build` en **verde** (22 rutas; `/panel` 111 kB). La verificación **en vivo
+queda pendiente**: el panel necesita el stack backend completo (auth + users +
+enrollments + catalog + exams + progress) y ahora estaba apagado. Traducción fiel a
+los tokens/fuentes del diseño (mismos `--brand`, Fredoka/Nunito/IBM Plex Mono).
+
+---
+
+## 2026-06-10 · Estudiar — lector de hojas, navegación, contenido ampliado y velocidad
+
+**Contexto:** feedback del responsable sobre Estudiar: el panel de quiz se veía
+"incompleto" y sin botón para pasar de tema; poco material por tema (pidió un
+"cambio de hoja" para más contenido); y la app "lenta para responder". Adjuntó la
+guía oficial SAA-C03 (referencia de cobertura, **no se copia** — regla de marcas).
+
+**Hecho:**
+- **Velocidad (causa raíz):** `dev-up.ps1` arrancaba la web con **`next dev`**
+  (recompila cada ruta al navegar). Ahora hace **build de producción + `next
+  start`** → respuesta mucho más ágil.
+- **Quiz:** la tarjeta de inicio del `QuizRunner` ya no se ve vacía (describe el
+  quiz, nº de preguntas y el 70% para aprobar/desbloquear). Se añadió
+  **navegación entre temas** al pie del tema ("← anterior" / "**Siguiente tema
+  →**", habilitado al aprobar).
+- **Lector de hojas:** nuevo `lesson-reader.tsx` (cliente) — el material se lee
+  como cuadernillo: **una hoja a la vez** con "← Hoja anterior / Siguiente hoja →",
+  indicador de página y "marcar leída" por hoja. Ordena por id (`m_<tema>` <
+  `m_<tema>_2`…).
+- **Contenido ampliado (workflow multi-agente):** una agente por tema redactó **3
+  hojas nuevas originales** (profundizan los subtemas que mide cada dominio, con
+  tablas comparativas y cierre "> En el examen:") + **3 preguntas** extra; un
+  **revisor adversarial** verificó exactitud técnica, originalidad, relevancia,
+  markdown y coherencia de respuestas en cada tema. Resultado en
+  `scripts/content/<slug>.json` (**+36 hojas, +36 preguntas**, 12/12 verificados).
+- **Seed:** `seed-mongo.py` carga `scripts/content/*.json` y crea las hojas
+  (`m_<tema>_2..`) y preguntas adicionales (robusto a archivos ausentes). Tras
+  sembrar: **materiales 48** (4/tema) y **preguntas 136** (más respuesta_múltiple),
+  todo UTF-8 correcto.
+
+**Verificación:** `npm run check` + `npm run build` en **verde**. Seed ejecutado
+contra Mongo: 12 temas × 4 hojas con ids ordenados, preguntas por tema ampliadas
+(p.ej. iam 10). El render en vivo de Estudiar queda para cuando el stack backend
+esté levantado (con la web ya en modo producción).

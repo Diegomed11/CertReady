@@ -124,24 +124,29 @@ export function QuizRunner({
   // --- inicio (en línea) ---------------------------------------------------
   if (fase === 'inicio') {
     return (
-      <Card className="flex h-full flex-col p-6 text-center">
-        <p className="text-3xl">{aprobado ? '🏆' : '🧠'}</p>
+      <Card className="flex flex-col items-center p-6 text-center sm:p-8">
+        <p className="text-4xl">{aprobado ? '🏆' : '🧠'}</p>
         <h2 className="mt-2 font-display text-lg font-bold">
           {aprobado ? `${titulo} · superado` : titulo}
         </h2>
-        <div className="mt-auto pt-5">
-          <div className="flex flex-wrap justify-center gap-3">
-            <Button onClick={empezar} disabled={loading}>
-              {loading ? 'Preparando…' : aprobado ? 'Repetir' : 'Empezar'}
-            </Button>
-            {aprobado && nextHref ? (
-              <Link href={nextHref} className={buttonStyles('ghost', 'md')}>
-                {nextLabel}
-              </Link>
-            ) : null}
-          </div>
-          {error ? <p className="mt-3 text-sm font-semibold text-bad">{error}</p> : null}
+        <p className="mx-auto mt-1.5 max-w-xs text-sm text-muted">
+          {aprobado
+            ? 'Ya lo dominas. Puedes repetirlo cuando quieras para reforzar.'
+            : `${num} pregunta${num === 1 ? '' : 's'} a pantalla completa. Con un 70% o más lo apruebas${
+                nextHref ? ' y desbloqueas el siguiente tema' : ''
+              }.`}
+        </p>
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <Button onClick={empezar} disabled={loading}>
+            {loading ? 'Preparando…' : aprobado ? 'Repetir quiz' : 'Empezar quiz'}
+          </Button>
+          {aprobado && nextHref ? (
+            <Link href={nextHref} className={buttonStyles('ghost', 'md')}>
+              {nextLabel}
+            </Link>
+          ) : null}
         </div>
+        {error ? <p className="mt-3 text-sm font-semibold text-bad">{error}</p> : null}
       </Card>
     )
   }

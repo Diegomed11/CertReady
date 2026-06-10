@@ -1,0 +1,7 @@
+# Generado por Next / herramientas
+.next
+node_modules
+
+# Escenas 3D del landing: código del diseño (hecho en claude.ai), se versiona
+# tal cual sin reformatear.
+components/landing3d

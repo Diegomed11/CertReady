@@ -61,3 +61,6 @@ Thumbs.db
 
 # Entorno local de desarrollo (scripts/dev-up.ps1) --------------------------
 .devlogs/
+
+# Carpeta scratch de diseños (export de claude.ai); el diseño ya vive en web/.
+/temporal/

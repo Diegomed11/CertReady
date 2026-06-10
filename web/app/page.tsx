@@ -1,7 +1,6 @@
 import Link from 'next/link'
 
-import { FeatureMedia } from '@/components/feature-media'
-import { HeroMedia } from '@/components/hero-media'
+import { LandingScene } from '@/components/landing-scene'
 import { buttonStyles } from '@/components/ui/button'
 import { Container } from '@/components/ui/container'
 import { SectionLabel } from '@/components/ui/section-label'
@@ -85,9 +84,8 @@ export default async function HomePage() {
         {/* Hero */}
         <Container className="grid items-center gap-8 py-12 lg:grid-cols-[1.25fr_1fr] lg:gap-12 lg:py-20">
           <div className="w-full lg:-ml-6">
-            {/* La animación vive en HeroMedia: usa /hero.webm o /hero.mp4 si existen,
-                y si no, cae al emoji. Deja el vídeo en web/public/. */}
-            <HeroMedia />
+            {/* Escena 3D (Three.js); cae a la ilustración SVG si no hay WebGL. */}
+            <LandingScene name="hero" hero className="aspect-[16/10] w-full" />
           </div>
 
           <div className="text-center lg:text-left">
@@ -132,8 +130,11 @@ export default async function HomePage() {
                     </ul>
                   </div>
                   <div className={mediaRight ? '' : 'lg:order-1'}>
-                    {/* Animación de la sección: /public/features/{clave}.webm|mp4. */}
-                    <FeatureMedia name={f.key} emoji={f.emoji} alt={f.label} />
+                    {/* Escena 3D de la sección; cae a la ilustración SVG sin WebGL. */}
+                    <LandingScene
+                      name={f.key}
+                      className="mx-auto aspect-[4/3] w-full max-w-[420px]"
+                    />
                   </div>
                 </div>
               )

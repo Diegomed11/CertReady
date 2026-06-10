@@ -904,3 +904,79 @@ guías ni preguntas reales de examen — regla de marcas).
 **Siguiente:** verificación en vivo de `/progreso` con el stack completo; opcional
 limpiar la sesión finalizada antigua con UUID como certificación (data de prueba
 pre-slug). Sigue pendiente el despliegue AWS (diferido) y Fase 6 (móvil) / Fase 7.
+
+---
+
+## 2026-06-10 · Landing — ilustraciones de marca en SVG (reemplazo de los vídeos 3D)
+
+**Contexto:** los visuales del landing eran **6 vídeos 3D pre-renderizados**
+(`hero` + 5 secciones, ~5 MB) que no convencían (look "3D genérico de IA"). Se
+evaluó usar el conector de Canva ("Claude design"), pero genera **gráficos
+estáticos**, no animación; no encaja para esto.
+
+**Hecho:**
+- **`components/illustrations.tsx`** (nuevo, server component): 6 escenas **SVG
+  originales** dibujadas en código, con la paleta azul→morado y movimiento sutil
+  (flotar, dibujar el trazo, barras que suben, destellos). Una por sección: ruta
+  de aprendizaje + birrete (hero), diploma con sello (certificaciones), libro
+  abierto (estudio), tarjeta de quiz con cronómetro (exámenes), editor de código
+  con tests en verde (entrevistas) y panel con medidor 72% (progreso).
+- **`globals.css`**: keyframes `il-float/il-pulse/il-rise/il-draw`, todas
+  **desactivadas bajo `prefers-reduced-motion`**.
+- **`app/page.tsx`**: usa `<Illustration name=…>` en hero y secciones.
+- Se eliminaron `hero-media.tsx`, `feature-media.tsx` y los **18 archivos** de
+  vídeo/imagen de `public/` (≈5 MB menos de assets).
+
+**Decisión:** ilustraciones **en código** (SVG) en vez de vídeo o imágenes de
+Canva — nítidas a cualquier tamaño, peso mínimo, temáticas a la marca,
+accesibles, y sin logos oficiales (íconos genéricos: nube, escudo, `</>`,
+birrete), conforme a la regla de marcas.
+
+**Seguimiento (mismo día):** a petición del responsable (quiere diseñar él las
+imágenes en claude.ai), se añadió **`components/landing-art.tsx`**: detecta un
+archivo propio en `public/landing/<seccion>.{svg,webp,png,avif,jpg}` y, si existe,
+lo usa en vez de la SVG (respaldo si falta). Guía de tamaños/nombres y prompts en
+`web/public/landing/README.md`. El landing ahora usa `LandingArt` en lugar de
+`Illustration`.
+
+**Verificación:** `npm run check` + `npm run build` en verde. Las 6 ilustraciones
+revisadas en vivo con el preview (build de producción): hero, certificaciones,
+estudio, exámenes, entrevistas y progreso renderizan correctamente, sin errores de
+consola. El landing no depende del backend (solo lee la sesión), así que se validó
+de forma aislada.
+
+---
+
+## 2026-06-10 · Landing — escenas 3D (Three.js) hechas en claude.ai, integradas
+
+**Contexto:** el responsable diseñó en **claude.ai** un landing 3D propio
+(Three.js, misma estructura/copys que el actual) y lo dejó en una carpeta
+`temporal/`. Pidió integrarlo. Supera el enfoque de imágenes del paso anterior.
+
+**Hecho:**
+- Dependencia **`three@0.160`** (+ `@types/three`); `tsconfig` con `allowJs`/
+  `checkJs:false` para los módulos del diseño.
+- **`components/landing3d/`**: `three-helpers.js` (clase `Scene3D` + materiales
+  toon, helpers) y `scenes.js` (6 builders: medallón hero, certificaciones,
+  estudio, exámenes, entrevistas, progreso) — el código del diseño, versionado tal
+  cual (`.prettierignore` para no reformatearlo).
+- **`components/landing-scene.tsx`** (cliente): monta cada escena en su sección;
+  carga `three` de forma **diferida** (solo en el cliente, code-split), respeta
+  `prefers-reduced-motion` (vía `Scene3D`) y **cae a la ilustración SVG**
+  (`illustrations.tsx`) si no hay WebGL.
+- **`app/page.tsx`**: usa `<LandingScene>` en hero (medallón) y las 5 secciones.
+- Se retiró `landing-art.tsx` y `public/landing/` (mecanismo de imágenes,
+  superado); `illustrations.tsx` se conserva como respaldo sin WebGL. La carpeta
+  scratch `temporal/` quedó en `.gitignore` (el diseño ya vive en `web/`).
+
+**Decisión:** integración Three.js real (no vídeo ni imágenes). `three` queda en
+un chunk diferido, así que la página `/` no engorda su First Load (~110 kB) ni
+afecta a otras rutas. SVG como degradación elegante.
+
+**Verificación:** `npm run check` + `npm run build` en verde; `three` sale como
+chunk aparte. En vivo (preview, build de producción): los **6 canvas** se montan,
+WebGL disponible, **sin errores** de consola ni de servidor; las escenas en
+viewport renderizan contenido 3D real de marca (las de abajo cargan al entrar en
+pantalla, por el render perezoso de `Scene3D`). Nota: el screenshot del preview no
+captura por la animación WebGL continua (limitación de la herramienta), no es un
+fallo de la página.

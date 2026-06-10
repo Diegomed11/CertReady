@@ -13,7 +13,9 @@ unitarias y de integración), y la web (patrón BFF) se verificó de extremo a
 extremo con el stack completo levantado: login OIDC, inscripción y panel del
 estudiante. El despliegue en AWS está escrito en Terraform y validado, pero
 pospuesto de forma deliberada hasta disponer de cuenta; el desarrollo ocurre por
-completo en local. El siguiente paso es la fase 2.
+completo en local. Hoy el backend de las Fases 1–5 está completo y, sobre él, el
+**frontend de la experiencia de estudio SAA-C03** (ruta de aprendizaje, simulacro
+con formato real y progreso) está construido y verificado.
 
 ## Completado
 
@@ -65,8 +67,8 @@ elige varias certificaciones y ve su panel.
   local (creación de preguntas, examen sin fuga de respuestas, calificación,
   repaso, control de reintento).
 
-Pendiente de la fase: el **frontend** (estudiar, presentar simulacro, repasar),
-pospuesto por decisión hasta hacer un pase de diseño único más adelante.
+El **frontend** de esta fase ya está construido (ver "Frontend — experiencia de
+estudio SAA-C03" más abajo): ruta de estudio, simulacro con formato real y repaso.
 
 ## Fase 3 — Entrevistas y juez de código (backend construido)
 
@@ -116,11 +118,33 @@ Verificado: `ruff`/`black`/`pytest` (modelo puro); integración con ClickHouse
 (readiness y probabilidad sensatas, 404 sin historial). La integración en el panel
 del estudiante (frontend) queda diferida.
 
+## Frontend — experiencia de estudio SAA-C03 (construido)
+
+Se retomó el frontend para hacer de la web una preparación real para **AWS
+Solutions Architect Associate (SAA-C03)**, con contenido **original** y **sin
+UUIDs visibles** (clave canónica = slug):
+
+- **Servicio `progress`** (Go + PostgreSQL, nuevo): avance de estudio por tema
+  (lecciones leídas y quiz aprobado). Endpoints `/v1/progress/*` y
+  `/v1/me/progress`.
+- **Estudiar como ruta de aprendizaje** (tipo Duolingo): los **12 temas**
+  agrupados por los **4 dominios oficiales** (Seguridad 30%, Resiliencia 26%,
+  Rendimiento 24%, Costos 20%), con estados bloqueado/disponible/completado;
+  aprobar el quiz de un tema desbloquea el siguiente. El **quiz va aislado a
+  pantalla completa** (el material no se ve mientras se responde).
+- **Exámenes — simulacro con formato real**: 65 preguntas, aprobación 720/1000
+  (≈72%), opción múltiple y respuesta múltiple, **muestreo ponderado por dominio**
+  (30/26/24/20) y **rotatorio** (`$sample`), con **desglose por sección** al
+  terminar. El historial muestra solo simulacros.
+- **Progreso**: avance real (temas aprobados, mejor/último simulacro, avance por
+  dominio) calculado con los servicios que corren a $0; la estimación IRT del DSS
+  es un extra opcional y ya no es requisito para ver el avance.
+
 ## En curso / inmediato
 
-Backend de las Fases 1–5 completo y verificado (todo en local, sin costo). El
-siguiente paso natural es retomar el **frontend** (panel, dashboards y readiness de
-las fases 1–5) con un pase de diseño, o avanzar a **Fase 6 (móvil)** / **Fase 7
+Backend de las Fases 1–5 y el frontend de la experiencia de estudio SAA-C03
+completos y verificados (todo en local, sin costo). Pasos naturales: dashboards de
+analítica (Cube/DSS) en la web, **Fase 6 (móvil Flutter)** o **Fase 7
 (endurecimiento, pentesting y producción)**.
 
 ## Planeado

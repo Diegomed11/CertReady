@@ -817,3 +817,90 @@ estudiante (frontend) diferida. Despliegue AWS diferido.
 **Siguiente:** retomar el **frontend** (panel + dashboards + readiness de las
 fases 1–5) con un pase de diseño, o **Fase 6 (móvil Flutter)** / **Fase 7
 (endurecimiento, pentesting y producción)**.
+
+---
+
+## 2026-06-10 · Frontend — experiencia de estudio SAA-C03 (ruta + simulacro + progreso)
+
+**Contexto:** se retomó el frontend para convertir la web en una experiencia de
+preparación real para **AWS Solutions Architect Associate (SAA-C03)**: ruta de
+aprendizaje tipo Duolingo, simulacro con el formato oficial y una vista de
+progreso útil. Restricciones vigentes: **$0 / solo Free Tier**, **sin UUIDs
+visibles** en la UI, y **contenido 100% original** (sin copiar documentación,
+guías ni preguntas reales de examen — regla de marcas).
+
+**Hecho — Estudiar como ruta de aprendizaje + servicio `progress`:**
+- **`services/progress`** (nuevo servicio Go, espejo de `enrollments`: Postgres +
+  OIDC, reusa `libs/platform`; puerto `:18093`, esquema `progress`). Tablas
+  `progress.lecciones` y `progress.temas` (quiz por tema, aprobado = ≥70).
+  Endpoints `POST /v1/progress/lessons`, `POST /v1/progress/quizzes`,
+  `GET /v1/me/progress?certificacion=<slug>`, salud/ready.
+- **`exams` — quiz por tema/sección:** `Muestrear` acepta `temas []string`
+  (filtro `$in`); `CrearSesion` acepta `tema`, `temas` y `grupos`.
+- **Web:** `/estudiar` (certificaciones inscritas por **nombre**, con progreso),
+  `/estudiar/[cert]` (ruta de temas tipo camino con estados bloqueado/disponible/
+  completado), `/estudiar/[cert]/[tema]` (lecciones + quiz que **desbloquea** el
+  siguiente tema). Componente `learning-path.tsx`. **Clave canónica = slug**
+  (`aws-saa`, `iam`), nunca UUID; el BFF resuelve el UUID de inscripción → nombre
+  vía catalog. Se quitaron los UUIDs del Panel/Estudiar/Exámenes/Progreso.
+- **Quiz aislado a pantalla completa** (`quiz-runner.tsx`): el material de estudio
+  queda oculto mientras se responde (antes se veía la respuesta arriba).
+
+**Hecho — Temario reorganizado a los 4 dominios oficiales SAA-C03:**
+- **12 temas** agrupados por dominio con sus pesos oficiales: **Seguridad 30%,
+  Resiliencia 26%, Rendimiento 24%, Costos 20%** (`Tema.dominio` + `orden`).
+- Lecciones markdown **originales** enfocadas a lo que sí cae en el examen, con
+  notas `> En el examen:`; seed (`seed-temas.sql` + `seed-mongo.py`) reescrito a
+  slugs y con limpieza de huérfanos (idempotente).
+
+**Hecho — Quiz por sección y simulacro con formato real:**
+- **Quiz de repaso por sección (dominio)**: muestrea preguntas a través de los
+  temas de un dominio.
+- **Simulacro formato SAA-C03**: **65 preguntas**, aprobación **720/1000 ≈ 72%**,
+  dos tipos de pregunta (**opción múltiple** y **respuesta múltiple** de varias
+  correctas), y **desglose de desempeño por sección** al terminar. El historial de
+  Exámenes muestra **solo simulacros** (los quizzes de estudio no se listan ahí).
+- **Muestreo ponderado por dominio (30/26/24/20) y rotatorio**: `exams` muestrea
+  por **grupos** (una cuota por dominio) con `$sample` (aleatorio); el BFF calcula
+  el reparto (`gruposPonderados` → `createSimulacroPonderado`) y mezcla las
+  preguntas. Banco ampliado a **100 preguntas** para que la rotación sea real
+  (sobre todo en Costos y Resiliencia). Verificado: 65 preg → Seg 19 · Res 17 ·
+  Rend 16 · Cost 13, y dos intentos seguidos comparten ~40/65 (rotan ~25).
+
+**Hecho — Arreglo de la vista de Progreso (causa raíz):**
+- **Síntoma reportado:** en `/progreso`, al elegir la certificación "no abría
+  nada", y un simulacro entregado "no se mostraba".
+- **Causa:** la página dependía 100% del servicio **DSS (ClickHouse + IRT)**, que
+  `dev-up.ps1` **no levanta** en el stack local de free-tier. Con el DSS apagado,
+  `getReadiness` devolvía `null` y la página mostraba siempre "sin datos", aunque
+  el simulacro **sí estaba persistido** (confirmado en Postgres).
+- **Fix:** se reescribió `/progreso` para mostrar el **avance real de los
+  servicios que sí corren** — estudio (temas con quiz aprobado, vía `progress`) y
+  simulacros (mejor/último puntaje, total, umbral 72%, vía `exams`), más el
+  **avance por dominio**. La estimación IRT del DSS pasa a ser un **extra
+  opcional**: solo se muestra si el servicio está disponible y ya no bloquea la
+  página.
+- **Limpieza de datos:** se borraron **10 sesiones "en curso"** de prueba (Dev
+  User) que ensuciaban el historial; las finalizadas se conservaron.
+
+**Decisiones:**
+- **Slug como clave canónica** de contenido/exámenes/progreso (mata los UUIDs en
+  la UI y desacopla del id de inscripción).
+- **Progreso no debe depender del DSS**: el avance básico se calcula con servicios
+  que corren a $0; el análisis IRT es un plus cuando el stack OLAP está encendido.
+- **Pesos y rotación reales** en el simulacro para que practicar se parezca al
+  examen y no repita siempre las mismas preguntas.
+
+**Verificación:**
+- Web: `npm run check` (typecheck + lint + formato + tests) y `npm run build`
+  en verde tras cada cambio, incluido el fix de Progreso.
+- `exams`/`progress`: `gofmt`/`go vet`/`go test` en verde; binarios reconstruidos.
+- Ponderación y rotación del simulacro comprobadas vía API; aislamiento del quiz,
+  ruta de Estudiar y desglose por sección verificados con el preview.
+- Progreso: el fix se validó por typecheck/build y contra los datos reales en
+  Postgres (simulacro finalizado presente); la verificación en navegador en vivo
+  queda para cuando el stack backend esté levantado.
+
+**Siguiente:** verificación en vivo de `/progreso` con el stack completo; opcional
+limpiar la sesión finalizada antigua con UUID como certificación (data de prueba
+pre-slug). Sigue pendiente el despliegue AWS (diferido) y Fase 6 (móvil) / Fase 7.

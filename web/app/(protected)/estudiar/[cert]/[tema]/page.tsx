@@ -10,8 +10,9 @@ import { SectionLabel } from '@/components/ui/section-label'
 import { getCertification, getMyProgress, listContent, listTopics } from '@/lib/api/services'
 import { requireSession } from '@/lib/auth/guard'
 
+import { QuizRunner } from '@/components/quiz-runner'
+
 import { MarkRead } from './mark-read'
-import { TemaQuiz } from './tema-quiz'
 
 /**
  * Tema de la ruta: sus lecciones (markdown, marcables como leídas) y el mini-quiz
@@ -95,7 +96,16 @@ export default async function TemaPage({
         </div>
       )}
 
-      <TemaQuiz cert={cert.slug} tema={tema.slug} yaAprobado={yaAprobado} siguiente={siguiente} />
+      <QuizRunner
+        cert={cert.slug}
+        temas={[tema.slug]}
+        progressTema={tema.slug}
+        num={4}
+        titulo="Pon a prueba lo aprendido"
+        yaAprobado={yaAprobado}
+        nextHref={siguiente ? `/estudiar/${cert.slug}/${siguiente}` : null}
+        nextLabel="Siguiente tema →"
+      />
     </div>
   )
 }

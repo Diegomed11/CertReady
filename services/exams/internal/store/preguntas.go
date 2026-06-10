@@ -31,15 +31,16 @@ func (s *PreguntasStore) PingMongo(ctx context.Context) error {
 // Parameters
 //
 //	certificacion : certificación a la que pertenecen las preguntas.
-//	tema          : si no está vacío, acota el muestreo a ese tema (quiz por tema).
+//	temas         : si no está vacío, acota el muestreo a esos temas (quiz por tema
+//	                con un elemento; quiz de sección/dominio con varios).
 //	n             : número máximo de preguntas a devolver.
-func (s *PreguntasStore) Muestrear(ctx context.Context, certificacion, tema string, n int) ([]exams.Pregunta, error) {
+func (s *PreguntasStore) Muestrear(ctx context.Context, certificacion string, temas []string, n int) ([]exams.Pregunta, error) {
 	filtro := bson.D{
 		{Key: "certificacion", Value: certificacion},
 		{Key: "tipo", Value: "opcion_multiple"},
 	}
-	if tema != "" {
-		filtro = append(filtro, bson.E{Key: "tema", Value: tema})
+	if len(temas) > 0 {
+		filtro = append(filtro, bson.E{Key: "tema", Value: bson.M{"$in": temas}})
 	}
 	pipeline := mongo.Pipeline{
 		{{Key: "$match", Value: filtro}},

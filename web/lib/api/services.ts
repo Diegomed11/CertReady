@@ -185,10 +185,11 @@ export async function listMyExams(
   return data ?? listaVacia<SesionExamen>()
 }
 
-/** Cuerpo para iniciar un simulacro o un quiz de tema (con `tema`). */
+/** Cuerpo para iniciar un simulacro, un quiz de tema (`tema`) o de sección (`temas`). */
 export interface NuevaSesionExamen {
   certificacion: string
   tema?: string
+  temas?: string[]
   num_preguntas?: number
   modo?: 'simulacro' | 'practica'
 }

@@ -504,7 +504,124 @@ SYLLABUS = [
     ),
 ]
 
-LETRAS = ["a", "b", "c", "d"]
+LETRAS = ["a", "b", "c", "d", "e"]
+
+# Preguntas adicionales para un simulacro completo (incluye respuesta múltiple).
+# (tema, id, tipo, dificultad, enunciado, [opciones], [índices correctos], explicación).
+EXTRA = [
+    ("fundamentos", "q_fundamentos_5", "opcion_multiple", "media",
+     "¿Qué servicio agrupa y factura varias cuentas de AWS de forma centralizada?",
+     ["AWS Organizations", "Una VPC", "Una Región", "Un grupo de IAM"], [0],
+     "**AWS Organizations** agrupa cuentas y centraliza facturación y gobierno."),
+    ("fundamentos", "q_fundamentos_6", "respuesta_multiple", "dificil",
+     "¿Cuáles son pilares del Well-Architected Framework? (elige 2)",
+     ["Seguridad", "Optimización de costos", "Velocidad de internet", "Marketing", "Color de marca"],
+     [0, 1], "Dos de los 6 pilares son **seguridad** y **optimización de costos**."),
+    ("iam", "q_iam_5", "opcion_multiple", "media",
+     "Para impedir que cualquier cuenta de la organización use una Región concreta, ¿qué usas?",
+     ["Una SCP en Organizations", "Un Security Group", "Una NACL", "MFA"], [0],
+     "Una **SCP** fija el techo de permisos de toda la organización."),
+    ("iam", "q_iam_6", "respuesta_multiple", "dificil",
+     "¿Qué prácticas mejoran la seguridad de la cuenta? (elige 2)",
+     ["Activar MFA", "Usar la cuenta raíz a diario", "Aplicar mínimo privilegio",
+      "Compartir claves de acceso", "Desactivar CloudTrail"], [0, 2],
+     "**MFA** y **mínimo privilegio** refuerzan la seguridad; lo demás la debilita."),
+    ("redes-vpc", "q_redes_vpc_5", "opcion_multiple", "media",
+     "¿Qué permite que instancias en subred privada salgan a internet sin ser accesibles desde fuera?",
+     ["Internet Gateway", "NAT Gateway", "VPC peering", "WAF"], [1],
+     "El **NAT Gateway** da salida a internet a subredes privadas (no entrada)."),
+    ("redes-vpc", "q_redes_vpc_6", "respuesta_multiple", "dificil",
+     "¿Qué servicios ayudan a proteger una aplicación web pública? (elige 2)",
+     ["AWS WAF", "AWS Shield", "Amazon EFS", "Amazon EMR", "Amazon Athena"], [0, 1],
+     "**WAF** (capa 7) y **Shield** (DDoS) protegen apps web públicas."),
+    ("seguridad-datos", "q_seguridad_datos_5", "opcion_multiple", "media",
+     "¿Qué servicio cifra/descifra objetos de S3 con una llave gestionada y auditada?",
+     ["KMS", "Cognito", "Route 53", "Glue"], [0],
+     "**KMS** gestiona las llaves de cifrado e integra con S3."),
+    ("seguridad-datos", "q_seguridad_datos_6", "respuesta_multiple", "dificil",
+     "¿Qué cubre la protección de datos en una arquitectura? (elige 2)",
+     ["Cifrado en reposo", "Cifrado en tránsito", "Aumentar la latencia", "Borrar los logs",
+      "Deshabilitar backups"], [0, 1],
+     "Proteger datos = cifrado **en reposo** y **en tránsito** (entre otros)."),
+    ("desacoplamiento", "q_desacoplamiento_5", "opcion_multiple", "media",
+     "Una API serverless necesita un punto de entrada gestionado con autenticación y límites de tasa. ¿Qué usas?",
+     ["API Gateway", "NAT Gateway", "EFS", "KMS"], [0],
+     "**API Gateway** gestiona las APIs (auth, throttling) frente a Lambda."),
+    ("desacoplamiento", "q_desacoplamiento_6", "respuesta_multiple", "dificil",
+     "¿Qué opciones permiten ejecutar contenedores en AWS? (elige 2)",
+     ["Amazon ECS", "Amazon EKS", "Amazon S3", "Amazon Route 53", "AWS KMS"], [0, 1],
+     "**ECS** y **EKS** orquestan contenedores (Fargate los ejecuta sin servidores)."),
+    ("alta-disponibilidad", "q_alta_disponibilidad_5", "opcion_multiple", "media",
+     "¿Qué métrica define cuántos datos puedes permitirte perder en un desastre?",
+     ["RPO", "RTO", "IOPS", "TPS"], [0],
+     "El **RPO** (Recovery Point Objective) define la pérdida de datos aceptable."),
+    ("alta-disponibilidad", "q_alta_disponibilidad_6", "respuesta_multiple", "dificil",
+     "¿Qué elementos mejoran la alta disponibilidad? (elige 2)",
+     ["Despliegue multi-AZ", "Auto Scaling", "Una sola instancia grande",
+      "Cuenta raíz compartida", "Desactivar los health checks"], [0, 1],
+     "**Multi-AZ** y **Auto Scaling** eliminan puntos únicos de fallo."),
+    ("computo", "q_computo_5", "opcion_multiple", "media",
+     "¿Qué servicio ejecuta contenedores sin que administres instancias EC2?",
+     ["AWS Fargate", "Amazon EMR", "Amazon Athena", "AWS Glue"], [0],
+     "**Fargate** ejecuta contenedores de forma serverless."),
+    ("computo", "q_computo_6", "respuesta_multiple", "dificil",
+     "¿Qué opciones de cómputo son serverless? (elige 2)",
+     ["AWS Lambda", "AWS Fargate", "Amazon EC2 dedicada", "Amazon EBS", "Amazon VPC"], [0, 1],
+     "**Lambda** y **Fargate** son cómputo serverless."),
+    ("almacenamiento", "q_almacenamiento_5", "opcion_multiple", "media",
+     "Para throughput secuencial barato (logs, big data), ¿qué tipo de volumen EBS eliges?",
+     ["SSD io2", "HDD st1", "SSD gp3", "Instance Store"], [1],
+     "Los volúmenes **HDD (st1)** dan throughput secuencial barato."),
+    ("almacenamiento", "q_almacenamiento_6", "respuesta_multiple", "dificil",
+     "¿Qué afirmaciones sobre Amazon S3 son correctas? (elige 2)",
+     ["Almacena objetos", "Ofrece 11 nueves de durabilidad", "Es un disco para una sola instancia",
+      "Solo permite acceso por SSH", "Requiere una instancia EC2"], [0, 1],
+     "S3 almacena **objetos** con **11 nueves** de durabilidad."),
+    ("bases-datos", "q_bases_datos_5", "opcion_multiple", "media",
+     "¿Qué servicio agrupa conexiones a RDS, útil con muchas funciones Lambda?",
+     ["RDS Proxy", "DynamoDB", "ElastiCache", "EFS"], [0],
+     "**RDS Proxy** hace pooling de conexiones, ideal con Lambda."),
+    ("bases-datos", "q_bases_datos_6", "respuesta_multiple", "dificil",
+     "¿Qué opciones escalan o aceleran las lecturas de una base de datos? (elige 2)",
+     ["Read replicas", "ElastiCache", "Multi-AZ síncrono", "Un NAT Gateway", "Apagar la base"], [0, 1],
+     "**Read replicas** escalan lecturas y **ElastiCache** las acelera con caché."),
+    ("redes-rendimiento", "q_redes_rendimiento_5", "opcion_multiple", "media",
+     "¿Qué servicio mejora la latencia global de apps TCP/UDP usando la red troncal de AWS?",
+     ["AWS Global Accelerator", "CloudTrail", "Amazon EFS", "Amazon Athena"], [0],
+     "**Global Accelerator** mejora apps no-HTTP por la red troncal (anycast)."),
+    ("redes-rendimiento", "q_redes_rendimiento_6", "respuesta_multiple", "dificil",
+     "¿Qué servicios acercan o aceleran la entrega de contenido/tráfico? (elige 2)",
+     ["Amazon CloudFront", "AWS Global Accelerator", "Amazon SQS", "AWS KMS", "Amazon Macie"], [0, 1],
+     "**CloudFront** (CDN) y **Global Accelerator** mejoran la entrega/latencia."),
+    ("datos", "q_datos_5", "opcion_multiple", "media",
+     "¿Qué servicio construye y gobierna lagos de datos sobre S3?",
+     ["AWS Lake Formation", "Amazon Cognito", "AWS Shield", "Amazon Route 53"], [0],
+     "**Lake Formation** construye y gobierna lagos de datos sobre S3."),
+    ("datos", "q_datos_6", "respuesta_multiple", "dificil",
+     "¿Qué servicios sirven para analizar o transformar datos? (elige 2)",
+     ["Amazon Athena", "AWS Glue", "Amazon SQS", "AWS WAF", "Amazon Cognito"], [0, 1],
+     "**Athena** consulta S3 con SQL y **Glue** hace ETL serverless."),
+    ("costos", "q_costos_5", "opcion_multiple", "media",
+     "¿Qué herramienta visualiza y analiza el gasto histórico de AWS?",
+     ["Cost Explorer", "AWS Budgets", "GuardDuty", "X-Ray"], [0],
+     "**Cost Explorer** visualiza y analiza el gasto histórico."),
+    ("costos", "q_costos_6", "respuesta_multiple", "dificil",
+     "¿Qué decisiones reducen costos en una arquitectura? (elige 2)",
+     ["Usar Spot para cargas tolerantes a fallos", "Aplicar ciclos de vida en S3",
+      "Crear más NAT Gateways de los necesarios", "Transferir datos entre regiones sin necesidad",
+      "Sobredimensionar las instancias"], [0, 1],
+     "**Spot** (cargas tolerantes) y **ciclos de vida en S3** reducen costos."),
+]
+
+
+def pregunta_ex(item: tuple) -> dict:
+    tema, _id, tipo, dif, enun, opts, correctos, expl = item
+    opciones = [{"id": LETRAS[i], "texto": t} for i, t in enumerate(opts)]
+    return {
+        "_id": _id, "certificacion": CERT, "tema": tema, "dificultad": dif, "tipo": tipo,
+        "enunciado": enun, "opciones": opciones,
+        "respuesta_correcta": [LETRAS[i] for i in correctos], "explicacion": expl, "tags": [tema],
+    }
 
 
 def material(tema: str, titulo: str, md: str) -> dict:
@@ -615,6 +732,7 @@ def main() -> None:
         materiales.append(material(tema, titulo, md))
         for q in qs:
             preguntas.append(pregunta(tema, q))
+    preguntas.extend(pregunta_ex(e) for e in EXTRA)
 
     def upsert(coll: str, docs: list[dict]) -> None:
         c = db[coll]

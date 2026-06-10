@@ -129,9 +129,6 @@ export function QuizRunner({
         <h2 className="mt-2 font-display text-lg font-bold">
           {aprobado ? `${titulo} · superado` : titulo}
         </h2>
-        <p className="mx-auto mt-1 max-w-md text-sm text-muted">
-          {num} preguntas a pantalla completa (sin ver el material). Con un 70% o más lo apruebas.
-        </p>
         <div className="mt-auto pt-5">
           <div className="flex flex-wrap justify-center gap-3">
             <Button onClick={empezar} disabled={loading}>

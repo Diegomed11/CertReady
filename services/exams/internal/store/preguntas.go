@@ -37,7 +37,7 @@ func (s *PreguntasStore) PingMongo(ctx context.Context) error {
 func (s *PreguntasStore) Muestrear(ctx context.Context, certificacion string, temas []string, n int) ([]exams.Pregunta, error) {
 	filtro := bson.D{
 		{Key: "certificacion", Value: certificacion},
-		{Key: "tipo", Value: "opcion_multiple"},
+		{Key: "tipo", Value: bson.M{"$in": []string{"opcion_multiple", "respuesta_multiple"}}},
 	}
 	if len(temas) > 0 {
 		filtro = append(filtro, bson.E{Key: "tema", Value: bson.M{"$in": temas}})

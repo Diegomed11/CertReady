@@ -5,8 +5,8 @@ import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 
-/** Opciones de número de preguntas del simulacro. */
-const TAMANOS = [5, 10, 20]
+/** Opciones de número de preguntas. 65 es el formato real del examen. */
+const TAMANOS = [65, 30, 15]
 
 /**
  * StartExam es el formulario para iniciar un simulacro: elige certificación y
@@ -20,7 +20,7 @@ export function StartExam({
 }) {
   const router = useRouter()
   const [cert, setCert] = useState(certificaciones[0]?.id ?? '')
-  const [num, setNum] = useState(10)
+  const [num, setNum] = useState(65)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -93,9 +93,15 @@ export function StartExam({
         </div>
       </div>
 
+      <p className="text-xs text-faint">
+        El examen real son <strong>65 preguntas</strong> en 130 min y se aprueba con{' '}
+        <strong>720/1000 (≈ 72%)</strong>. Incluye preguntas de opción múltiple y de respuesta
+        múltiple (elige varias).
+      </p>
+
       <div className="flex items-center gap-4">
         <Button onClick={iniciar} disabled={loading || !cert}>
-          {loading ? 'Preparando…' : 'Empezar simulacro'}
+          {loading ? 'Preparando…' : 'Empezar examen'}
         </Button>
         {error ? <span className="text-sm font-semibold text-bad">{error}</span> : null}
       </div>

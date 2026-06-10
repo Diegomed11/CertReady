@@ -47,6 +47,10 @@ export default async function ExamenesPage() {
       return c ? [{ id: c.slug, nombre: c.nombre }] : []
     })
 
+  // Solo los simulacros van al historial; los quizzes de estudio (modo 'practica')
+  // no se listan aquí.
+  const simulacros = historial.data.filter((s) => s.modo === 'simulacro')
+
   return (
     <div className="space-y-10">
       <PageHeader
@@ -66,9 +70,10 @@ export default async function ExamenesPage() {
           </EmptyState>
         ) : (
           <Card className="p-6">
-            <h2 className="font-display text-xl font-semibold">Nuevo simulacro</h2>
+            <h2 className="font-display text-xl font-semibold">Nuevo examen de práctica</h2>
             <p className="mt-1 text-sm text-muted">
-              Elige una certificación y cuántas preguntas quieres responder.
+              Un simulacro con el formato del examen real: preguntas de todos los dominios y
+              desglose de tu desempeño por sección al terminar.
             </p>
             <div className="mt-5">
               <StartExam certificaciones={opciones} />
@@ -79,13 +84,13 @@ export default async function ExamenesPage() {
 
       <section>
         <h2 className="mb-4 font-display text-xl font-semibold">Mi historial</h2>
-        {historial.data.length === 0 ? (
-          <EmptyState title="Aún no has hecho simulacros">
-            Cuando entregues tu primer examen aparecerá aquí, con tu puntaje.
+        {simulacros.length === 0 ? (
+          <EmptyState title="Aún no has hecho exámenes">
+            Cuando entregues tu primer examen de práctica aparecerá aquí, con tu puntaje.
           </EmptyState>
         ) : (
           <ul className="space-y-3">
-            {historial.data.map((s: SesionExamen) => (
+            {simulacros.map((s: SesionExamen) => (
               <li key={s.id}>
                 <Link href={`/examenes/${s.id}`} className="block">
                   <Card interactive className="flex items-center justify-between gap-4 p-4">

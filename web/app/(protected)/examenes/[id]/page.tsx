@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card'
 import { Markdown } from '@/components/ui/markdown'
 import { PageHeader } from '@/components/ui/page-header'
 import { SectionLabel } from '@/components/ui/section-label'
-import { getExamSession } from '@/lib/api/services'
+import { getCertification, getExamSession, listTopics } from '@/lib/api/services'
 import { requireSession } from '@/lib/auth/guard'
 
 import { ExamRunner } from './exam-runner'
@@ -26,17 +26,23 @@ export default async function SesionExamenPage({ params }: { params: Promise<{ i
   if (!rev) notFound()
 
   if (rev.estado === 'en_curso' && rev.preguntas && rev.preguntas.length > 0) {
+    // Mapa tema → dominio para el desglose por sección del resultado.
+    const cert = await getCertification(rev.certificacion, accessToken)
+    const topics = cert ? await listTopics(cert.id, accessToken) : []
+    const temaDominio: Record<string, string> = {}
+    for (const t of topics) if (t.dominio) temaDominio[t.slug] = t.dominio
+
     return (
       <div className="space-y-8">
-        <PageHeader label={<SectionLabel>Simulacro en curso</SectionLabel>} title="Responde" />
-        <ExamRunner sesionId={id} preguntas={rev.preguntas} />
+        <PageHeader label={<SectionLabel>Examen en curso</SectionLabel>} title="Responde" />
+        <ExamRunner sesionId={id} preguntas={rev.preguntas} temaDominio={temaDominio} />
       </div>
     )
   }
 
   const r = rev.resultado
   const puntaje = rev.puntaje ?? r?.puntaje ?? 0
-  const aprobado = puntaje >= 70
+  const aprobado = puntaje >= 72
 
   return (
     <div className="mx-auto max-w-3xl space-y-8">
@@ -45,9 +51,16 @@ export default async function SesionExamenPage({ params }: { params: Promise<{ i
       </Link>
 
       <Card className="overflow-hidden">
-        <div className="bg-gradient-brand px-6 py-8 text-center text-white">
-          <p className="font-display text-6xl font-bold">{Math.round(puntaje)}</p>
-          <p className="mt-1 text-sm font-semibold opacity-90">de 100 puntos</p>
+        <div
+          className={`px-6 py-8 text-center text-white ${aprobado ? 'bg-good' : 'bg-gradient-brand'}`}
+        >
+          <p className="font-display text-6xl font-bold">
+            {Math.round(puntaje)}
+            <span className="text-2xl opacity-80">%</span>
+          </p>
+          <p className="mt-1 text-sm font-semibold opacity-90">
+            {aprobado ? 'Aprobado' : 'Reprobado'} · se aprueba con 72%
+          </p>
         </div>
         <div className="p-6 text-center">
           <p className="font-display text-xl font-bold text-ink">

@@ -16,7 +16,7 @@ import (
 const (
 	defaultLimit  = 20
 	maxLimit      = 100
-	maxPreguntas  = 50
+	maxPreguntas  = 65
 	minPreguntas  = 1
 	modoSimulacro = "simulacro"
 	modoPractica  = "practica"

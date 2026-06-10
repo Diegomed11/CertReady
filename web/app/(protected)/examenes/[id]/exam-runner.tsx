@@ -28,9 +28,11 @@ function mmss(total: number): string {
 export function ExamRunner({
   sesionId,
   preguntas,
+  temaDominio = {},
 }: {
   sesionId: string
   preguntas: PreguntaPublica[]
+  temaDominio?: Record<string, string>
 }) {
   const [idx, setIdx] = useState(0)
   const [sel, setSel] = useState<Record<string, string[]>>({})
@@ -83,7 +85,7 @@ export function ExamRunner({
   }, [restante])
 
   if (resultado) {
-    return <Repaso preguntas={preguntas} resultado={resultado} />
+    return <Repaso preguntas={preguntas} resultado={resultado} temaDominio={temaDominio} />
   }
 
   const p = preguntas[idx]
@@ -218,23 +220,45 @@ export function ExamRunner({
 function Repaso({
   preguntas,
   resultado,
+  temaDominio,
 }: {
   preguntas: PreguntaPublica[]
   resultado: ResultadoExamen
+  temaDominio: Record<string, string>
 }) {
   const porRef = new Map(resultado.resultados.map((r) => [r.ref, r]))
-  const aprobado = resultado.puntaje >= 70
+  const aprobado = resultado.puntaje >= 72
+
+  // Desempeño por sección (dominio): correctas/total por dominio, en orden de aparición.
+  const secciones: { dominio: string; correctas: number; total: number }[] = []
+  for (const p of preguntas) {
+    const dom = temaDominio[p.tema] ?? 'General'
+    let s = secciones.find((x) => x.dominio === dom)
+    if (!s) {
+      s = { dominio: dom, correctas: 0, total: 0 }
+      secciones.push(s)
+    }
+    s.total += 1
+    if (porRef.get(p.ref)?.correcto) s.correctas += 1
+  }
 
   return (
     <div className="mx-auto max-w-3xl space-y-8">
       <Card className="overflow-hidden">
-        <div className="bg-gradient-brand px-6 py-8 text-center text-white">
-          <p className="font-display text-6xl font-bold">{Math.round(resultado.puntaje)}</p>
-          <p className="mt-1 text-sm font-semibold opacity-90">de 100 puntos</p>
+        <div
+          className={`px-6 py-8 text-center text-white ${aprobado ? 'bg-good' : 'bg-gradient-brand'}`}
+        >
+          <p className="font-display text-6xl font-bold">
+            {Math.round(resultado.puntaje)}
+            <span className="text-2xl opacity-80">%</span>
+          </p>
+          <p className="mt-1 text-sm font-semibold opacity-90">
+            {aprobado ? 'Aprobado' : 'Reprobado'} · se aprueba con 72%
+          </p>
         </div>
         <div className="p-6 text-center">
           <p className="font-display text-xl font-bold text-ink">
-            {aprobado ? '¡Bien hecho! 🎉' : 'Sigue practicando 💪'}
+            {aprobado ? '¡Aprobaste! 🎉' : 'Sigue practicando 💪'}
           </p>
           <p className="mt-1 text-sm text-muted">
             Acertaste {resultado.correctas} de {resultado.total} preguntas.
@@ -249,6 +273,35 @@ function Repaso({
           </div>
         </div>
       </Card>
+
+      {secciones.length > 1 ? (
+        <Card className="p-6">
+          <h2 className="font-display text-lg font-semibold">Desempeño por sección</h2>
+          <p className="mt-1 text-sm text-muted">
+            El examen real usa puntaje compensatorio: solo cuenta el total. Esto resalta tus
+            fortalezas y debilidades por dominio.
+          </p>
+          <div className="mt-4 space-y-3">
+            {secciones.map((s) => {
+              const pct = s.total > 0 ? Math.round((s.correctas / s.total) * 100) : 0
+              const color = pct >= 72 ? 'bg-good' : pct >= 50 ? 'bg-warn' : 'bg-bad'
+              return (
+                <div key={s.dominio}>
+                  <div className="flex items-center justify-between gap-3 text-sm">
+                    <span className="font-semibold text-ink">{s.dominio}</span>
+                    <span className="font-mono text-xs text-muted">
+                      {s.correctas}/{s.total} · {pct}%
+                    </span>
+                  </div>
+                  <div className="mt-1.5 h-2.5 w-full overflow-hidden rounded-full bg-sunken">
+                    <div className={`h-full rounded-full ${color}`} style={{ width: `${pct}%` }} />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </Card>
+      ) : null}
 
       <div className="space-y-5">
         <h2 className="font-display text-xl font-semibold">Repaso</h2>

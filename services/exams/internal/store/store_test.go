@@ -88,7 +88,7 @@ func TestPreguntasMuestrear(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	got, err := st.Muestrear(ctx, "aws-saa", 2)
+	got, err := st.Muestrear(ctx, "aws-saa", "", 2)
 	if err != nil {
 		t.Fatalf("muestrear: %v", err)
 	}

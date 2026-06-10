@@ -53,8 +53,12 @@ func (n NuevaPregunta) Validar() []string {
 }
 
 // CrearSesion son los parámetros para iniciar un simulacro.
+//
+// Tema es opcional: si se indica, la sesión se acota a las preguntas de ese tema
+// (mini-quiz por tema); si está vacío, se muestrea toda la certificación.
 type CrearSesion struct {
 	Certificacion string `json:"certificacion"`
+	Tema          string `json:"tema"`
 	NumPreguntas  int    `json:"num_preguntas"`
 	Modo          string `json:"modo"`
 }

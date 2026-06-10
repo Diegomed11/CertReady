@@ -61,6 +61,7 @@ Build 'services\enrollments' 'build\enrollments.exe' './cmd/server'
 Build 'services\content'     'build\content.exe'     './cmd/server'
 Build 'services\exams'       'build\exams.exe'       './cmd/server'
 Build 'services\problems'    'build\problems.exe'    './cmd/server'
+Build 'services\progress'    'build\progress.exe'    './cmd/server'
 Build 'judge'                'build\judge.exe'       './cmd/server'
 
 Write-Host 'Aplicando migraciones (Postgres)...'
@@ -78,10 +79,18 @@ foreach ($svc in @('exams', 'judge')) {
   Push-Location (Join-Path $root (@{ exams = 'services\exams'; judge = 'judge' }[$svc]))
   try { go run ./cmd/migrate | Out-Null } finally { Pop-Location }
 }
+# progress guarda el avance de estudio por tema en Postgres (esquema progress).
+$env:PROGRESS_DATABASE_URL = $dsn
+Push-Location (Join-Path $root 'services\progress')
+try { go run ./cmd/migrate | Out-Null } finally { Pop-Location }
 
 Write-Host 'Sembrando una certificacion de ejemplo (catalog)...'
 $env:PGPASSWORD = ''
 & $psql -U postgres -h localhost -d certready_dev -c "insert into catalog.certificaciones (slug,nombre,proveedor,nivel,descripcion) values ('aws-saa','AWS Solutions Architect Associate','AWS','associate','Diseno en AWS') on conflict (slug) do nothing;" | Out-Null
+
+Write-Host 'Sembrando el temario real (temas de aws-saa en catalog)...'
+$env:PGCLIENTENCODING = 'UTF8'
+& $psql -U postgres -h localhost -d certready_dev -f (Join-Path $root 'scripts\seed-temas.sql') | Out-Null
 
 Write-Host 'Sembrando datos demo en MongoDB (material, preguntas, problemas, Q&A)...'
 $py = Join-Path $root 'data\.venv\Scripts\python.exe'
@@ -105,6 +114,8 @@ $env:PROBLEMS_ADDR = ':18096'; $env:PROBLEMS_MONGO_URI = $mongo; $env:PROBLEMS_M
 $env:PROBLEMS_OIDC_ISSUER = 'http://localhost:9099'; $env:PROBLEMS_OIDC_AUDIENCE = 'certready-web'
 $env:JUDGE_ADDR = ':18097'; $env:JUDGE_MONGO_URI = $mongo; $env:JUDGE_MONGO_DB = 'certready'
 $env:JUDGE_OIDC_ISSUER = 'http://localhost:9099'; $env:JUDGE_OIDC_AUDIENCE = 'certready-web'
+$env:PROGRESS_ADDR = ':18093'; $env:PROGRESS_DATABASE_URL = $dsn
+$env:PROGRESS_OIDC_ISSUER = 'http://localhost:9099'; $env:PROGRESS_OIDC_AUDIENCE = 'certready-web'
 
 Write-Host 'Arrancando emisor OIDC...'
 Start-Process -FilePath "$root\tools\oidc-mock\build\oidc-mock.exe" -RedirectStandardOutput "$logs\oidc.log" -RedirectStandardError "$logs\oidc.err"
@@ -117,6 +128,7 @@ Start-Svc 'enrollments' "$root\services\enrollments\build\enrollments.exe" 'http
 Start-Svc 'content'     "$root\services\content\build\content.exe"         'http://localhost:18094/v1/health'
 Start-Svc 'exams'       "$root\services\exams\build\exams.exe"             'http://localhost:18095/v1/health'
 Start-Svc 'problems'    "$root\services\problems\build\problems.exe"       'http://localhost:18096/v1/health'
+Start-Svc 'progress'    "$root\services\progress\build\progress.exe"       'http://localhost:18093/v1/health'
 Start-Svc 'judge'       "$root\judge\build\judge.exe"                      'http://localhost:18097/v1/health'
 
 Write-Host 'Arrancando la web (Next.js dev)...'

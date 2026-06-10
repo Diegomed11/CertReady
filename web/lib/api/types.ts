@@ -279,3 +279,23 @@ export interface Readiness {
   por_celda: CeldaDominio[]
   siguiente_accion: SiguienteAccion | null
 }
+
+// --- progress --------------------------------------------------------------
+
+export interface LeccionCompletada {
+  tema: string
+  material_id: string
+  creado_en: string
+}
+
+export interface TemaProgreso {
+  tema: string
+  quiz_puntaje: number
+  quiz_aprobado: boolean
+}
+
+/** Progreso de estudio del usuario en una certificación (lecciones + quiz por tema). */
+export interface Progreso {
+  lecciones: LeccionCompletada[]
+  temas: TemaProgreso[]
+}

@@ -9,7 +9,7 @@ import (
 // PreguntasStore es el contrato del banco de preguntas (MongoDB).
 type PreguntasStore interface {
 	PingMongo(ctx context.Context) error
-	Muestrear(ctx context.Context, certificacion string, n int) ([]exams.Pregunta, error)
+	Muestrear(ctx context.Context, certificacion, tema string, n int) ([]exams.Pregunta, error)
 	PorRefs(ctx context.Context, refs []string) (map[string]exams.Pregunta, error)
 	CrearPregunta(ctx context.Context, n exams.NuevaPregunta) (exams.Pregunta, error)
 }

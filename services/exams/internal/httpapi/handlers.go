@@ -56,7 +56,7 @@ func (a *API) crearSesion(w http.ResponseWriter, r *http.Request) {
 		n = maxPreguntas
 	}
 
-	preguntas, err := a.preguntas.Muestrear(r.Context(), in.Certificacion, n)
+	preguntas, err := a.preguntas.Muestrear(r.Context(), in.Certificacion, in.Tema, n)
 	if err != nil {
 		a.errorInterno(w, r, "muestrear preguntas", err)
 		return

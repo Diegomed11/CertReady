@@ -27,12 +27,22 @@ func (s *PreguntasStore) PingMongo(ctx context.Context) error {
 
 // Muestrear elige al azar hasta n preguntas de opción múltiple de la
 // certificación dada (aleatorización en la base con $sample).
-func (s *PreguntasStore) Muestrear(ctx context.Context, certificacion string, n int) ([]exams.Pregunta, error) {
+//
+// Parameters
+//
+//	certificacion : certificación a la que pertenecen las preguntas.
+//	tema          : si no está vacío, acota el muestreo a ese tema (quiz por tema).
+//	n             : número máximo de preguntas a devolver.
+func (s *PreguntasStore) Muestrear(ctx context.Context, certificacion, tema string, n int) ([]exams.Pregunta, error) {
+	filtro := bson.D{
+		{Key: "certificacion", Value: certificacion},
+		{Key: "tipo", Value: "opcion_multiple"},
+	}
+	if tema != "" {
+		filtro = append(filtro, bson.E{Key: "tema", Value: tema})
+	}
 	pipeline := mongo.Pipeline{
-		{{Key: "$match", Value: bson.D{
-			{Key: "certificacion", Value: certificacion},
-			{Key: "tipo", Value: "opcion_multiple"},
-		}}},
+		{{Key: "$match", Value: filtro}},
 		{{Key: "$sample", Value: bson.D{{Key: "size", Value: n}}}},
 	}
 	cur, err := s.coll().Aggregate(ctx, pipeline)

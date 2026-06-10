@@ -37,10 +37,15 @@ export default async function ExamenesPage() {
     listMyExams(accessToken, { limit: 50 }),
   ])
 
-  const nombrePorId = new Map(certs.data.map((c) => [c.id, c.nombre]))
+  const certsById = new Map(certs.data.map((c) => [c.id, c]))
+  const nombrePorSlug = new Map(certs.data.map((c) => [c.slug, c.nombre]))
+  // El examen se identifica por slug (clave legible), no por el UUID de inscripción.
   const opciones = inscripciones.data
     .filter((i) => i.tipo_objetivo === 'certificacion')
-    .map((i) => ({ id: i.objetivo_id, nombre: nombrePorId.get(i.objetivo_id) ?? i.objetivo_id }))
+    .flatMap((i) => {
+      const c = certsById.get(i.objetivo_id)
+      return c ? [{ id: c.slug, nombre: c.nombre }] : []
+    })
 
   return (
     <div className="space-y-10">
@@ -88,7 +93,7 @@ export default async function ExamenesPage() {
                       <Badge tone={estadoTone(s.estado)}>{etiquetaEstado(s.estado)}</Badge>
                       <div>
                         <p className="font-semibold text-ink">
-                          {nombrePorId.get(s.certificacion) ?? s.certificacion}
+                          {nombrePorSlug.get(s.certificacion) ?? s.certificacion}
                         </p>
                         <p className="mt-0.5 font-mono text-xs text-faint">
                           {fecha(s.iniciado_en)}

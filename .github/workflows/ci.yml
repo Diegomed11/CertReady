@@ -85,7 +85,7 @@ jobs:
       - name: Vet y pruebas por módulo
         run: |
           set -e
-          for dir in libs/platform services/health services/catalog services/users services/enrollments services/content services/exams services/problems tools/oidc-mock judge; do
+          for dir in libs/platform services/health services/catalog services/users services/enrollments services/content services/exams services/problems services/progress tools/oidc-mock judge; do
             echo "===== $dir ====="
             (cd "$dir" && go vet ./... && go test -cover ./...)
           done

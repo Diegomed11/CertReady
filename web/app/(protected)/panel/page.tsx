@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { PageHeader } from '@/components/ui/page-header'
 import { SectionLabel } from '@/components/ui/section-label'
-import { getMe, listMyEnrollments } from '@/lib/api/services'
+import { getMe, listCertifications, listMyEnrollments } from '@/lib/api/services'
 import type { EstadoInscripcion } from '@/lib/api/types'
 import { requireSession } from '@/lib/auth/guard'
 
@@ -25,10 +25,12 @@ function estadoTone(estado: EstadoInscripcion): BadgeTone {
  */
 export default async function PanelPage() {
   const { accessToken } = await requireSession()
-  const [cuenta, inscripciones] = await Promise.all([
+  const [cuenta, inscripciones, certs] = await Promise.all([
     getMe(accessToken),
     listMyEnrollments(accessToken),
+    listCertifications({ accessToken, limit: 100 }),
   ])
+  const certsById = new Map(certs.data.map((c) => [c.id, c]))
 
   const accesos = [
     { href: '/estudiar', emoji: '📖', titulo: 'Estudiar' },
@@ -77,22 +79,37 @@ export default async function PanelPage() {
           </EmptyState>
         ) : (
           <ul className="space-y-3">
-            {inscripciones.data.map((ins) => (
-              <li key={ins.id}>
-                <Card className="flex items-center justify-between gap-4 p-4">
-                  <div className="flex items-center gap-4">
-                    <Badge tone="brand">{ins.tipo_objetivo}</Badge>
-                    <div>
-                      <p className="font-semibold text-ink">{ins.objetivo_id}</p>
-                      <p className="mt-1">
-                        <Badge tone={estadoTone(ins.estado)}>{ins.estado}</Badge>
-                      </p>
+            {inscripciones.data.map((ins) => {
+              const cert = certsById.get(ins.objetivo_id)
+              const nombre =
+                cert?.nombre ??
+                (ins.tipo_objetivo === 'pista' ? 'Pista de entrevista' : 'Certificación')
+              return (
+                <li key={ins.id}>
+                  <Card className="flex items-center justify-between gap-4 p-4">
+                    <div className="flex items-center gap-4">
+                      {cert ? <Badge tone="brand">{cert.proveedor}</Badge> : null}
+                      <div>
+                        {cert ? (
+                          <Link
+                            href={`/estudiar/${cert.slug}`}
+                            className="font-semibold text-ink hover:text-brand"
+                          >
+                            {nombre}
+                          </Link>
+                        ) : (
+                          <p className="font-semibold text-ink">{nombre}</p>
+                        )}
+                        <p className="mt-1">
+                          <Badge tone={estadoTone(ins.estado)}>{ins.estado}</Badge>
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <UnenrollButton id={ins.id} />
-                </Card>
-              </li>
-            ))}
+                    <UnenrollButton id={ins.id} />
+                  </Card>
+                </li>
+              )
+            })}
           </ul>
         )}
       </section>

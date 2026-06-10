@@ -31,6 +31,7 @@ export async function POST(req: Request) {
   try {
     const sesion = await createExamSession(session.accessToken, {
       certificacion: body.certificacion,
+      tema: body.tema,
       num_preguntas: body.num_preguntas,
       modo: body.modo,
     })
@@ -47,12 +48,16 @@ export async function POST(req: Request) {
 }
 
 /** esNuevaSesion valida la forma mínima del cuerpo recibido del cliente. */
-function esNuevaSesion(
-  v: unknown,
-): v is { certificacion: string; num_preguntas?: number; modo?: 'simulacro' | 'practica' } {
+function esNuevaSesion(v: unknown): v is {
+  certificacion: string
+  tema?: string
+  num_preguntas?: number
+  modo?: 'simulacro' | 'practica'
+} {
   if (typeof v !== 'object' || v === null) return false
   const o = v as Record<string, unknown>
   if (typeof o.certificacion !== 'string' || o.certificacion.length === 0) return false
+  if (o.tema !== undefined && typeof o.tema !== 'string') return false
   if (o.num_preguntas !== undefined && typeof o.num_preguntas !== 'number') return false
   if (o.modo !== undefined && o.modo !== 'simulacro' && o.modo !== 'practica') return false
   return true

@@ -30,6 +30,7 @@ const Schema = z.object({
   PROBLEMS_BASE_URL: z.string().url().optional(),
   JUDGE_BASE_URL: z.string().url().optional(),
   DSS_BASE_URL: z.string().url().optional(),
+  PROGRESS_BASE_URL: z.string().url().optional(),
 
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
 })

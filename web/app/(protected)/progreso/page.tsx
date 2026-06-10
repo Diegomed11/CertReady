@@ -54,10 +54,14 @@ export default async function ProgresoPage({
     listCertifications({ accessToken, limit: 100 }),
   ])
 
-  const nombrePorId = new Map(certs.data.map((c) => [c.id, c.nombre]))
+  const certsById = new Map(certs.data.map((c) => [c.id, c]))
+  // La readiness se consulta por slug (clave de las preguntas/intentos), no por UUID.
   const opciones = inscripciones.data
     .filter((i) => i.tipo_objetivo === 'certificacion')
-    .map((i) => ({ id: i.objetivo_id, nombre: nombrePorId.get(i.objetivo_id) ?? i.objetivo_id }))
+    .flatMap((i) => {
+      const c = certsById.get(i.objetivo_id)
+      return c ? [{ id: c.slug, nombre: c.nombre }] : []
+    })
 
   const certActiva = sp.cert && opciones.some((o) => o.id === sp.cert) ? sp.cert : opciones[0]?.id
   const readiness = certActiva ? await getReadiness(subject, certActiva) : null

@@ -17,6 +17,7 @@ use (
 	./services/exams
 	./services/health
 	./services/problems
+	./services/progress
 	./services/users
 	./tools/oidc-mock
 	./judge

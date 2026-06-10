@@ -16,12 +16,15 @@ import type {
   PaginatedList,
   Problema,
   PreguntaQA,
+  Progreso,
   Readiness,
   RespuestaCorrida,
   ResultadoExamen,
   RevisionSesion,
   SesionConPreguntas,
   SesionExamen,
+  Tema,
+  TemaProgreso,
 } from './types'
 
 /** Lista vacía reutilizable cuando un endpoint responde 204/sin cuerpo. */
@@ -182,9 +185,10 @@ export async function listMyExams(
   return data ?? listaVacia<SesionExamen>()
 }
 
-/** Cuerpo para iniciar un simulacro. */
+/** Cuerpo para iniciar un simulacro o un quiz de tema (con `tema`). */
 export interface NuevaSesionExamen {
   certificacion: string
+  tema?: string
   num_preguntas?: number
   modo?: 'simulacro' | 'practica'
 }
@@ -398,4 +402,76 @@ export async function getReadiness(
     }
     return null
   }
+}
+
+// --- catalog: temas (ruta de aprendizaje) ----------------------------------
+
+/** getCertification devuelve una certificación por id o slug, o null si no existe. */
+export async function getCertification(
+  idOrSlug: string,
+  accessToken?: string,
+): Promise<Certificacion | null> {
+  try {
+    return await fetchJSON<Certificacion>({
+      baseURL: env().CATALOG_BASE_URL,
+      path: `/v1/certifications/${encodeURIComponent(idOrSlug)}`,
+      accessToken,
+    })
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) return null
+    throw e
+  }
+}
+
+/** listTopics devuelve los temas de una certificación, ordenados por `orden`. */
+export async function listTopics(certId: string, accessToken?: string): Promise<Tema[]> {
+  const data = await fetchJSON<{ data: Tema[]; count: number }>({
+    baseURL: env().CATALOG_BASE_URL,
+    path: `/v1/certifications/${encodeURIComponent(certId)}/topics`,
+    accessToken,
+  })
+  return data?.data ?? []
+}
+
+// --- progress --------------------------------------------------------------
+
+/** getMyProgress devuelve el progreso del usuario en una certificación (clave = slug). */
+export async function getMyProgress(accessToken: string, certificacion: string): Promise<Progreso> {
+  const suffix = querystring({ certificacion })
+  const data = await fetchJSON<Progreso>({
+    baseURL: requireUrl('PROGRESS_BASE_URL', env().PROGRESS_BASE_URL),
+    path: `/v1/me/progress${suffix}`,
+    accessToken,
+  })
+  return data ?? { lecciones: [], temas: [] }
+}
+
+/** completeLesson marca una lección (material) como leída por el usuario. */
+export async function completeLesson(
+  accessToken: string,
+  body: { certificacion: string; tema: string; material_id: string },
+): Promise<void> {
+  await fetchJSON({
+    baseURL: requireUrl('PROGRESS_BASE_URL', env().PROGRESS_BASE_URL),
+    path: '/v1/progress/lessons',
+    method: 'POST',
+    accessToken,
+    body,
+  })
+}
+
+/** completeQuiz registra el resultado del quiz de un tema y devuelve su estado. */
+export async function completeQuiz(
+  accessToken: string,
+  body: { certificacion: string; tema: string; puntaje: number },
+): Promise<TemaProgreso> {
+  const data = await fetchJSON<TemaProgreso>({
+    baseURL: requireUrl('PROGRESS_BASE_URL', env().PROGRESS_BASE_URL),
+    path: '/v1/progress/quizzes',
+    method: 'POST',
+    accessToken,
+    body,
+  })
+  if (!data) throw new Error('respuesta vacía al guardar el quiz')
+  return data
 }

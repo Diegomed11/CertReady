@@ -1,0 +1,343 @@
+{
+  "slug": "gcp-associate-data-practitioner",
+  "nombre": "Google Cloud Associate Data Practitioner",
+  "proveedor": "Google",
+  "nivel": "associate",
+  "area": "Datos",
+  "descripcion": "Certificación de nivel asociado que valida la capacidad de preparar, ingerir, transformar, analizar y publicar datos en Google Cloud usando servicios gestionados. Pensada para perfiles que trabajan con datos y empiezan a operar canalizaciones y análisis en la nube.",
+  "skills": [
+    "bigquery",
+    "cloud storage",
+    "etl",
+    "elt",
+    "dataflow",
+    "looker",
+    "sql",
+    "ingesta de datos",
+    "gobernanza de datos",
+    "visualización",
+    "particionado",
+    "iam"
+  ],
+  "roles": [
+    "Analista de datos",
+    "Practicante de datos en la nube",
+    "Ingeniero de datos junior",
+    "Analista de inteligencia de negocio",
+    "Administrador de datos"
+  ],
+  "temas": [
+    {
+      "slug": "preparacion-e-ingesta",
+      "nombre": "Preparación e ingesta de datos",
+      "dominio": "Data preparation and ingestion",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Cómo entran y se almacenan los datos en Google Cloud",
+        "markdown": "## Orígenes y formatos\nLos datos llegan en formatos variados (CSV, JSON, Avro, Parquet) y desde fuentes distintas: archivos, bases relacionales o flujos de eventos. El primer paso es elegir **dónde aterrizan**.\n\n- **Cloud Storage**: almacén de objetos para datos en bruto y como zona de aterrizaje; organiza por **buckets** y clases de almacenamiento.\n- **BigQuery**: almacén analítico para datos ya estructurados y listos para consultar.\n\n## Modos de ingesta\n- **Por lotes (batch)**: cargas periódicas de grandes volúmenes (por ejemplo, archivos a BigQuery o a un bucket).\n- **En streaming**: eventos que llegan continuamente, normalmente vía **Pub/Sub** hacia un destino analítico.\n\n## Carga hacia BigQuery\nPuedes **cargar** archivos desde Cloud Storage, usar **tablas externas** que leen sin copiar, o transmitir filas en tiempo real.\n\n> **En el examen:** asocia datos en bruto y sin esquema fijo con **Cloud Storage**, datos listos para analizar con **BigQuery**, y distingue siempre ingesta **batch** de **streaming** (Pub/Sub)."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Necesitas una zona de aterrizaje para archivos en bruto de cualquier formato antes de procesarlos. ¿Qué servicio usarías?",
+          "opciones": [
+            "Cloud Storage",
+            "BigQuery",
+            "Looker",
+            "Cloud SQL"
+          ],
+          "correctas": [0],
+          "explicacion": "Cloud Storage es el almacén de objetos ideal para recibir datos en bruto de cualquier formato como zona de aterrizaje antes de su procesamiento."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una aplicación genera eventos continuos que deben ingerirse en tiempo casi real. ¿Qué servicio es el punto de entrada más adecuado?",
+          "opciones": [
+            "Carga por lotes desde Cloud Storage",
+            "Pub/Sub para ingesta de eventos en streaming",
+            "Exportación nocturna a CSV",
+            "Una tabla externa de solo lectura"
+          ],
+          "correctas": [1],
+          "explicacion": "Pub/Sub es el servicio de mensajería para ingerir flujos continuos de eventos en tiempo casi real, base de las canalizaciones de streaming."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de las siguientes son formas válidas de hacer disponibles datos en BigQuery?",
+          "opciones": [
+            "Cargar archivos desde Cloud Storage a una tabla",
+            "Definir una tabla externa que lee datos sin copiarlos",
+            "Insertar filas mediante streaming en tiempo real",
+            "Guardar los datos solo como un logo de proveedor",
+            "Renombrar manualmente cada fila desde la consola sin esquema"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "BigQuery admite carga por lotes desde Cloud Storage, tablas externas que leen sin copiar y la inserción por streaming. Las otras opciones no describen métodos reales de ingesta."
+        }
+      ]
+    },
+    {
+      "slug": "analisis-y-presentacion",
+      "nombre": "Análisis y presentación de datos",
+      "dominio": "Data analysis and presentation",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Consultar con SQL y comunicar resultados",
+        "markdown": "## Analizar en BigQuery\n**BigQuery** ejecuta consultas **SQL** sobre grandes volúmenes sin administrar servidores. El análisis suele combinar:\n\n- **Filtrado y agregación**: `WHERE`, `GROUP BY`, `SUM`, `AVG`, `COUNT`.\n- **Uniones (JOIN)**: cruzar tablas de hechos con dimensiones.\n- **Funciones de ventana**: rankings y acumulados sin colapsar filas.\n\n## Vistas y reutilización\n- **Vista**: consulta guardada que se ejecuta al leerla; siempre datos frescos.\n- **Vista materializada**: resultado precalculado que acelera consultas repetidas.\n\n## Presentar los datos\n- **Looker** y **Looker Studio**: paneles e informes interactivos conectados a BigQuery.\n- Elegir el gráfico según la intención: **líneas** para tendencias en el tiempo, **barras** para comparar categorías, **tabla** para detalle.\n\n> **En el examen:** recuerda que una **vista** entrega datos frescos al leerse y una **materializada** precalcula para ir más rápido; asocia cada tipo de gráfico con su propósito (tendencia, comparación, detalle)."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Quieres comunicar la tendencia de ingresos mensuales durante el último año en un panel. ¿Qué visualización es la más adecuada?",
+          "opciones": [
+            "Gráfico circular",
+            "Gráfico de líneas",
+            "Tarjeta de un solo valor",
+            "Mapa geográfico"
+          ],
+          "correctas": [1],
+          "explicacion": "El gráfico de líneas es el más apropiado para mostrar la evolución de un valor a lo largo del tiempo, como los ingresos mes a mes."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una consulta pesada se repite muchas veces al día sobre datos que cambian con poca frecuencia y quieres acelerar las respuestas. ¿Qué objeto de BigQuery conviene?",
+          "opciones": [
+            "Una vista estándar",
+            "Una vista materializada",
+            "Una tabla externa",
+            "Un bucket de Cloud Storage"
+          ],
+          "correctas": [1],
+          "explicacion": "La vista materializada precalcula y almacena el resultado, acelerando consultas repetidas sobre datos que cambian poco."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de las siguientes afirmaciones sobre análisis con SQL en BigQuery son correctas?",
+          "opciones": [
+            "GROUP BY agrupa filas para calcular agregados",
+            "Una JOIN combina datos de dos tablas relacionadas",
+            "Las funciones de ventana permiten rankings sin colapsar filas",
+            "BigQuery requiere aprovisionar y administrar servidores manualmente",
+            "WHERE filtra las filas antes de agregar"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "GROUP BY agrega, JOIN cruza tablas, las funciones de ventana calculan sin colapsar filas y WHERE filtra. BigQuery es sin servidores, por lo que no se aprovisiona infraestructura manualmente."
+        }
+      ]
+    },
+    {
+      "slug": "canalizaciones-y-orquestacion",
+      "nombre": "Canalizaciones y orquestación",
+      "dominio": "Data pipelines and orchestration",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Transformar y automatizar el flujo de datos",
+        "markdown": "## ETL frente a ELT\n- **ETL**: se **extrae**, se **transforma** y luego se **carga** al destino.\n- **ELT**: se carga primero y la **transformación ocurre dentro del almacén** (por ejemplo, con SQL en BigQuery), aprovechando su potencia.\n\n## Servicios de transformación\n- **Dataflow**: procesamiento por lotes y streaming basado en Apache Beam, totalmente gestionado.\n- **Dataproc**: clústeres gestionados de Spark/Hadoop para cargas existentes.\n- **Dataprep / SQL en BigQuery**: limpieza y transformación con poco o ningún código.\n\n## Orquestación\nLas canalizaciones encadenan pasos que deben ejecutarse en orden y a tiempo.\n- **Cloud Composer** (basado en Apache Airflow): orquesta flujos complejos con dependencias.\n- **Programaciones** y disparadores para lanzar cargas periódicas.\n\n> **En el examen:** asocia **Dataflow** con batch y streaming unificados, **Dataproc** con Spark/Hadoop existente y **Cloud Composer/Airflow** con la orquestación de dependencias; distingue **ETL** (transformar antes de cargar) de **ELT** (transformar dentro del almacén)."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio gestionado de Google Cloud se basa en Apache Beam y unifica el procesamiento por lotes y en streaming?",
+          "opciones": [
+            "Dataflow",
+            "Cloud SQL",
+            "Looker Studio",
+            "Cloud Storage"
+          ],
+          "correctas": [0],
+          "explicacion": "Dataflow es el servicio gestionado basado en Apache Beam que procesa datos tanto en lotes como en streaming con un mismo modelo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Necesitas orquestar una canalización con varios pasos y dependencias que deben ejecutarse en orden y según un horario. ¿Qué servicio eliges?",
+          "opciones": [
+            "Cloud Composer (Apache Airflow)",
+            "Cloud Storage",
+            "Pub/Sub",
+            "BigQuery BI Engine"
+          ],
+          "correctas": [0],
+          "explicacion": "Cloud Composer, basado en Apache Airflow, orquesta flujos de trabajo con dependencias y programación, ideal para canalizaciones de varios pasos."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "En un enfoque ELT sobre BigQuery, ¿cuáles de las siguientes afirmaciones son correctas?",
+          "opciones": [
+            "Los datos se cargan al almacén antes de transformarlos",
+            "La transformación aprovecha la potencia de cómputo de BigQuery",
+            "Suele usar SQL para transformar dentro del almacén",
+            "La transformación siempre ocurre antes de cargar los datos",
+            "Es idéntico a ETL y el orden de los pasos no importa"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "En ELT se carga primero y se transforma dentro del almacén con su propio cómputo, normalmente vía SQL. Transformar antes de cargar describe a ETL, y el orden sí distingue ambos enfoques."
+        }
+      ]
+    },
+    {
+      "slug": "almacenamiento-y-modelado",
+      "nombre": "Almacenamiento y modelado de datos",
+      "dominio": "Data storage and modeling",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Elegir el almacén y diseñar tablas eficientes",
+        "markdown": "## Elegir dónde guardar\n- **Cloud Storage**: objetos en bruto, archivos y respaldos.\n- **BigQuery**: almacén analítico para consultas a gran escala.\n- **Cloud SQL**: bases relacionales gestionadas (MySQL, PostgreSQL) para cargas transaccionales.\n- **Firestore / Bigtable**: NoSQL para baja latencia y grandes volúmenes operativos.\n\n## Modelado en BigQuery\n- **Esquema en estrella**: tablas de **hechos** (medidas) rodeadas de **dimensiones** (contexto).\n- **Campos anidados y repetidos**: BigQuery permite estructuras (STRUCT) y arreglos para evitar uniones costosas.\n\n## Optimizar costo y rendimiento\n- **Particionado**: divide una tabla (por fecha, por ejemplo) para leer solo lo necesario.\n- **Clustering**: ordena los datos por columnas frecuentes en filtros para escanear menos.\n\n> **En el examen:** asocia **OLTP** con **Cloud SQL** y **OLAP** con **BigQuery**; recuerda que **particionado** y **clustering** reducen el costo y el tiempo de las consultas al limitar los datos escaneados."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Una aplicación necesita una base de datos relacional gestionada para operaciones transaccionales (OLTP). ¿Qué servicio es el más adecuado?",
+          "opciones": [
+            "Cloud SQL",
+            "BigQuery",
+            "Cloud Storage",
+            "Looker"
+          ],
+          "correctas": [0],
+          "explicacion": "Cloud SQL ofrece bases de datos relacionales gestionadas (MySQL, PostgreSQL, SQL Server) idóneas para cargas transaccionales OLTP."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Tus consultas filtran casi siempre por fecha sobre una tabla muy grande y quieres reducir los datos escaneados. ¿Qué técnica de BigQuery aplicas primero?",
+          "opciones": [
+            "Particionar la tabla por fecha",
+            "Exportar la tabla a CSV",
+            "Convertir la tabla en una vista sin cambios",
+            "Eliminar las claves primarias"
+          ],
+          "correctas": [0],
+          "explicacion": "Particionar por fecha hace que las consultas lean solo las particiones relevantes, reduciendo los datos escaneados, el costo y la latencia."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de las siguientes son ciertas sobre el modelado y la optimización en BigQuery?",
+          "opciones": [
+            "El clustering ordena los datos por columnas usadas en filtros frecuentes",
+            "En un esquema en estrella, los hechos contienen las medidas numéricas",
+            "Las dimensiones aportan el contexto descriptivo de los hechos",
+            "El particionado siempre aumenta el costo de las consultas",
+            "BigQuery admite campos anidados y repetidos para evitar uniones costosas"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Clustering, esquema en estrella, dimensiones de contexto y campos anidados son correctos. El particionado, bien usado, reduce el costo al escanear menos datos, no lo aumenta."
+        }
+      ]
+    },
+    {
+      "slug": "gobernanza-y-seguridad",
+      "nombre": "Gobernanza y seguridad de datos",
+      "dominio": "Data governance and security",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Controlar el acceso y proteger los datos",
+        "markdown": "## Control de acceso con IAM\n**IAM** concede permisos asignando **roles** a **identidades** (usuarios, grupos, cuentas de servicio) sobre recursos. Se aplica el **mínimo privilegio**: solo el acceso necesario.\n\n- **Roles predefinidos** para tareas comunes (por ejemplo, lector de datos de BigQuery).\n- **Cuentas de servicio** para que las aplicaciones accedan sin credenciales humanas.\n\n## Protección de datos\n- **Cifrado en reposo y en tránsito** activado por defecto en los servicios gestionados.\n- **Cloud DLP / Sensitive Data Protection**: descubre y enmascara datos sensibles (PII).\n- **Controles a nivel de columna y fila** en BigQuery para limitar qué ve cada usuario.\n\n## Catálogo y calidad\n- **Dataplex / Data Catalog**: descubrir, etiquetar y gobernar activos de datos.\n- Documentar linaje y propietarios mejora la confianza y el cumplimiento.\n\n> **En el examen:** aplica siempre el **mínimo privilegio** con roles de IAM, usa **cuentas de servicio** para apps y recuerda que la seguridad por columna/fila y el enmascaramiento de PII protegen datos sensibles."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál es el principio que recomienda conceder únicamente los permisos estrictamente necesarios para una tarea?",
+          "opciones": [
+            "Mínimo privilegio",
+            "Acceso público por defecto",
+            "Privilegio máximo administrativo",
+            "Acceso anónimo permanente"
+          ],
+          "correctas": [0],
+          "explicacion": "El principio de mínimo privilegio indica otorgar solo los permisos imprescindibles, reduciendo la superficie de riesgo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una aplicación necesita leer datos de BigQuery de forma automatizada sin usar credenciales de una persona. ¿Qué identidad de IAM debe utilizar?",
+          "opciones": [
+            "Una cuenta de servicio con el rol adecuado",
+            "La cuenta personal de un administrador",
+            "Un usuario anónimo público",
+            "La clave raíz del proyecto compartida por correo"
+          ],
+          "correctas": [0],
+          "explicacion": "Las cuentas de servicio permiten que las aplicaciones accedan a recursos con roles acotados, sin depender de credenciales humanas."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles de las siguientes son prácticas válidas de gobernanza y seguridad de datos en Google Cloud?",
+          "opciones": [
+            "Asignar roles de IAM siguiendo el mínimo privilegio",
+            "Usar controles a nivel de columna o fila en BigQuery",
+            "Enmascarar o detectar datos sensibles con Sensitive Data Protection",
+            "Compartir una sola credencial de administrador entre todo el equipo",
+            "Catalogar y etiquetar activos con Dataplex / Data Catalog"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Mínimo privilegio, controles por columna/fila, protección de datos sensibles y catalogación son buenas prácticas. Compartir una credencial de administrador rompe la trazabilidad y el mínimo privilegio."
+        }
+      ]
+    },
+    {
+      "slug": "monitoreo-y-mantenimiento",
+      "nombre": "Monitoreo y mantenimiento de soluciones de datos",
+      "dominio": "Monitoring and maintaining data solutions",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Vigilar, optimizar costos y mantener canalizaciones",
+        "markdown": "## Observar el sistema\n**Cloud Monitoring** y **Cloud Logging** recopilan métricas y registros para detectar fallos y cuellos de botella en canalizaciones y consultas.\n\n- **Alertas** sobre umbrales (errores, latencia, retrasos de un job).\n- **Paneles** para seguir el estado de cargas y trabajos de Dataflow.\n\n## Controlar el costo en BigQuery\n- **Modelo bajo demanda**: pagas por **datos escaneados**; consultar menos columnas y usar particiones reduce el gasto.\n- **Capacidad (slots)**: cómputo reservado para cargas predecibles.\n- Revisar consultas costosas y evitar `SELECT *` innecesarios.\n\n## Mantener la confiabilidad\n- **Reintentos** y manejo de errores en canalizaciones.\n- **Calidad de datos**: validar esquemas y detectar valores fuera de rango.\n- **Frescura**: confirmar que las cargas se completan a tiempo.\n\n> **En el examen:** asocia **Cloud Monitoring/Logging** con observar y alertar, recuerda que en BigQuery bajo demanda pagas por **datos escaneados** (evita `SELECT *`) y que validar esquemas y frescura mantiene la confiabilidad."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio recopila métricas y permite crear alertas sobre el estado de tus canalizaciones y trabajos?",
+          "opciones": [
+            "Cloud Monitoring",
+            "Cloud Storage",
+            "BigQuery",
+            "Pub/Sub"
+          ],
+          "correctas": [0],
+          "explicacion": "Cloud Monitoring recopila métricas y permite definir alertas para vigilar el estado de servicios, canalizaciones y trabajos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En BigQuery con el modelo bajo demanda, ¿qué práctica reduce el costo de una consulta?",
+          "opciones": [
+            "Seleccionar solo las columnas necesarias en lugar de SELECT *",
+            "Escanear siempre la tabla completa para asegurar resultados",
+            "Eliminar el particionado de las tablas grandes",
+            "Convertir todas las tablas en vistas sin filtros"
+          ],
+          "correctas": [0],
+          "explicacion": "Como se paga por datos escaneados, seleccionar solo las columnas necesarias (evitando SELECT *) reduce el volumen escaneado y el costo."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de las siguientes son prácticas adecuadas para monitorear y mantener soluciones de datos?",
+          "opciones": [
+            "Definir alertas sobre errores y latencia de los trabajos",
+            "Usar Cloud Logging para revisar registros de las canalizaciones",
+            "Validar esquemas y detectar valores fuera de rango",
+            "Ignorar los reintentos y dejar que los fallos se acumulen",
+            "Verificar que las cargas se completen dentro de su ventana de frescura"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Alertas, registros, validación de calidad y control de frescura son prácticas correctas. Ignorar los reintentos y permitir que los fallos se acumulen degrada la confiabilidad."
+        }
+      ]
+    }
+  ]
+}

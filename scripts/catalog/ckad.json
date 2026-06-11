@@ -1,0 +1,335 @@
+{
+  "slug": "ckad",
+  "nombre": "Certified Kubernetes Application Developer (CKAD)",
+  "proveedor": "CNCF",
+  "nivel": "associate",
+  "area": "DevOps",
+  "descripcion": "Certificación práctica que valida la capacidad de diseñar, construir y operar aplicaciones nativas de la nube sobre Kubernetes. Se rinde en una terminal real resolviendo tareas con kubectl y manifiestos YAML.",
+  "skills": [
+    "kubernetes",
+    "kubectl",
+    "pods",
+    "deployments",
+    "servicios",
+    "configmaps",
+    "secrets",
+    "yaml",
+    "probes",
+    "ingress",
+    "networkpolicy",
+    "rbac"
+  ],
+  "roles": [
+    "Desarrollador de aplicaciones cloud-native",
+    "Ingeniero DevOps",
+    "Ingeniero de plataforma",
+    "Backend engineer"
+  ],
+  "temas": [
+    {
+      "slug": "diseno-y-construccion-de-aplicaciones",
+      "nombre": "Diseño y construcción de aplicaciones",
+      "dominio": "Application Design and Build",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Cargas de trabajo y patrones de Pod",
+        "markdown": "## Tipos de carga de trabajo\nKubernetes ofrece controladores según el ciclo de vida de la aplicación:\n\n- **Deployment**: cargas sin estado, replicadas y actualizables.\n- **Job**: tarea que corre hasta completarse una o varias veces.\n- **CronJob**: ejecuta un Job según un calendario tipo cron.\n\n## Pods multicontenedor\nVarios contenedores en un mismo Pod comparten red y volúmenes. Los patrones clásicos son:\n\n- **Sidecar**: agrega capacidad al contenedor principal (logs, proxy).\n- **Init container**: corre y termina **antes** de los contenedores normales, ideal para preparar dependencias.\n\n## Imágenes y almacenamiento efímero\nDefine la imagen con su **tag** explícito y monta un `emptyDir` cuando necesites compartir archivos temporales entre contenedores del mismo Pod.\n\n> **En el examen:** memoriza `kubectl create job --from=cronjob/...` y genera YAML base con `--dry-run=client -o yaml` para no escribirlo todo a mano."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué controlador usarías para una tarea por lotes que debe ejecutarse una sola vez hasta completarse?",
+          "opciones": [
+            "Deployment",
+            "Job",
+            "DaemonSet",
+            "StatefulSet"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "Un Job ejecuta uno o más Pods hasta que terminan correctamente; es el controlador pensado para tareas por lotes que deben completarse, no para procesos de larga duración."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué afirmaciones sobre los init containers son correctas?",
+          "opciones": [
+            "Se ejecutan secuencialmente antes de los contenedores de aplicación",
+            "Comparten red y volúmenes con el resto del Pod",
+            "Si uno falla, el Pod lo reinicia según su restartPolicy",
+            "Corren en paralelo con los contenedores principales",
+            "Sirven para preparar dependencias antes del arranque de la app"
+          ],
+          "correctas": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "explicacion": "Los init containers se ejecutan en orden y deben terminar con éxito antes de los contenedores normales; comparten el entorno del Pod y respetan la restartPolicy. No corren en paralelo con los contenedores de aplicación."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Necesitas que dos contenedores del mismo Pod intercambien archivos temporales que no deben sobrevivir al Pod. ¿Qué volumen es el adecuado?",
+          "opciones": [
+            "persistentVolumeClaim",
+            "hostPath",
+            "emptyDir",
+            "configMap"
+          ],
+          "correctas": [
+            2
+          ],
+          "explicacion": "emptyDir crea un directorio vacío al iniciar el Pod, accesible por todos sus contenedores, y se elimina cuando el Pod desaparece; es ideal para datos efímeros compartidos."
+        }
+      ]
+    },
+    {
+      "slug": "despliegue-de-aplicaciones",
+      "nombre": "Despliegue de aplicaciones",
+      "dominio": "Application Deployment",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Deployments, estrategias y rollouts",
+        "markdown": "## Estrategias de actualización\nUn Deployment soporta dos estrategias:\n\n- **RollingUpdate** (por defecto): reemplaza Pods gradualmente con `maxSurge` y `maxUnavailable`.\n- **Recreate**: elimina todos los Pods antes de crear los nuevos.\n\n## Gestión de rollouts\nKubernetes guarda el historial de revisiones del Deployment:\n\n- `kubectl rollout status deploy/app` vigila el progreso.\n- `kubectl rollout undo deploy/app` revierte a la revisión anterior.\n- `kubectl scale deploy/app --replicas=4` ajusta el número de réplicas.\n\n## Más allá del despliegue manual\nHerramientas declarativas como **Helm** (charts) o **Kustomize** (overlays) empaquetan y parametrizan manifiestos para distintos entornos sin duplicar YAML.\n\n> **En el examen:** practica `kubectl set image deploy/app c=imagen:tag` seguido de `rollout undo`; son la forma más rápida de actualizar y revertir bajo presión de tiempo."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué comando revierte un Deployment a su revisión anterior?",
+          "opciones": [
+            "kubectl rollout undo deploy/app",
+            "kubectl rollback deploy/app",
+            "kubectl delete deploy/app --previous",
+            "kubectl apply --revert deploy/app"
+          ],
+          "correctas": [
+            0
+          ],
+          "explicacion": "kubectl rollout undo restaura la revisión previa registrada en el historial del Deployment. Los demás comandos no existen en kubectl."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Con la estrategia RollingUpdate, ¿qué controla el parámetro maxUnavailable?",
+          "opciones": [
+            "Cuántos Pods nuevos se pueden crear por encima del total deseado",
+            "Cuántos Pods pueden estar no disponibles durante la actualización",
+            "El número máximo de revisiones guardadas en el historial",
+            "El tiempo máximo de espera antes de marcar el rollout como fallido"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "maxUnavailable define cuántos Pods pueden estar fuera de servicio simultáneamente durante un RollingUpdate. La capacidad extra por encima del deseado la controla maxSurge."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre herramientas y estrategias de despliegue en Kubernetes son correctas?",
+          "opciones": [
+            "Helm empaqueta manifiestos parametrizables en charts reutilizables",
+            "Kustomize aplica overlays sobre una base sin plantillas de texto",
+            "La estrategia Recreate provoca downtime al eliminar todos los Pods antes de recrearlos",
+            "RollingUpdate garantiza siempre cero interrupciones aunque maxUnavailable sea alto",
+            "kubectl set image puede disparar un nuevo rollout de un Deployment"
+          ],
+          "correctas": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "explicacion": "Helm usa charts, Kustomize usa overlays declarativos, Recreate implica downtime y set image dispara un rollout. RollingUpdate no garantiza cero interrupciones si maxUnavailable permite retirar muchos Pods a la vez."
+        }
+      ]
+    },
+    {
+      "slug": "observabilidad-y-mantenimiento",
+      "nombre": "Observabilidad y mantenimiento",
+      "dominio": "Application Observability and Maintenance",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Probes, logs y depuración",
+        "markdown": "## Tipos de probe\nKubernetes evalúa la salud del contenedor con tres sondas:\n\n- **liveness**: si falla, el contenedor se **reinicia**.\n- **readiness**: si falla, el Pod se **quita** de los endpoints del Service.\n- **startup**: protege apps de arranque lento desactivando las otras sondas hasta que la app esté lista.\n\n## Diagnóstico rápido\nPara investigar problemas:\n\n- `kubectl logs pod -c contenedor` revisa la salida estándar.\n- `kubectl describe pod` muestra eventos y motivos de fallo.\n- `kubectl exec -it pod -- sh` abre una shell dentro del contenedor.\n\n## Estados y métricas\nAprende a leer estados como **CrashLoopBackOff** o **ImagePullBackOff**, y usa `kubectl top pod` para ver consumo de CPU y memoria.\n\n> **En el examen:** ante un Pod que no arranca, ve directo a `kubectl describe pod` y mira la sección Events; ahí suele estar la causa raíz."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué ocurre cuando falla repetidamente una liveness probe?",
+          "opciones": [
+            "El Pod se elimina de los endpoints del Service",
+            "El contenedor se reinicia",
+            "El Deployment escala a cero réplicas",
+            "Se ignora hasta el próximo despliegue"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "La liveness probe determina si el contenedor sigue sano; cuando falla, el kubelet lo reinicia. Quitar el Pod de los endpoints es comportamiento de la readiness probe."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un Pod muestra el estado ImagePullBackOff. ¿Cuál es la causa más probable?",
+          "opciones": [
+            "La aplicación se cierra inmediatamente tras arrancar",
+            "El nodo no tiene memoria suficiente",
+            "La imagen no se puede descargar (nombre, tag o credenciales incorrectos)",
+            "La readiness probe nunca pasa"
+          ],
+          "correctas": [
+            2
+          ],
+          "explicacion": "ImagePullBackOff indica que el kubelet no logró descargar la imagen, normalmente por un nombre o tag inexistente o por falta de credenciales al registro privado."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué comandos ayudan a diagnosticar un Pod que falla?",
+          "opciones": [
+            "kubectl describe pod nombre",
+            "kubectl logs nombre -c contenedor",
+            "kubectl top pod nombre",
+            "kubectl rollout undo pod nombre",
+            "kubectl exec -it nombre -- sh"
+          ],
+          "correctas": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "explicacion": "describe, logs, top y exec sirven para investigar un Pod. No existe rollout undo para un Pod; esa operación aplica a controladores como Deployment."
+        }
+      ]
+    },
+    {
+      "slug": "configuracion-y-entorno",
+      "nombre": "Configuración y entorno de ejecución",
+      "dominio": "Application Environment, Configuration and Security",
+      "orden": 4,
+      "hoja": {
+        "titulo": "ConfigMaps, Secrets y contexto de seguridad",
+        "markdown": "## Externalizar configuración\nSepara la configuración del código con dos objetos:\n\n- **ConfigMap**: datos no sensibles (URLs, flags, archivos de configuración).\n- **Secret**: datos sensibles, codificados en **base64** (no es cifrado fuerte por defecto).\n\nAmbos se inyectan como **variables de entorno** (`envFrom`) o montados como **volúmenes**.\n\n## SecurityContext\nControla cómo corre el contenedor:\n\n- `runAsNonRoot: true` impide ejecutar como root.\n- `runAsUser` fija el UID del proceso.\n- `readOnlyRootFilesystem` bloquea escrituras al sistema de archivos raíz.\n\n## Permisos y cuotas\nUsa **ServiceAccount** para la identidad del Pod, **RBAC** (Role/RoleBinding) para permisos, y **ResourceQuota** o **LimitRange** para acotar consumo por namespace.\n\n> **En el examen:** recuerda que un Secret es solo base64; descífralo mental o rápidamente con `echo valor | base64 -d` para verificar contenido."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cómo se almacenan los valores dentro de un Secret de Kubernetes por defecto?",
+          "opciones": [
+            "Cifrados con AES-256",
+            "Codificados en base64",
+            "En texto plano sin transformación",
+            "Hasheados con SHA-256"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "Por defecto los Secrets se guardan codificados en base64, lo que es reversible y no constituye cifrado real. El cifrado en reposo debe habilitarse aparte en etcd."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué opciones de securityContext refuerzan la seguridad de un contenedor?",
+          "opciones": [
+            "runAsNonRoot: true",
+            "readOnlyRootFilesystem: true",
+            "allowPrivilegeEscalation: false",
+            "privileged: true",
+            "drop de todas las capabilities"
+          ],
+          "correctas": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "explicacion": "Ejecutar como no-root, montar el FS raíz en solo lectura, impedir la escalada de privilegios y descartar capabilities endurecen el contenedor. privileged: true hace lo contrario al darle acceso casi total al host."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Quieres inyectar todas las claves de un ConfigMap como variables de entorno en un contenedor. ¿Qué campo usas?",
+          "opciones": [
+            "volumeMounts",
+            "envFrom con configMapRef",
+            "args",
+            "imagePullSecrets"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "envFrom con configMapRef carga todas las claves del ConfigMap como variables de entorno de una sola vez, sin enumerar cada una con valueFrom."
+        }
+      ]
+    },
+    {
+      "slug": "servicios-y-redes",
+      "nombre": "Servicios y redes",
+      "dominio": "Services and Networking",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Services, Ingress y NetworkPolicy",
+        "markdown": "## Tipos de Service\nUn Service expone Pods de forma estable mediante selectores de etiquetas:\n\n- **ClusterIP** (por defecto): accesible solo dentro del clúster.\n- **NodePort**: abre un puerto en cada nodo.\n- **LoadBalancer**: solicita un balanceador externo al proveedor de nube.\n\n## Ingress\nUn **Ingress** enruta tráfico HTTP/HTTPS hacia distintos Services según **host** y **path**, y suele gestionar TLS. Requiere un **Ingress Controller** instalado en el clúster.\n\n## NetworkPolicy\nPor defecto todos los Pods se comunican entre sí. Una **NetworkPolicy** restringe el tráfico **ingress** y **egress** mediante selectores; en cuanto seleccionas un Pod, todo lo no permitido queda **denegado**.\n\n> **En el examen:** un Service sin endpoints casi siempre significa que su `selector` no coincide con las etiquetas de los Pods; verifícalo con `kubectl get endpoints`."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué tipo de Service expone una aplicación únicamente dentro del clúster?",
+          "opciones": [
+            "LoadBalancer",
+            "NodePort",
+            "ClusterIP",
+            "ExternalName"
+          ],
+          "correctas": [
+            2
+          ],
+          "explicacion": "ClusterIP, el tipo por defecto, asigna una IP interna accesible solo desde dentro del clúster. NodePort y LoadBalancer exponen el servicio al exterior."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un Service no enruta tráfico a ningún Pod y kubectl get endpoints aparece vacío. ¿Cuál es la causa más probable?",
+          "opciones": [
+            "El selector del Service no coincide con las etiquetas de los Pods",
+            "El clúster no tiene un Ingress Controller",
+            "Falta una NetworkPolicy que permita egress",
+            "El Service usa ClusterIP en lugar de NodePort"
+          ],
+          "correctas": [
+            0
+          ],
+          "explicacion": "El Service construye sus endpoints a partir de los Pods cuyas etiquetas coinciden con su selector; si está vacío, normalmente el selector y las labels no coinciden."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre NetworkPolicy son correctas?",
+          "opciones": [
+            "Si ningún policy selecciona un Pod, este acepta todo el tráfico",
+            "Al seleccionar un Pod, el tráfico no permitido explícitamente queda denegado",
+            "Pueden controlar tanto tráfico de ingress como de egress",
+            "Requieren un plugin de red (CNI) que las soporte para tener efecto",
+            "Se aplican a nivel de nodo, no de Pod"
+          ],
+          "correctas": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "explicacion": "Sin policies un Pod es abierto; al ser seleccionado pasa a modelo deny por defecto. Controlan ingress y egress y necesitan un CNI compatible. Operan a nivel de Pod, no de nodo."
+        }
+      ]
+    }
+  ]
+}

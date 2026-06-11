@@ -1,0 +1,228 @@
+{
+  "slug": "rhcsa",
+  "nombre": "Red Hat Certified System Administrator (RHCSA)",
+  "proveedor": "Red Hat",
+  "nivel": "associate",
+  "area": "Sistemas",
+  "descripcion": "Certificacion practica que valida la capacidad de operar, configurar y resolver problemas de sistemas Linux empresariales desde la linea de comandos. Esta orientada a administradores que gestionan servidores en produccion en el dia a dia.",
+  "skills": ["linux", "bash", "systemd", "permisos", "lvm", "selinux", "firewalld", "ssh", "yum", "usuarios", "redes", "contenedores"],
+  "roles": ["administrador de sistemas linux", "ingeniero de infraestructura", "operador de servidores", "tecnico de soporte de sistemas", "ingeniero devops junior"],
+  "temas": [
+    {
+      "slug": "herramientas-esenciales",
+      "nombre": "Herramientas esenciales y linea de comandos",
+      "dominio": "Comprender y usar herramientas esenciales",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Shell, archivos y procesos",
+        "markdown": "## El shell\nLa terminal interpreta comandos a traves de **Bash**. Cada proceso hereda variables de **entorno** (como `PATH`) y se comunica por tres flujos: **stdin**, **stdout** y **stderr**. Las **redirecciones** (`>`, `>>`, `2>`) y las **tuberias** (`|`) encadenan la salida de un comando con la entrada de otro.\n\n## Navegacion y archivos\n- **Rutas absolutas** parten de `/`; las **relativas** dependen del directorio actual.\n- Para localizar contenido se combinan herramientas como busqueda por nombre y por patron dentro de archivos.\n- Los **enlaces duros** comparten el mismo inodo; los **enlaces simbolicos** apuntan a una ruta.\n\n## Procesos\nCada proceso tiene un **PID** y un estado. Las **senales** controlan su ciclo de vida: terminar de forma ordenada o forzada. Las tareas se manejan en **primer o segundo plano**.\n\n## Documentacion\nLas **paginas de manual** son la fuente local de referencia para opciones y sintaxis.\n\n> **En el examen:** dominar redirecciones, tuberias y senales ahorra tiempo; cuando dudes de una opcion, consulta el manual antes de improvisar."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Quieres guardar unicamente los mensajes de error de un comando en un archivo, descartando la salida normal. Que redireccion usas?",
+          "opciones": ["comando > errores.log", "comando 2> errores.log", "comando >> errores.log", "comando | errores.log"],
+          "correctas": [1],
+          "explicacion": "El descriptor 2 corresponde a stderr, asi que '2>' redirige solo los errores; '>' captura stdout y '|' encadena hacia otro comando, no hacia un archivo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Diferencia clave entre un enlace simbolico y un enlace duro en el sistema de archivos. Cual afirmacion es correcta?",
+          "opciones": ["El enlace duro apunta a una ruta de texto y se rompe si el destino se mueve", "El enlace simbolico comparte el mismo inodo que el archivo original", "El enlace duro comparte el inodo del archivo y sobrevive si el nombre original se borra", "Ambos dejan de funcionar si el archivo original cambia de permisos"],
+          "correctas": [2],
+          "explicacion": "Un enlace duro es otra referencia al mismo inodo, por lo que los datos persisten aunque se elimine el nombre original; el enlace simbolico solo guarda una ruta y se rompe si el destino desaparece."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de los siguientes son flujos estandar de un proceso en Linux? Selecciona todas las que apliquen.",
+          "opciones": ["stdin (entrada estandar)", "stdout (salida estandar)", "stderr (error estandar)", "stdlog (registro estandar)", "stdcache (cache estandar)"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Todo proceso dispone de stdin, stdout y stderr (descriptores 0, 1 y 2). 'stdlog' y 'stdcache' no existen como flujos estandar."
+        }
+      ]
+    },
+    {
+      "slug": "scripts-shell",
+      "nombre": "Creacion de scripts simples en shell",
+      "dominio": "Crear scripts de shell sencillos",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Automatizacion con Bash",
+        "markdown": "## Estructura de un script\nUn script comienza con la **shebang** (`#!/bin/bash`) que indica el interprete. Debe tener permiso de **ejecucion** para correr directamente. Recibe argumentos posicionales: `$1`, `$2`, `$@` (todos) y `$#` (la cantidad).\n\n## Variables y sustitucion\n- Asignacion sin espacios: `nombre=valor`.\n- **Sustitucion de comandos** con `$(...)` captura la salida de otro comando.\n- El **codigo de salida** de cada comando vive en `$?`: cero significa exito.\n\n## Control de flujo\n- **Condicionales** `if`/`elif`/`else` evaluan pruebas con `test` o `[[ ]]`.\n- **Bucles** `for` recorren listas; `while` repiten mientras una condicion sea verdadera.\n- Los operadores `&&` y `||` encadenan segun exito o fallo.\n\n## Buenas practicas\nComillar variables evita problemas con espacios. La salida con codigo distinto de cero comunica fallos a otros procesos.\n\n> **En el examen:** revisa la shebang, los permisos de ejecucion y el manejo de `$?`; un script que no marca su codigo de salida es dificil de encadenar."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Que variable especial contiene el codigo de salida del ultimo comando ejecutado?",
+          "opciones": ["$!", "$#", "$?", "$0"],
+          "correctas": [2],
+          "explicacion": "'$?' guarda el codigo de salida del comando anterior (0 indica exito). '$#' cuenta los argumentos, '$0' es el nombre del script y '$!' el PID del ultimo proceso en segundo plano."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Necesitas guardar en una variable la lista de archivos actuales para recorrerla luego. Que sintaxis captura correctamente la salida de un comando?",
+          "opciones": ["archivos = ls", "archivos=$(ls)", "archivos=<ls>", "archivos==ls"],
+          "correctas": [1],
+          "explicacion": "La sustitucion de comandos '$(...)' ejecuta el comando y asigna su salida; la asignacion no admite espacios alrededor del '=' ni dobles signos."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Cuales de los siguientes elementos son validos para controlar el flujo o los argumentos en un script de Bash? Selecciona todas las que apliquen.",
+          "opciones": ["El bucle for sobre una lista", "El condicional if con [[ ]]", "El argumento posicional $1", "La directiva import de modulos", "La declaracion de clases con class"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Bash usa for, if con pruebas y argumentos posicionales como $1. No tiene 'import' de modulos ni declaracion de clases; esos conceptos pertenecen a otros lenguajes."
+        }
+      ]
+    },
+    {
+      "slug": "operacion-sistemas",
+      "nombre": "Operacion de sistemas en ejecucion",
+      "dominio": "Operar sistemas en ejecucion",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Arranque, servicios y journald",
+        "markdown": "## systemd como init\n**systemd** gestiona el arranque y los servicios mediante **unidades**. Las de tipo *service* controlan demonios; los **targets** agrupan estados del sistema (equivalentes a los antiguos runlevels), como el modo grafico o el multiusuario.\n\n## Gestion de servicios\n- **Iniciar / detener / reiniciar** un servicio en caliente.\n- **Habilitar** lo arranca al inicio; **deshabilitar** lo evita.\n- Consultar el **estado** revela si esta activo, fallido o detenido.\n\n## Arranque y rescate\nEl gestor de arranque carga el **kernel**. Se puede editar la linea del kernel para entrar en **modo de rescate** o **emergencia**, util para recuperar la contrasena de root o reparar el arranque.\n\n## Registros\n- **journald** centraliza los logs; se filtran por unidad, prioridad o tiempo.\n- La **prioridad** distingue avisos informativos de errores criticos.\n\n## Recursos del sistema\nMonitorear **procesos**, uso de **CPU** y **memoria** ayuda a diagnosticar lentitud o saturacion.\n\n> **En el examen:** distingue habilitar (persistente al arranque) de iniciar (solo ahora); para recuperar root, el modo de rescate desde el gestor de arranque es la via."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Configuras un servicio para que arranque automaticamente cada vez que inicie el servidor, pero ahora mismo sigue detenido. Que accion lograste con 'habilitar'?",
+          "opciones": ["Lo dejaste corriendo de inmediato en esta sesion", "Lo marcaste para iniciarse en cada arranque futuro, sin arrancarlo ahora", "Eliminaste su unidad del sistema", "Lo pusiste en modo de rescate"],
+          "correctas": [1],
+          "explicacion": "Habilitar un servicio crea el enlace para que systemd lo inicie en cada arranque, pero no lo arranca en la sesion actual; para eso hace falta iniciarlo explicitamente."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Olvidaste la contrasena de root y necesitas restablecerla sin reinstalar. Cual es el enfoque correcto?",
+          "opciones": ["Editar la linea del kernel desde el gestor de arranque para entrar en un modo de rescate", "Borrar el archivo de contrasenas desde otro usuario normal", "Reinstalar el sistema operativo completo", "Deshabilitar systemd en el arranque"],
+          "correctas": [0],
+          "explicacion": "Interrumpir el gestor de arranque y editar la linea del kernel permite arrancar en un entorno de rescate con acceso para cambiar la contrasena de root; las demas opciones no son viables o son destructivas."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de las siguientes son responsabilidades de systemd en un sistema Linux? Selecciona todas las que apliquen.",
+          "opciones": ["Gestionar el arranque mediante unidades y targets", "Iniciar, detener y habilitar servicios", "Recolectar registros a traves de journald", "Compilar el kernel desde el codigo fuente", "Particionar discos automaticamente en cada arranque"],
+          "correctas": [0, 1, 2],
+          "explicacion": "systemd gestiona unidades y targets, controla servicios y, junto a journald, centraliza los registros. No compila el kernel ni particiona discos por su cuenta."
+        }
+      ]
+    },
+    {
+      "slug": "almacenamiento-local",
+      "nombre": "Configuracion de almacenamiento local",
+      "dominio": "Configurar almacenamiento local",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Particiones, LVM y sistemas de archivos",
+        "markdown": "## Particiones\nUn disco se divide en **particiones** segun un esquema (MBR o GPT). Cada particion puede contener un **sistema de archivos** o ser parte de un volumen logico.\n\n## LVM (administrador de volumenes logicos)\nAporta flexibilidad en tres capas:\n- **Volumenes fisicos (PV)**: discos o particiones preparados para LVM.\n- **Grupos de volumenes (VG)**: agregan varios PV en un mismo pool de almacenamiento.\n- **Volumenes logicos (LV)**: se crean desde el VG y se pueden **extender** sin reiniciar.\n\n## Sistemas de archivos y montaje\n- Se **formatea** un volumen con un sistema de archivos (por ejemplo xfs o ext4).\n- El **montaje** lo asocia a un directorio; para que persista tras reiniciar se declara en la tabla de montaje (`/etc/fstab`).\n- Conviene usar **UUID** en lugar de nombres de dispositivo, que pueden cambiar.\n\n## Intercambio (swap)\nEl **swap** extiende la memoria usando disco cuando la RAM se agota.\n\n> **En el examen:** LVM permite ampliar almacenamiento en caliente; usa UUID en fstab para evitar fallos de arranque por cambios de nombre de dispositivo."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un volumen logico se quedo sin espacio y necesitas ampliarlo sin perder datos ni reiniciar. Que tecnologia lo permite?",
+          "opciones": ["Reparticionar el disco con MBR desde cero", "Extender el volumen logico (LVM) y luego el sistema de archivos", "Crear un nuevo disco swap", "Cambiar el formato a solo lectura"],
+          "correctas": [1],
+          "explicacion": "LVM permite extender un volumen logico en caliente tomando espacio libre del grupo de volumenes y luego ampliar el sistema de archivos, sin interrumpir el servicio."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Para que un sistema de archivos se monte automaticamente en cada arranque, donde debe declararse?",
+          "opciones": ["En /etc/fstab", "En /etc/passwd", "En /etc/hostname", "En /etc/motd"],
+          "correctas": [0],
+          "explicacion": "La tabla /etc/fstab define los montajes persistentes; passwd guarda cuentas, hostname el nombre del host y motd el mensaje del dia."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Cuales de los siguientes son componentes del modelo de LVM? Selecciona todas las que apliquen.",
+          "opciones": ["Volumen fisico (PV)", "Grupo de volumenes (VG)", "Volumen logico (LV)", "Grupo de seguridad de red", "Tabla de enrutamiento"],
+          "correctas": [0, 1, 2],
+          "explicacion": "LVM se compone de volumenes fisicos, grupos de volumenes y volumenes logicos. Los grupos de seguridad de red y las tablas de enrutamiento pertenecen al dominio de redes, no a LVM."
+        }
+      ]
+    },
+    {
+      "slug": "usuarios-grupos-permisos",
+      "nombre": "Administracion de usuarios, grupos y permisos",
+      "dominio": "Crear y configurar sistemas de archivos, usuarios y grupos",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Cuentas, permisos y SELinux",
+        "markdown": "## Usuarios y grupos\nCada cuenta tiene un **UID**, un grupo primario y, opcionalmente, grupos secundarios. La informacion vive en `/etc/passwd` y las contrasenas cifradas en `/etc/shadow`. Las politicas de **caducidad** controlan la vigencia de las contrasenas.\n\n## Permisos basicos\nCada archivo define permisos de **lectura (r)**, **escritura (w)** y **ejecucion (x)** para tres categorias: **propietario**, **grupo** y **otros**. Se expresan en notacion **simbolica** o **octal** (por ejemplo 750).\n\n## Permisos especiales\n- **setuid / setgid**: ejecutan con la identidad del propietario o grupo.\n- **sticky bit**: en un directorio compartido, solo el dueno de cada archivo puede borrarlo.\n\n## Escalada de privilegios\n**sudo** delega comandos concretos a usuarios autorizados sin compartir la contrasena de root.\n\n## SELinux\nAplica **control de acceso obligatorio** mediante **contextos** y un modo (*enforcing*, *permissive* o *disabled*). Los **booleanos** ajustan politicas sin reescribirlas.\n\n> **En el examen:** practica la notacion octal y recuerda que SELinux en *enforcing* puede bloquear accesos aun con permisos correctos; revisa contextos y booleanos antes de culpar a los permisos clasicos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Quieres que el propietario tenga lectura, escritura y ejecucion; el grupo lectura y ejecucion; y otros sin acceso. Que valor octal corresponde?",
+          "opciones": ["777", "750", "640", "700"],
+          "correctas": [1],
+          "explicacion": "rwx vale 7, r-x vale 5 y --- vale 0, por lo que el conjunto es 750. 777 da todo a todos, 640 no da ejecucion y 700 niega acceso al grupo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Un servicio falla al acceder a un archivo aunque los permisos clasicos son correctos y SELinux esta en modo enforcing. Cual es la causa mas probable?",
+          "opciones": ["El archivo tiene un UID negativo", "El contexto de SELinux del archivo no coincide con el que el servicio espera", "El grupo primario del usuario no existe", "El sticky bit esta desactivado"],
+          "correctas": [1],
+          "explicacion": "En modo enforcing, SELinux puede denegar el acceso si el contexto del archivo no es el adecuado para el servicio, incluso con permisos rwx correctos; corregir el contexto suele resolverlo."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de los siguientes son permisos especiales o mecanismos de control de acceso en Linux? Selecciona todas las que apliquen.",
+          "opciones": ["setuid", "setgid", "sticky bit", "balanceo de carga", "tabla de particiones"],
+          "correctas": [0, 1, 2],
+          "explicacion": "setuid, setgid y el sticky bit son permisos especiales que alteran el comportamiento de ejecucion o borrado. El balanceo de carga y la tabla de particiones no controlan permisos de archivos."
+        }
+      ]
+    },
+    {
+      "slug": "redes-seguridad-contenedores",
+      "nombre": "Redes, seguridad y contenedores basicos",
+      "dominio": "Gestionar seguridad basica de red y desplegar contenedores",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Red, firewalld, SSH y contenedores",
+        "markdown": "## Configuracion de red\nLas conexiones se gestionan de forma persistente con un administrador de red que guarda el **perfil** (IP estatica o DHCP, puerta de enlace, DNS). La **resolucion de nombres** se define en `/etc/resolv.conf` y los nombres estaticos en `/etc/hosts`.\n\n## Firewall\n**firewalld** organiza reglas en **zonas**; cada zona aplica un nivel de confianza. Se permiten **servicios** o **puertos** y los cambios se hacen **permanentes** para sobrevivir reinicios.\n\n## Acceso remoto seguro\n- **SSH** cifra la sesion remota.\n- La **autenticacion por clave** (par publica/privada) es mas segura que la contrasena.\n- Conviene **endurecer** la configuracion, por ejemplo limitando el acceso de root.\n\n## Contenedores\nCon herramientas sin demonio se pueden ejecutar **contenedores** como usuario normal (*rootless*). Se montan **volumenes** para persistir datos y se integran como **servicios** systemd para que arranquen solos.\n\n> **En el examen:** recuerda hacer permanentes las reglas de firewalld y recargar; para SSH, las claves publicas evitan exponer contrasenas y permiten automatizar accesos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Agregas una regla en firewalld para abrir un puerto, pero tras reiniciar el servidor la regla desaparece. Que omitiste?",
+          "opciones": ["Asignar la regla a un usuario", "Hacer la regla permanente y recargar la configuracion", "Reiniciar el servicio SSH", "Cambiar el contexto de SELinux del puerto"],
+          "correctas": [1],
+          "explicacion": "Las reglas de firewalld aplicadas solo en tiempo de ejecucion se pierden al reiniciar; deben marcarse como permanentes y recargarse para persistir."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Que metodo de autenticacion de SSH es mas seguro y permite acceso sin escribir contrasena en cada conexion?",
+          "opciones": ["Autenticacion por contrasena simple", "Autenticacion por par de claves publica/privada", "Acceso anonimo sin credenciales", "Telnet en texto plano"],
+          "correctas": [1],
+          "explicacion": "El par de claves publica/privada permite autenticacion sin contrasena interactiva y es mas resistente a ataques de fuerza bruta; telnet ni siquiera cifra el trafico."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Cuales de las siguientes son practicas o capacidades correctas al trabajar con contenedores y seguridad de red en RHEL? Selecciona todas las que apliquen.",
+          "opciones": ["Ejecutar contenedores rootless como usuario normal", "Montar volumenes para persistir datos del contenedor", "Integrar un contenedor como servicio de systemd", "Abrir todos los puertos del firewall por defecto para mayor comodidad", "Compartir la clave privada SSH publicamente para facilitar accesos"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Los contenedores rootless, los volumenes persistentes y la integracion con systemd son practicas validas. Abrir todos los puertos o compartir la clave privada son fallos graves de seguridad."
+        }
+      ]
+    }
+  ]
+}

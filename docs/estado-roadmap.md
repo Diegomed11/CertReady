@@ -167,9 +167,12 @@ trabajo continuo. Próximos pasos posibles (a decidir con el responsable):
 
 ## Planeado
 
-- **Más analítica en la web.** Ya está el acierto por dominio + el recomendador de
-  CV (DSS). Falta surfacear más medidas de Cube (tendencias, comparativas) y
-  ampliar el recomendador (más certificaciones con contenido propio).
+- **Más analítica en la web.** Ya están el acierto por dominio + el recomendador
+  de CV (DSS) y un **catálogo de ~50 certificaciones** (AWS/Azure/GCP + otras) con
+  camino, estudio y quiz (contenido ligero, se refina cert por cert). Falta
+  surfacear más medidas de Cube (tendencias, comparativas) y **refinar/profundizar**
+  el contenido de las certs nuevas (hoy `aws-saa` es la única profunda), además de
+  pesos de simulacro y corte de aprobación por cert.
 - **Pulido de UI/UX.** Refinamiento visual y de interacción sobre el MVP.
 - **Fase 6 — Móvil.** Aplicación Flutter consumiendo las mismas APIs.
 - **Fase 7 — Endurecimiento, pentesting y producción.** Revisión de seguridad,

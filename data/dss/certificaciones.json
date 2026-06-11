@@ -1,16 +1,6 @@
 {
-  "_nota": "Dataset curado y ORIGINAL para el recomendador. Nombres nominativos, sin logos. 'skills' alimentan el emparejamiento por solape; 'slug_estudio' enlaza a una certificación con contenido propio (hoy solo aws-saa).",
+  "_nota": "Dataset del recomendador. GENERADO por scripts/build-reco-dataset.py desde scripts/catalog/*.json (no editar a mano). aws-saa se conserva curado. Nombres nominativos, sin logos; 'slug_estudio' enlaza a la cert con contenido.",
   "certificaciones": [
-    {
-      "slug": "aws-cloud-practitioner",
-      "nombre": "AWS Certified Cloud Practitioner",
-      "proveedor": "AWS",
-      "area": "Nube",
-      "nivel": "foundational",
-      "descripcion": "Primer contacto con la nube de AWS: conceptos, servicios clave, modelo de costos y seguridad compartida. Ideal para validar bases antes de una certificación técnica.",
-      "skills": ["aws", "nube", "cloud", "fundamentos", "facturacion", "costos", "regiones", "iam basico"],
-      "roles": ["soporte", "ventas tecnicas", "estudiante", "transicion a la nube"]
-    },
     {
       "slug": "aws-saa",
       "nombre": "AWS Certified Solutions Architect – Associate",
@@ -18,279 +8,117 @@
       "area": "Nube",
       "nivel": "associate",
       "descripcion": "Diseño de arquitecturas seguras, resilientes, de alto rendimiento y optimizadas en costo sobre AWS. La certificación de arquitectura más demandada del mercado.",
-      "skills": ["aws", "arquitectura", "ec2", "s3", "vpc", "rds", "dynamodb", "alta disponibilidad", "auto scaling", "elb", "iam", "costos", "well-architected", "nube"],
-      "roles": ["arquitecto de soluciones", "ingeniero de nube", "devops"],
+      "skills": [
+        "aws",
+        "arquitectura",
+        "ec2",
+        "s3",
+        "vpc",
+        "rds",
+        "dynamodb",
+        "alta disponibilidad",
+        "auto scaling",
+        "elb",
+        "iam",
+        "costos",
+        "well-architected",
+        "nube"
+      ],
+      "roles": [
+        "arquitecto de soluciones",
+        "ingeniero de nube",
+        "devops"
+      ],
       "slug_estudio": "aws-saa"
     },
     {
-      "slug": "aws-developer-associate",
-      "nombre": "AWS Certified Developer – Associate",
+      "slug": "aws-advanced-networking-specialty",
+      "nombre": "AWS Certified Advanced Networking – Specialty",
       "proveedor": "AWS",
-      "area": "Desarrollo",
-      "nivel": "associate",
-      "descripcion": "Construir, desplegar y depurar aplicaciones nativas de AWS usando sus SDK, servicios serverless y prácticas de integración continua.",
-      "skills": ["aws", "lambda", "api gateway", "dynamodb", "sdk", "ci/cd", "serverless", "desarrollo", "backend", "python", "node"],
-      "roles": ["desarrollador backend", "ingeniero de software", "desarrollador en la nube"]
-    },
-    {
-      "slug": "aws-sysops-associate",
-      "nombre": "AWS Certified SysOps Administrator – Associate",
-      "proveedor": "AWS",
-      "area": "Sistemas",
-      "nivel": "associate",
-      "descripcion": "Operar, monitorear y automatizar cargas en AWS: despliegues, métricas, alarmas, respaldo y recuperación.",
-      "skills": ["aws", "operaciones", "cloudwatch", "monitoreo", "automatizacion", "respaldos", "sistemas", "linux", "scripting"],
-      "roles": ["administrador de sistemas", "ingeniero de operaciones", "sre"]
-    },
-    {
-      "slug": "aws-solutions-architect-professional",
-      "nombre": "AWS Certified Solutions Architect – Professional",
-      "proveedor": "AWS",
-      "area": "Nube",
-      "nivel": "professional",
-      "descripcion": "Arquitecturas avanzadas y multi-cuenta en AWS: migraciones, híbrido, costos a escala y gobernanza. Paso natural tras el nivel asociado.",
-      "skills": ["aws", "arquitectura avanzada", "multicuenta", "migracion", "hibrido", "gobernanza", "costos", "organizations", "nube"],
-      "roles": ["arquitecto senior", "arquitecto de soluciones", "lider tecnico"]
-    },
-    {
-      "slug": "aws-devops-professional",
-      "nombre": "AWS Certified DevOps Engineer – Professional",
-      "proveedor": "AWS",
-      "area": "DevOps",
-      "nivel": "professional",
-      "descripcion": "Automatización de entrega continua, infraestructura como código y observabilidad sobre AWS a escala de producción.",
-      "skills": ["aws", "devops", "ci/cd", "infraestructura como codigo", "iac", "automatizacion", "observabilidad", "pipelines", "contenedores"],
-      "roles": ["ingeniero devops", "sre", "ingeniero de plataforma"]
-    },
-    {
-      "slug": "aws-security-specialty",
-      "nombre": "AWS Certified Security – Specialty",
-      "proveedor": "AWS",
-      "area": "Seguridad",
+      "area": "Redes",
       "nivel": "specialty",
-      "descripcion": "Seguridad en profundidad sobre AWS: gestión de identidades, cifrado, detección, respuesta a incidentes y cumplimiento.",
-      "skills": ["aws", "seguridad", "iam", "kms", "cifrado", "deteccion", "respuesta a incidentes", "cumplimiento", "nube"],
-      "roles": ["ingeniero de seguridad en la nube", "analista de seguridad", "arquitecto de seguridad"]
+      "descripcion": "Valida el diseño, la implementación y la operación de arquitecturas de red híbridas y a gran escala en AWS. Cubre conectividad híbrida, VPC avanzada, DNS, balanceo de carga y seguridad de red en entornos multicuenta.",
+      "skills": [
+        "VPC",
+        "Transit Gateway",
+        "Direct Connect",
+        "Site-to-Site VPN",
+        "Route 53",
+        "BGP",
+        "load balancing",
+        "VPC endpoints",
+        "network firewall",
+        "CIDR",
+        "multicuenta",
+        "monitoreo de red"
+      ],
+      "roles": [
+        "Ingeniero de redes en la nube",
+        "Arquitecto de conectividad híbrida",
+        "Ingeniero de infraestructura",
+        "Especialista en seguridad de red"
+      ],
+      "slug_estudio": "aws-advanced-networking-specialty"
     },
     {
-      "slug": "azure-fundamentals",
-      "nombre": "Microsoft Certified: Azure Fundamentals (AZ-900)",
-      "proveedor": "Microsoft",
+      "slug": "aws-ai-practitioner",
+      "nombre": "AWS Certified AI Practitioner",
+      "proveedor": "AWS",
+      "area": "IA",
+      "nivel": "foundational",
+      "descripcion": "Certificación de nivel fundacional que valida el conocimiento general de inteligencia artificial, machine learning e IA generativa en el ecosistema de AWS. Está pensada para perfiles que usan o impulsan soluciones de IA sin ser necesariamente especialistas en ciencia de datos.",
+      "skills": [
+        "inteligencia artificial",
+        "machine learning",
+        "ia generativa",
+        "modelos fundacionales",
+        "amazon bedrock",
+        "amazon sagemaker",
+        "prompt engineering",
+        "rag",
+        "ia responsable",
+        "seguridad de datos",
+        "embeddings",
+        "fine-tuning"
+      ],
+      "roles": [
+        "Practicante de IA",
+        "Analista de negocio orientado a datos",
+        "Desarrollador de aplicaciones de IA",
+        "Líder de producto de IA",
+        "Profesional de la nube en transición a IA"
+      ],
+      "slug_estudio": "aws-ai-practitioner"
+    },
+    {
+      "slug": "aws-cloud-practitioner",
+      "nombre": "AWS Certified Cloud Practitioner",
+      "proveedor": "AWS",
       "area": "Nube",
       "nivel": "foundational",
-      "descripcion": "Conceptos base de la nube de Microsoft Azure: servicios, precios, soporte y seguridad. Punto de entrada al ecosistema Azure.",
-      "skills": ["azure", "microsoft", "nube", "cloud", "fundamentos", "costos"],
-      "roles": ["estudiante", "transicion a la nube", "soporte"]
-    },
-    {
-      "slug": "azure-administrator",
-      "nombre": "Microsoft Certified: Azure Administrator Associate (AZ-104)",
-      "proveedor": "Microsoft",
-      "area": "Sistemas",
-      "nivel": "associate",
-      "descripcion": "Administrar identidades, redes, almacenamiento y cómputo en Azure, además de monitoreo y respaldo.",
-      "skills": ["azure", "microsoft", "administracion", "redes", "almacenamiento", "active directory", "powershell", "sistemas", "nube"],
-      "roles": ["administrador de azure", "administrador de sistemas", "ingeniero de nube"]
-    },
-    {
-      "slug": "azure-solutions-architect",
-      "nombre": "Microsoft Certified: Azure Solutions Architect Expert (AZ-305)",
-      "proveedor": "Microsoft",
-      "area": "Nube",
-      "nivel": "professional",
-      "descripcion": "Diseñar soluciones en Azure: cómputo, red, almacenamiento, identidad, continuidad de negocio y gobernanza.",
-      "skills": ["azure", "microsoft", "arquitectura", "diseno", "identidad", "gobernanza", "alta disponibilidad", "nube"],
-      "roles": ["arquitecto de soluciones", "arquitecto de nube", "lider tecnico"]
-    },
-    {
-      "slug": "azure-security-engineer",
-      "nombre": "Microsoft Certified: Azure Security Engineer Associate (AZ-500)",
-      "proveedor": "Microsoft",
-      "area": "Seguridad",
-      "nivel": "associate",
-      "descripcion": "Implementar controles de seguridad, gestión de identidades, protección de datos y respuesta ante amenazas en Azure.",
-      "skills": ["azure", "microsoft", "seguridad", "identidad", "proteccion de datos", "amenazas", "cifrado", "nube"],
-      "roles": ["ingeniero de seguridad", "analista de seguridad"]
-    },
-    {
-      "slug": "gcp-cloud-digital-leader",
-      "nombre": "Google Cloud Digital Leader",
-      "proveedor": "Google",
-      "area": "Nube",
-      "nivel": "foundational",
-      "descripcion": "Visión de negocio y conceptos de la nube de Google: productos, datos e IA, y cómo aportan valor. Entrada no técnica al ecosistema.",
-      "skills": ["google cloud", "gcp", "nube", "cloud", "fundamentos", "datos", "ia"],
-      "roles": ["estudiante", "negocio", "transicion a la nube"]
-    },
-    {
-      "slug": "gcp-associate-cloud-engineer",
-      "nombre": "Google Cloud Associate Cloud Engineer",
-      "proveedor": "Google",
-      "area": "Nube",
-      "nivel": "associate",
-      "descripcion": "Desplegar aplicaciones, monitorear operaciones y administrar servicios en Google Cloud.",
-      "skills": ["google cloud", "gcp", "compute engine", "gke", "operaciones", "despliegue", "nube", "linux"],
-      "roles": ["ingeniero de nube", "administrador de sistemas", "devops"]
-    },
-    {
-      "slug": "gcp-professional-cloud-architect",
-      "nombre": "Google Cloud Professional Cloud Architect",
-      "proveedor": "Google",
-      "area": "Nube",
-      "nivel": "professional",
-      "descripcion": "Diseñar arquitecturas seguras, escalables y confiables en Google Cloud, alineadas a objetivos de negocio.",
-      "skills": ["google cloud", "gcp", "arquitectura", "escalabilidad", "seguridad", "diseno", "nube"],
-      "roles": ["arquitecto de soluciones", "arquitecto de nube"]
-    },
-    {
-      "slug": "comptia-a-plus",
-      "nombre": "CompTIA A+",
-      "proveedor": "CompTIA",
-      "area": "Soporte",
-      "nivel": "foundational",
-      "descripcion": "Fundamentos de soporte técnico: hardware, sistemas operativos, redes básicas y resolución de problemas. Puerta de entrada a TI.",
-      "skills": ["soporte tecnico", "hardware", "windows", "sistemas operativos", "redes basicas", "troubleshooting", "helpdesk"],
-      "roles": ["soporte tecnico", "helpdesk", "tecnico de campo"]
-    },
-    {
-      "slug": "comptia-network-plus",
-      "nombre": "CompTIA Network+",
-      "proveedor": "CompTIA",
-      "area": "Redes",
-      "nivel": "associate",
-      "descripcion": "Fundamentos de redes neutrales de fabricante: protocolos, direccionamiento, infraestructura y diagnóstico.",
-      "skills": ["redes", "tcp/ip", "protocolos", "switching", "routing", "subnetting", "dns", "diagnostico"],
-      "roles": ["administrador de redes", "soporte de redes", "tecnico de redes"]
-    },
-    {
-      "slug": "comptia-security-plus",
-      "nombre": "CompTIA Security+",
-      "proveedor": "CompTIA",
-      "area": "Seguridad",
-      "nivel": "associate",
-      "descripcion": "Base de ciberseguridad reconocida por la industria: amenazas, criptografía, control de acceso y respuesta a incidentes. Excelente primer paso en seguridad.",
-      "skills": ["seguridad", "ciberseguridad", "amenazas", "criptografia", "control de acceso", "respuesta a incidentes", "riesgos", "redes"],
-      "roles": ["analista de seguridad", "administrador de seguridad", "soc"]
-    },
-    {
-      "slug": "comptia-cysa",
-      "nombre": "CompTIA CySA+",
-      "proveedor": "CompTIA",
-      "area": "Seguridad",
-      "nivel": "professional",
-      "descripcion": "Análisis de ciberseguridad y operaciones de un centro de operaciones de seguridad: detección, inteligencia de amenazas y respuesta.",
-      "skills": ["seguridad", "soc", "deteccion", "inteligencia de amenazas", "monitoreo", "siem", "respuesta a incidentes", "analisis"],
-      "roles": ["analista soc", "analista de amenazas", "ingeniero de seguridad"]
-    },
-    {
-      "slug": "cisco-ccna",
-      "nombre": "Cisco Certified Network Associate (CCNA)",
-      "proveedor": "Cisco",
-      "area": "Redes",
-      "nivel": "associate",
-      "descripcion": "Fundamentos sólidos de redes: enrutamiento y conmutación, IP, seguridad básica y automatización. Estándar de facto para empezar en redes.",
-      "skills": ["redes", "cisco", "routing", "switching", "tcp/ip", "subnetting", "ospf", "vlan", "seguridad de red", "automatizacion"],
-      "roles": ["ingeniero de redes", "administrador de redes", "soporte de redes"]
-    },
-    {
-      "slug": "cisco-ccnp-enterprise",
-      "nombre": "Cisco Certified Network Professional (CCNP) Enterprise",
-      "proveedor": "Cisco",
-      "area": "Redes",
-      "nivel": "professional",
-      "descripcion": "Redes empresariales avanzadas: arquitecturas, enrutamiento avanzado, redes definidas por software y automatización.",
-      "skills": ["redes", "cisco", "routing avanzado", "sd-wan", "arquitectura de red", "automatizacion", "empresarial"],
-      "roles": ["ingeniero de redes senior", "arquitecto de redes"]
-    },
-    {
-      "slug": "cka",
-      "nombre": "Certified Kubernetes Administrator (CKA)",
-      "proveedor": "CNCF",
-      "area": "DevOps",
-      "nivel": "associate",
-      "descripcion": "Operar clústeres de Kubernetes en producción: instalación, redes, almacenamiento, seguridad y resolución de problemas. Examen práctico.",
-      "skills": ["kubernetes", "contenedores", "docker", "devops", "orquestacion", "linux", "redes", "yaml", "nube"],
-      "roles": ["ingeniero devops", "ingeniero de plataforma", "sre"]
-    },
-    {
-      "slug": "ckad",
-      "nombre": "Certified Kubernetes Application Developer (CKAD)",
-      "proveedor": "CNCF",
-      "area": "DevOps",
-      "nivel": "associate",
-      "descripcion": "Diseñar y desplegar aplicaciones en Kubernetes: configuración, observabilidad y multicontenedor. Examen práctico orientado a desarrolladores.",
-      "skills": ["kubernetes", "contenedores", "docker", "desarrollo", "despliegue", "microservicios", "yaml", "devops"],
-      "roles": ["desarrollador", "ingeniero devops", "ingeniero de plataforma"]
-    },
-    {
-      "slug": "terraform-associate",
-      "nombre": "HashiCorp Certified: Terraform Associate",
-      "proveedor": "HashiCorp",
-      "area": "DevOps",
-      "nivel": "associate",
-      "descripcion": "Infraestructura como código con Terraform: flujo de trabajo, estado, módulos y proveedores en múltiples nubes.",
-      "skills": ["terraform", "infraestructura como codigo", "iac", "devops", "automatizacion", "nube", "aws", "azure", "gcp"],
-      "roles": ["ingeniero devops", "ingeniero de plataforma", "ingeniero de nube"]
-    },
-    {
-      "slug": "docker-dca",
-      "nombre": "Docker Certified Associate",
-      "proveedor": "Docker",
-      "area": "DevOps",
-      "nivel": "associate",
-      "descripcion": "Empaquetado y ejecución de aplicaciones en contenedores con Docker: imágenes, redes, almacenamiento y orquestación básica.",
-      "skills": ["docker", "contenedores", "imagenes", "devops", "microservicios", "linux"],
-      "roles": ["ingeniero devops", "desarrollador", "administrador de sistemas"]
-    },
-    {
-      "slug": "cissp",
-      "nombre": "Certified Information Systems Security Professional (CISSP)",
-      "proveedor": "ISC2",
-      "area": "Seguridad",
-      "nivel": "professional",
-      "descripcion": "Certificación de gestión de seguridad de la información de amplio alcance (gobernanza, riesgo, arquitectura, operaciones). Para perfiles con experiencia.",
-      "skills": ["seguridad", "ciberseguridad", "gobernanza", "riesgo", "arquitectura de seguridad", "criptografia", "cumplimiento", "gestion"],
-      "roles": ["arquitecto de seguridad", "gerente de seguridad", "ciso", "consultor de seguridad"]
-    },
-    {
-      "slug": "pmp",
-      "nombre": "Project Management Professional (PMP)",
-      "proveedor": "PMI",
-      "area": "Gestion de proyectos",
-      "nivel": "professional",
-      "descripcion": "Gestión de proyectos reconocida globalmente: enfoques predictivo, ágil e híbrido, liderazgo y entrega de valor.",
-      "skills": ["gestion de proyectos", "liderazgo", "agil", "scrum", "planificacion", "riesgos", "stakeholders", "pmbok"],
-      "roles": ["gerente de proyectos", "lider de equipo", "pmo"]
-    },
-    {
-      "slug": "psm-i",
-      "nombre": "Professional Scrum Master I (PSM I)",
-      "proveedor": "Scrum.org",
-      "area": "Gestion de proyectos",
-      "nivel": "associate",
-      "descripcion": "Dominio del marco Scrum y del rol de Scrum Master: facilitación, mejora continua y entrega ágil de valor.",
-      "skills": ["scrum", "agil", "agile", "facilitacion", "kanban", "gestion de proyectos", "equipos"],
-      "roles": ["scrum master", "lider agil", "gerente de proyectos"]
-    },
-    {
-      "slug": "lpic-1",
-      "nombre": "LPIC-1: Linux Administrator",
-      "proveedor": "LPI",
-      "area": "Sistemas",
-      "nivel": "associate",
-      "descripcion": "Administración de sistemas Linux neutral de distribución: línea de comandos, mantenimiento, redes y seguridad básica.",
-      "skills": ["linux", "administracion de sistemas", "bash", "shell", "redes", "scripting", "servidores"],
-      "roles": ["administrador de sistemas", "administrador linux", "soporte de servidores"]
-    },
-    {
-      "slug": "rhcsa",
-      "nombre": "Red Hat Certified System Administrator (RHCSA)",
-      "proveedor": "Red Hat",
-      "area": "Sistemas",
-      "nivel": "associate",
-      "descripcion": "Administración práctica de Red Hat Enterprise Linux: usuarios, almacenamiento, servicios, contenedores y automatización. Examen práctico.",
-      "skills": ["linux", "red hat", "administracion de sistemas", "bash", "servidores", "almacenamiento", "automatizacion", "contenedores"],
-      "roles": ["administrador de sistemas", "administrador linux", "ingeniero de operaciones"]
+      "descripcion": "Valida el entendimiento general de la nube de AWS: conceptos, servicios principales, seguridad, precios y soporte. Pensada para perfiles no técnicos y técnicos que inician su recorrido en la nube.",
+      "skills": [
+        "cloud",
+        "aws",
+        "modelo de responsabilidad compartida",
+        "ec2",
+        "s3",
+        "iam",
+        "facturación",
+        "costos cloud",
+        "regiones y zonas de disponibilidad",
+        "seguridad en la nube",
+        "escalabilidad",
+        "well-architected"
+      ],
+      "roles": [
+        "Analista de negocio en nube",
+        "Profesional de ventas técnicas",
+        "Gerente de proyecto cloud",
+        "Desarrollador junior",
+        "Especialista de soporte TI"
+      ],
+      "slug_estudio": "aws-cloud-practitioner"
     },
     {
       "slug": "aws-data-engineer-associate",
@@ -298,9 +126,889 @@
       "proveedor": "AWS",
       "area": "Datos",
       "nivel": "associate",
-      "descripcion": "Diseñar canalizaciones de datos en AWS: ingesta, transformación, almacenamiento analítico y gobernanza de datos.",
-      "skills": ["aws", "datos", "data engineering", "etl", "sql", "kinesis", "glue", "athena", "redshift", "analitica", "python"],
-      "roles": ["ingeniero de datos", "analista de datos", "ingeniero de nube"]
+      "descripcion": "Valida la capacidad de construir y operar canalizaciones de datos en AWS: ingesta, transformación, almacenamiento y exposición de datos de forma segura y eficiente. Está orientada a quienes diseñan pipelines con servicios gestionados y optimizan costo y rendimiento.",
+      "skills": [
+        "ingesta de datos",
+        "ETL",
+        "AWS Glue",
+        "Amazon Kinesis",
+        "Amazon S3",
+        "Amazon Redshift",
+        "Apache Spark",
+        "Lake Formation",
+        "particionamiento",
+        "orquestación",
+        "calidad de datos",
+        "gobierno de datos"
+      ],
+      "roles": [
+        "Ingeniero de datos",
+        "Ingeniero de ETL",
+        "Arquitecto de datos junior",
+        "Analista de plataformas de datos"
+      ],
+      "slug_estudio": "aws-data-engineer-associate"
+    },
+    {
+      "slug": "aws-developer-associate",
+      "nombre": "AWS Certified Developer – Associate",
+      "proveedor": "AWS",
+      "area": "Desarrollo",
+      "nivel": "associate",
+      "descripcion": "Valida la capacidad de construir, desplegar y depurar aplicaciones nativas de la nube usando los servicios de cómputo, almacenamiento, mensajería y despliegue de AWS. Pensada para personas con experiencia práctica escribiendo y operando código sobre la plataforma.",
+      "skills": [
+        "lambda",
+        "api gateway",
+        "dynamodb",
+        "s3",
+        "iam",
+        "sdk",
+        "cloudformation",
+        "ci/cd",
+        "sqs",
+        "cognito",
+        "cloudwatch",
+        "x-ray"
+      ],
+      "roles": [
+        "Desarrollador backend en la nube",
+        "Ingeniero de aplicaciones serverless",
+        "Desarrollador full-stack",
+        "Ingeniero de integración de APIs"
+      ],
+      "slug_estudio": "aws-developer-associate"
+    },
+    {
+      "slug": "aws-devops-professional",
+      "nombre": "AWS Certified DevOps Engineer – Professional",
+      "proveedor": "AWS",
+      "area": "DevOps",
+      "nivel": "professional",
+      "descripcion": "Valida la capacidad de automatizar entregas, gobernar infraestructura como código y operar sistemas resilientes y observables en AWS. Está orientada a perfiles que ya dominan operaciones y desarrollo en la nube y buscan demostrar práctica avanzada de DevOps.",
+      "skills": [
+        "CI/CD",
+        "CodePipeline",
+        "infraestructura como código",
+        "CloudFormation",
+        "observabilidad",
+        "CloudWatch",
+        "automatización operativa",
+        "despliegues blue/green",
+        "alta disponibilidad",
+        "respuesta a incidentes",
+        "gobernanza multicuenta",
+        "automatización de seguridad"
+      ],
+      "roles": [
+        "Ingeniero DevOps",
+        "Ingeniero de plataforma",
+        "SRE (Site Reliability Engineer)",
+        "Ingeniero de automatización en la nube"
+      ],
+      "slug_estudio": "aws-devops-professional"
+    },
+    {
+      "slug": "aws-machine-learning-engineer-associate",
+      "nombre": "AWS Certified Machine Learning Engineer – Associate",
+      "proveedor": "AWS",
+      "area": "IA",
+      "nivel": "associate",
+      "descripcion": "Valida la capacidad de construir, desplegar y operar modelos de machine learning en producción sobre AWS, cubriendo el ciclo completo desde la preparación de datos hasta el monitoreo continuo. Enfocada en perfiles que llevan modelos a producción con prácticas de MLOps.",
+      "skills": [
+        "SageMaker",
+        "ingenieria de features",
+        "pipelines de datos",
+        "entrenamiento de modelos",
+        "ajuste de hiperparametros",
+        "despliegue de endpoints",
+        "MLOps",
+        "monitoreo de modelos",
+        "deteccion de drift",
+        "seguridad en ML",
+        "CI/CD para ML",
+        "optimizacion de costos"
+      ],
+      "roles": [
+        "Ingeniero de Machine Learning",
+        "Ingeniero de MLOps",
+        "Cientifico de datos aplicado",
+        "Ingeniero de datos con foco en ML",
+        "Arquitecto de soluciones de IA"
+      ],
+      "slug_estudio": "aws-machine-learning-engineer-associate"
+    },
+    {
+      "slug": "aws-machine-learning-specialty",
+      "nombre": "AWS Certified Machine Learning – Specialty",
+      "proveedor": "AWS",
+      "area": "IA",
+      "nivel": "specialty",
+      "descripcion": "Certificación enfocada en diseñar, entrenar, optimizar y operar soluciones de aprendizaje automático sobre AWS. Cubre todo el ciclo: ingeniería de datos, análisis exploratorio, modelado y despliegue en producción.",
+      "skills": [
+        "SageMaker",
+        "ingenieria de features",
+        "ajuste de hiperparametros",
+        "metricas de evaluacion",
+        "datos desbalanceados",
+        "deteccion de overfitting",
+        "pipelines de datos",
+        "inferencia en tiempo real",
+        "inferencia por lotes",
+        "MLOps",
+        "Kinesis",
+        "deep learning"
+      ],
+      "roles": [
+        "Ingeniero de Machine Learning",
+        "Data Scientist",
+        "Arquitecto de soluciones de IA",
+        "Ingeniero de datos",
+        "Ingeniero de MLOps"
+      ],
+      "slug_estudio": "aws-machine-learning-specialty"
+    },
+    {
+      "slug": "aws-security-specialty",
+      "nombre": "AWS Certified Security – Specialty",
+      "proveedor": "AWS",
+      "area": "Seguridad",
+      "nivel": "specialty",
+      "descripcion": "Valida la capacidad de diseñar y operar controles de seguridad en cargas de trabajo de AWS. Cubre detección de amenazas, registro y monitoreo, protección de red, identidades, cifrado de datos y gobernanza.",
+      "skills": [
+        "IAM",
+        "KMS",
+        "GuardDuty",
+        "CloudTrail",
+        "respuesta a incidentes",
+        "cifrado",
+        "VPC security",
+        "WAF",
+        "Security Hub",
+        "Secrets Manager",
+        "least privilege",
+        "gobernanza multi-cuenta"
+      ],
+      "roles": [
+        "Ingeniero de seguridad en la nube",
+        "Arquitecto de seguridad",
+        "Especialista en respuesta a incidentes",
+        "Ingeniero DevSecOps"
+      ],
+      "slug_estudio": "aws-security-specialty"
+    },
+    {
+      "slug": "aws-solutions-architect-professional",
+      "nombre": "AWS Certified Solutions Architect – Professional",
+      "proveedor": "AWS",
+      "area": "Nube",
+      "nivel": "professional",
+      "descripcion": "Certificación avanzada que valida la capacidad de diseñar arquitecturas distribuidas, resilientes y rentables en AWS para organizaciones complejas. Cubre soluciones multicuenta, migraciones de gran escala y optimización continua de costos y rendimiento.",
+      "skills": [
+        "AWS Organizations",
+        "VPC avanzado",
+        "alta disponibilidad",
+        "recuperación ante desastres",
+        "migración de cargas",
+        "optimización de costos",
+        "seguridad multicuenta",
+        "IAM y SCP",
+        "arquitectura serverless",
+        "interconexión híbrida",
+        "Well-Architected",
+        "automatización con IaC"
+      ],
+      "roles": [
+        "Arquitecto de soluciones cloud",
+        "Arquitecto empresarial",
+        "Ingeniero de plataforma",
+        "Líder técnico de migración",
+        "Consultor de nube"
+      ],
+      "slug_estudio": "aws-solutions-architect-professional"
+    },
+    {
+      "slug": "aws-sysops-associate",
+      "nombre": "AWS Certified SysOps Administrator – Associate",
+      "proveedor": "AWS",
+      "area": "Sistemas",
+      "nivel": "associate",
+      "descripcion": "Valida la capacidad de desplegar, operar y mantener cargas de trabajo en AWS con foco en disponibilidad, automatización y respuesta a incidentes. Está orientada a perfiles que administran sistemas en producción día a día.",
+      "skills": [
+        "CloudWatch",
+        "CloudTrail",
+        "Auto Scaling",
+        "EC2",
+        "Systems Manager",
+        "IAM",
+        "VPC",
+        "S3",
+        "CloudFormation",
+        "Backup",
+        "EBS",
+        "ELB"
+      ],
+      "roles": [
+        "Administrador de sistemas en la nube",
+        "Ingeniero de operaciones (CloudOps)",
+        "Ingeniero de soporte de infraestructura",
+        "Site Reliability Engineer junior"
+      ],
+      "slug_estudio": "aws-sysops-associate"
+    },
+    {
+      "slug": "azure-administrator",
+      "nombre": "Microsoft Certified: Azure Administrator Associate (AZ-104)",
+      "proveedor": "Microsoft",
+      "area": "Sistemas",
+      "nivel": "associate",
+      "descripcion": "Certificacion intermedia que valida la capacidad de implementar, gestionar y monitorear identidades, almacenamiento, computo y redes en un entorno Azure. Dirigida a administradores que operan recursos en la nube en el dia a dia.",
+      "skills": [
+        "identidades",
+        "rbac",
+        "directivas",
+        "cuentas de almacenamiento",
+        "maquinas virtuales",
+        "redes virtuales",
+        "balanceo de carga",
+        "respaldos",
+        "monitoreo",
+        "plantillas arm",
+        "escalado",
+        "dns"
+      ],
+      "roles": [
+        "administrador de azure",
+        "administrador de sistemas",
+        "ingeniero de infraestructura cloud",
+        "operador de nube",
+        "administrador de identidades"
+      ],
+      "slug_estudio": "azure-administrator"
+    },
+    {
+      "slug": "azure-ai-engineer",
+      "nombre": "Microsoft Certified: Azure AI Engineer Associate (AI-102)",
+      "proveedor": "Microsoft",
+      "area": "IA",
+      "nivel": "associate",
+      "descripcion": "Certificación que valida la capacidad de diseñar, construir y desplegar soluciones de IA usando los servicios de Azure AI. Dirigida a ingenieros que integran visión, lenguaje, búsqueda y IA generativa en aplicaciones productivas.",
+      "skills": [
+        "azure ai services",
+        "azure openai",
+        "computer vision",
+        "procesamiento de lenguaje natural",
+        "azure ai search",
+        "document intelligence",
+        "ia generativa",
+        "rag",
+        "ia responsable",
+        "contenedores",
+        "embeddings",
+        "prompt engineering"
+      ],
+      "roles": [
+        "Ingeniero de IA",
+        "Desarrollador de software",
+        "Arquitecto de soluciones",
+        "Ingeniero de machine learning",
+        "Desarrollador backend"
+      ],
+      "slug_estudio": "azure-ai-engineer"
+    },
+    {
+      "slug": "azure-ai-fundamentals",
+      "nombre": "Microsoft Certified: Azure AI Fundamentals (AI-900)",
+      "proveedor": "Microsoft",
+      "area": "IA",
+      "nivel": "foundational",
+      "descripcion": "Certificación introductoria que valida el entendimiento de conceptos de inteligencia artificial y machine learning, y de cómo los servicios de Azure AI los hacen realidad. Ideal para perfiles técnicos y de negocio que inician su camino en IA.",
+      "skills": [
+        "machine learning",
+        "computer vision",
+        "procesamiento de lenguaje natural",
+        "IA generativa",
+        "IA responsable",
+        "Azure Machine Learning",
+        "Azure AI Vision",
+        "Azure AI Language",
+        "Azure OpenAI",
+        "clasificacion",
+        "regresion",
+        "clustering"
+      ],
+      "roles": [
+        "Analista de negocio",
+        "Estudiante de IA",
+        "Desarrollador junior",
+        "Gestor de producto",
+        "Consultor técnico"
+      ],
+      "slug_estudio": "azure-ai-fundamentals"
+    },
+    {
+      "slug": "azure-data-engineer",
+      "nombre": "Microsoft Certified: Azure Data Engineer Associate (DP-203)",
+      "proveedor": "Microsoft",
+      "area": "Datos",
+      "nivel": "associate",
+      "descripcion": "Certificacion que valida la capacidad de disenar e implementar soluciones de datos en Azure, integrando almacenamiento, procesamiento por lotes y en streaming, seguridad y monitoreo. Orientada a perfiles que construyen y operan plataformas de datos analiticas.",
+      "skills": [
+        "data lake",
+        "azure synapse",
+        "azure data factory",
+        "particionamiento",
+        "procesamiento por lotes",
+        "procesamiento en streaming",
+        "delta lake",
+        "transformacion de datos",
+        "cifrado",
+        "control de acceso",
+        "optimizacion de consultas",
+        "monitoreo"
+      ],
+      "roles": [
+        "ingeniero de datos",
+        "arquitecto de datos",
+        "desarrollador de etl",
+        "analista de plataformas de datos",
+        "especialista en big data"
+      ],
+      "slug_estudio": "azure-data-engineer"
+    },
+    {
+      "slug": "azure-data-fundamentals",
+      "nombre": "Microsoft Certified: Azure Data Fundamentals (DP-900)",
+      "proveedor": "Microsoft",
+      "area": "Datos",
+      "nivel": "foundational",
+      "descripcion": "Certificación introductoria que valida el entendimiento de los conceptos de datos centrales y de cómo se trabajan datos relacionales, no relacionales y analíticos en Azure. Pensada para perfiles técnicos y de negocio que arrancan su camino en datos en la nube.",
+      "skills": [
+        "datos relacionales",
+        "datos no relacionales",
+        "bases de datos",
+        "almacenamiento de datos",
+        "análisis de datos",
+        "azure sql",
+        "cosmos db",
+        "azure storage",
+        "data warehouse",
+        "etl",
+        "olap",
+        "visualización"
+      ],
+      "roles": [
+        "Analista de datos junior",
+        "Administrador de bases de datos",
+        "Ingeniero de datos en formación",
+        "Analista de negocio",
+        "Estudiante de datos en la nube"
+      ],
+      "slug_estudio": "azure-data-fundamentals"
+    },
+    {
+      "slug": "azure-data-scientist",
+      "nombre": "Microsoft Certified: Azure Data Scientist Associate (DP-100)",
+      "proveedor": "Microsoft",
+      "area": "IA",
+      "nivel": "associate",
+      "descripcion": "Certificación que valida la capacidad de diseñar y operar cargas de machine learning en Azure: preparar recursos, entrenar y ajustar modelos con Azure Machine Learning, y desplegarlos de forma confiable y responsable. Pensada para perfiles que ya programan en Python y trabajan con datos.",
+      "skills": [
+        "azure machine learning",
+        "mlflow",
+        "experimentos",
+        "ajuste de hiperparametros",
+        "automated ml",
+        "pipelines",
+        "endpoints",
+        "scikit-learn",
+        "python sdk v2",
+        "ia responsable",
+        "monitoreo de modelos",
+        "compute"
+      ],
+      "roles": [
+        "Científico de datos",
+        "Ingeniero de machine learning",
+        "Ingeniero de datos",
+        "Desarrollador de IA",
+        "MLOps engineer"
+      ],
+      "slug_estudio": "azure-data-scientist"
+    },
+    {
+      "slug": "azure-developer",
+      "nombre": "Microsoft Certified: Azure Developer Associate (AZ-204)",
+      "proveedor": "Microsoft",
+      "area": "Desarrollo",
+      "nivel": "associate",
+      "descripcion": "Certificación para personas desarrolladoras que diseñan, construyen, prueban y mantienen soluciones en la nube de Azure. Valida la capacidad de implementar cómputo, almacenamiento, seguridad, monitoreo y servicios conectados de forma profesional.",
+      "skills": [
+        "azure functions",
+        "app service",
+        "contenedores",
+        "blob storage",
+        "cosmos db",
+        "microsoft entra id",
+        "key vault",
+        "managed identity",
+        "azure sdk",
+        "event grid",
+        "service bus",
+        "api management"
+      ],
+      "roles": [
+        "Desarrollador de aplicaciones cloud",
+        "Ingeniero backend",
+        "Desarrollador full stack",
+        "Ingeniero de integraciones",
+        "DevOps junior"
+      ],
+      "slug_estudio": "azure-developer"
+    },
+    {
+      "slug": "azure-devops-engineer",
+      "nombre": "Microsoft Certified: DevOps Engineer Expert (AZ-400)",
+      "proveedor": "Microsoft",
+      "area": "DevOps",
+      "nivel": "professional",
+      "descripcion": "Valida la capacidad de combinar personas, procesos y tecnología para entregar software de forma continua en Azure. Cubre estrategia de DevOps, control de versiones con Git, pipelines de CI/CD, infraestructura como código, seguridad de la cadena de suministro y observabilidad operativa.",
+      "skills": [
+        "azure devops",
+        "github actions",
+        "ci/cd",
+        "git",
+        "infraestructura como código",
+        "bicep",
+        "contenedores",
+        "observabilidad",
+        "secretos",
+        "feature flags",
+        "yaml pipelines",
+        "shift-left security"
+      ],
+      "roles": [
+        "Ingeniero DevOps",
+        "Ingeniero de plataforma",
+        "SRE (Site Reliability Engineer)",
+        "Arquitecto de entrega continua"
+      ],
+      "slug_estudio": "azure-devops-engineer"
+    },
+    {
+      "slug": "azure-fundamentals",
+      "nombre": "Microsoft Certified: Azure Fundamentals (AZ-900)",
+      "proveedor": "Microsoft",
+      "area": "Nube",
+      "nivel": "foundational",
+      "descripcion": "Certificación introductoria que valida el conocimiento base sobre los servicios de la nube de Azure, su modelo de precios y los principios de gobernanza y seguridad. Pensada para perfiles técnicos y no técnicos que inician su recorrido en la nube.",
+      "skills": [
+        "computo en la nube",
+        "modelos de servicio",
+        "modelos de despliegue",
+        "maquinas virtuales",
+        "almacenamiento",
+        "redes virtuales",
+        "identidad y acceso",
+        "gobernanza",
+        "costos",
+        "SLA",
+        "regiones",
+        "seguridad"
+      ],
+      "roles": [
+        "estudiante de nube",
+        "analista de negocio",
+        "gerente de proyecto TI",
+        "vendedor tecnico",
+        "administrador junior"
+      ],
+      "slug_estudio": "azure-fundamentals"
+    },
+    {
+      "slug": "azure-network-engineer",
+      "nombre": "Microsoft Certified: Azure Network Engineer Associate (AZ-700)",
+      "proveedor": "Microsoft",
+      "area": "Redes",
+      "nivel": "associate",
+      "descripcion": "Certificacion enfocada en el diseno, la implementacion y el mantenimiento de la infraestructura de red en Azure: conectividad hibrida, enrutamiento, entrega de aplicaciones, acceso privado y seguridad de red. Dirigida a profesionales de redes que operan entornos en la nube de Microsoft.",
+      "skills": [
+        "redes virtuales",
+        "emparejamiento de vnet",
+        "vpn gateway",
+        "expressroute",
+        "enrutamiento",
+        "tablas de rutas",
+        "balanceo de carga",
+        "load balancer",
+        "application gateway",
+        "private endpoint",
+        "grupos de seguridad de red",
+        "azure firewall"
+      ],
+      "roles": [
+        "ingeniero de redes en la nube",
+        "administrador de infraestructura",
+        "arquitecto de conectividad",
+        "especialista en seguridad de red",
+        "ingeniero de operaciones de red"
+      ],
+      "slug_estudio": "azure-network-engineer"
+    },
+    {
+      "slug": "azure-security-engineer",
+      "nombre": "Microsoft Certified: Azure Security Engineer Associate (AZ-500)",
+      "proveedor": "Microsoft",
+      "area": "Seguridad",
+      "nivel": "associate",
+      "descripcion": "Certificación que valida la capacidad de implementar, gestionar y monitorear la seguridad de identidades, redes, datos y plataforma en Azure. Dirigida a perfiles que protegen cargas de trabajo en la nube y entornos híbridos.",
+      "skills": [
+        "microsoft entra id",
+        "control de acceso basado en roles",
+        "acceso condicional",
+        "managed identities",
+        "network security groups",
+        "azure firewall",
+        "azure key vault",
+        "microsoft defender for cloud",
+        "microsoft sentinel",
+        "cifrado de datos",
+        "privileged identity management",
+        "azure policy"
+      ],
+      "roles": [
+        "Ingeniero de seguridad en la nube",
+        "Administrador de seguridad de Azure",
+        "Analista de seguridad (SOC)",
+        "Arquitecto de identidad",
+        "Especialista en cumplimiento"
+      ],
+      "slug_estudio": "azure-security-engineer"
+    },
+    {
+      "slug": "azure-security-fundamentals",
+      "nombre": "Microsoft Certified: Security, Compliance, and Identity Fundamentals (SC-900)",
+      "proveedor": "Microsoft",
+      "area": "Seguridad",
+      "nivel": "foundational",
+      "descripcion": "Certificación introductoria que valida la comprensión de los conceptos de seguridad, cumplimiento e identidad en entornos Microsoft y Azure. Pensada para perfiles que inician en la nube y necesitan una base sólida sobre identidad, protección y gobernanza.",
+      "skills": [
+        "identidad",
+        "azure ad",
+        "zero trust",
+        "cumplimiento",
+        "rbac",
+        "cifrado",
+        "defender",
+        "sentinel",
+        "gobernanza",
+        "autenticacion",
+        "purview",
+        "proteccion"
+      ],
+      "roles": [
+        "analista de seguridad junior",
+        "administrador de identidad",
+        "consultor de cumplimiento",
+        "estudiante de ciberseguridad",
+        "especialista en soporte cloud"
+      ],
+      "slug_estudio": "azure-security-fundamentals"
+    },
+    {
+      "slug": "azure-solutions-architect",
+      "nombre": "Microsoft Certified: Azure Solutions Architect Expert (AZ-305)",
+      "proveedor": "Microsoft",
+      "area": "Nube",
+      "nivel": "professional",
+      "descripcion": "Certificacion experta que valida la capacidad de disenar soluciones completas en Azure cubriendo identidad, gobernanza, datos, continuidad del negocio, infraestructura y redes. Dirigida a arquitectos que traducen requisitos de negocio en arquitecturas seguras, resilientes y optimizadas en costo.",
+      "skills": [
+        "identidad",
+        "gobernanza",
+        "rbac",
+        "almacenamiento",
+        "bases de datos",
+        "continuidad del negocio",
+        "recuperacion ante desastres",
+        "computo",
+        "contenedores",
+        "redes",
+        "balanceo de carga",
+        "monitoreo"
+      ],
+      "roles": [
+        "arquitecto de soluciones cloud",
+        "arquitecto de infraestructura",
+        "lider tecnico de plataforma",
+        "ingeniero senior de nube",
+        "consultor de migracion a Azure"
+      ],
+      "slug_estudio": "azure-solutions-architect"
+    },
+    {
+      "slug": "cisco-ccna",
+      "nombre": "Cisco Certified Network Associate (CCNA)",
+      "proveedor": "Cisco",
+      "area": "Redes",
+      "nivel": "associate",
+      "descripcion": "Certificación base de Cisco que valida la capacidad de instalar, operar y solucionar problemas en redes empresariales pequeñas y medianas. Cubre fundamentos de conmutación, enrutamiento, servicios IP, seguridad y automatización.",
+      "skills": [
+        "tcp/ip",
+        "subnetting",
+        "vlan",
+        "ospf",
+        "enrutamiento",
+        "switching",
+        "acl",
+        "nat",
+        "dhcp",
+        "wireless",
+        "automatizacion",
+        "ipv6"
+      ],
+      "roles": [
+        "Técnico de redes",
+        "Administrador de redes junior",
+        "Ingeniero de soporte de redes",
+        "Especialista de help desk de infraestructura"
+      ],
+      "slug_estudio": "cisco-ccna"
+    },
+    {
+      "slug": "cisco-ccnp-enterprise",
+      "nombre": "Cisco Certified Network Professional (CCNP) Enterprise",
+      "proveedor": "Cisco",
+      "area": "Redes",
+      "nivel": "professional",
+      "descripcion": "Certificación profesional que valida la capacidad de diseñar, implementar y operar redes empresariales avanzadas. Cubre enrutamiento, infraestructura, virtualización, automatización y seguridad de la infraestructura.",
+      "skills": [
+        "ospf",
+        "bgp",
+        "eigrp",
+        "vlan",
+        "spanning tree",
+        "sd-wan",
+        "sd-access",
+        "qos",
+        "netconf",
+        "python",
+        "wireless",
+        "troubleshooting"
+      ],
+      "roles": [
+        "Ingeniero de redes",
+        "Administrador de redes empresariales",
+        "Especialista en infraestructura",
+        "Arquitecto de soluciones de red"
+      ],
+      "slug_estudio": "cisco-ccnp-enterprise"
+    },
+    {
+      "slug": "cissp",
+      "nombre": "Certified Information Systems Security Professional (CISSP)",
+      "proveedor": "ISC2",
+      "area": "Seguridad",
+      "nivel": "professional",
+      "descripcion": "Certificación avanzada que valida la capacidad de diseñar, implementar y dirigir un programa integral de seguridad de la información. Cubre ocho dominios que abarcan gobierno, ingeniería, operaciones y desarrollo seguro.",
+      "skills": [
+        "gestion de riesgos",
+        "criptografia",
+        "control de acceso",
+        "seguridad de redes",
+        "arquitectura segura",
+        "respuesta a incidentes",
+        "continuidad del negocio",
+        "gobierno de seguridad",
+        "modelado de amenazas",
+        "cumplimiento normativo",
+        "seguridad en software",
+        "identidad digital"
+      ],
+      "roles": [
+        "Arquitecto de seguridad",
+        "Gerente de seguridad de la informacion",
+        "Consultor de ciberseguridad",
+        "Oficial de seguridad (CISO)",
+        "Analista de riesgos"
+      ],
+      "slug_estudio": "cissp"
+    },
+    {
+      "slug": "cka",
+      "nombre": "Certified Kubernetes Administrator (CKA)",
+      "proveedor": "CNCF",
+      "area": "DevOps",
+      "nivel": "associate",
+      "descripcion": "Certificación práctica que valida la capacidad de instalar, configurar y operar clústeres de Kubernetes en producción. El examen es 100% basado en tareas en una terminal real, sin preguntas teóricas.",
+      "skills": [
+        "kubernetes",
+        "kubectl",
+        "etcd",
+        "rbac",
+        "networking",
+        "pods",
+        "deployments",
+        "troubleshooting",
+        "kubeadm",
+        "storage",
+        "scheduling",
+        "containers"
+      ],
+      "roles": [
+        "administrador de kubernetes",
+        "ingeniero devops",
+        "ingeniero de plataforma",
+        "site reliability engineer"
+      ],
+      "slug_estudio": "cka"
+    },
+    {
+      "slug": "ckad",
+      "nombre": "Certified Kubernetes Application Developer (CKAD)",
+      "proveedor": "CNCF",
+      "area": "DevOps",
+      "nivel": "associate",
+      "descripcion": "Certificación práctica que valida la capacidad de diseñar, construir y operar aplicaciones nativas de la nube sobre Kubernetes. Se rinde en una terminal real resolviendo tareas con kubectl y manifiestos YAML.",
+      "skills": [
+        "kubernetes",
+        "kubectl",
+        "pods",
+        "deployments",
+        "servicios",
+        "configmaps",
+        "secrets",
+        "yaml",
+        "probes",
+        "ingress",
+        "networkpolicy",
+        "rbac"
+      ],
+      "roles": [
+        "Desarrollador de aplicaciones cloud-native",
+        "Ingeniero DevOps",
+        "Ingeniero de plataforma",
+        "Backend engineer"
+      ],
+      "slug_estudio": "ckad"
+    },
+    {
+      "slug": "comptia-a-plus",
+      "nombre": "CompTIA A+",
+      "proveedor": "CompTIA",
+      "area": "Soporte",
+      "nivel": "foundational",
+      "descripcion": "Certificacion de entrada que valida las habilidades practicas de soporte tecnico: hardware, redes, dispositivos moviles, sistemas operativos y seguridad basica. Pensada para quien inicia una carrera en mesas de ayuda y soporte de campo.",
+      "skills": [
+        "hardware",
+        "redes",
+        "dispositivos moviles",
+        "windows",
+        "linux",
+        "virtualizacion",
+        "troubleshooting",
+        "seguridad",
+        "malware",
+        "cableado",
+        "direccionamiento ip",
+        "soporte tecnico"
+      ],
+      "roles": [
+        "tecnico de soporte",
+        "agente de mesa de ayuda",
+        "tecnico de campo",
+        "especialista de escritorio",
+        "administrador junior de sistemas"
+      ],
+      "slug_estudio": "comptia-a-plus"
+    },
+    {
+      "slug": "comptia-cysa",
+      "nombre": "CompTIA CySA+",
+      "proveedor": "CompTIA",
+      "area": "Seguridad",
+      "nivel": "professional",
+      "descripcion": "Certificación enfocada en operaciones defensivas de ciberseguridad. Valida la capacidad de detectar, analizar y responder a amenazas usando análisis de comportamiento y monitoreo continuo.",
+      "skills": [
+        "soc",
+        "deteccion",
+        "vulnerabilidades",
+        "threat hunting",
+        "siem",
+        "respuesta a incidentes",
+        "forense",
+        "inteligencia de amenazas",
+        "monitoreo",
+        "remediacion",
+        "analisis de logs",
+        "mitre att&ck"
+      ],
+      "roles": [
+        "Analista SOC",
+        "Analista de seguridad",
+        "Cazador de amenazas",
+        "Responder de incidentes",
+        "Analista de vulnerabilidades"
+      ],
+      "slug_estudio": "comptia-cysa"
+    },
+    {
+      "slug": "comptia-network-plus",
+      "nombre": "CompTIA Network+",
+      "proveedor": "CompTIA",
+      "area": "Redes",
+      "nivel": "associate",
+      "descripcion": "Certificación base que valida la capacidad de diseñar, configurar, operar y resolver problemas de redes cableadas e inalámbricas. Cubre fundamentos de conectividad, seguridad y operación independiente del fabricante.",
+      "skills": [
+        "tcp/ip",
+        "subredes",
+        "enrutamiento",
+        "conmutación",
+        "vlan",
+        "dns",
+        "dhcp",
+        "wifi",
+        "firewall",
+        "vpn",
+        "osi",
+        "diagnóstico"
+      ],
+      "roles": [
+        "Administrador de redes junior",
+        "Técnico de soporte de red",
+        "Analista de operaciones de red (NOC)",
+        "Especialista en infraestructura",
+        "Ingeniero de soporte de campo"
+      ],
+      "slug_estudio": "comptia-network-plus"
+    },
+    {
+      "slug": "comptia-security-plus",
+      "nombre": "CompTIA Security+",
+      "proveedor": "CompTIA",
+      "area": "Seguridad",
+      "nivel": "associate",
+      "descripcion": "Certificación de base en ciberseguridad que valida la capacidad de evaluar riesgos, implementar controles y responder a incidentes en entornos híbridos. Orientada a quienes asumen su primer rol técnico de seguridad y necesitan dominar fundamentos prácticos.",
+      "skills": [
+        "amenazas",
+        "criptografia",
+        "gestion de riesgo",
+        "control de acceso",
+        "respuesta a incidentes",
+        "seguridad de red",
+        "iam",
+        "cumplimiento",
+        "vulnerabilidades",
+        "monitoreo",
+        "resiliencia",
+        "zero trust"
+      ],
+      "roles": [
+        "analista de seguridad junior",
+        "administrador de sistemas",
+        "ingeniero de soporte de seguridad",
+        "analista de soc nivel 1",
+        "consultor de cumplimiento"
+      ],
+      "slug_estudio": "comptia-security-plus"
     },
     {
       "slug": "databricks-data-engineer-associate",
@@ -308,9 +1016,527 @@
       "proveedor": "Databricks",
       "area": "Datos",
       "nivel": "associate",
-      "descripcion": "Construir canalizaciones de datos con Databricks y Apache Spark: procesamiento, lakehouse y orquestación.",
-      "skills": ["datos", "spark", "databricks", "etl", "sql", "python", "lakehouse", "big data", "analitica"],
-      "roles": ["ingeniero de datos", "ingeniero de big data"]
+      "descripcion": "Certificacion que valida la capacidad de construir tareas de ingenieria de datos sobre la plataforma Lakehouse de Databricks, usando Spark SQL y el formato Delta Lake. Orientada a perfiles que ingieren, transforman y publican datos de forma incremental y gobernada.",
+      "skills": [
+        "lakehouse",
+        "delta lake",
+        "spark sql",
+        "pyspark",
+        "auto loader",
+        "medallion",
+        "delta live tables",
+        "unity catalog",
+        "incremental",
+        "merge",
+        "workflows",
+        "pivote"
+      ],
+      "roles": [
+        "ingeniero de datos",
+        "desarrollador de etl",
+        "analista de datos",
+        "ingeniero de analitica",
+        "desarrollador de pipelines"
+      ],
+      "slug_estudio": "databricks-data-engineer-associate"
+    },
+    {
+      "slug": "docker-dca",
+      "nombre": "Docker Certified Associate",
+      "proveedor": "Docker",
+      "area": "DevOps",
+      "nivel": "associate",
+      "descripcion": "Certificación que valida el dominio práctico de Docker para construir, distribuir y operar aplicaciones en contenedores. Cubre el ciclo de vida de imágenes, orquestación con Swarm, redes, almacenamiento y seguridad.",
+      "skills": [
+        "docker",
+        "contenedores",
+        "imagenes",
+        "dockerfile",
+        "swarm",
+        "redes",
+        "volumenes",
+        "registro",
+        "orquestacion",
+        "seguridad",
+        "compose",
+        "namespaces"
+      ],
+      "roles": [
+        "ingeniero devops",
+        "administrador de sistemas",
+        "desarrollador backend",
+        "ingeniero de plataforma",
+        "sre"
+      ],
+      "slug_estudio": "docker-dca"
+    },
+    {
+      "slug": "gcp-associate-cloud-engineer",
+      "nombre": "Google Cloud Associate Cloud Engineer",
+      "proveedor": "Google",
+      "area": "Nube",
+      "nivel": "associate",
+      "descripcion": "Valida la capacidad de desplegar, operar y administrar cargas de trabajo en Google Cloud usando la consola y la línea de comandos. Está pensada para perfiles que gestionan proyectos, recursos y accesos en el día a día.",
+      "skills": [
+        "gcloud",
+        "iam",
+        "compute engine",
+        "kubernetes",
+        "cloud storage",
+        "vpc",
+        "facturación",
+        "monitoring",
+        "bigquery",
+        "cloud sql",
+        "terraform"
+      ],
+      "roles": [
+        "Ingeniero de nube junior",
+        "Administrador de sistemas en la nube",
+        "Operador de infraestructura",
+        "Ingeniero DevOps"
+      ],
+      "slug_estudio": "gcp-associate-cloud-engineer"
+    },
+    {
+      "slug": "gcp-associate-data-practitioner",
+      "nombre": "Google Cloud Associate Data Practitioner",
+      "proveedor": "Google",
+      "area": "Datos",
+      "nivel": "associate",
+      "descripcion": "Certificación de nivel asociado que valida la capacidad de preparar, ingerir, transformar, analizar y publicar datos en Google Cloud usando servicios gestionados. Pensada para perfiles que trabajan con datos y empiezan a operar canalizaciones y análisis en la nube.",
+      "skills": [
+        "bigquery",
+        "cloud storage",
+        "etl",
+        "elt",
+        "dataflow",
+        "looker",
+        "sql",
+        "ingesta de datos",
+        "gobernanza de datos",
+        "visualización",
+        "particionado",
+        "iam"
+      ],
+      "roles": [
+        "Analista de datos",
+        "Practicante de datos en la nube",
+        "Ingeniero de datos junior",
+        "Analista de inteligencia de negocio",
+        "Administrador de datos"
+      ],
+      "slug_estudio": "gcp-associate-data-practitioner"
+    },
+    {
+      "slug": "gcp-cloud-digital-leader",
+      "nombre": "Google Cloud Digital Leader",
+      "proveedor": "Google",
+      "area": "Nube",
+      "nivel": "foundational",
+      "descripcion": "Certificación introductoria que valida el conocimiento de los productos y servicios de Google Cloud y su capacidad para impulsar resultados de negocio. Está pensada para perfiles no técnicos que necesitan entender el valor de la nube en la transformación digital.",
+      "skills": [
+        "transformacion digital",
+        "computo en la nube",
+        "compute engine",
+        "bigquery",
+        "machine learning",
+        "kubernetes",
+        "modernizacion de datos",
+        "seguridad en la nube",
+        "costos en la nube",
+        "infraestructura",
+        "analitica",
+        "inteligencia artificial"
+      ],
+      "roles": [
+        "gerente de proyecto",
+        "analista de negocio",
+        "lider de transformacion digital",
+        "ejecutivo de ventas tecnicas",
+        "consultor de nube"
+      ],
+      "slug_estudio": "gcp-cloud-digital-leader"
+    },
+    {
+      "slug": "gcp-professional-cloud-architect",
+      "nombre": "Google Cloud Professional Cloud Architect",
+      "proveedor": "Google",
+      "area": "Nube",
+      "nivel": "professional",
+      "descripcion": "Certificación que valida la capacidad de diseñar, planificar y gestionar soluciones empresariales sobre Google Cloud, equilibrando requisitos técnicos, de negocio, seguridad y costo. Pone el foco en traducir necesidades reales en arquitecturas escalables y confiables.",
+      "skills": [
+        "diseño de soluciones",
+        "compute engine",
+        "kubernetes",
+        "redes vpc",
+        "iam",
+        "seguridad",
+        "alta disponibilidad",
+        "recuperación ante desastres",
+        "optimización de costos",
+        "cumplimiento",
+        "migración",
+        "observabilidad"
+      ],
+      "roles": [
+        "Arquitecto de nube",
+        "Ingeniero de soluciones",
+        "Líder técnico de infraestructura",
+        "Consultor de migración cloud"
+      ],
+      "slug_estudio": "gcp-professional-cloud-architect"
+    },
+    {
+      "slug": "gcp-professional-cloud-database-engineer",
+      "nombre": "Google Cloud Professional Cloud Database Engineer",
+      "proveedor": "Google",
+      "area": "Datos",
+      "nivel": "professional",
+      "descripcion": "Certificación que valida la capacidad de diseñar, migrar y operar bases de datos gestionadas en Google Cloud. Cubre la elección de motores, la alta disponibilidad, la seguridad y la optimización de costos y rendimiento.",
+      "skills": [
+        "cloud sql",
+        "spanner",
+        "alloydb",
+        "bigtable",
+        "firestore",
+        "memorystore",
+        "migracion",
+        "alta disponibilidad",
+        "replicacion",
+        "respaldos",
+        "iam",
+        "observabilidad"
+      ],
+      "roles": [
+        "Ingeniero de bases de datos en la nube",
+        "Arquitecto de datos",
+        "Administrador de bases de datos (DBA)",
+        "Ingeniero de plataformas de datos"
+      ],
+      "slug_estudio": "gcp-professional-cloud-database-engineer"
+    },
+    {
+      "slug": "gcp-professional-cloud-developer",
+      "nombre": "Google Cloud Professional Cloud Developer",
+      "proveedor": "Google",
+      "area": "Desarrollo",
+      "nivel": "professional",
+      "descripcion": "Valida la capacidad de diseñar, construir, probar y desplegar aplicaciones nativas de la nube escalables y altamente disponibles sobre Google Cloud. Hace énfasis en servicios gestionados, observabilidad y prácticas modernas de entrega continua.",
+      "skills": [
+        "cloud run",
+        "gke",
+        "cloud functions",
+        "pub/sub",
+        "firestore",
+        "cloud sql",
+        "iam",
+        "secret manager",
+        "cloud build",
+        "cloud logging",
+        "cloud trace",
+        "apis"
+      ],
+      "roles": [
+        "Desarrollador de aplicaciones cloud",
+        "Ingeniero backend",
+        "Ingeniero DevOps",
+        "Arquitecto de soluciones junior"
+      ],
+      "slug_estudio": "gcp-professional-cloud-developer"
+    },
+    {
+      "slug": "gcp-professional-cloud-devops-engineer",
+      "nombre": "Google Cloud Professional Cloud DevOps Engineer",
+      "proveedor": "Google",
+      "area": "DevOps",
+      "nivel": "professional",
+      "descripcion": "Valida la capacidad de aplicar prácticas DevOps y SRE para entregar software de forma continua y operar servicios fiables en Google Cloud. Está dirigida a perfiles que automatizan despliegues, definen objetivos de fiabilidad y gestionan observabilidad e incidentes en producción.",
+      "skills": [
+        "ci/cd",
+        "sre",
+        "slo",
+        "error budget",
+        "cloud build",
+        "observabilidad",
+        "cloud monitoring",
+        "automatización",
+        "infraestructura como código",
+        "gestión de incidentes",
+        "despliegues progresivos",
+        "toil"
+      ],
+      "roles": [
+        "Ingeniero DevOps",
+        "Site Reliability Engineer (SRE)",
+        "Ingeniero de plataforma",
+        "Ingeniero de fiabilidad de servicios"
+      ],
+      "slug_estudio": "gcp-professional-cloud-devops-engineer"
+    },
+    {
+      "slug": "gcp-professional-cloud-network-engineer",
+      "nombre": "Google Cloud Professional Cloud Network Engineer",
+      "proveedor": "Google",
+      "area": "Redes",
+      "nivel": "professional",
+      "descripcion": "Certificación profesional enfocada en el diseño, la implementación y la operación de arquitecturas de red en Google Cloud. Valida la capacidad de construir conectividad híbrida, segmentación y entrega de servicios de forma segura y escalable.",
+      "skills": [
+        "vpc",
+        "subredes",
+        "peering",
+        "cloud interconnect",
+        "cloud vpn",
+        "balanceo de carga",
+        "cloud dns",
+        "firewall",
+        "cloud nat",
+        "cloud armor",
+        "bgp",
+        "shared vpc"
+      ],
+      "roles": [
+        "ingeniero de redes en la nube",
+        "arquitecto de conectividad híbrida",
+        "ingeniero de infraestructura",
+        "especialista en seguridad de red",
+        "ingeniero devops de plataforma"
+      ],
+      "slug_estudio": "gcp-professional-cloud-network-engineer"
+    },
+    {
+      "slug": "gcp-professional-cloud-security-engineer",
+      "nombre": "Google Cloud Professional Cloud Security Engineer",
+      "proveedor": "Google",
+      "area": "Seguridad",
+      "nivel": "professional",
+      "descripcion": "Valida la capacidad de diseñar y operar controles de seguridad en Google Cloud, abarcando identidad, redes, cifrado, cumplimiento y respuesta a incidentes. Está orientada a profesionales que protegen cargas de trabajo en la nube de forma integral.",
+      "skills": [
+        "iam",
+        "vpc",
+        "kms",
+        "cifrado",
+        "cumplimiento",
+        "organization policy",
+        "security command center",
+        "vpc service controls",
+        "cloud armor",
+        "registro de auditoria",
+        "respuesta a incidentes",
+        "gestion de secretos"
+      ],
+      "roles": [
+        "Ingeniero de Seguridad en la Nube",
+        "Arquitecto de Seguridad",
+        "Especialista en Cumplimiento",
+        "Ingeniero DevSecOps"
+      ],
+      "slug_estudio": "gcp-professional-cloud-security-engineer"
+    },
+    {
+      "slug": "gcp-professional-data-engineer",
+      "nombre": "Google Cloud Professional Data Engineer",
+      "proveedor": "Google",
+      "area": "Datos",
+      "nivel": "professional",
+      "descripcion": "Valida la capacidad de diseñar, construir y operar sistemas de datos en Google Cloud, desde la ingesta hasta el análisis y el machine learning. Pone el foco en decisiones de arquitectura que equilibran costo, escalabilidad, seguridad y confiabilidad.",
+      "skills": [
+        "bigquery",
+        "dataflow",
+        "pub/sub",
+        "dataproc",
+        "etl",
+        "streaming",
+        "machine learning",
+        "modelado de datos",
+        "gobernanza",
+        "iam",
+        "particionamiento",
+        "orquestación"
+      ],
+      "roles": [
+        "Ingeniero de datos",
+        "Arquitecto de datos en la nube",
+        "Ingeniero de plataformas analíticas",
+        "Especialista en machine learning operativo"
+      ],
+      "slug_estudio": "gcp-professional-data-engineer"
+    },
+    {
+      "slug": "gcp-professional-ml-engineer",
+      "nombre": "Google Cloud Professional Machine Learning Engineer",
+      "proveedor": "Google",
+      "area": "IA",
+      "nivel": "professional",
+      "descripcion": "Valida la capacidad de diseñar, construir y operar sistemas de machine learning escalables en Google Cloud, equilibrando rigor experimental con prácticas responsables de producción.",
+      "skills": [
+        "vertex ai",
+        "bigquery ml",
+        "tensorflow",
+        "feature engineering",
+        "mlops",
+        "model monitoring",
+        "pipelines",
+        "hyperparameter tuning",
+        "data preprocessing",
+        "responsible ai",
+        "model serving",
+        "automl"
+      ],
+      "roles": [
+        "ingeniero de machine learning",
+        "científico de datos",
+        "ingeniero de mlops",
+        "arquitecto de soluciones de ia"
+      ],
+      "slug_estudio": "gcp-professional-ml-engineer"
+    },
+    {
+      "slug": "lpic-1",
+      "nombre": "LPIC-1: Linux Administrator",
+      "proveedor": "LPI",
+      "area": "Sistemas",
+      "nivel": "associate",
+      "descripcion": "Certificación que valida la capacidad de administrar sistemas Linux desde la línea de comandos, gestionando paquetes, archivos, procesos, redes y usuarios. Demuestra autonomía operativa en cualquier distribución mayoritaria.",
+      "skills": [
+        "linux",
+        "bash",
+        "shell",
+        "systemd",
+        "permisos",
+        "particiones",
+        "redes",
+        "usuarios",
+        "paquetes",
+        "procesos",
+        "logs",
+        "scripting"
+      ],
+      "roles": [
+        "Administrador de sistemas Linux",
+        "Ingeniero de soporte de infraestructura",
+        "Operador de centro de datos",
+        "Técnico DevOps junior"
+      ],
+      "slug_estudio": "lpic-1"
+    },
+    {
+      "slug": "pmp",
+      "nombre": "Project Management Professional (PMP)",
+      "proveedor": "PMI",
+      "area": "Gestion de proyectos",
+      "nivel": "professional",
+      "descripcion": "Valida la capacidad de dirigir proyectos combinando enfoques predictivos, ágiles e híbridos. Cubre el liderazgo de personas, la ejecución de procesos y la conexión del proyecto con la estrategia del negocio.",
+      "skills": [
+        "liderazgo",
+        "gestión de riesgos",
+        "cronograma",
+        "presupuesto",
+        "interesados",
+        "scrum",
+        "kanban",
+        "gestión de alcance",
+        "gestión de conflictos",
+        "valor ganado",
+        "cambio organizacional",
+        "calidad"
+      ],
+      "roles": [
+        "Gerente de proyecto",
+        "Líder de proyecto",
+        "Scrum Master",
+        "Coordinador de PMO",
+        "Líder de equipo de entrega"
+      ],
+      "slug_estudio": "pmp"
+    },
+    {
+      "slug": "psm-i",
+      "nombre": "Professional Scrum Master I (PSM I)",
+      "proveedor": "Scrum.org",
+      "area": "Gestion de proyectos",
+      "nivel": "associate",
+      "descripcion": "Certificacion que valida el dominio del marco Scrum, sus roles, eventos y artefactos, asi como la mentalidad agil basada en el empirismo. Esta orientada a quienes facilitan equipos que entregan valor de forma incremental.",
+      "skills": [
+        "scrum",
+        "empirismo",
+        "agilidad",
+        "scrum master",
+        "facilitacion",
+        "product backlog",
+        "sprint",
+        "auto gestion",
+        "definicion de hecho",
+        "mejora continua",
+        "valor",
+        "transparencia"
+      ],
+      "roles": [
+        "scrum master",
+        "agile coach",
+        "lider de equipo",
+        "facilitador de equipos",
+        "gerente de proyectos agil"
+      ],
+      "slug_estudio": "psm-i"
+    },
+    {
+      "slug": "rhcsa",
+      "nombre": "Red Hat Certified System Administrator (RHCSA)",
+      "proveedor": "Red Hat",
+      "area": "Sistemas",
+      "nivel": "associate",
+      "descripcion": "Certificacion practica que valida la capacidad de operar, configurar y resolver problemas de sistemas Linux empresariales desde la linea de comandos. Esta orientada a administradores que gestionan servidores en produccion en el dia a dia.",
+      "skills": [
+        "linux",
+        "bash",
+        "systemd",
+        "permisos",
+        "lvm",
+        "selinux",
+        "firewalld",
+        "ssh",
+        "yum",
+        "usuarios",
+        "redes",
+        "contenedores"
+      ],
+      "roles": [
+        "administrador de sistemas linux",
+        "ingeniero de infraestructura",
+        "operador de servidores",
+        "tecnico de soporte de sistemas",
+        "ingeniero devops junior"
+      ],
+      "slug_estudio": "rhcsa"
+    },
+    {
+      "slug": "terraform-associate",
+      "nombre": "HashiCorp Certified: Terraform Associate",
+      "proveedor": "HashiCorp",
+      "area": "DevOps",
+      "nivel": "associate",
+      "descripcion": "Certificación que valida la capacidad de gestionar infraestructura como código con Terraform. Cubre el flujo de trabajo central, manejo de estado, módulos y buenas prácticas de aprovisionamiento.",
+      "skills": [
+        "terraform",
+        "infraestructura como código",
+        "hcl",
+        "estado remoto",
+        "módulos",
+        "providers",
+        "variables",
+        "plan y apply",
+        "ciclo de vida",
+        "aprovisionamiento",
+        "backends"
+      ],
+      "roles": [
+        "ingeniero de infraestructura",
+        "ingeniero devops",
+        "administrador de la nube",
+        "ingeniero de plataforma"
+      ],
+      "slug_estudio": "terraform-associate"
     }
   ]
 }

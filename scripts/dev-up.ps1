@@ -100,6 +100,15 @@ if (Test-Path $py) {
   Write-Host '  [aviso] no encontré data\.venv; omito el seed de Mongo (crea el venv de data o siembra a mano)' -ForegroundColor Yellow
 }
 
+# Catálogo extendido (~50 certificaciones: camino + estudio + quiz) y dataset del
+# recomendador, generados desde scripts/catalog/*.json. Idempotente.
+if (Test-Path $py) {
+  Write-Host 'Sembrando el catálogo extendido (certificaciones, temas, contenido y recomendador)...'
+  $env:DATABASE_URL = $dsn; $env:MONGO_URI = $mongo
+  & $py (Join-Path $root 'scripts\build-reco-dataset.py')
+  & $py (Join-Path $root 'scripts\seed-catalog.py')
+}
+
 # Variables de entorno de los servicios.
 $env:OIDC_MOCK_ADDR = ':9099'
 $env:CATALOG_ADDR = ':18090'

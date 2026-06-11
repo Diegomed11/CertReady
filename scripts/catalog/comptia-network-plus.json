@@ -1,0 +1,343 @@
+{
+  "slug": "comptia-network-plus",
+  "nombre": "CompTIA Network+",
+  "proveedor": "CompTIA",
+  "nivel": "associate",
+  "area": "Redes",
+  "descripcion": "Certificación base que valida la capacidad de diseñar, configurar, operar y resolver problemas de redes cableadas e inalámbricas. Cubre fundamentos de conectividad, seguridad y operación independiente del fabricante.",
+  "skills": [
+    "tcp/ip",
+    "subredes",
+    "enrutamiento",
+    "conmutación",
+    "vlan",
+    "dns",
+    "dhcp",
+    "wifi",
+    "firewall",
+    "vpn",
+    "osi",
+    "diagnóstico"
+  ],
+  "roles": [
+    "Administrador de redes junior",
+    "Técnico de soporte de red",
+    "Analista de operaciones de red (NOC)",
+    "Especialista en infraestructura",
+    "Ingeniero de soporte de campo"
+  ],
+  "temas": [
+    {
+      "slug": "fundamentos-de-redes",
+      "nombre": "Fundamentos de redes",
+      "dominio": "Networking Concepts",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Modelos de referencia y conceptos base",
+        "markdown": "## Modelo OSI\nEl modelo OSI organiza la comunicación en **siete capas**, cada una con una responsabilidad clara:\n\n- **Capa 1 (Física):** señales, cables y conectores.\n- **Capa 2 (Enlace):** tramas y direcciones MAC.\n- **Capa 3 (Red):** direccionamiento IP y enrutamiento.\n- **Capa 4 (Transporte):** TCP y UDP, control de flujo.\n- **Capas 5-7:** sesión, presentación y aplicación.\n\n## Topologías y dispositivos\nUna **topología** describe cómo se interconectan los nodos. Las más usadas hoy son estrella y malla. Un **switch** opera en capa 2 y reenvía tramas por dirección MAC; un **router** opera en capa 3 y decide rutas entre redes distintas.\n\n## Encapsulación\nLos datos descienden por las capas agregando encabezados: segmento → paquete → trama → bits. En el receptor el proceso se invierte (**desencapsulación**).\n\n> **En el examen:** memoriza el orden de las 7 capas y en qué capa actúa cada dispositivo (hub=1, switch=2, router=3)."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿En qué capa del modelo OSI opera principalmente un router?",
+          "opciones": [
+            "Capa 2 (Enlace de datos)",
+            "Capa 3 (Red)",
+            "Capa 4 (Transporte)",
+            "Capa 7 (Aplicación)"
+          ],
+          "correctas": [1],
+          "explicacion": "El router toma decisiones de reenvío basándose en direcciones IP, que pertenecen a la capa 3 (Red)."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de los siguientes son protocolos de la capa de transporte?",
+          "opciones": [
+            "TCP",
+            "UDP",
+            "IP",
+            "Ethernet",
+            "HTTP"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "TCP y UDP son protocolos de capa 4. IP es capa 3, Ethernet capa 2 y HTTP capa 7."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un switch tradicional reenvía tramas tomando como referencia principalmente:",
+          "opciones": [
+            "La dirección IP de destino",
+            "El número de puerto TCP",
+            "La dirección MAC de destino",
+            "El nombre de host"
+          ],
+          "correctas": [2],
+          "explicacion": "Un switch de capa 2 construye una tabla de direcciones MAC y reenvía cada trama hacia el puerto asociado a la MAC de destino."
+        }
+      ]
+    },
+    {
+      "slug": "direccionamiento-ip-y-subredes",
+      "nombre": "Direccionamiento IP y subredes",
+      "dominio": "Networking Concepts",
+      "orden": 2,
+      "hoja": {
+        "titulo": "IPv4, IPv6 y segmentación",
+        "markdown": "## Direcciones IPv4\nUna dirección IPv4 tiene **32 bits** divididos en red y host según la máscara. La notación **CIDR** (por ejemplo `/24`) indica cuántos bits pertenecen a la porción de red.\n\n## Rangos privados\nReservados por RFC 1918 y no enrutables en Internet:\n\n- **10.0.0.0/8**\n- **172.16.0.0/12**\n- **192.168.0.0/16**\n\n## Cálculo de subredes\nCada bit prestado al host **duplica** la cantidad de subredes y reduce a la mitad los hosts disponibles. En cada subred se restan **dos direcciones**: la de red y la de broadcast.\n\n## IPv6\nUsa **128 bits** en notación hexadecimal. Elimina la necesidad de NAT por su enorme espacio y usa **SLAAC** para autoconfiguración.\n\n> **En el examen:** practica convertir máscaras a CIDR y recuerda la fórmula de hosts utilizables: 2^n − 2."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál de las siguientes direcciones pertenece a un rango privado según RFC 1918?",
+          "opciones": [
+            "8.8.8.8",
+            "172.20.5.10",
+            "200.45.10.1",
+            "1.1.1.1"
+          ],
+          "correctas": [1],
+          "explicacion": "172.20.5.10 está dentro de 172.16.0.0/12, uno de los tres bloques privados definidos por RFC 1918."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuántos hosts utilizables ofrece una subred con máscara /29?",
+          "opciones": [
+            "8",
+            "6",
+            "4",
+            "14"
+          ],
+          "correctas": [1],
+          "explicacion": "Una /29 deja 3 bits para host: 2^3 = 8, menos la dirección de red y la de broadcast, quedan 6 hosts utilizables."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles afirmaciones sobre IPv6 son correctas?",
+          "opciones": [
+            "Usa direcciones de 128 bits",
+            "Se representa en notación hexadecimal",
+            "Requiere NAT para conectarse a Internet",
+            "Permite autoconfiguración mediante SLAAC",
+            "Tiene exactamente el mismo espacio que IPv4"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "IPv6 emplea 128 bits en hexadecimal y soporta SLAAC. Su amplio espacio evita la dependencia de NAT y supera con creces a IPv4."
+        }
+      ]
+    },
+    {
+      "slug": "implementaciones-de-red",
+      "nombre": "Implementaciones de red",
+      "dominio": "Network Implementations",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Cableado, conmutación y enrutamiento",
+        "markdown": "## Medios de transmisión\n- **Cobre (UTP):** categorías como Cat5e, Cat6 y Cat6a; sensible a interferencias (EMI).\n- **Fibra óptica:** monomodo para largas distancias, multimodo para tramos cortos; inmune a EMI.\n\n## Conmutación\nUna **VLAN** segmenta lógicamente un mismo switch en dominios de difusión separados. Un enlace **trunk** transporta varias VLAN usando etiquetado **802.1Q**.\n\n## Enrutamiento\n- **Estático:** rutas configuradas manualmente, ideal para redes pequeñas y predecibles.\n- **Dinámico:** protocolos como **OSPF** (estado de enlace) o **BGP** (entre sistemas autónomos) actualizan rutas automáticamente.\n\nEl **enrutamiento inter-VLAN** requiere un router o switch de capa 3 para comunicar VLAN distintas.\n\n> **En el examen:** distingue cuándo usar fibra frente a cobre y recuerda que 802.1Q es el estándar de etiquetado de VLAN."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué estándar se utiliza para etiquetar tramas y transportar varias VLAN por un mismo enlace trunk?",
+          "opciones": [
+            "802.11ac",
+            "802.1Q",
+            "802.3af",
+            "802.1X"
+          ],
+          "correctas": [1],
+          "explicacion": "802.1Q define el etiquetado de VLAN que permite identificar a qué VLAN pertenece cada trama en un enlace trunk."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué medio de transmisión es inmune a la interferencia electromagnética (EMI)?",
+          "opciones": [
+            "Cable UTP Cat5e",
+            "Cable coaxial",
+            "Fibra óptica",
+            "Cable STP"
+          ],
+          "correctas": [2],
+          "explicacion": "La fibra óptica transmite mediante luz, por lo que no se ve afectada por interferencias electromagnéticas."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles de los siguientes son protocolos de enrutamiento dinámico?",
+          "opciones": [
+            "OSPF",
+            "BGP",
+            "DHCP",
+            "EIGRP",
+            "ARP"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "OSPF, BGP y EIGRP descubren y mantienen rutas de forma dinámica. DHCP asigna direcciones y ARP resuelve IP a MAC; ninguno enruta."
+        }
+      ]
+    },
+    {
+      "slug": "operaciones-de-red",
+      "nombre": "Operaciones de red",
+      "dominio": "Network Operations",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Monitoreo, documentación y disponibilidad",
+        "markdown": "## Monitoreo y métricas\nLa supervisión proactiva usa **SNMP** para recolectar métricas de dispositivos y **syslog** para centralizar registros. Métricas clave: latencia, jitter, pérdida de paquetes y uso de ancho de banda.\n\n## Documentación\nMantener inventarios actualizados, diagramas físicos y lógicos, y un **IPAM** para administrar direcciones evita errores y acelera la resolución de incidentes.\n\n## Alta disponibilidad\n- **Redundancia:** enlaces y equipos duplicados para eliminar puntos únicos de fallo.\n- **Métricas de servicio:** el **RTO** define cuánto puede tardar la recuperación y el **RPO** cuánta pérdida de datos se tolera.\n\n## Continuidad\nPlanes de recuperación ante desastres y respaldos periódicos garantizan que el negocio siga operando tras una interrupción.\n\n> **En el examen:** asocia SNMP con monitoreo, syslog con registros, y distingue claramente RTO (tiempo) de RPO (datos)."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué protocolo se utiliza habitualmente para recolectar métricas y supervisar dispositivos de red?",
+          "opciones": [
+            "SMTP",
+            "SNMP",
+            "SFTP",
+            "SIP"
+          ],
+          "correctas": [1],
+          "explicacion": "SNMP (Simple Network Management Protocol) recopila información de estado y rendimiento de routers, switches y otros equipos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "dificil",
+          "enunciado": "El RPO (Recovery Point Objective) define principalmente:",
+          "opciones": [
+            "El tiempo máximo aceptable para restaurar el servicio",
+            "La cantidad máxima de datos que se puede perder",
+            "El número de enlaces redundantes necesarios",
+            "La latencia máxima permitida en la red"
+          ],
+          "correctas": [1],
+          "explicacion": "El RPO mide cuántos datos (en tiempo) puede perderse, lo que determina la frecuencia de respaldos. El RTO mide el tiempo de recuperación."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles son ejemplos de documentación de red recomendada para operaciones?",
+          "opciones": [
+            "Diagramas lógicos",
+            "Diagramas físicos",
+            "Registros IPAM de direcciones",
+            "Contraseñas en texto plano en el diagrama",
+            "Inventario de equipos"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Diagramas, IPAM e inventario son documentación válida. Guardar contraseñas en texto plano es una mala práctica de seguridad, no documentación recomendada."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-de-red",
+      "nombre": "Seguridad de red",
+      "dominio": "Network Security",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Defensa, control de acceso y amenazas",
+        "markdown": "## Principios CIA\nLa seguridad busca **confidencialidad**, **integridad** y **disponibilidad**. Cada control técnico apunta a proteger uno o más de estos pilares.\n\n## Control de acceso\n- **802.1X:** autenticación basada en puerto antes de permitir acceso a la red.\n- **NAC:** evalúa la postura del dispositivo antes de admitirlo.\n- Principio de **mínimo privilegio:** otorgar solo los permisos estrictamente necesarios.\n\n## Defensas perimetrales\nUn **firewall** filtra tráfico según reglas; un **IDS** detecta y alerta, mientras un **IPS** además bloquea. La **segmentación** limita el alcance de un ataque.\n\n## Amenazas comunes\nPhishing, ataques **DDoS**, envenenamiento ARP y suplantación (spoofing). La **defensa en profundidad** aplica capas múltiples de protección.\n\n> **En el examen:** recuerda que IDS detecta y IPS previene, y que 802.1X es autenticación por puerto, no cifrado inalámbrico."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuál es la diferencia principal entre un IDS y un IPS?",
+          "opciones": [
+            "El IDS cifra el tráfico y el IPS lo descifra",
+            "El IDS solo detecta y alerta, el IPS además bloquea el tráfico",
+            "El IDS opera en capa 2 y el IPS en capa 7",
+            "No existe ninguna diferencia funcional"
+          ],
+          "correctas": [1],
+          "explicacion": "Un IDS detecta y genera alertas de actividad sospechosa; un IPS, además de detectar, puede bloquear activamente el tráfico malicioso."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles de los siguientes son pilares del modelo de seguridad de la información (CIA)?",
+          "opciones": [
+            "Confidencialidad",
+            "Integridad",
+            "Disponibilidad",
+            "Escalabilidad",
+            "Redundancia"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "La tríada CIA está formada por confidencialidad, integridad y disponibilidad. Escalabilidad y redundancia son propiedades de diseño, no pilares del modelo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué estándar proporciona autenticación basada en puerto para controlar el acceso a la red?",
+          "opciones": [
+            "802.1Q",
+            "802.11n",
+            "802.1X",
+            "802.3"
+          ],
+          "correctas": [2],
+          "explicacion": "802.1X ofrece control de acceso a la red basado en puerto, exigiendo autenticación antes de permitir el tráfico del cliente."
+        }
+      ]
+    },
+    {
+      "slug": "diagnostico-y-resolucion-de-problemas",
+      "nombre": "Diagnóstico y resolución de problemas",
+      "dominio": "Network Troubleshooting",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Metodología y herramientas de diagnóstico",
+        "markdown": "## Metodología estructurada\nUn enfoque ordenado evita soluciones a ciegas:\n\n1. **Identificar** el problema y reunir información.\n2. Establecer una **teoría** de causa probable.\n3. **Probar** la teoría para confirmarla.\n4. Crear un **plan de acción** e implementarlo.\n5. **Verificar** la funcionalidad y documentar.\n\n## Herramientas comunes\n- **ping:** prueba conectividad y latencia.\n- **traceroute/tracert:** muestra el camino salto a salto.\n- **nslookup/dig:** diagnostica resolución DNS.\n- **ipconfig/ifconfig:** revisa la configuración local.\n\n## Problemas típicos\nConflictos de IP, máscara incorrecta, **puerta de enlace** mal configurada, fallas de DNS o cableado defectuoso. Aislar la capa afectada acelera la solución.\n\n> **En el examen:** memoriza el orden de los pasos de la metodología y asocia cada herramienta con el síntoma que diagnostica."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué herramienta usarías para verificar el camino salto a salto que sigue un paquete hasta un destino?",
+          "opciones": [
+            "ping",
+            "traceroute / tracert",
+            "ipconfig",
+            "netstat"
+          ],
+          "correctas": [1],
+          "explicacion": "traceroute (tracert en Windows) muestra cada salto intermedio y el tiempo de respuesta hasta el destino."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Según la metodología de resolución de problemas, ¿cuál es el primer paso?",
+          "opciones": [
+            "Implementar la solución de inmediato",
+            "Identificar el problema y reunir información",
+            "Documentar los hallazgos",
+            "Verificar la funcionalidad del sistema"
+          ],
+          "correctas": [1],
+          "explicacion": "El método estructurado comienza identificando el problema y recopilando información antes de teorizar o actuar."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Un equipo no resuelve nombres de dominio pero sí puede hacer ping a direcciones IP externas. ¿Qué causas son plausibles?",
+          "opciones": [
+            "Servidor DNS mal configurado o inaccesible",
+            "El cable de red está físicamente desconectado",
+            "Dirección de servidor DNS incorrecta en el cliente",
+            "Bloqueo del puerto 53 por un firewall",
+            "La tarjeta de red está deshabilitada"
+          ],
+          "correctas": [0, 2, 3],
+          "explicacion": "Si hay conectividad IP pero falla la resolución de nombres, el problema está en DNS: servidor inaccesible, IP de DNS errónea o el puerto 53 bloqueado. Un cable desconectado o NIC deshabilitada impedirían también el ping."
+        }
+      ]
+    }
+  ]
+}

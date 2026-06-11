@@ -1,0 +1,341 @@
+{
+  "slug": "aws-ai-practitioner",
+  "nombre": "AWS Certified AI Practitioner",
+  "proveedor": "AWS",
+  "nivel": "foundational",
+  "area": "IA",
+  "descripcion": "Certificación de nivel fundacional que valida el conocimiento general de inteligencia artificial, machine learning e IA generativa en el ecosistema de AWS. Está pensada para perfiles que usan o impulsan soluciones de IA sin ser necesariamente especialistas en ciencia de datos.",
+  "skills": [
+    "inteligencia artificial",
+    "machine learning",
+    "ia generativa",
+    "modelos fundacionales",
+    "amazon bedrock",
+    "amazon sagemaker",
+    "prompt engineering",
+    "rag",
+    "ia responsable",
+    "seguridad de datos",
+    "embeddings",
+    "fine-tuning"
+  ],
+  "roles": [
+    "Practicante de IA",
+    "Analista de negocio orientado a datos",
+    "Desarrollador de aplicaciones de IA",
+    "Líder de producto de IA",
+    "Profesional de la nube en transición a IA"
+  ],
+  "temas": [
+    {
+      "slug": "fundamentos-ia-ml",
+      "nombre": "Fundamentos de IA y ML",
+      "dominio": "Dominio 1: Fundamentos de IA y ML",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Conceptos básicos de IA, ML y aprendizaje profundo",
+        "markdown": "## Jerarquía de conceptos\nLa **inteligencia artificial (IA)** es el campo amplio que busca que las máquinas imiten capacidades humanas. El **machine learning (ML)** es un subconjunto donde el sistema **aprende patrones a partir de datos** en lugar de seguir reglas fijas. El **aprendizaje profundo** usa redes neuronales con muchas capas para tareas complejas como visión o lenguaje.\n\n## Tipos de aprendizaje\n- **Supervisado:** se entrena con datos **etiquetados** (clasificación, regresión).\n- **No supervisado:** descubre estructura sin etiquetas (agrupamiento).\n- **Por refuerzo:** un agente aprende mediante **recompensas** y penalizaciones.\n\n## Datos\n- **Estructurados** (tablas) vs **no estructurados** (texto, imágenes).\n- El ciclo típico: recolección, preparación, entrenamiento, evaluación e **inferencia**.\n\n> **En el examen:** distingue IA ⊃ ML ⊃ aprendizaje profundo y reconoce cuándo conviene aprendizaje supervisado, no supervisado o por refuerzo según el problema."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué enfoque de machine learning requiere un conjunto de datos con ejemplos previamente etiquetados?",
+          "opciones": [
+            "Aprendizaje supervisado",
+            "Aprendizaje no supervisado",
+            "Aprendizaje por refuerzo",
+            "Aprendizaje por transferencia sin datos"
+          ],
+          "correctas": [0],
+          "explicacion": "El aprendizaje supervisado entrena el modelo con pares de entrada y salida conocida (etiquetas), permitiéndole predecir la etiqueta de nuevos datos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una empresa quiere agrupar a sus clientes en segmentos sin tener categorías definidas de antemano. ¿Qué técnica es la más adecuada?",
+          "opciones": [
+            "Regresión lineal supervisada",
+            "Agrupamiento (clustering) no supervisado",
+            "Aprendizaje por refuerzo",
+            "Clasificación binaria etiquetada"
+          ],
+          "correctas": [1],
+          "explicacion": "El agrupamiento es una técnica no supervisada que descubre estructura en los datos sin etiquetas previas, ideal para segmentar clientes."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de las siguientes afirmaciones sobre la jerarquía de conceptos de IA son correctas? (Selecciona dos.)",
+          "opciones": [
+            "El machine learning es un subconjunto de la inteligencia artificial",
+            "El aprendizaje profundo utiliza redes neuronales con múltiples capas",
+            "La inteligencia artificial es un subconjunto del machine learning",
+            "El aprendizaje profundo no tiene relación con el machine learning",
+            "Toda IA requiere obligatoriamente aprendizaje por refuerzo"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "La IA es el campo más amplio; el ML es un subconjunto de la IA y el aprendizaje profundo es un subconjunto del ML basado en redes neuronales multicapa."
+        }
+      ]
+    },
+    {
+      "slug": "fundamentos-ia-generativa",
+      "nombre": "Fundamentos de IA generativa",
+      "dominio": "Dominio 2: Fundamentos de la IA generativa",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Modelos fundacionales y generación de contenido",
+        "markdown": "## ¿Qué es la IA generativa?\nGenera contenido nuevo (texto, imágenes, código, audio) a partir de patrones aprendidos. Se apoya en **modelos fundacionales (FM)**: modelos grandes preentrenados con enormes volúmenes de datos que luego se adaptan a tareas concretas.\n\n## Conceptos clave\n- **Tokens:** unidades en que se divide el texto.\n- **Embeddings:** representaciones numéricas que capturan significado.\n- **Ventana de contexto:** cuánta información puede considerar el modelo a la vez.\n- **Temperatura:** controla la **aleatoriedad** de la salida.\n\n## Casos de uso\n- Resúmenes, chatbots, asistentes de código, generación de imágenes.\n- **Limitaciones:** **alucinaciones**, sesgo, conocimiento desactualizado y costo de cómputo.\n\n> **En el examen:** asocia modelo fundacional con preentrenamiento amplio, y reconoce alucinación y sesgo como riesgos inherentes de la IA generativa."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué describe mejor a un modelo fundacional (foundation model)?",
+          "opciones": [
+            "Un modelo pequeño entrenado para una sola tarea muy específica",
+            "Un modelo grande preentrenado con datos amplios que puede adaptarse a múltiples tareas",
+            "Una base de datos relacional optimizada para IA",
+            "Un conjunto de reglas escritas manualmente por expertos"
+          ],
+          "correctas": [1],
+          "explicacion": "Un modelo fundacional se preentrena con grandes volúmenes de datos diversos y luego se adapta (mediante prompts o ajuste) a numerosas tareas."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuando un modelo generativo produce información que suena convincente pero es falsa o inventada, ¿cómo se denomina este fenómeno?",
+          "opciones": [
+            "Sobreajuste",
+            "Alucinación",
+            "Fuga de datos",
+            "Normalización"
+          ],
+          "correctas": [1],
+          "explicacion": "La alucinación ocurre cuando el modelo genera contenido plausible pero incorrecto; es un riesgo conocido de la IA generativa que debe mitigarse."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un equipo quiere reducir la aleatoriedad de las respuestas de un modelo generativo para obtener salidas más deterministas. ¿Qué parámetro deberían disminuir?",
+          "opciones": [
+            "El número de tokens de entrada",
+            "La temperatura",
+            "El tamaño del embedding",
+            "La cantidad de capas del modelo"
+          ],
+          "correctas": [1],
+          "explicacion": "Una temperatura más baja hace que las respuestas sean más deterministas y predecibles; una más alta aumenta la diversidad y creatividad."
+        }
+      ]
+    },
+    {
+      "slug": "servicios-ia-aws",
+      "nombre": "Servicios de IA gestionados en AWS",
+      "dominio": "Dominio 2: Fundamentos de la IA generativa",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Amazon Bedrock, SageMaker y servicios de IA",
+        "markdown": "## Servicios clave\n- **Amazon Bedrock:** acceso vía API a **modelos fundacionales** de varios proveedores; ideal para construir apps generativas **sin gestionar infraestructura**.\n- **Amazon SageMaker:** plataforma para **construir, entrenar y desplegar** modelos propios de ML de extremo a extremo.\n- **Servicios de IA preentrenados:** **Rekognition** (visión), **Comprehend** (NLP), **Transcribe** (voz a texto), **Polly** (texto a voz), **Translate**.\n\n## Cómo elegir\n- ¿Necesitas un modelo generativo listo para usar? → **Bedrock**.\n- ¿Entrenar y personalizar tu propio modelo? → **SageMaker**.\n- ¿Una capacidad común (OCR, sentimiento, traducción)? → **servicio de IA específico**.\n\n> **En el examen:** Bedrock = modelos fundacionales gestionados por API; SageMaker = ciclo completo de ML personalizado; servicios como Rekognition o Comprehend resuelven tareas concretas sin entrenar."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio de AWS ofrece acceso por API a modelos fundacionales de varios proveedores para crear aplicaciones de IA generativa sin administrar infraestructura?",
+          "opciones": [
+            "Amazon Bedrock",
+            "Amazon Rekognition",
+            "Amazon RDS",
+            "Amazon Polly"
+          ],
+          "correctas": [0],
+          "explicacion": "Amazon Bedrock proporciona acceso gestionado a modelos fundacionales de distintos proveedores mediante una API unificada, sin necesidad de gestionar servidores."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una empresa necesita extraer el sentimiento y las entidades clave de miles de reseñas de texto en español. ¿Qué servicio gestionado es el más apropiado?",
+          "opciones": [
+            "Amazon Transcribe",
+            "Amazon Comprehend",
+            "Amazon Polly",
+            "Amazon Translate"
+          ],
+          "correctas": [1],
+          "explicacion": "Amazon Comprehend es el servicio de procesamiento de lenguaje natural que detecta sentimiento, entidades, frases clave e idioma en texto."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Un equipo quiere construir y entrenar un modelo de ML personalizado de principio a fin, controlando los datos, el algoritmo y el despliegue. ¿Qué afirmaciones son correctas? (Selecciona dos.)",
+          "opciones": [
+            "Amazon SageMaker es adecuado porque cubre construir, entrenar y desplegar modelos propios",
+            "Conviene usar SageMaker cuando se requiere control completo del ciclo de vida del modelo",
+            "Amazon Polly es la mejor opción para entrenar un modelo de clasificación personalizado",
+            "Bedrock obliga a entrenar el modelo fundacional desde cero antes de usarlo",
+            "Rekognition permite entrenar modelos de lenguaje generativo de gran tamaño"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "SageMaker es la plataforma para el ciclo de vida completo de ML personalizado. Polly (texto a voz) y Rekognition (visión) no entrenan modelos generativos, y Bedrock entrega modelos ya preentrenados."
+        }
+      ]
+    },
+    {
+      "slug": "prompt-engineering-rag",
+      "nombre": "Prompt engineering y RAG",
+      "dominio": "Dominio 3: Aplicaciones de modelos fundacionales",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Diseño de prompts y recuperación aumentada",
+        "markdown": "## Prompt engineering\nEs la práctica de **redactar instrucciones** efectivas para guiar al modelo. Técnicas comunes:\n- **Zero-shot:** se pide la tarea sin ejemplos.\n- **Few-shot:** se incluyen **ejemplos** dentro del prompt.\n- **Chain-of-thought:** se pide razonar **paso a paso**.\n\nUn buen prompt aporta **contexto, rol, formato de salida** y restricciones claras.\n\n## RAG (recuperación aumentada por generación)\nCombina el modelo con una **base de conocimiento externa**:\n1. La consulta se convierte en **embedding**.\n2. Se buscan documentos relevantes en una **base vectorial**.\n3. Ese contexto se inyecta en el prompt.\n\nRAG reduce **alucinaciones** y permite usar datos **propios y actualizados** sin reentrenar el modelo.\n\n> **En el examen:** RAG es la respuesta cuando se quiere que el modelo use información privada o reciente sin hacer fine-tuning."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una organización quiere que su asistente responda usando documentos internos actualizados sin reentrenar el modelo fundacional. ¿Qué enfoque es el más adecuado?",
+          "opciones": [
+            "Recuperación aumentada por generación (RAG)",
+            "Aumentar la temperatura del modelo",
+            "Reducir el número de tokens del prompt",
+            "Entrenar un modelo desde cero"
+          ],
+          "correctas": [0],
+          "explicacion": "RAG recupera información relevante de una base de conocimiento externa y la inyecta en el prompt, permitiendo respuestas basadas en datos propios sin reentrenar el modelo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Incluir varios ejemplos de la tarea dentro del prompt para guiar la respuesta del modelo se conoce como:",
+          "opciones": [
+            "Prompting few-shot",
+            "Prompting zero-shot",
+            "Fine-tuning",
+            "Cuantización"
+          ],
+          "correctas": [0],
+          "explicacion": "El prompting few-shot proporciona ejemplos dentro del propio prompt para orientar al modelo, a diferencia del zero-shot, que no incluye ninguno."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles son beneficios reales de aplicar RAG en una aplicación de IA generativa? (Selecciona dos.)",
+          "opciones": [
+            "Permite usar datos privados y actualizados sin reentrenar el modelo",
+            "Ayuda a reducir las alucinaciones al fundamentar las respuestas en documentos recuperados",
+            "Elimina por completo la necesidad de un modelo fundacional",
+            "Garantiza que el modelo nunca cometa errores de ningún tipo",
+            "Convierte automáticamente cualquier modelo en uno multimodal"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "RAG aprovecha datos externos actualizados sin fine-tuning y reduce alucinaciones al anclar la respuesta en fuentes recuperadas, pero sigue dependiendo del modelo y no garantiza ausencia de errores."
+        }
+      ]
+    },
+    {
+      "slug": "ia-responsable",
+      "nombre": "IA responsable",
+      "dominio": "Dominio 4: Directrices para una IA responsable",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Sesgo, equidad y transparencia en IA",
+        "markdown": "## Principios de IA responsable\nBuscan que los sistemas sean **justos, transparentes y seguros**. Pilares habituales:\n- **Equidad:** evitar **sesgos** que perjudiquen a grupos.\n- **Explicabilidad / transparencia:** poder entender por qué el modelo decide.\n- **Privacidad y seguridad** de los datos.\n- **Robustez** y supervisión humana.\n\n## Riesgos a vigilar\n- **Sesgo** en los datos de entrenamiento.\n- **Alucinaciones** y desinformación.\n- **Toxicidad** o contenido dañino.\n\n## Herramientas en AWS\n- **SageMaker Clarify:** detecta **sesgo** y ayuda con la explicabilidad.\n- **Guardrails de Amazon Bedrock:** filtran contenido y temas no deseados.\n\n> **En el examen:** ante preguntas de equidad o detección de sesgo piensa en SageMaker Clarify; para filtrar respuestas de modelos generativos, en los guardrails de Bedrock."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué herramienta de AWS ayuda a detectar sesgo en los datos y a explicar las predicciones de un modelo de ML?",
+          "opciones": [
+            "Amazon SageMaker Clarify",
+            "Amazon CloudFront",
+            "Amazon Polly",
+            "AWS CloudFormation"
+          ],
+          "correctas": [0],
+          "explicacion": "SageMaker Clarify analiza sesgo en datos y modelos y aporta explicabilidad sobre cómo se generan las predicciones, alineándose con la IA responsable."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál de los siguientes es un principio central de la IA responsable?",
+          "opciones": [
+            "Maximizar el costo de cómputo",
+            "Equidad y reducción de sesgos",
+            "Ocultar por completo cómo funciona el modelo",
+            "Eliminar toda supervisión humana"
+          ],
+          "correctas": [1],
+          "explicacion": "La equidad y la mitigación de sesgos son pilares de la IA responsable, junto con la transparencia, la privacidad y la supervisión humana."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una empresa quiere impedir que su chatbot basado en Amazon Bedrock genere contenido tóxico o aborde temas prohibidos. ¿Qué función debería configurar?",
+          "opciones": [
+            "Guardrails de Amazon Bedrock",
+            "Amazon Translate",
+            "Una mayor temperatura en el modelo",
+            "Amazon Transcribe"
+          ],
+          "correctas": [0],
+          "explicacion": "Los guardrails de Amazon Bedrock permiten filtrar contenido dañino y restringir temas no deseados, reforzando una IA responsable en aplicaciones generativas."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-gobernanza-ia",
+      "nombre": "Seguridad y gobernanza de IA",
+      "dominio": "Dominio 5: Seguridad, conformidad y gobernanza de soluciones de IA",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Protección de datos y cumplimiento en IA",
+        "markdown": "## Seguridad de datos en IA\nLos datos de entrenamiento e inferencia deben protegerse en todo el ciclo:\n- **Cifrado** en reposo (**KMS**) y en tránsito (**TLS**).\n- **Control de acceso** con **IAM** y privilegio mínimo.\n- **Aislamiento de red** con VPC para cargas sensibles.\n\n## Gobernanza y cumplimiento\n- Clasificar y minimizar datos; cuidar la **privacidad** (PII).\n- **Trazabilidad** y auditoría con **CloudTrail**.\n- Vigilar la **residencia de datos** y normativas aplicables.\n\n## Buenas prácticas\n- No exponer secretos en prompts ni código.\n- Registrar y monitorear el uso de los modelos.\n- Definir responsables y políticas de uso aceptable.\n\n> **En el examen:** asocia cifrado con KMS, control de acceso con IAM y auditoría/trazabilidad con CloudTrail al razonar sobre seguridad de soluciones de IA."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio de AWS se utiliza para gestionar permisos y controlar quién puede acceder a los recursos de una solución de IA?",
+          "opciones": [
+            "AWS IAM",
+            "Amazon Polly",
+            "Amazon Comprehend",
+            "Amazon CloudFront"
+          ],
+          "correctas": [0],
+          "explicacion": "AWS IAM gestiona identidades y permisos, permitiendo aplicar el principio de privilegio mínimo sobre los recursos de IA."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un equipo de auditoría necesita un registro de quién invocó los modelos y qué acciones se realizaron en la cuenta. ¿Qué servicio proporciona esa trazabilidad?",
+          "opciones": [
+            "AWS CloudTrail",
+            "Amazon Rekognition",
+            "Amazon SageMaker Clarify",
+            "Amazon Translate"
+          ],
+          "correctas": [0],
+          "explicacion": "AWS CloudTrail registra las llamadas a la API y la actividad de la cuenta, ofreciendo trazabilidad y soporte para auditoría y cumplimiento."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué prácticas ayudan a proteger los datos en una solución de IA en AWS? (Selecciona dos.)",
+          "opciones": [
+            "Cifrar los datos en reposo con AWS KMS",
+            "Aplicar control de acceso con IAM y privilegio mínimo",
+            "Incluir credenciales en texto plano dentro de los prompts",
+            "Deshabilitar todo el registro de actividad",
+            "Compartir las claves de cifrado públicamente"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "El cifrado con KMS y el control de acceso con IAM bajo privilegio mínimo son prácticas centrales de seguridad; exponer credenciales, desactivar el registro o compartir claves son antipatrones."
+        }
+      ]
+    }
+  ]
+}

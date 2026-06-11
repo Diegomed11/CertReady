@@ -1,0 +1,397 @@
+{
+  "slug": "pmp",
+  "nombre": "Project Management Professional (PMP)",
+  "proveedor": "PMI",
+  "nivel": "professional",
+  "area": "Gestion de proyectos",
+  "descripcion": "Valida la capacidad de dirigir proyectos combinando enfoques predictivos, ágiles e híbridos. Cubre el liderazgo de personas, la ejecución de procesos y la conexión del proyecto con la estrategia del negocio.",
+  "skills": [
+    "liderazgo",
+    "gestión de riesgos",
+    "cronograma",
+    "presupuesto",
+    "interesados",
+    "scrum",
+    "kanban",
+    "gestión de alcance",
+    "gestión de conflictos",
+    "valor ganado",
+    "cambio organizacional",
+    "calidad"
+  ],
+  "roles": [
+    "Gerente de proyecto",
+    "Líder de proyecto",
+    "Scrum Master",
+    "Coordinador de PMO",
+    "Líder de equipo de entrega"
+  ],
+  "temas": [
+    {
+      "slug": "liderazgo-equipos",
+      "nombre": "Liderazgo y desarrollo de equipos",
+      "dominio": "People",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Construir, empoderar y motivar al equipo",
+        "markdown": "## Liderazgo de servicio\nEl director de proyecto moderno actúa como **líder servidor**: remueve obstáculos, facilita acuerdos y deja que el equipo tome decisiones técnicas. No manda por jerarquía, sino que habilita el desempeño.\n\n## Formación del equipo\nLos equipos pasan por etapas de **formación, conflicto, normalización y desempeño**. Reconocer la etapa ayuda a elegir el estilo: más dirección al inicio, más delegación al madurar.\n\n## Empoderamiento\n- Define **acuerdos de equipo** (ground rules) de forma colaborativa.\n- Delega según competencia y motivación de cada persona.\n- Da **autonomía** para que el equipo se autoorganice.\n\n## Motivación\n- Reconoce logros de manera oportuna y específica.\n- Conecta el trabajo con un **propósito** claro.\n- Atiende factores de higiene (claridad, herramientas, respeto) antes que premios.\n\n> **En el examen:** ante un equipo bloqueado, el director facilita y remueve impedimentos; rara vez la respuesta es imponer una solución desde arriba."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un nuevo equipo discute mucho y aún no define cómo trabajar en conjunto. ¿En qué etapa de desarrollo se encuentra?",
+          "opciones": [
+            "Formación",
+            "Conflicto (turbulencia)",
+            "Normalización",
+            "Desempeño"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "La etapa de conflicto se caracteriza por desacuerdos mientras el equipo negocia roles y formas de trabajo; el líder facilita acuerdos para avanzar."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un miembro experimentado y motivado pide más responsabilidad sobre una tarea técnica. ¿Cuál es la mejor acción del director de proyecto?",
+          "opciones": [
+            "Supervisar cada paso para evitar errores",
+            "Delegar la tarea y brindar apoyo cuando lo solicite",
+            "Reasignar la tarea a alguien con menos carga",
+            "Pedir aprobación del patrocinador antes de delegar"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "Con alta competencia y motivación, delegar empodera a la persona; el líder servidor ofrece apoyo sin microgestionar."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué prácticas reflejan un liderazgo que empodera al equipo de proyecto?",
+          "opciones": [
+            "Construir los acuerdos de equipo de forma colaborativa",
+            "Remover impedimentos que bloquean al equipo",
+            "Permitir que el equipo se autoorganice para las tareas",
+            "Asignar todas las decisiones técnicas al director de proyecto",
+            "Reconocer logros de manera oportuna y específica"
+          ],
+          "correctas": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "explicacion": "Acuerdos colaborativos, remover impedimentos, autoorganización y reconocimiento empoderan. Centralizar toda decisión técnica en el director contradice el empoderamiento."
+        }
+      ]
+    },
+    {
+      "slug": "interesados-comunicacion",
+      "nombre": "Interesados y comunicación",
+      "dominio": "People",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Gestionar conflictos, interesados y compromiso",
+        "markdown": "## Identificar interesados\nUn **interesado** es cualquier persona o grupo afectado por el proyecto. Se clasifican por **poder e interés** para decidir cuánto comunicar y con qué frecuencia.\n\n## Estrategias de involucramiento\n- Alto poder y alto interés: **gestionar de cerca**.\n- Alto poder y bajo interés: mantener **satisfechos**.\n- Bajo poder y alto interés: mantener **informados**.\n- Bajo poder y bajo interés: **monitorear**.\n\n## Gestión de conflictos\nEnfrentar el problema mediante **colaboración (resolver el problema)** suele dar el mejor resultado duradero. Evitar o imponer son soluciones temporales.\n\n## Comunicación efectiva\n- Adapta el canal y el detalle a cada audiencia.\n- Prefiere comunicación **cara a cara** para temas sensibles.\n- Escucha activamente y confirma el entendimiento.\n\n> **En el examen:** ante un conflicto, la técnica preferida casi siempre es **colaborar / resolver el problema**, no evitar ni forzar."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Dos personas del equipo discuten por la forma de implementar una función. ¿Qué técnica de resolución de conflictos genera el mejor resultado a largo plazo?",
+          "opciones": [
+            "Evitar el tema hasta que se calmen",
+            "Imponer la decisión del director de proyecto",
+            "Colaborar para resolver el problema de raíz",
+            "Llegar a un punto medio rápido sin analizar"
+          ],
+          "correctas": [
+            2
+          ],
+          "explicacion": "Colaborar (resolver el problema) busca una solución que satisfaga a ambas partes y suele ser la más duradera."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un interesado tiene mucho poder sobre el proyecto pero poco interés en el día a día. ¿Cuál es la estrategia adecuada?",
+          "opciones": [
+            "Gestionarlo de cerca con reuniones frecuentes",
+            "Mantenerlo satisfecho con información clave",
+            "Solo monitorearlo de manera pasiva",
+            "Ignorarlo hasta que pida actualizaciones"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "Alto poder y bajo interés se gestiona manteniendo al interesado satisfecho, sin saturarlo de detalles."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué acciones mejoran la comunicación y el involucramiento de los interesados?",
+          "opciones": [
+            "Clasificar interesados por poder e interés",
+            "Adaptar el nivel de detalle a cada audiencia",
+            "Preferir el correo masivo para temas sensibles y delicados",
+            "Usar comunicación cara a cara para resolver malentendidos",
+            "Confirmar el entendimiento mediante escucha activa"
+          ],
+          "correctas": [
+            0,
+            1,
+            3,
+            4
+          ],
+          "explicacion": "Clasificar, adaptar el detalle, hablar cara a cara y confirmar entendimiento ayudan. Los temas sensibles se manejan en persona, no por correo masivo."
+        }
+      ]
+    },
+    {
+      "slug": "alcance-cronograma",
+      "nombre": "Alcance, cronograma y costo",
+      "dominio": "Process",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Planificar entregables, tiempo y presupuesto",
+        "markdown": "## Definir el alcance\nEl **enunciado del alcance** describe entregables y límites. La **EDT/WBS** descompone el trabajo en paquetes manejables. Controlar el alcance evita el **scope creep** (crecimiento no aprobado).\n\n## Construir el cronograma\n- Define actividades y sus **dependencias**.\n- Calcula la **ruta crítica**: la secuencia más larga que determina la duración mínima.\n- La **holgura** indica cuánto puede retrasarse una actividad sin afectar el fin.\n\n## Estimar costos\n- Estima por **analogía**, **paramétrica** o de **abajo hacia arriba**.\n- Suma reservas de **contingencia** para riesgos conocidos.\n\n## Medir el desempeño\nEl **valor ganado (EVM)** compara lo planeado, lo gastado y lo realmente avanzado mediante índices como **SPI** y **CPI**.\n\n> **En el examen:** un CPI menor a 1 significa sobrecosto y un SPI menor a 1 significa atraso respecto al plan."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En un proyecto el CPI calculado es 0,85. ¿Qué indica este valor?",
+          "opciones": [
+            "El proyecto va adelantado en el cronograma",
+            "El proyecto gasta más de lo presupuestado para el trabajo hecho",
+            "El proyecto está exactamente en presupuesto",
+            "El proyecto terminó antes de lo previsto"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "Un CPI menor a 1 indica sobrecosto: se ha gastado más de lo planeado para el valor de trabajo completado."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué herramienta descompone el trabajo del proyecto en paquetes más pequeños y manejables?",
+          "opciones": [
+            "La matriz de riesgos",
+            "La estructura de desglose del trabajo (EDT/WBS)",
+            "El registro de interesados",
+            "El diagrama de Gantt"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "La EDT/WBS descompone jerárquicamente los entregables en paquetes de trabajo manejables."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre cronograma y costos son correctas?",
+          "opciones": [
+            "La ruta crítica define la duración mínima del proyecto",
+            "La holgura es el retraso posible sin afectar la fecha final",
+            "Un SPI menor a 1 indica atraso respecto al plan",
+            "La estimación paramétrica usa una relación estadística entre variables",
+            "El scope creep es un crecimiento del alcance siempre aprobado y deseable"
+          ],
+          "correctas": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "explicacion": "Ruta crítica, holgura, SPI y estimación paramétrica están bien descritos. El scope creep es crecimiento NO aprobado del alcance y se debe controlar."
+        }
+      ]
+    },
+    {
+      "slug": "riesgos-calidad",
+      "nombre": "Riesgos y calidad",
+      "dominio": "Process",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Anticipar amenazas y asegurar entregables",
+        "markdown": "## Gestionar riesgos\nUn **riesgo** es un evento incierto que, de ocurrir, afecta los objetivos. Se identifican, analizan y se planifican respuestas.\n\n## Respuestas a amenazas\n- **Evitar**: eliminar la causa.\n- **Transferir**: pasar el impacto a un tercero (seguro, contrato).\n- **Mitigar**: reducir probabilidad o impacto.\n- **Aceptar**: convivir con el riesgo, con o sin reserva.\n\n## Respuestas a oportunidades\nExplotar, mejorar, compartir o aceptar. El objetivo es **aumentar** la probabilidad o el beneficio.\n\n## Asegurar la calidad\n- **Calidad** es cumplir requisitos; **grado** es el nivel de características.\n- Prevenir cuesta menos que inspeccionar y corregir.\n- Usa **causa raíz** para problemas recurrentes en lugar de parches.\n\n> **En el examen:** comprar un seguro frente a un riesgo es **transferir**; reforzar pruebas para reducir defectos es **mitigar**."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "El equipo contrata un seguro para cubrir las pérdidas si un proveedor falla en la entrega. ¿Qué estrategia de respuesta al riesgo aplica?",
+          "opciones": [
+            "Evitar",
+            "Mitigar",
+            "Transferir",
+            "Aceptar"
+          ],
+          "correctas": [
+            2
+          ],
+          "explicacion": "Contratar un seguro traslada el impacto financiero del riesgo a un tercero, lo que corresponde a la estrategia de transferir."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Según los principios de calidad en proyectos, ¿qué afirmación es correcta?",
+          "opciones": [
+            "Inspeccionar al final cuesta menos que prevenir defectos",
+            "Prevenir defectos suele costar menos que corregirlos después",
+            "Calidad y grado significan exactamente lo mismo",
+            "La calidad solo depende del cliente, no del equipo"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "La prevención es más económica que la corrección; detectar tarde un defecto eleva el costo de retrabajo."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué estrategias son respuestas válidas frente a amenazas (riesgos negativos)?",
+          "opciones": [
+            "Evitar eliminando la causa del riesgo",
+            "Mitigar reduciendo probabilidad o impacto",
+            "Transferir el impacto a un tercero",
+            "Explotar para asegurar que el riesgo ocurra",
+            "Aceptar el riesgo con una reserva de contingencia"
+          ],
+          "correctas": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "explicacion": "Evitar, mitigar, transferir y aceptar son respuestas a amenazas. Explotar es una respuesta a oportunidades, no a amenazas."
+        }
+      ]
+    },
+    {
+      "slug": "enfoques-agiles",
+      "nombre": "Enfoques ágiles e híbridos",
+      "dominio": "Process",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Elegir el ciclo de vida adecuado",
+        "markdown": "## Predictivo vs. adaptativo\nEl enfoque **predictivo** planifica todo por adelantado; el **adaptativo (ágil)** entrega en iteraciones cortas y se adapta a cambios. El **híbrido** combina ambos según el contexto.\n\n## Marcos ágiles\n- **Scrum**: sprints, roles (product owner, scrum master, equipo) y eventos como la **retrospectiva**.\n- **Kanban**: flujo continuo con **límites de trabajo en progreso (WIP)**.\n\n## Entrega de valor\n- Prioriza el **backlog** por valor para el cliente.\n- Entrega incrementos **funcionales** de manera frecuente.\n- Inspecciona y adapta en cada ciclo.\n\n## Cuándo usar cada uno\n- Requisitos estables y claros: predictivo.\n- Alta incertidumbre o cambio frecuente: adaptativo.\n- Necesidades mixtas: híbrido.\n\n> **En el examen:** ante requisitos cambiantes y necesidad de retroalimentación temprana, el enfoque adaptativo/ágil suele ser la mejor elección."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un proyecto tiene requisitos muy inciertos y el cliente quiere ver avances frecuentes para dar retroalimentación. ¿Qué enfoque conviene?",
+          "opciones": [
+            "Predictivo con un único plan detallado al inicio",
+            "Adaptativo (ágil) con entregas iterativas",
+            "Sin planificación para ir más rápido",
+            "Posponer el proyecto hasta tener todo claro"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "Con alta incertidumbre y necesidad de retroalimentación temprana, el enfoque adaptativo entrega valor de forma iterativa y se ajusta a los cambios."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En Kanban, ¿qué mecanismo ayuda a evitar la sobrecarga del equipo y a visualizar cuellos de botella?",
+          "opciones": [
+            "Sprints de duración fija",
+            "Límites de trabajo en progreso (WIP)",
+            "Reunión diaria obligatoria de una hora",
+            "Estimación en puntos de historia"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "Los límites de WIP restringen cuántas tareas pueden estar en curso, lo que revela cuellos de botella y evita la sobrecarga."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué afirmaciones sobre enfoques ágiles e híbridos son correctas?",
+          "opciones": [
+            "El enfoque híbrido combina prácticas predictivas y adaptativas",
+            "La retrospectiva sirve para mejorar la forma de trabajo del equipo",
+            "El backlog se prioriza por el valor que aporta al cliente",
+            "Scrum elimina por completo cualquier tipo de planificación",
+            "Los incrementos ágiles deben ser funcionales y entregables"
+          ],
+          "correctas": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "explicacion": "Híbrido combina ambos, la retrospectiva mejora el proceso, el backlog se prioriza por valor y los incrementos son funcionales. Scrum sí planifica, en cada sprint."
+        }
+      ]
+    },
+    {
+      "slug": "entorno-negocio",
+      "nombre": "Entorno de negocio y cumplimiento",
+      "dominio": "Business Environment",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Valor, cumplimiento y cambio organizacional",
+        "markdown": "## Alinear con la estrategia\nUn proyecto existe para **entregar valor de negocio**. El **caso de negocio** justifica la inversión y los **beneficios** se gestionan hasta que se materializan, incluso tras el cierre.\n\n## Cumplimiento\n- Identifica requisitos **legales, regulatorios y de seguridad**.\n- Integra el cumplimiento en el plan, no como un añadido final.\n- Documenta evidencia para auditorías.\n\n## Gestión del cambio organizacional\n- Comunica el **porqué** del cambio para reducir resistencia.\n- Prepara, capacita y acompaña a las personas afectadas.\n- Mide la **adopción**, no solo la entrega técnica.\n\n## Beneficios y valor\n- Define métricas de éxito ligadas a objetivos del negocio.\n- Revisa que el proyecto siga siendo viable ante cambios del entorno.\n\n> **En el examen:** si el entorno cambia y el caso de negocio deja de ser válido, escalar y revisar la viabilidad es preferible a continuar por inercia."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "A mitad del proyecto, un cambio regulatorio hace que el caso de negocio deje de ser rentable. ¿Cuál es la mejor acción del director de proyecto?",
+          "opciones": [
+            "Continuar según el plan original sin avisar a nadie",
+            "Escalar la situación y revisar la viabilidad del proyecto",
+            "Reducir la calidad para terminar más barato",
+            "Ignorar el cambio porque ya estaba aprobado el presupuesto"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "Cuando el caso de negocio deja de ser válido, corresponde escalar y reevaluar la viabilidad en lugar de continuar por inercia."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué documento justifica por qué se debe invertir en un proyecto y cuáles beneficios se esperan?",
+          "opciones": [
+            "El caso de negocio",
+            "El registro de riesgos",
+            "El acta de la reunión diaria",
+            "La matriz de trazabilidad de requisitos"
+          ],
+          "correctas": [
+            0
+          ],
+          "explicacion": "El caso de negocio justifica la inversión y describe los beneficios esperados que sustentan la decisión de emprender el proyecto."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué prácticas conectan el proyecto con el entorno de negocio y favorecen el cambio organizacional?",
+          "opciones": [
+            "Integrar los requisitos de cumplimiento dentro del plan",
+            "Comunicar el porqué del cambio para reducir resistencia",
+            "Medir la adopción del cambio por parte de los usuarios",
+            "Entregar el producto sin considerar si genera valor de negocio",
+            "Gestionar los beneficios incluso después del cierre del proyecto"
+          ],
+          "correctas": [
+            0,
+            1,
+            2,
+            4
+          ],
+          "explicacion": "Integrar cumplimiento, comunicar el cambio, medir adopción y gestionar beneficios alinean el proyecto con el negocio. Entregar sin pensar en el valor contradice ese propósito."
+        }
+      ]
+    }
+  ]
+}

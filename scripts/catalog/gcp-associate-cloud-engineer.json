@@ -1,0 +1,329 @@
+{
+  "slug": "gcp-associate-cloud-engineer",
+  "nombre": "Google Cloud Associate Cloud Engineer",
+  "proveedor": "Google",
+  "nivel": "associate",
+  "area": "Nube",
+  "descripcion": "Valida la capacidad de desplegar, operar y administrar cargas de trabajo en Google Cloud usando la consola y la línea de comandos. Está pensada para perfiles que gestionan proyectos, recursos y accesos en el día a día.",
+  "skills": [
+    "gcloud",
+    "iam",
+    "compute engine",
+    "kubernetes",
+    "cloud storage",
+    "vpc",
+    "facturación",
+    "monitoring",
+    "bigquery",
+    "cloud sql",
+    "terraform"
+  ],
+  "roles": [
+    "Ingeniero de nube junior",
+    "Administrador de sistemas en la nube",
+    "Operador de infraestructura",
+    "Ingeniero DevOps"
+  ],
+  "temas": [
+    {
+      "slug": "configuracion-entorno",
+      "nombre": "Configuración del entorno de nube",
+      "dominio": "Configuración de un entorno de nube",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Proyectos, facturación y gestión de accesos",
+        "markdown": "## Jerarquía de recursos\nGoogle Cloud organiza todo en una estructura de **organización → carpetas → proyectos → recursos**. El **proyecto** es la unidad de facturación y aislamiento; cada recurso pertenece a uno.\n\n## Cuentas de facturación\n- Una **cuenta de facturación** puede pagar varios proyectos.\n- Define **presupuestos y alertas** para evitar sorpresas de costo.\n- Los roles de facturación (como administrador de facturación) son independientes de los roles del proyecto.\n\n## Herramientas de acceso\n- **Consola web**: interfaz visual para tareas puntuales.\n- **Cloud Shell** y **gcloud**: automatización y scripting.\n- Configura el contexto con `gcloud config set project` para fijar el proyecto activo.\n\n## Buenas prácticas\n- Usa **carpetas** para separar entornos (producción vs. pruebas).\n- Aplica el **mínimo privilegio** desde el inicio.\n\n> **En el examen:** recuerda que la cuenta de facturación se asocia a proyectos y que los presupuestos solo alertan, no detienen el gasto automáticamente."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál es la unidad de Google Cloud que agrupa recursos y sirve como base para la facturación y el aislamiento?",
+          "opciones": [
+            "La carpeta",
+            "El proyecto",
+            "La organización",
+            "La cuenta de facturación"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "El proyecto es la unidad fundamental: cada recurso pertenece a un proyecto y la facturación se calcula por proyecto."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un presupuesto con alerta al 90% se activa cuando el gasto del mes supera ese umbral. ¿Qué ocurre con los recursos?",
+          "opciones": [
+            "Se apagan automáticamente al cruzar el umbral",
+            "Se bloquea la creación de nuevos recursos",
+            "Solo se envía una notificación; el gasto continúa",
+            "Se reduce la cuota de la cuenta de facturación"
+          ],
+          "correctas": [
+            2
+          ],
+          "explicacion": "Las alertas de presupuesto son informativas: notifican pero no detienen el consumo. Para frenar gasto se requiere automatización adicional."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué afirmaciones sobre la jerarquía de recursos y las herramientas de gestión son correctas?",
+          "opciones": [
+            "Las carpetas permiten organizar proyectos por entorno o equipo",
+            "Una cuenta de facturación puede pagar varios proyectos",
+            "Cada recurso puede pertenecer a varios proyectos a la vez",
+            "Cloud Shell incluye gcloud preinstalado",
+            "La organización está por debajo del proyecto en la jerarquía"
+          ],
+          "correctas": [
+            0,
+            1,
+            3
+          ],
+          "explicacion": "Las carpetas agrupan proyectos, una cuenta de facturación cubre múltiples proyectos y Cloud Shell trae gcloud. Un recurso pertenece a un solo proyecto y la organización está por encima, no por debajo."
+        }
+      ]
+    },
+    {
+      "slug": "planificacion-recursos",
+      "nombre": "Planificación de una solución",
+      "dominio": "Planificación y configuración de una solución de nube",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Dimensionar cómputo, almacenamiento y red",
+        "markdown": "## Elegir el cómputo adecuado\n- **Compute Engine**: máquinas virtuales con control total.\n- **App Engine** y **Cloud Run**: opciones gestionadas y serverless.\n- **GKE**: orquestación de contenedores a escala.\n\n## Clases de almacenamiento\nCloud Storage ofrece clases según frecuencia de acceso:\n- **Standard**: datos calientes y frecuentes.\n- **Nearline / Coldline**: acceso mensual o trimestral.\n- **Archive**: respaldo de largo plazo y bajo costo.\n\n## Estimar costos\n- Usa la **calculadora de precios** antes de desplegar.\n- Aprovecha **descuentos por uso sostenido** y **compromisos** para cargas estables.\n- Las **VM Spot** reducen costo a cambio de posible interrupción.\n\n## Red\n- Diseña la **VPC** y subredes según regiones donde correrán los servicios.\n\n> **En el examen:** asocia cada clase de Cloud Storage con su frecuencia de acceso y recuerda que las VM Spot son las más baratas pero interrumpibles."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Para datos de respaldo que casi nunca se consultan y deben conservarse años al menor costo, ¿qué clase de Cloud Storage conviene?",
+          "opciones": [
+            "Standard",
+            "Nearline",
+            "Coldline",
+            "Archive"
+          ],
+          "correctas": [
+            3
+          ],
+          "explicacion": "Archive es la clase de menor costo de almacenamiento, pensada para datos rara vez accedidos y retención de largo plazo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una carga por lotes tolera reinicios y busca el menor costo de cómputo posible. ¿Qué tipo de VM de Compute Engine elegir?",
+          "opciones": [
+            "VM bajo demanda estándar",
+            "VM Spot",
+            "VM con compromiso de uso de 3 años",
+            "VM con memoria optimizada"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "Las VM Spot ofrecen el mayor descuento a cambio de poder ser interrumpidas, ideales para cargas tolerantes a fallos."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué mecanismos ayudan a reducir el costo de Compute Engine en distintos escenarios?",
+          "opciones": [
+            "Descuentos por uso sostenido para VM que corren gran parte del mes",
+            "Descuentos por compromiso para cargas estables y predecibles",
+            "VM Spot para trabajos interrumpibles",
+            "Aumentar el tamaño del disco persistente",
+            "Asignar IP externa estática a cada VM"
+          ],
+          "correctas": [
+            0,
+            1,
+            2
+          ],
+          "explicacion": "El uso sostenido, los compromisos y las VM Spot reducen costo. Agrandar discos o asignar IP estáticas no abarata el cómputo; suelen aumentar el gasto."
+        }
+      ]
+    },
+    {
+      "slug": "despliegue-computo",
+      "nombre": "Despliegue de cómputo y contenedores",
+      "dominio": "Despliegue e implementación de una solución de nube",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Compute Engine, GKE y servicios serverless",
+        "markdown": "## Compute Engine\n- Crea VM desde plantillas de instancia para estandarizar.\n- Usa **grupos de instancias gestionados (MIG)** para autoescalado y reparación automática.\n\n## Kubernetes Engine (GKE)\n- Despliega clústeres con `gcloud container clusters create`.\n- Define cargas con **Deployments** y expón con **Services**.\n- El modo **Autopilot** gestiona los nodos por ti.\n\n## Serverless\n- **Cloud Run**: contenedores sin servidor, escala a cero.\n- **App Engine**: aplicaciones gestionadas por plataforma.\n- **Cloud Functions**: funciones disparadas por eventos.\n\n## Infraestructura como código\n- **Deployment Manager** o **Terraform** describen recursos de forma reproducible.\n\n> **En el examen:** distingue cuándo conviene un MIG (VM con autoescalado) frente a Cloud Run (contenedores que escalan a cero sin gestionar servidores)."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Necesitas que un grupo de VM escale automáticamente según la carga y reemplace instancias que fallen. ¿Qué recurso usar?",
+          "opciones": [
+            "Una VM aislada con IP estática",
+            "Un grupo de instancias gestionado (MIG)",
+            "Una función de Cloud Functions",
+            "Un bucket de Cloud Storage"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "Los MIG ofrecen autoescalado y reparación automática a partir de una plantilla de instancia."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio permite ejecutar un contenedor sin gestionar servidores y escalar a cero cuando no hay tráfico?",
+          "opciones": [
+            "Cloud Run",
+            "Compute Engine",
+            "Persistent Disk",
+            "Cloud VPN"
+          ],
+          "correctas": [
+            0
+          ],
+          "explicacion": "Cloud Run ejecuta contenedores de forma serverless y puede escalar a cero instancias sin tráfico."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Al desplegar una aplicación en GKE, ¿qué afirmaciones son correctas?",
+          "opciones": [
+            "Un Deployment define el número deseado de réplicas de un Pod",
+            "Un Service expone los Pods bajo una dirección estable",
+            "El modo Autopilot gestiona automáticamente los nodos del clúster",
+            "Cada Pod debe tener su propia cuenta de facturación",
+            "GKE solo admite contenedores escritos en Go"
+          ],
+          "correctas": [
+            0,
+            1,
+            2
+          ],
+          "explicacion": "Deployments controlan réplicas, los Services dan acceso estable y Autopilot administra los nodos. La facturación es por proyecto y GKE corre cualquier contenedor, sin importar el lenguaje."
+        }
+      ]
+    },
+    {
+      "slug": "operacion-monitoreo",
+      "nombre": "Operación de la solución",
+      "dominio": "Aseguramiento del funcionamiento exitoso de una solución de nube",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Monitoreo, registros y administración de recursos",
+        "markdown": "## Observabilidad\nLa suite de operaciones reúne:\n- **Cloud Monitoring**: métricas, paneles y políticas de **alerta**.\n- **Cloud Logging**: recolección y consulta de registros.\n- **Error Reporting** y **Trace**: errores y latencia de aplicaciones.\n\n## Administración diaria\n- Gestiona VM: iniciar, detener, cambiar tipo de máquina.\n- Crea **snapshots** de discos para respaldo y migración.\n- Ajusta cuotas y solicita aumentos cuando sea necesario.\n\n## Almacenamiento y bases de datos\n- Administra **buckets**, ciclos de vida y versiones de objetos.\n- Opera **Cloud SQL**: copias de seguridad, réplicas y failover.\n\n## Alertas útiles\n- Define umbrales sobre métricas como CPU o latencia.\n- Conecta canales de notificación (correo, mensajería).\n\n> **En el examen:** asocia métricas y alertas con Cloud Monitoring, y consultas de texto de registros con Cloud Logging; son servicios distintos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio usarías para definir una política de alerta cuando la CPU de una VM supere el 80%?",
+          "opciones": [
+            "Cloud Logging",
+            "Cloud Monitoring",
+            "Cloud Storage",
+            "Cloud DNS"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "Cloud Monitoring administra métricas, paneles y políticas de alerta basadas en umbrales."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Quieres conservar una copia puntual de un disco persistente para poder restaurarlo más tarde. ¿Qué creas?",
+          "opciones": [
+            "Una imagen de contenedor",
+            "Un snapshot del disco",
+            "Una política de IAM",
+            "Una regla de firewall"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "Los snapshots capturan el estado de un disco persistente y permiten restaurarlo o crear nuevos discos."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué tareas corresponden a la operación continua de una solución en Google Cloud?",
+          "opciones": [
+            "Consultar registros de aplicación con Cloud Logging",
+            "Configurar réplicas y copias de seguridad en Cloud SQL",
+            "Definir reglas de ciclo de vida en buckets de Cloud Storage",
+            "Escribir el código fuente de la aplicación",
+            "Diseñar el logotipo de la empresa"
+          ],
+          "correctas": [
+            0,
+            1,
+            2
+          ],
+          "explicacion": "Operar la solución incluye revisar logs, gestionar bases de datos y administrar almacenamiento. Programar la app o tareas de marca quedan fuera de la operación de infraestructura."
+        }
+      ]
+    },
+    {
+      "slug": "iam-seguridad",
+      "nombre": "Acceso y seguridad",
+      "dominio": "Configuración del acceso y la seguridad",
+      "orden": 5,
+      "hoja": {
+        "titulo": "IAM, roles y cuentas de servicio",
+        "markdown": "## Identidad y acceso (IAM)\nIAM responde **quién** puede hacer **qué** sobre **qué recurso** mediante **políticas** que vinculan miembros a roles.\n\n## Tipos de roles\n- **Básicos**: propietario, editor, lector (amplios, evita usarlos).\n- **Predefinidos**: ajustados a un servicio concreto.\n- **Personalizados**: permisos a medida para casos específicos.\n\n## Cuentas de servicio\n- Identidad para **aplicaciones y VM**, no para personas.\n- Usa **claves gestionadas por Google** cuando sea posible y evita descargar claves.\n- Asigna el rol mínimo necesario a cada cuenta.\n\n## Principio de mínimo privilegio\n- Concede solo lo indispensable.\n- Revisa accesos periódicamente y prefiere roles predefinidos sobre básicos.\n\n> **En el examen:** las cuentas de servicio son para cargas no humanas y conviene preferir roles predefinidos frente a los básicos para limitar el alcance."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una aplicación en una VM necesita leer objetos de un bucket. ¿Cuál es la forma recomendada de darle acceso?",
+          "opciones": [
+            "Compartir las credenciales personales del desarrollador",
+            "Asignar una cuenta de servicio con el rol mínimo de lectura",
+            "Hacer el bucket público a internet",
+            "Usar el rol básico de propietario en el proyecto"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "Las cargas no humanas deben usar cuentas de servicio con el rol mínimo necesario, siguiendo el principio de mínimo privilegio."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "En IAM, ¿qué vincula una política para conceder acceso?",
+          "opciones": [
+            "Un miembro con un rol sobre un recurso",
+            "Una región con una zona",
+            "Un disco con un snapshot",
+            "Una métrica con una alerta"
+          ],
+          "correctas": [
+            0
+          ],
+          "explicacion": "Una política de IAM asocia miembros (usuarios, grupos o cuentas de servicio) a roles sobre un recurso determinado."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué prácticas refuerzan la seguridad de acceso en Google Cloud?",
+          "opciones": [
+            "Preferir roles predefinidos en lugar de roles básicos amplios",
+            "Aplicar el principio de mínimo privilegio",
+            "Usar cuentas de servicio para aplicaciones y VM",
+            "Otorgar el rol de propietario a todo el equipo por comodidad",
+            "Compartir una sola clave de cuenta de servicio entre todos"
+          ],
+          "correctas": [
+            0,
+            1,
+            2
+          ],
+          "explicacion": "Roles predefinidos, mínimo privilegio y cuentas de servicio reducen la superficie de riesgo. Repartir el rol de propietario o compartir claves amplía el riesgo innecesariamente."
+        }
+      ]
+    }
+  ]
+}

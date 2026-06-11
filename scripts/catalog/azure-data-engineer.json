@@ -1,0 +1,228 @@
+{
+  "slug": "azure-data-engineer",
+  "nombre": "Microsoft Certified: Azure Data Engineer Associate (DP-203)",
+  "proveedor": "Microsoft",
+  "nivel": "associate",
+  "area": "Datos",
+  "descripcion": "Certificacion que valida la capacidad de disenar e implementar soluciones de datos en Azure, integrando almacenamiento, procesamiento por lotes y en streaming, seguridad y monitoreo. Orientada a perfiles que construyen y operan plataformas de datos analiticas.",
+  "skills": ["data lake", "azure synapse", "azure data factory", "particionamiento", "procesamiento por lotes", "procesamiento en streaming", "delta lake", "transformacion de datos", "cifrado", "control de acceso", "optimizacion de consultas", "monitoreo"],
+  "roles": ["ingeniero de datos", "arquitecto de datos", "desarrollador de etl", "analista de plataformas de datos", "especialista en big data"],
+  "temas": [
+    {
+      "slug": "diseno-almacenamiento",
+      "nombre": "Diseno del almacenamiento de datos",
+      "dominio": "Disenar e implementar el almacenamiento de datos",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Capas, formatos y modelado en el data lake",
+        "markdown": "## Arquitectura por capas\nUn **data lake** suele organizarse en zonas: **bronce** (datos crudos tal como llegan), **plata** (limpios y validados) y **oro** (agregados listos para consumo analitico). Esta separacion facilita la trazabilidad y el reprocesamiento.\n\n## Eleccion de formato\n- **Parquet / ORC**: columnar, comprimido, ideal para consultas analiticas que leen pocas columnas.\n- **Avro**: orientado a filas, util para ingestas y esquemas que evolucionan.\n- **JSON / CSV**: legibles pero pesados; reservados para intercambio o crudo.\n\n## Modelado analitico\n- **Esquema en estrella**: tabla de hechos central rodeada de dimensiones; rapido para agregaciones.\n- **Tablas de hechos** guardan metricas; las **dimensiones** describen el contexto (tiempo, cliente, producto).\n\n## Niveles de servicio\nElige cuentas con **espacio de nombres jerarquico** para tratar carpetas y archivos de forma eficiente en cargas analiticas.\n\n> **En el examen:** asocia datos analiticos con formato columnar (Parquet), usa el esquema en estrella para reportes y separa zonas bronce/plata/oro para gobernar el ciclo del dato."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Una carga analitica consulta repetidamente unas pocas columnas de tablas muy anchas. Que formato de archivo es el mas adecuado para almacenar esos datos?",
+          "opciones": ["CSV", "JSON", "Parquet", "Texto plano"],
+          "correctas": [2],
+          "explicacion": "Parquet es columnar y comprimido, por lo que permite leer solo las columnas necesarias, reduciendo E/S en consultas analiticas."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En un modelo dimensional en estrella, donde se almacenan las metricas numericas que se agregan en los reportes?",
+          "opciones": ["En las tablas de dimensiones", "En la tabla de hechos", "En vistas materializadas exclusivamente", "En archivos de log"],
+          "correctas": [1],
+          "explicacion": "La tabla de hechos concentra las metricas medibles; las dimensiones aportan el contexto descriptivo para filtrar y agrupar."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de las siguientes son zonas tipicas de un data lake organizado por capas? Selecciona todas las que apliquen.",
+          "opciones": ["Bronce (datos crudos)", "Plata (datos limpios)", "Oro (datos agregados)", "Diamante (datos cifrados)", "Cobre (datos eliminados)"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Las capas habituales son bronce, plata y oro. 'Diamante' y 'cobre' no forman parte de esta convencion de zonas."
+        }
+      ]
+    },
+    {
+      "slug": "particionamiento",
+      "nombre": "Particionamiento y distribucion de datos",
+      "dominio": "Disenar e implementar el almacenamiento de datos",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Particiones, distribucion y archivos eficientes",
+        "markdown": "## Por que particionar\nDividir los datos en **particiones** permite que las consultas lean solo el subconjunto relevante (poda de particiones), mejorando rendimiento y costo.\n\n## Estrategias en el lago\n- Particionar carpetas por **fecha** (anio/mes/dia) cuando las consultas filtran por tiempo.\n- Evitar el problema de **archivos pequenos**: muchos archivos minusculos degradan el rendimiento; conviene compactar.\n\n## Distribucion en el almacen analitico\nEn un almacen distribuido las tablas pueden distribuirse de varias formas:\n- **Hash**: reparte filas segun una columna; ideal para tablas de hechos grandes y joins frecuentes.\n- **Round-robin**: reparte de forma uniforme sin clave; util para staging.\n- **Replicada**: copia completa en cada nodo; conviene para dimensiones pequenas.\n\n## Sesgo de datos\nUna mala columna de hash genera **sesgo (skew)**, concentrando filas en pocos nodos y degradando el paralelismo.\n\n> **En el examen:** usa distribucion por hash en hechos grandes con joins, replicada en dimensiones pequenas y particiona por fecha cuando filtras por tiempo."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En un almacen analitico distribuido, que estrategia de distribucion es la mas adecuada para una tabla de dimension pequena que se une con muchas tablas grandes?",
+          "opciones": ["Distribucion por hash", "Distribucion round-robin", "Tabla replicada", "Sin distribucion"],
+          "correctas": [2],
+          "explicacion": "Una tabla replicada mantiene una copia completa en cada nodo de computo, evitando movimiento de datos en los joins con dimensiones pequenas."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Las consultas de una tabla de eventos siempre filtran por fecha. Como conviene organizar los datos en el data lake para acelerarlas?",
+          "opciones": ["Guardar todo en un unico archivo grande", "Particionar las carpetas por anio, mes y dia", "Cifrar cada fila por separado", "Convertir todo a formato CSV"],
+          "correctas": [1],
+          "explicacion": "Particionar por fecha permite la poda de particiones, leyendo solo las carpetas que coinciden con el filtro temporal."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Cuales de los siguientes son problemas que degradan el rendimiento en un almacenamiento o almacen analitico? Selecciona todas las que apliquen.",
+          "opciones": ["Gran cantidad de archivos muy pequenos", "Sesgo de datos por una mala columna de hash", "Poda de particiones por fecha", "Movimiento de datos innecesario en joins", "Uso de formato columnar comprimido"],
+          "correctas": [0, 1, 3],
+          "explicacion": "Los archivos diminutos, el sesgo de datos y el movimiento de datos perjudican el rendimiento. La poda de particiones y el formato columnar lo mejoran."
+        }
+      ]
+    },
+    {
+      "slug": "procesamiento-lotes",
+      "nombre": "Procesamiento de datos por lotes",
+      "dominio": "Desarrollar el procesamiento de datos",
+      "orden": 3,
+      "hoja": {
+        "titulo": "ETL/ELT y orquestacion por lotes",
+        "markdown": "## ETL vs ELT\n- **ETL**: se transforma antes de cargar al destino; util cuando el destino tiene recursos limitados.\n- **ELT**: se cargan los datos crudos y se transforman dentro del motor analitico, aprovechando su escala.\n\n## Orquestacion\nLas **canalizaciones (pipelines)** encadenan actividades de copia y transformacion. Los **disparadores (triggers)** las inician por horario, por ventana de tiempo o por la llegada de un archivo.\n\n## Motores de transformacion\n- **Flujos de datos** visuales para transformaciones sin codigo.\n- **Spark / cuadernos** para logica compleja a gran escala.\n- **Delta Lake** aporta transacciones ACID y viaje en el tiempo sobre el data lake.\n\n## Cargas incrementales\nEn vez de reprocesar todo, se usan marcas de **alta de agua (watermark)** para traer solo los registros nuevos o modificados desde la ultima ejecucion.\n\n> **En el examen:** elige ELT cuando el motor destino escala bien, usa watermarks para cargas incrementales y Delta para transacciones ACID sobre el lago."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Se cargan datos crudos a un almacen analitico potente y las transformaciones se ejecutan dentro de ese motor aprovechando su escala. Que enfoque describe esto?",
+          "opciones": ["ETL", "ELT", "Procesamiento en streaming", "Replicacion sincrona"],
+          "correctas": [1],
+          "explicacion": "En ELT los datos se cargan primero y se transforman dentro del motor analitico, aprovechando su capacidad de computo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Que tecnica permite traer en cada ejecucion solo los registros nuevos o modificados desde la ultima carga, en lugar de reprocesar todo?",
+          "opciones": ["Carga completa diaria", "Marca de alta de agua (watermark)", "Replicacion total", "Compactacion de archivos"],
+          "correctas": [1],
+          "explicacion": "La marca de alta de agua guarda el ultimo valor procesado (por ejemplo, una fecha) para extraer solo los cambios posteriores en la siguiente carga incremental."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de los siguientes son tipos de disparadores que pueden iniciar una canalizacion de datos por lotes? Selecciona todas las que apliquen.",
+          "opciones": ["Disparador por horario (programado)", "Disparador por ventana de tiempo continua", "Disparador por evento de llegada de archivo", "Disparador por color del archivo", "Disparador por nombre de usuario aleatorio"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Las canalizaciones se inician por horario, por ventana de tiempo o por eventos como la llegada de un archivo. Las otras opciones no son disparadores reales."
+        }
+      ]
+    },
+    {
+      "slug": "procesamiento-streaming",
+      "nombre": "Procesamiento de datos en streaming",
+      "dominio": "Desarrollar el procesamiento de datos",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Ingesta y analitica en tiempo real",
+        "markdown": "## Flujo en tiempo real\nUn pipeline de **streaming** procesa eventos a medida que llegan desde fuentes como sensores, clics o telemetria, en lugar de esperar a un lote.\n\n## Ventanas temporales\nPara agregar datos continuos se usan **ventanas**:\n- **Saltante (tumbling)**: intervalos fijos y sin solape.\n- **Deslizante (sliding)**: se mueve con cada evento y puede solaparse.\n- **De salto (hopping)**: intervalos fijos que pueden solaparse segun un paso.\n\n## Tiempo del evento\nDistinguir el **tiempo del evento** (cuando ocurrio) del **tiempo de llegada** (cuando se proceso) es clave para datos que llegan tarde o desordenados.\n\n## Garantias de entrega\n- **Al menos una vez**: ningun evento se pierde, pero puede duplicarse.\n- **Exactamente una vez**: cada evento se procesa una sola vez, evitando duplicados.\n\n> **En el examen:** usa ventanas saltantes para conteos por intervalo fijo, distingue tiempo de evento de tiempo de llegada y recuerda que 'exactamente una vez' evita duplicados."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Se necesita contar eventos en intervalos fijos de un minuto que no se solapan entre si. Que tipo de ventana temporal corresponde usar?",
+          "opciones": ["Ventana deslizante (sliding)", "Ventana saltante (tumbling)", "Ventana de sesion infinita", "Ventana sin limite"],
+          "correctas": [1],
+          "explicacion": "La ventana saltante (tumbling) define intervalos fijos y contiguos sin solape, ideal para conteos por periodo cerrado."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "En un sistema de streaming, que diferencia hay entre el tiempo del evento y el tiempo de llegada?",
+          "opciones": ["Son lo mismo siempre", "El tiempo del evento es cuando ocurrio y el de llegada es cuando se proceso", "El tiempo del evento es cuando se proceso y el de llegada es cuando ocurrio", "Ambos solo aplican a procesamiento por lotes"],
+          "correctas": [1],
+          "explicacion": "El tiempo del evento marca cuando sucedio realmente; el de llegada cuando el sistema lo recibio. La diferencia importa con datos tardios o desordenados."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Cuales de las siguientes afirmaciones sobre el procesamiento en streaming son correctas? Selecciona todas las que apliquen.",
+          "opciones": ["La garantia 'exactamente una vez' evita duplicados", "La garantia 'al menos una vez' puede generar duplicados", "Las ventanas saltantes no se solapan", "El streaming siempre espera a acumular un lote completo antes de procesar", "Las ventanas deslizantes nunca se solapan"],
+          "correctas": [0, 1, 2],
+          "explicacion": "'Exactamente una vez' evita duplicados, 'al menos una vez' puede duplicarlos y las saltantes no se solapan. El streaming procesa al vuelo y las deslizantes si pueden solaparse."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-datos",
+      "nombre": "Seguridad de los datos",
+      "dominio": "Proteger, supervisar y optimizar el almacenamiento y el procesamiento de datos",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Cifrado, control de acceso y enmascaramiento",
+        "markdown": "## Cifrado\n- **En reposo**: los datos almacenados se cifran de forma transparente; se pueden usar **claves administradas por el cliente** para mayor control.\n- **En transito**: el trafico viaja cifrado mediante protocolos seguros de transporte.\n\n## Control de acceso\n- **RBAC**: permisos por rol al alcance adecuado (cuenta, contenedor, recurso).\n- **Listas de control de acceso (ACL)**: permisos finos a nivel de carpeta o archivo en el data lake.\n\n## Proteccion a nivel de datos\n- **Seguridad a nivel de fila**: limita que filas ve cada usuario.\n- **Seguridad a nivel de columna**: restringe columnas sensibles.\n- **Enmascaramiento dinamico**: oculta datos sensibles (por ejemplo, parte de un correo) sin alterarlos en origen.\n\n## Secretos\nLas credenciales y cadenas de conexion se guardan en un **almacen de secretos**, nunca en el codigo.\n\n> **En el examen:** combina RBAC con ACL para acceso fino, usa enmascaramiento dinamico para datos sensibles y guarda secretos en un almacen, nunca en el codigo."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Se requiere que ciertos usuarios solo puedan ver una version ofuscada de columnas sensibles como el correo, sin modificar los datos originales. Que tecnica aplica?",
+          "opciones": ["Cifrado en reposo", "Enmascaramiento dinamico de datos", "Particionamiento por hash", "Compactacion de archivos"],
+          "correctas": [1],
+          "explicacion": "El enmascaramiento dinamico de datos oculta valores sensibles en los resultados de consulta sin cambiar los datos almacenados en origen."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Donde deberian almacenarse las cadenas de conexion y credenciales que usa una canalizacion de datos?",
+          "opciones": ["Codificadas directamente en el script", "En un almacen de secretos dedicado", "En un archivo CSV publico del data lake", "En comentarios del codigo"],
+          "correctas": [1],
+          "explicacion": "Los secretos deben guardarse en un almacen de secretos gestionado y referenciarse de forma segura, nunca incrustarse en el codigo o en archivos accesibles."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de los siguientes son mecanismos validos para proteger datos en una plataforma analitica de Azure? Selecciona todas las que apliquen.",
+          "opciones": ["Cifrado en reposo", "Seguridad a nivel de fila", "Listas de control de acceso (ACL) por carpeta", "Desactivar todo el cifrado en transito", "Compartir una unica clave en texto plano por correo"],
+          "correctas": [0, 1, 2],
+          "explicacion": "El cifrado en reposo, la seguridad a nivel de fila y las ACL protegen los datos. Desactivar el cifrado en transito y compartir claves en texto plano son practicas inseguras."
+        }
+      ]
+    },
+    {
+      "slug": "monitoreo-optimizacion",
+      "nombre": "Monitoreo y optimizacion",
+      "dominio": "Proteger, supervisar y optimizar el almacenamiento y el procesamiento de datos",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Supervision, diagnostico y afinamiento",
+        "markdown": "## Que monitorear\n- **Canalizaciones**: ejecuciones exitosas, fallidas y su duracion.\n- **Consultas**: tiempos de respuesta, colas y consumo de recursos.\n- **Almacenamiento**: volumen, latencia y operaciones.\n\n## Herramientas\n- **Registros y metricas** centralizados para alertas y paneles.\n- **Alertas** que notifican ante fallos o umbrales superados.\n\n## Optimizacion de consultas\n- **Estadisticas** actualizadas ayudan al optimizador a elegir buenos planes.\n- **Vistas materializadas** precalculan agregaciones costosas y frecuentes.\n- **Almacenamiento en cache de conjuntos de resultados** acelera consultas repetidas.\n\n## Optimizacion de costos\n- **Pausar** o escalar el computo cuando no se usa.\n- Compactar archivos pequenos y elegir el formato adecuado para reducir E/S.\n\n## Reintentos y resiliencia\nConfigurar **reintentos** y manejo de errores en las actividades para tolerar fallos transitorios.\n\n> **En el examen:** actualiza estadisticas y usa vistas materializadas para acelerar consultas, configura alertas sobre fallos y pausa el computo ocioso para controlar costos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una consulta de agregacion costosa se ejecuta muchas veces al dia sobre los mismos datos. Que tecnica precalcula el resultado para acelerarla?",
+          "opciones": ["Vista materializada", "Particionamiento round-robin", "Enmascaramiento dinamico", "Cifrado en reposo"],
+          "correctas": [0],
+          "explicacion": "Una vista materializada almacena de forma persistente el resultado de una agregacion costosa, evitando recalcularla en cada consulta."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Que accion ayuda a reducir el costo del computo analitico cuando no se esta utilizando?",
+          "opciones": ["Mantenerlo siempre encendido al maximo", "Pausar o escalar el computo cuando esta ocioso", "Eliminar todos los registros de auditoria", "Duplicar todas las tablas"],
+          "correctas": [1],
+          "explicacion": "Pausar o reducir la escala del computo en periodos de inactividad evita pagar por recursos que no se estan usando."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Cuales de las siguientes practicas ayudan a optimizar el rendimiento o el costo de una plataforma de datos? Selecciona todas las que apliquen.",
+          "opciones": ["Mantener estadisticas actualizadas para el optimizador", "Usar vistas materializadas para agregaciones frecuentes", "Pausar el computo ocioso", "Generar muchos archivos diminutos sin compactar", "Desactivar todas las alertas de monitoreo"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Estadisticas al dia, vistas materializadas y pausar el computo ocioso optimizan rendimiento y costo. Los archivos diminutos sin compactar y desactivar alertas empeoran la operacion."
+        }
+      ]
+    }
+  ]
+}

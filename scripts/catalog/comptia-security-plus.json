@@ -1,0 +1,291 @@
+{
+  "slug": "comptia-security-plus",
+  "nombre": "CompTIA Security+",
+  "proveedor": "CompTIA",
+  "nivel": "associate",
+  "area": "Seguridad",
+  "descripcion": "Certificación de base en ciberseguridad que valida la capacidad de evaluar riesgos, implementar controles y responder a incidentes en entornos híbridos. Orientada a quienes asumen su primer rol técnico de seguridad y necesitan dominar fundamentos prácticos.",
+  "skills": [
+    "amenazas",
+    "criptografia",
+    "gestion de riesgo",
+    "control de acceso",
+    "respuesta a incidentes",
+    "seguridad de red",
+    "iam",
+    "cumplimiento",
+    "vulnerabilidades",
+    "monitoreo",
+    "resiliencia",
+    "zero trust"
+  ],
+  "roles": [
+    "analista de seguridad junior",
+    "administrador de sistemas",
+    "ingeniero de soporte de seguridad",
+    "analista de soc nivel 1",
+    "consultor de cumplimiento"
+  ],
+  "temas": [
+    {
+      "slug": "conceptos-generales-seguridad",
+      "nombre": "Conceptos generales de seguridad",
+      "dominio": "Conceptos generales de seguridad",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Pilares, controles y confianza cero",
+        "markdown": "## La tríada CIA\n\nTodo programa de seguridad busca preservar tres propiedades: **confidencialidad** (solo quien debe accede), **integridad** (los datos no se alteran sin autorización) y **disponibilidad** (el servicio responde cuando se le necesita). A esto se suelen sumar la **autenticidad** y el **no repudio**.\n\n## Tipos de controles\n\nLos controles se clasifican por **categoría** y por **función**:\n\n- **Categoría**: técnico, gerencial, operativo y físico.\n- **Función**: preventivo, disuasivo, detectivo, correctivo, compensatorio y directivo.\n\nUn mismo control puede cumplir varias funciones según el contexto.\n\n## Zero Trust\n\nEl modelo de **confianza cero** elimina la idea de una red interna \"segura por defecto\". Cada solicitud se verifica con identidad, dispositivo y contexto. Conceptualmente se divide en un **plano de control** (decide políticas) y un **plano de datos** (las aplica).\n\n> **En el examen:** distingue la *categoría* de un control (quién lo gobierna) de su *función* (qué efecto tiene), y no asumas confianza por ubicación de red."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Una cámara de vigilancia visible que desanima a un intruso a entrar actúa principalmente como un control de tipo:",
+          "opciones": [
+            "Disuasivo",
+            "Correctivo",
+            "Compensatorio",
+            "Directivo"
+          ],
+          "correctas": [0],
+          "explicacion": "Un control disuasivo busca desalentar al atacante antes de que actúe. Si además grabara para revisión posterior cumpliría también una función detectiva."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de las siguientes son propiedades centrales de la tríada CIA? (Elige todas las que apliquen)",
+          "opciones": [
+            "Confidencialidad",
+            "Integridad",
+            "Disponibilidad",
+            "Escalabilidad",
+            "Portabilidad"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "La tríada CIA agrupa confidencialidad, integridad y disponibilidad. Escalabilidad y portabilidad son atributos de diseño, no objetivos de la tríada."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En una arquitectura de confianza cero, ¿qué componente decide y publica las políticas de acceso?",
+          "opciones": [
+            "El plano de control",
+            "El plano de datos",
+            "El cortafuegos perimetral",
+            "El servidor DNS"
+          ],
+          "correctas": [0],
+          "explicacion": "El plano de control toma las decisiones de política; el plano de datos las aplica imponiendo el acceso a los recursos."
+        }
+      ]
+    },
+    {
+      "slug": "amenazas-vulnerabilidades-mitigaciones",
+      "nombre": "Amenazas, vulnerabilidades y mitigaciones",
+      "dominio": "Amenazas, vulnerabilidades y mitigaciones",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Quién ataca, por dónde y cómo frenarlo",
+        "markdown": "## Actores de amenaza\n\nVarían en **motivación** y **recursos**: desde el *hacktivista* movido por una causa, hasta el **Estado-nación** con capacidad de **amenaza persistente avanzada (APT)**, pasando por el crimen organizado o la **amenaza interna**. La *TI en la sombra* añade riesgo no gestionado.\n\n## Vectores y superficies\n\nEl atacante busca puntos de entrada: correo (**phishing**), dispositivos extraíbles, servicios expuestos, cadena de suministro o credenciales débiles. La **ingeniería social** explota a las personas con pretextos, urgencia o suplantación.\n\n## Vulnerabilidades comunes\n\n- **Inyección SQL** y **scripting entre sitios (XSS)** en aplicaciones web.\n- **Desbordamiento de búfer** y condiciones de carrera en software.\n- Errores de **configuración** y sistemas sin parches.\n\n## Mitigaciones\n\nSegmentación, **listas de permitidos**, endurecimiento (*hardening*), parcheo y privilegio mínimo reducen la superficie de ataque.\n\n> **En el examen:** asocia cada actor con su motivación y recursos, y recuerda que el phishing es un vector que explota a la persona, no solo a la máquina."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un atacante envía un correo que aparenta venir del banco para que la víctima revele su contraseña. ¿Qué técnica describe mejor el ataque?",
+          "opciones": [
+            "Phishing",
+            "Desbordamiento de búfer",
+            "Inyección SQL",
+            "Escaneo de puertos"
+          ],
+          "correctas": [0],
+          "explicacion": "El phishing es ingeniería social por correo que suplanta a una entidad confiable para robar credenciales o información sensible."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué término describe a un atacante con alto financiamiento y persistencia, típicamente asociado a un Estado-nación, que mantiene acceso prolongado y sigiloso?",
+          "opciones": [
+            "Amenaza persistente avanzada (APT)",
+            "Script kiddie",
+            "TI en la sombra",
+            "Insider accidental"
+          ],
+          "correctas": [0],
+          "explicacion": "Una APT combina recursos elevados y permanencia para mantener acceso encubierto a largo plazo, rasgo típico de actores patrocinados por Estados."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de las siguientes son mitigaciones válidas para reducir la superficie de ataque? (Elige todas las que apliquen)",
+          "opciones": [
+            "Aplicar privilegio mínimo",
+            "Segmentar la red",
+            "Endurecer (hardening) los sistemas",
+            "Deshabilitar todos los registros de auditoría",
+            "Compartir credenciales administrativas entre el equipo"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Privilegio mínimo, segmentación y hardening reducen el riesgo. Desactivar la auditoría y compartir credenciales lo aumentan."
+        }
+      ]
+    },
+    {
+      "slug": "arquitectura-de-seguridad",
+      "nombre": "Arquitectura de seguridad",
+      "dominio": "Arquitectura de seguridad",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Diseñar entornos resilientes y protegidos",
+        "markdown": "## Modelos de arquitectura\n\nLas cargas viven en entornos **on-premise**, **nube** (con responsabilidad compartida), híbridos, **serverless**, contenedores o **IoT**. Cada modelo cambia qué protege el proveedor y qué protege el cliente.\n\n## Protección de la red\n\n- **Segmentación** y **microsegmentación** para limitar el movimiento lateral.\n- **Cortafuegos** con y sin estado, y proxies.\n- **Zonas desmilitarizadas (DMZ)** para servicios expuestos.\n\n## Protección del dato\n\nLos datos se clasifican y protegen según su **estado**: en reposo, en tránsito y en uso. Técnicas como el **cifrado**, la **tokenización** y el **enmascaramiento** reducen el impacto de una fuga.\n\n## Resiliencia\n\nLa **alta disponibilidad**, los respaldos siguiendo la regla **3-2-1** y los sitios de recuperación (caliente, tibio, frío) sostienen la continuidad ante fallos.\n\n> **En el examen:** liga cada estado del dato con su control adecuado y recuerda que en la nube la responsabilidad es *compartida*, no delegada por completo."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué técnica reemplaza un dato sensible por un valor sustituto sin significado, almacenando la correspondencia en una bóveda segura?",
+          "opciones": [
+            "Tokenización",
+            "Compresión",
+            "Normalización",
+            "Deduplicación"
+          ],
+          "correctas": [0],
+          "explicacion": "La tokenización sustituye el dato real por un token; el valor original se guarda aparte en una bóveda, reduciendo la exposición."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles son estados del dato que requieren controles de protección específicos? (Elige todas las que apliquen)",
+          "opciones": [
+            "En reposo",
+            "En tránsito",
+            "En uso",
+            "En cuarentena legal",
+            "En compilación"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Los tres estados clásicos del dato son en reposo, en tránsito y en uso. Las otras opciones no son estados reconocidos en este modelo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "La regla de respaldo 3-2-1 recomienda mantener:",
+          "opciones": [
+            "Tres copias en dos medios distintos, con una fuera del sitio",
+            "Tres servidores idénticos en la misma sala",
+            "Una sola copia cifrada en la nube",
+            "Dos respaldos completos cada tres horas"
+          ],
+          "correctas": [0],
+          "explicacion": "La regla 3-2-1 propone tres copias de los datos, en dos tipos de medio, con al menos una almacenada fuera del sitio principal."
+        }
+      ]
+    },
+    {
+      "slug": "operaciones-de-seguridad",
+      "nombre": "Operaciones de seguridad",
+      "dominio": "Operaciones de seguridad",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Vigilar, responder y endurecer en el día a día",
+        "markdown": "## Identidad y acceso\n\nLa **gestión de identidad y acceso (IAM)** abarca aprovisionamiento, autenticación y autorización. La **autenticación multifactor (MFA)** combina factores (algo que sabes, tienes o eres). Modelos como **RBAC** y **ABAC** definen qué puede hacer cada quién bajo **privilegio mínimo**.\n\n## Monitoreo\n\nUn **SIEM** centraliza y correlaciona registros; las soluciones **SOAR** automatizan respuestas. El escaneo de **vulnerabilidades** y la inteligencia de amenazas alimentan la detección.\n\n## Respuesta a incidentes\n\nEl ciclo común es: **preparación, identificación, contención, erradicación, recuperación y lecciones aprendidas**. El análisis forense exige preservar la **cadena de custodia**.\n\n## Endurecimiento\n\nDeshabilitar servicios innecesarios, cerrar puertos, aplicar líneas base y parchear son tareas operativas continuas.\n\n> **En el examen:** memoriza el orden de las fases de respuesta a incidentes y diferencia SIEM (recolecta y correlaciona) de SOAR (orquesta y automatiza)."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Tras detectar malware en un servidor, el equipo lo aísla de la red para evitar que se propague. ¿En qué fase de la respuesta a incidentes están?",
+          "opciones": [
+            "Contención",
+            "Recuperación",
+            "Preparación",
+            "Lecciones aprendidas"
+          ],
+          "correctas": [0],
+          "explicacion": "Aislar el sistema afectado para frenar la propagación corresponde a la fase de contención, posterior a la identificación."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué tecnología centraliza y correlaciona registros de múltiples fuentes para detectar actividad sospechosa?",
+          "opciones": [
+            "SIEM",
+            "VPN",
+            "DNS",
+            "DHCP"
+          ],
+          "correctas": [0],
+          "explicacion": "Un SIEM (Security Information and Event Management) agrega y correlaciona registros para identificar incidentes; SOAR se enfoca en automatizar la respuesta."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles de los siguientes son factores válidos de autenticación multifactor? (Elige todas las que apliquen)",
+          "opciones": [
+            "Algo que sabes (contraseña)",
+            "Algo que tienes (token físico)",
+            "Algo que eres (huella dactilar)",
+            "Algo que copias de un compañero",
+            "Algo que olvidas con frecuencia"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Los factores válidos son conocimiento, posesión e inherencia (algo que sabes, tienes o eres). Las otras dos opciones son distractores sin validez técnica."
+        }
+      ]
+    },
+    {
+      "slug": "gestion-programa-seguridad",
+      "nombre": "Gestión y supervisión del programa de seguridad",
+      "dominio": "Gestión y supervisión del programa de seguridad",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Gobierno, riesgo y cumplimiento (GRC)",
+        "markdown": "## Gobierno\n\nLas **políticas**, **estándares**, **procedimientos** y **guías** ordenan cómo se hace seguridad. Las **políticas** marcan la dirección; los **procedimientos** detallan los pasos. El gobierno define roles como **propietario**, **custodio** y **procesador** del dato.\n\n## Gestión de riesgo\n\nEl riesgo se **identifica, analiza y trata**. Las respuestas posibles son **transferir** (p. ej. seguro), **aceptar**, **evitar** o **mitigar**. Métricas como **ALE**, **SLE** y **ARO** cuantifican la pérdida esperada.\n\n## Terceros y cumplimiento\n\nLa gestión de riesgo de proveedores usa acuerdos como **SLA**, **MOU** y **BPA**. El cumplimiento responde a marcos y normativas (privacidad, sector) y a auditorías internas o externas.\n\n## Concienciación\n\nLa **formación de usuarios** y las campañas anti-phishing reducen el factor humano, a menudo el eslabón más débil.\n\n> **En el examen:** distingue política (qué/por qué) de procedimiento (cómo), y asocia cada respuesta al riesgo —transferir, aceptar, evitar, mitigar— con su ejemplo."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una empresa contrata un seguro para cubrir las pérdidas de un eventual ataque de ransomware. ¿Qué estrategia de tratamiento del riesgo aplica?",
+          "opciones": [
+            "Transferencia del riesgo",
+            "Aceptación del riesgo",
+            "Evitación del riesgo",
+            "Mitigación del riesgo"
+          ],
+          "correctas": [0],
+          "explicacion": "Contratar un seguro traslada el impacto financiero a un tercero: es transferencia del riesgo. Aceptar sería no hacer nada; evitar sería abandonar la actividad."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué documento describe los pasos concretos y secuenciales para ejecutar una tarea de seguridad?",
+          "opciones": [
+            "Procedimiento",
+            "Política",
+            "Estándar",
+            "Marco regulatorio"
+          ],
+          "correctas": [0],
+          "explicacion": "El procedimiento detalla el cómo paso a paso. La política fija la dirección general y el porqué; el estándar fija requisitos obligatorios."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de los siguientes son respuestas válidas frente a un riesgo identificado? (Elige todas las que apliquen)",
+          "opciones": [
+            "Mitigar",
+            "Transferir",
+            "Aceptar",
+            "Evitar",
+            "Ignorar sin documentar"
+          ],
+          "correctas": [0, 1, 2, 3],
+          "explicacion": "Mitigar, transferir, aceptar y evitar son las cuatro estrategias estándar de tratamiento del riesgo. Ignorar sin documentar no es una respuesta formal y es una mala práctica."
+        }
+      ]
+    }
+  ]
+}

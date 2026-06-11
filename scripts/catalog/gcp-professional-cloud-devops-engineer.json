@@ -1,0 +1,192 @@
+{
+  "slug": "gcp-professional-cloud-devops-engineer",
+  "nombre": "Google Cloud Professional Cloud DevOps Engineer",
+  "proveedor": "Google",
+  "nivel": "professional",
+  "area": "DevOps",
+  "descripcion": "Valida la capacidad de aplicar prácticas DevOps y SRE para entregar software de forma continua y operar servicios fiables en Google Cloud. Está dirigida a perfiles que automatizan despliegues, definen objetivos de fiabilidad y gestionan observabilidad e incidentes en producción.",
+  "skills": ["ci/cd", "sre", "slo", "error budget", "cloud build", "observabilidad", "cloud monitoring", "automatización", "infraestructura como código", "gestión de incidentes", "despliegues progresivos", "toil"],
+  "roles": ["Ingeniero DevOps", "Site Reliability Engineer (SRE)", "Ingeniero de plataforma", "Ingeniero de fiabilidad de servicios"],
+  "temas": [
+    {
+      "slug": "estrategia-organizacion-devops",
+      "nombre": "Estrategia de bootstrapping y cultura DevOps",
+      "dominio": "Bootstrapping a Google Cloud organization for DevOps",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Fundaciones de una organización DevOps",
+        "markdown": "## Idea central\nArrancar una organización para DevOps significa preparar estructura, identidad y automatización antes de escalar equipos y cargas. La cultura cuenta tanto como la herramienta.\n\n## Estructura de recursos\n- **Jerarquía**: organización → carpetas → proyectos para aislar entornos y aplicar políticas.\n- **IAM**: permisos de mínimo privilegio mediante roles y cuentas de servicio.\n- **Políticas de organización**: límites que ninguna unidad puede exceder.\n\n## Automatización desde el inicio\n- **Infraestructura como código** para entornos reproducibles y versionados.\n- Pipelines y plantillas compartidas para no reinventar cada proyecto.\n\n## Cultura\n- **Responsabilidad compartida** entre desarrollo y operaciones.\n- **Posmortems sin culpa** que buscan causa raíz, no culpables.\n- Reducir el **toil** (trabajo manual repetitivo) con automatización.\n\n> **En el examen:** si piden aislar entornos y aplicar políticas a escala, piensa en la jerarquía de recursos con carpetas y políticas de organización, no en permisos por usuario."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Quieres aislar los entornos de desarrollo y producción y aplicar políticas distintas a cada grupo de proyectos. ¿Qué elemento de la jerarquía de recursos usas?",
+          "opciones": ["Carpetas", "Etiquetas de red", "Grupos de seguridad", "Buckets separados"],
+          "correctas": [0],
+          "explicacion": "Las carpetas agrupan proyectos y permiten aplicar IAM y políticas de organización por entorno. Las demás opciones no organizan la jerarquía de recursos."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué prácticas culturales son propias de una organización DevOps madura? (elige dos)",
+          "opciones": ["Posmortems sin culpa centrados en la causa raíz", "Reducir el toil mediante automatización", "Asignar siempre la culpa del incidente a una persona", "Mantener desarrollo y operaciones totalmente aislados", "Evitar cualquier cambio para no arriesgar"],
+          "correctas": [0, 1],
+          "explicacion": "Los posmortems sin culpa fomentan el aprendizaje y reducir el toil libera tiempo para mejoras. Las otras opciones reflejan una cultura de silos y miedo al cambio."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué describe mejor el término \"toil\" en el contexto de SRE?",
+          "opciones": ["Trabajo manual, repetitivo y automatizable que no aporta valor duradero", "El presupuesto de errores de un servicio", "La latencia de una petición", "El número de incidentes abiertos"],
+          "correctas": [0],
+          "explicacion": "El toil es trabajo operativo manual y repetitivo que escala con el tamaño del servicio; el objetivo es reducirlo con automatización."
+        }
+      ]
+    },
+    {
+      "slug": "ci-cd-pipelines",
+      "nombre": "Construcción de pipelines de CI/CD",
+      "dominio": "Building and implementing CI/CD pipelines for a service",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Integración y entrega continua en Google Cloud",
+        "markdown": "## Idea central\nUn pipeline de CI/CD lleva un cambio desde el commit hasta producción de forma automática y segura, con retroalimentación temprana ante fallos.\n\n## Servicios clave\n- **Cloud Build**: ejecuta compilaciones, pruebas y empaquetado en pasos definidos.\n- **Artifact Registry**: almacena imágenes y artefactos versionados.\n- **Cloud Deploy**: orquesta promociones progresivas entre entornos.\n\n## Estrategias de despliegue\n- **Canary**: enruta un porcentaje del tráfico a la nueva versión antes del total.\n- **Blue/green**: levanta una versión paralela y conmuta al validar.\n- **Rolling**: reemplaza instancias por lotes.\n\n## Buenas prácticas\n- **Pruebas automatizadas** como compuerta de cada etapa.\n- **Rollback** rápido ante señales de error.\n- Escaneo de vulnerabilidades de imágenes antes de promover.\n\n> **En el examen:** si buscan limitar el impacto de una versión nueva exponiéndola a poco tráfico primero, la respuesta es despliegue canary."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio de Google Cloud ejecuta los pasos de compilación, pruebas y empaquetado de un pipeline de CI?",
+          "opciones": ["Cloud Build", "Cloud Storage", "Cloud DNS", "Cloud NAT"],
+          "correctas": [0],
+          "explicacion": "Cloud Build ejecuta pasos de build, test y empaquetado; los demás servicios cumplen funciones de almacenamiento o red, no de integración continua."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Un equipo quiere reducir el riesgo de promover una versión defectuosa a producción. ¿Qué prácticas ayudan directamente? (elige dos)",
+          "opciones": ["Despliegue canary con incremento gradual de tráfico", "Rollback automático ante un aumento de errores", "Promover sin ejecutar pruebas para ir más rápido", "Publicar siempre al 100% del tráfico de inmediato", "Reutilizar artefactos sin versionar ni escanear"],
+          "correctas": [0, 1],
+          "explicacion": "El canary limita el alcance de un fallo y el rollback revierte rápido ante errores. Las demás opciones eliminan controles y aumentan el riesgo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Dónde conviene almacenar las imágenes de contenedor versionadas que produce el pipeline para luego desplegarlas?",
+          "opciones": ["Artifact Registry", "Cloud Logging", "Cloud Scheduler", "Cloud Pub/Sub"],
+          "correctas": [0],
+          "explicacion": "Artifact Registry gestiona imágenes y paquetes versionados que el pipeline consume al desplegar; los otros servicios no almacenan artefactos de build."
+        }
+      ]
+    },
+    {
+      "slug": "fiabilidad-slo-error-budget",
+      "nombre": "Fiabilidad: SLI, SLO y error budgets",
+      "dominio": "Applying site reliability engineering practices to a service",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Objetivos de nivel de servicio y presupuestos de error",
+        "markdown": "## Idea central\nSRE mide la fiabilidad con datos y la equilibra con la velocidad de cambio mediante objetivos explícitos y presupuestos de error.\n\n## Conceptos\n- **SLI** (indicador): métrica que mide la experiencia, como disponibilidad o latencia.\n- **SLO** (objetivo): meta para un SLI, p. ej. 99.9% de éxito.\n- **SLA** (acuerdo): compromiso contractual, normalmente más laxo que el SLO.\n\n## Presupuesto de error\n- El **error budget** es el margen de fallos tolerable: `100% − SLO`.\n- Si queda presupuesto, el equipo **lanza más rápido**; si se agota, **prioriza estabilidad**.\n- Alinea a desarrollo y operaciones con una sola política basada en datos.\n\n## Reducir toil\n- Automatizar respuestas y tareas repetitivas para liberar capacidad de ingeniería.\n\n> **En el examen:** ante \"el servicio agotó su presupuesto de error\", la acción correcta es frenar lanzamientos y enfocar el trabajo en fiabilidad."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un servicio define un SLO de disponibilidad del 99.9% mensual y ya agotó su presupuesto de error este mes. ¿Cuál es la acción alineada con SRE?",
+          "opciones": ["Congelar lanzamientos de funciones y priorizar trabajo de fiabilidad", "Acelerar los despliegues para compensar el tiempo perdido", "Subir el SLO al 100% para no fallar nunca", "Ignorar el presupuesto hasta el siguiente trimestre"],
+          "correctas": [0],
+          "explicacion": "Al agotarse el error budget, la política SRE prioriza estabilidad y frena cambios riesgosos hasta recuperar margen."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre SLI, SLO y SLA son correctas? (elige dos)",
+          "opciones": ["Un SLI es una métrica que cuantifica la experiencia del usuario", "El error budget equivale a 100% menos el SLO", "El SLA suele ser más estricto que el SLO interno", "Un SLO es un compromiso contractual con penalizaciones", "Un SLI define el contrato legal con el cliente"],
+          "correctas": [0, 1],
+          "explicacion": "El SLI mide la experiencia y el error budget es el complemento del SLO. El SLA es contractual y suele ser más laxo que el SLO, que es un objetivo interno."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué representa un SLO (Service Level Objective)?",
+          "opciones": ["Una meta interna para un indicador de fiabilidad, como 99.9% de disponibilidad", "El número total de servidores desplegados", "El costo mensual de la infraestructura", "La cantidad de commits realizados por semana"],
+          "correctas": [0],
+          "explicacion": "El SLO es la meta que se fija para un SLI; orienta decisiones de fiabilidad y el cálculo del presupuesto de error."
+        }
+      ]
+    },
+    {
+      "slug": "monitoreo-observabilidad",
+      "nombre": "Monitoreo y observabilidad del servicio",
+      "dominio": "Implementing service monitoring strategies",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Observabilidad con la suite de operaciones",
+        "markdown": "## Tres señales\nLa observabilidad se apoya en **métricas**, **logs** y **trazas**. Juntas permiten detectar, diagnosticar y anticipar problemas en producción.\n\n## Servicios\n- **Cloud Monitoring**: métricas, paneles, alertas y comprobaciones de disponibilidad.\n- **Cloud Logging**: ingesta y consulta centralizada de logs, con métricas basadas en logs.\n- **Cloud Trace**: trazas distribuidas para latencia entre servicios.\n- **Error Reporting**: agrupa y resalta errores recurrentes.\n\n## Patrones\n- Definir **alertas sobre SLO** para notificar antes de violar el objetivo.\n- Convertir patrones de log en **métricas basadas en logs**.\n- Usar **políticas de alerta** con condiciones y canales de notificación.\n\n## Buenas prácticas\n- Alertar sobre **síntomas** que afectan al usuario, no sobre cada causa interna.\n- Evitar la fatiga de alertas reduciendo el ruido.\n\n> **En el examen:** para localizar en qué servicio se origina la latencia de una petición que cruza varios microservicios, piensa en Cloud Trace."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una petición atraviesa varios microservicios y necesitas identificar en cuál se acumula la latencia. ¿Qué herramienta usas?",
+          "opciones": ["Cloud Trace", "Cloud Storage", "Cloud Build", "Secret Manager"],
+          "correctas": [0],
+          "explicacion": "Cloud Trace ofrece trazas distribuidas que muestran el recorrido y la latencia por segmento, ideal para hallar el cuello de botella."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué prácticas mejoran la calidad de las alertas de un servicio en producción? (elige dos)",
+          "opciones": ["Alertar sobre síntomas que afectan al usuario", "Basar las alertas en el cumplimiento del SLO", "Disparar una alerta por cada causa interna posible", "Notificar el mismo evento por todos los canales sin filtro", "Mantener alertas que nadie revisa ni acciona"],
+          "correctas": [0, 1],
+          "explicacion": "Alertar sobre síntomas relevantes y sobre el SLO reduce el ruido y enfoca al equipo en lo que impacta al usuario. Las demás opciones generan fatiga de alertas."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio centraliza la ingesta y consulta de logs y permite crear métricas basadas en patrones de log?",
+          "opciones": ["Cloud Logging", "Cloud Monitoring", "Cloud Trace", "Cloud CDN"],
+          "correctas": [0],
+          "explicacion": "Cloud Logging centraliza los registros y permite definir métricas basadas en logs; Cloud Monitoring se ocupa de métricas, paneles y alertas."
+        }
+      ]
+    },
+    {
+      "slug": "gestion-incidentes",
+      "nombre": "Gestión y respuesta a incidentes",
+      "dominio": "Optimizing service performance and incident response",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Responder y aprender de los incidentes",
+        "markdown": "## Idea central\nLa respuesta a incidentes busca **restaurar el servicio rápido** y luego **aprender** para que no se repita, con roles claros y comunicación ordenada.\n\n## Roles del proceso\n- **Comandante de incidente**: coordina y toma decisiones.\n- **Líder de comunicaciones**: informa a interesados.\n- **Líder de operaciones**: ejecuta la mitigación técnica.\n\n## Flujo\n1. **Detectar** mediante alertas basadas en SLO.\n2. **Mitigar** primero (por ejemplo, rollback) antes de buscar la causa raíz.\n3. **Resolver** y restaurar el servicio.\n4. **Posmortem sin culpa** para extraer acciones correctivas.\n\n## Mejora continua\n- Convertir cada incidente en **acciones de seguimiento** rastreables.\n- Automatizar mitigaciones recurrentes para reducir el toil.\n\n> **En el examen:** durante un incidente activo, primero mitiga el impacto al usuario (p. ej. revertir); el análisis de causa raíz va después, en el posmortem."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Durante un incidente activo en producción, ¿cuál debe ser la prioridad inmediata del equipo?",
+          "opciones": ["Mitigar el impacto al usuario, por ejemplo revirtiendo el cambio", "Redactar el posmortem detallado antes de actuar", "Identificar al responsable del error", "Esperar a tener la causa raíz exacta antes de intervenir"],
+          "correctas": [0],
+          "explicacion": "La prioridad es restaurar el servicio y reducir el impacto; el análisis de causa raíz se realiza después, en un posmortem sin culpa."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué elementos caracterizan una buena gestión de incidentes según SRE? (elige dos)",
+          "opciones": ["Roles claros, como comandante de incidente y líder de comunicaciones", "Posmortems sin culpa con acciones de seguimiento", "Resolver siempre en solitario sin comunicar a nadie", "Buscar culpables como cierre del incidente", "Improvisar la coordinación sin roles definidos"],
+          "correctas": [0, 1],
+          "explicacion": "Los roles definidos y los posmortems sin culpa con seguimiento estructuran la respuesta y promueven el aprendizaje. Las demás opciones generan caos o cultura de culpa."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál es el propósito principal de un posmortem sin culpa tras un incidente?",
+          "opciones": ["Entender la causa raíz y definir acciones para evitar que se repita", "Determinar a quién sancionar por el incidente", "Cerrar el incidente sin documentar nada", "Calcular el costo del downtime para facturarlo"],
+          "correctas": [0],
+          "explicacion": "El posmortem sin culpa busca aprendizaje y mejora del sistema, no señalar responsables; produce acciones correctivas rastreables."
+        }
+      ]
+    }
+  ]
+}

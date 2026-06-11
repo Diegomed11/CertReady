@@ -1,0 +1,342 @@
+{
+  "slug": "gcp-professional-data-engineer",
+  "nombre": "Google Cloud Professional Data Engineer",
+  "proveedor": "Google",
+  "nivel": "professional",
+  "area": "Datos",
+  "descripcion": "Valida la capacidad de diseñar, construir y operar sistemas de datos en Google Cloud, desde la ingesta hasta el análisis y el machine learning. Pone el foco en decisiones de arquitectura que equilibran costo, escalabilidad, seguridad y confiabilidad.",
+  "skills": [
+    "bigquery",
+    "dataflow",
+    "pub/sub",
+    "dataproc",
+    "etl",
+    "streaming",
+    "machine learning",
+    "modelado de datos",
+    "gobernanza",
+    "iam",
+    "particionamiento",
+    "orquestación"
+  ],
+  "roles": [
+    "Ingeniero de datos",
+    "Arquitecto de datos en la nube",
+    "Ingeniero de plataformas analíticas",
+    "Especialista en machine learning operativo"
+  ],
+  "temas": [
+    {
+      "slug": "diseno-sistemas-procesamiento",
+      "nombre": "Diseño de sistemas de procesamiento de datos",
+      "dominio": "Designing data processing systems",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Elegir el almacén y el patrón correctos",
+        "markdown": "## Mapear el caso de uso al servicio\n\nLa primera decisión de un ingeniero es **dónde vive el dato** y **cómo se accede**. No existe un servicio universal: cada uno optimiza un patrón distinto.\n\n- **BigQuery**: analítica masiva, consultas SQL ad hoc sobre petabytes.\n- **Bigtable**: lecturas/escrituras de baja latencia y alto volumen con clave de fila.\n- **Cloud SQL**: cargas transaccionales relacionales de tamaño moderado.\n- **Firestore**: aplicaciones con documentos y sincronización.\n\n## Batch frente a streaming\n\nDecide según la **latencia tolerada**. Si el negocio acepta minutos u horas, un proceso por lotes suele ser más barato. Si necesita reaccionar en segundos, conviene un flujo continuo con ventanas.\n\n- Define **SLAs de frescura** antes de elegir tecnología.\n- Considera el **costo total**, no solo el cómputo: almacenamiento, egreso y operación.\n\n> **En el examen:** ante un escenario, identifica primero la latencia y el patrón de acceso; eso descarta la mayoría de los servicios antes de comparar precios."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Una aplicación necesita lecturas y escrituras de muy baja latencia sobre miles de millones de filas indexadas por una clave única. ¿Qué servicio se ajusta mejor?",
+          "opciones": [
+            "Cloud Bigtable",
+            "BigQuery",
+            "Cloud SQL",
+            "Cloud Storage"
+          ],
+          "correctas": [0],
+          "explicacion": "Bigtable está diseñado para acceso de baja latencia y alto rendimiento mediante una clave de fila, ideal para cargas de gran volumen. BigQuery optimiza analítica, no operaciones puntuales rápidas."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Selecciona los factores que deberían guiar la elección entre procesamiento por lotes y streaming.",
+          "opciones": [
+            "La latencia máxima aceptable por el negocio",
+            "El costo total de cómputo y operación",
+            "El color del panel de la consola",
+            "La frecuencia con que llegan los datos de origen",
+            "El nombre del proyecto en facturación"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "La latencia tolerada, el costo total y la cadencia de llegada de datos son los criterios técnicos relevantes. El color del panel y el nombre del proyecto no influyen en la arquitectura."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "El equipo requiere consultas SQL ad hoc sobre varios petabytes con concurrencia analítica. ¿Qué opción prioriza?",
+          "opciones": [
+            "BigQuery",
+            "Firestore",
+            "Bigtable",
+            "Cloud SQL"
+          ],
+          "correctas": [0],
+          "explicacion": "BigQuery es el almacén analítico serverless para escala de petabytes con SQL. Los demás están orientados a documentos, claves de fila o transacciones relacionales acotadas."
+        }
+      ]
+    },
+    {
+      "slug": "ingesta-procesamiento-datos",
+      "nombre": "Ingesta y procesamiento de datos",
+      "dominio": "Ingesting and processing the data",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Tuberías de ingesta confiables",
+        "markdown": "## Desacoplar con mensajería\n\n**Pub/Sub** actúa como amortiguador entre productores y consumidores. Permite absorber picos y reintentar sin perder eventos, gracias a su entrega **al menos una vez**.\n\n- Usa **suscripciones** independientes por consumidor.\n- Activa **dead-letter topics** para mensajes que fallan repetidamente.\n\n## Transformar con Dataflow\n\n**Dataflow** (basado en Apache Beam) ejecuta el mismo código en lotes o en streaming. Sus conceptos clave:\n\n- **Ventanas** para agrupar eventos en el tiempo.\n- **Marcas de agua** para razonar sobre datos tardíos.\n- **Triggers** que deciden cuándo emitir resultados parciales.\n\n## Idempotencia\n\nComo la entrega puede duplicar mensajes, diseña pasos **idempotentes** o deduplica por un identificador estable del evento.\n\n> **En el examen:** Pub/Sub para desacoplar e ingestar, Dataflow para transformar; si mencionan datos tardíos o ventanas, la respuesta casi siempre involucra Beam."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio se usa principalmente para desacoplar productores y consumidores y absorber picos de eventos?",
+          "opciones": [
+            "Pub/Sub",
+            "Cloud Functions",
+            "BigQuery",
+            "Cloud Storage"
+          ],
+          "correctas": [0],
+          "explicacion": "Pub/Sub es el sistema de mensajería asíncrona que amortigua picos y desacopla servicios mediante temas y suscripciones."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "En una tubería de streaming con Dataflow que recibe eventos posiblemente tardíos y duplicados, ¿qué mecanismos ayudan a producir resultados correctos?",
+          "opciones": [
+            "Ventanas con marcas de agua para manejar datos tardíos",
+            "Deduplicación por un identificador estable del evento",
+            "Ignorar todos los eventos que lleguen fuera de orden",
+            "Pasos de transformación idempotentes",
+            "Reiniciar el clúster en cada lote para limpiar el estado"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "Las ventanas con marcas de agua gestionan la llegada tardía, la deduplicación por ID y la idempotencia evitan efectos por duplicados. Descartar eventos fuera de orden pierde datos y reiniciar el clúster no resuelve correctitud."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un equipo quiere ejecutar la misma lógica de transformación tanto en lotes como en streaming sin reescribir el código. ¿Qué tecnología lo permite?",
+          "opciones": [
+            "Dataflow con Apache Beam",
+            "Cloud SQL",
+            "Bigtable",
+            "Cloud Spanner"
+          ],
+          "correctas": [0],
+          "explicacion": "Apache Beam, ejecutado por Dataflow, ofrece un modelo unificado para batch y streaming con el mismo código de pipeline."
+        }
+      ]
+    },
+    {
+      "slug": "almacenamiento-modelado-datos",
+      "nombre": "Almacenamiento y modelado de datos",
+      "dominio": "Storing the data",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Modelar para el rendimiento y el costo",
+        "markdown": "## Particionar y agrupar en BigQuery\n\nEn analítica, el costo suele ser proporcional a los **bytes escaneados**. Dos palancas reducen ese escaneo:\n\n- **Particionamiento** por fecha o por rango: la consulta solo lee las particiones relevantes.\n- **Clustering**: ordena físicamente las filas por columnas frecuentes en filtros y agregaciones.\n\n## Diseño de clave en Bigtable\n\nEl rendimiento depende del **diseño de la clave de fila**. Evita claves monótonas (como timestamps puros) que concentran la carga en un solo nodo y generan **hotspotting**.\n\n- Antepón un campo distribuido o aplica **salting** controlado.\n\n## Ciclo de vida del almacenamiento\n\nEn Cloud Storage, define **clases** (Standard, Nearline, Coldline, Archive) y **reglas de ciclo de vida** para mover o eliminar objetos automáticamente y bajar costos.\n\n> **En el examen:** si ves consultas caras en BigQuery, piensa en particiones y clustering; si ves latencia desigual en Bigtable, sospecha del diseño de la clave de fila."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Las consultas en una tabla de BigQuery siempre filtran por fecha y escanean datos de años completos, elevando el costo. ¿Qué optimización aplica primero?",
+          "opciones": [
+            "Particionar la tabla por la columna de fecha",
+            "Duplicar la tabla en otra región",
+            "Convertir la tabla a formato CSV",
+            "Aumentar el número de slots reservados de forma permanente"
+          ],
+          "correctas": [0],
+          "explicacion": "Particionar por fecha permite que las consultas lean solo las particiones necesarias, reduciendo los bytes escaneados y el costo. Las demás opciones no atacan el escaneo excesivo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "dificil",
+          "enunciado": "En Bigtable, las escrituras se concentran en pocos nodos y aparecen puntos calientes. ¿Cuál es la causa más probable?",
+          "opciones": [
+            "Una clave de fila monótona como un timestamp secuencial",
+            "Demasiadas familias de columnas vacías",
+            "El uso de SQL estándar",
+            "Un número par de nodos en el clúster"
+          ],
+          "correctas": [0],
+          "explicacion": "Las claves monótonas hacen que las escrituras recientes caigan siempre en el mismo rango, creando hotspotting. La solución es distribuir la clave, por ejemplo con un prefijo o salting."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué estrategias reducen el costo de almacenamiento en Cloud Storage para datos poco accedidos?",
+          "opciones": [
+            "Usar clases Nearline, Coldline o Archive según la frecuencia de acceso",
+            "Definir reglas de ciclo de vida para mover o eliminar objetos",
+            "Guardar todo siempre en clase Standard por seguridad",
+            "Comprimir objetos grandes antes de almacenarlos",
+            "Replicar cada objeto manualmente en cinco regiones"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "Las clases de menor costo, las reglas de ciclo de vida y la compresión reducen gasto. Mantener todo en Standard o replicar manualmente en muchas regiones encarece innecesariamente."
+        }
+      ]
+    },
+    {
+      "slug": "analitica-preparacion-datos",
+      "nombre": "Análisis y preparación de datos",
+      "dominio": "Preparing and using data for analysis",
+      "orden": 4,
+      "hoja": {
+        "titulo": "De datos crudos a información confiable",
+        "markdown": "## Preparar antes de analizar\n\nLos datos rara vez llegan listos. La preparación incluye **limpieza**, **normalización** y **enriquecimiento**.\n\n- **Dataprep** ayuda a explorar y transformar visualmente sin escribir mucho código.\n- Para transformaciones programáticas y reproducibles, conviene SQL en BigQuery o pipelines de Dataflow.\n\n## Modelado para el consumo\n\nDecide entre **esquema estrella** (hechos y dimensiones) para reportes claros o tablas **desnormalizadas** que aprovechan campos anidados y repetidos de BigQuery para evitar uniones costosas.\n\n## Vistas y visualización\n\n- Usa **vistas** y **vistas materializadas** para encapsular lógica y acelerar consultas frecuentes.\n- Conecta herramientas de BI para que el analista no toque SQL crudo.\n\n## Calidad\n\nValida **frescura**, **completitud** y **unicidad**; documenta supuestos para que el consumo sea confiable.\n\n> **En el examen:** las vistas materializadas y los campos anidados son respuestas típicas cuando piden acelerar reportes sin disparar el costo de las uniones."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un panel ejecutivo repite la misma agregación pesada muchas veces al día sobre datos que cambian poco. ¿Qué recurso acelera las consultas sin recalcular todo cada vez?",
+          "opciones": [
+            "Una vista materializada en BigQuery",
+            "Una tabla temporal recreada manualmente cada hora",
+            "Exportar los datos a una hoja de cálculo",
+            "Aumentar el tamaño de fila máximo"
+          ],
+          "correctas": [0],
+          "explicacion": "Las vistas materializadas almacenan resultados precalculados y se actualizan de forma incremental, ideales para agregaciones repetidas sobre datos relativamente estables."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué dimensiones de calidad de datos conviene validar antes de exponer un conjunto para análisis?",
+          "opciones": [
+            "Frescura de los datos",
+            "Completitud de los registros",
+            "Unicidad de las claves",
+            "El tema visual del dashboard",
+            "La hora local del analista"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Frescura, completitud y unicidad son dimensiones de calidad que afectan la confiabilidad del análisis. El tema visual y la hora del analista no son atributos de calidad del dato."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "dificil",
+          "enunciado": "En BigQuery, un modelo con muchas uniones grandes degrada el rendimiento de los reportes. ¿Qué enfoque de modelado suele aliviarlo?",
+          "opciones": [
+            "Desnormalizar usando campos anidados y repetidos",
+            "Añadir más claves foráneas entre tablas",
+            "Convertir todas las tablas en externas sobre CSV",
+            "Eliminar el particionamiento existente"
+          ],
+          "correctas": [0],
+          "explicacion": "BigQuery favorece esquemas desnormalizados con campos anidados y repetidos, que evitan uniones costosas. Más claves foráneas o tablas externas en CSV empeoran el rendimiento."
+        }
+      ]
+    },
+    {
+      "slug": "machine-learning-operativo",
+      "nombre": "Aprovechamiento del aprendizaje automático",
+      "dominio": "Maintaining and automating data workloads",
+      "orden": 5,
+      "hoja": {
+        "titulo": "ML donde viven los datos",
+        "markdown": "## Acercar el modelo al dato\n\nMover petabytes para entrenar suele ser caro y lento. **BigQuery ML** permite entrenar y predecir con SQL directamente sobre las tablas, sin extraer datos.\n\n- Útil para **regresión**, **clasificación** y **clustering** rápidos.\n- Para necesidades avanzadas, **Vertex AI** ofrece entrenamiento personalizado, ajuste y servicio gestionado.\n\n## Automatizar el flujo\n\nUn modelo en producción necesita un ciclo confiable:\n\n- **Cloud Composer** (Airflow gestionado) orquesta dependencias entre tareas de datos.\n- Programa **reentrenamientos** cuando la calidad de las predicciones cae.\n\n## Observar el desempeño\n\n- Vigila el **desvío de datos** y el **desvío de predicción** respecto al entrenamiento.\n- Versiona datos y modelos para reproducir resultados.\n\n> **En el examen:** si el escenario quiere ML rápido sin sacar los datos de BigQuery, la respuesta es BigQuery ML; si pide orquestar reentrenamientos, piensa en Cloud Composer."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un analista quiere entrenar un modelo de clasificación directamente sobre tablas sin mover los datos fuera del almacén analítico. ¿Qué herramienta usa?",
+          "opciones": [
+            "BigQuery ML",
+            "Cloud Bigtable",
+            "Pub/Sub",
+            "Cloud Storage"
+          ],
+          "correctas": [0],
+          "explicacion": "BigQuery ML permite entrenar y servir modelos con SQL sobre los datos ya almacenados en BigQuery, evitando movimientos costosos de datos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Se necesita orquestar un pipeline con dependencias entre extracción, transformación y reentrenamiento programado de un modelo. ¿Qué servicio encaja?",
+          "opciones": [
+            "Cloud Composer",
+            "Cloud SQL",
+            "Memorystore",
+            "Cloud CDN"
+          ],
+          "correctas": [0],
+          "explicacion": "Cloud Composer es Airflow gestionado y orquesta tareas con dependencias y programación, adecuado para flujos de datos y reentrenamientos."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Un modelo en producción empeora con el tiempo. ¿Qué prácticas ayudan a detectar y corregir la degradación?",
+          "opciones": [
+            "Monitorear el desvío de datos respecto al entrenamiento",
+            "Programar reentrenamientos cuando cae la calidad de predicción",
+            "Versionar datos y modelos para reproducir resultados",
+            "Desactivar el monitoreo para reducir costos",
+            "Sustituir el modelo por reglas fijas sin medir su efecto"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Monitorear el desvío, reentrenar ante caídas de calidad y versionar datos y modelos son prácticas sólidas de operación de ML. Desactivar el monitoreo o cambiar a reglas sin medir agrava el problema."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-gobernanza-confiabilidad",
+      "nombre": "Seguridad, gobernanza y confiabilidad",
+      "dominio": "Ensuring solution quality",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Proteger, gobernar y sostener",
+        "markdown": "## Control de acceso con IAM\n\nAplica el **menor privilegio**: otorga roles acotados al recurso y a la tarea, evitando permisos amplios.\n\n- Prefiere **roles predefinidos** sobre roles primitivos.\n- Usa **cuentas de servicio** para cargas, no credenciales de usuario.\n\n## Gobernanza del dato\n\n- Clasifica y descubre activos sensibles; protege información personal mediante **enmascaramiento** o tokenización.\n- Mantén **linaje** y catálogo para saber de dónde viene cada dato.\n\n## Cifrado\n\nLos datos se cifran en reposo y en tránsito. Para mayor control, gestiona tus propias **claves (CMEK)**.\n\n## Confiabilidad\n\n- Define **SLOs** y monitorea con alertas.\n- Diseña tolerancia a fallos: reintentos, regiones y respaldos verificados.\n\n> **En el examen:** menor privilegio, roles predefinidos, cuentas de servicio y CMEK son respuestas recurrentes; ante datos sensibles, piensa en enmascaramiento o tokenización."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Según el principio de menor privilegio, ¿cómo se deben asignar los permisos a una carga automatizada?",
+          "opciones": [
+            "Roles predefinidos acotados mediante una cuenta de servicio",
+            "El rol de propietario del proyecto para evitar errores",
+            "Credenciales personales de un administrador",
+            "Acceso público de lectura y escritura"
+          ],
+          "correctas": [0],
+          "explicacion": "El menor privilegio recomienda roles predefinidos y acotados asignados a una cuenta de servicio. Otorgar propietario, usar credenciales personales o abrir acceso público viola el principio."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué medidas refuerzan la gobernanza y protección de datos sensibles en una plataforma analítica?",
+          "opciones": [
+            "Enmascarar o tokenizar información personal identificable",
+            "Mantener linaje y un catálogo de datos",
+            "Usar claves gestionadas por el cliente (CMEK) cuando se requiere mayor control",
+            "Compartir un único usuario administrador entre todo el equipo",
+            "Deshabilitar el cifrado para acelerar las consultas"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "El enmascaramiento o tokenización, el linaje y catálogo, y CMEK fortalecen la gobernanza. Compartir un usuario administrador o deshabilitar el cifrado son malas prácticas de seguridad."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Para garantizar la confiabilidad de un servicio de datos crítico, ¿qué práctica es la más adecuada?",
+          "opciones": [
+            "Definir SLOs y monitorear con alertas y respaldos verificados",
+            "Confiar en que la nube nunca falla y omitir respaldos",
+            "Eliminar los reintentos para simplificar el código",
+            "Concentrar todo en una sola zona sin redundancia"
+          ],
+          "correctas": [0],
+          "explicacion": "Definir SLOs, monitorear con alertas y mantener respaldos verificados sostienen la confiabilidad. Omitir respaldos, quitar reintentos o concentrar todo en una zona aumentan el riesgo de interrupción."
+        }
+      ]
+    }
+  ]
+}

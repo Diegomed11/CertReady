@@ -1,0 +1,228 @@
+{
+  "slug": "cka",
+  "nombre": "Certified Kubernetes Administrator (CKA)",
+  "proveedor": "CNCF",
+  "nivel": "associate",
+  "area": "DevOps",
+  "descripcion": "Certificación práctica que valida la capacidad de instalar, configurar y operar clústeres de Kubernetes en producción. El examen es 100% basado en tareas en una terminal real, sin preguntas teóricas.",
+  "skills": ["kubernetes", "kubectl", "etcd", "rbac", "networking", "pods", "deployments", "troubleshooting", "kubeadm", "storage", "scheduling", "containers"],
+  "roles": ["administrador de kubernetes", "ingeniero devops", "ingeniero de plataforma", "site reliability engineer"],
+  "temas": [
+    {
+      "slug": "arquitectura-y-componentes",
+      "nombre": "Arquitectura y componentes del clúster",
+      "dominio": "Cluster Architecture, Installation & Configuration",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Plano de control y nodos de trabajo",
+        "markdown": "## El plano de control\n\nUn clúster de Kubernetes se divide en dos partes lógicas. El **plano de control** toma decisiones globales y mantiene el estado deseado del sistema. Sus piezas clave son:\n\n- **kube-apiserver**: la única puerta de entrada al clúster; todo pasa por su API REST.\n- **etcd**: almacén clave-valor que guarda el estado completo del clúster.\n- **kube-scheduler**: decide en qué nodo se ejecuta cada Pod nuevo.\n- **kube-controller-manager**: ejecuta los bucles de control que reconcilian el estado real con el deseado.\n\n## Los nodos de trabajo\n\nCada nodo corre:\n\n- **kubelet**: agente que arranca y vigila los Pods asignados.\n- **kube-proxy**: gestiona las reglas de red para los Services.\n- Un **runtime de contenedores** (por ejemplo containerd).\n\nLa comunicación es radial: los componentes **nunca hablan directo con etcd**, solo el apiserver lo hace.\n\n> **En el examen:** si un Pod no se programa, revisa primero los logs del scheduler y los eventos con `kubectl describe`."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué componente del plano de control es el único que escribe y lee directamente en etcd?",
+          "opciones": ["kube-scheduler", "kube-apiserver", "kubelet", "kube-proxy"],
+          "correctas": [1],
+          "explicacion": "Todo acceso a etcd se canaliza a través del kube-apiserver, que actúa como única puerta de entrada al estado del clúster."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de los siguientes componentes se ejecutan típicamente en cada nodo de trabajo?",
+          "opciones": ["kubelet", "etcd", "kube-proxy", "runtime de contenedores", "kube-scheduler"],
+          "correctas": [0, 2, 3],
+          "explicacion": "kubelet, kube-proxy y el runtime de contenedores corren en cada nodo. etcd y kube-scheduler pertenecen al plano de control."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuál es la función principal del kube-scheduler?",
+          "opciones": ["Aplicar reglas de red para Services", "Decidir en qué nodo se ejecuta cada Pod nuevo", "Almacenar el estado del clúster", "Renovar certificados TLS"],
+          "correctas": [1],
+          "explicacion": "El scheduler evalúa recursos, afinidades y restricciones para asignar cada Pod sin nodo a un nodo adecuado."
+        }
+      ]
+    },
+    {
+      "slug": "cargas-de-trabajo-y-scheduling",
+      "nombre": "Cargas de trabajo y planificación",
+      "dominio": "Workloads & Scheduling",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Deployments, taints y afinidad",
+        "markdown": "## Controladores de cargas\n\nUn **Deployment** gestiona réplicas de Pods sin estado y permite actualizaciones graduales (*rolling update*) y reversiones con `kubectl rollout undo`. Detrás genera un **ReplicaSet** que mantiene el número de réplicas deseado.\n\n## Influir en dónde corre un Pod\n\nKubernetes ofrece varios mecanismos para controlar la colocación:\n\n- **nodeSelector**: la forma más simple, empareja etiquetas del nodo.\n- **Afinidad/antiafinidad de nodo**: reglas `required` o `preferred` más expresivas.\n- **Taints y tolerations**: un *taint* en un nodo lo **repele** salvo que el Pod tenga la *toleration* correspondiente.\n\n## Recursos\n\nDefine **requests** (lo que se reserva para programar) y **limits** (el tope máximo). El scheduler usa los *requests*, no los *limits*, para decidir.\n\n> **En el examen:** para cordón rápido usa `kubectl cordon` y `kubectl drain` antes de mantener un nodo; recuerda `--ignore-daemonsets`."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué objeto crea internamente un Deployment para mantener el número de réplicas deseado?",
+          "opciones": ["Un DaemonSet", "Un ReplicaSet", "Un StatefulSet", "Un Job"],
+          "correctas": [1],
+          "explicacion": "El Deployment gestiona un ReplicaSet, que a su vez asegura que el número correcto de Pods esté en ejecución."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre taints y tolerations son correctas?",
+          "opciones": ["Un taint en un nodo repele Pods que no lo toleran", "Una toleration en el Pod permite ignorar un taint", "Las tolerations atraen Pods hacia un nodo específico", "El efecto NoSchedule impide programar nuevos Pods sin la toleration", "Los taints se aplican a Pods, no a nodos"],
+          "correctas": [0, 1, 3],
+          "explicacion": "Los taints van en nodos y repelen; las tolerations en el Pod permiten convivir con ellos. NoSchedule bloquea Pods sin toleration. Para atraer Pods se usa afinidad, no tolerations."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué valor usa el scheduler para decidir si un Pod cabe en un nodo?",
+          "opciones": ["Los limits de CPU y memoria", "Los requests de CPU y memoria", "El uso real medido en tiempo real", "El número de contenedores del Pod"],
+          "correctas": [1],
+          "explicacion": "El scheduler reserva capacidad según los requests declarados; los limits solo imponen un tope durante la ejecución."
+        }
+      ]
+    },
+    {
+      "slug": "servicios-y-redes",
+      "nombre": "Servicios y redes",
+      "dominio": "Services & Networking",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Services, DNS y políticas de red",
+        "markdown": "## Exponer Pods\n\nLos Pods son efímeros y cambian de IP, así que se exponen mediante un **Service** estable. Tipos principales:\n\n- **ClusterIP**: IP interna, accesible solo dentro del clúster (por defecto).\n- **NodePort**: abre un puerto en cada nodo hacia el Service.\n- **LoadBalancer**: solicita un balanceador externo al proveedor de nube.\n\n## DNS interno\n\nEl complemento **CoreDNS** resuelve nombres de Services con el patrón `servicio.namespace.svc.cluster.local`. Así los Pods se descubren por nombre y no por IP.\n\n## NetworkPolicy\n\nPor defecto **todo el tráfico está permitido**. Una **NetworkPolicy** introduce control de acceso seleccionando Pods por etiqueta y definiendo reglas de **ingress** y **egress**. Requiere un plugin CNI que las soporte (por ejemplo Calico).\n\n> **En el examen:** verifica conectividad con `kubectl exec` y prueba un Service por su nombre DNS, no por IP, para confirmar que CoreDNS funciona."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué tipo de Service es el predeterminado y solo accesible dentro del clúster?",
+          "opciones": ["NodePort", "LoadBalancer", "ClusterIP", "ExternalName"],
+          "correctas": [2],
+          "explicacion": "ClusterIP es el tipo por defecto y asigna una IP virtual interna alcanzable únicamente desde dentro del clúster."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué afirmaciones sobre NetworkPolicy son correctas?",
+          "opciones": ["Sin políticas, el tráfico entre Pods está permitido por defecto", "Seleccionan Pods mediante etiquetas", "Pueden controlar tráfico de ingress y egress", "Funcionan con cualquier CNI sin requisitos", "Bloquean por defecto todo el tráfico al instalarse Kubernetes"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Por defecto todo está permitido. Las políticas seleccionan Pods por etiqueta y controlan ingress/egress, pero necesitan un CNI compatible como Calico."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué componente resuelve los nombres DNS de los Services dentro del clúster?",
+          "opciones": ["kube-proxy", "CoreDNS", "etcd", "kubelet"],
+          "correctas": [1],
+          "explicacion": "CoreDNS es el servidor DNS del clúster y resuelve nombres como servicio.namespace.svc.cluster.local."
+        }
+      ]
+    },
+    {
+      "slug": "almacenamiento",
+      "nombre": "Almacenamiento",
+      "dominio": "Storage",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Volúmenes, PV, PVC y StorageClass",
+        "markdown": "## Persistencia más allá del Pod\n\nUn **Volume** vive mientras vive el Pod. Para datos persistentes se usa el dúo:\n\n- **PersistentVolume (PV)**: una pieza de almacenamiento aprovisionada en el clúster.\n- **PersistentVolumeClaim (PVC)**: la solicitud de un usuario por cierta capacidad y modo de acceso.\n\nKubernetes **enlaza** un PVC con un PV compatible (*binding*).\n\n## Modos de acceso\n\n- **ReadWriteOnce (RWO)**: montable lectura/escritura por un solo nodo.\n- **ReadOnlyMany (ROX)**: solo lectura por muchos nodos.\n- **ReadWriteMany (RWX)**: lectura/escritura por muchos nodos.\n\n## Aprovisionamiento dinámico\n\nUna **StorageClass** permite crear PVs automáticamente cuando llega un PVC, evitando preparar volúmenes a mano. El campo **reclaimPolicy** (`Retain` o `Delete`) define qué pasa con el PV al liberarse.\n\n> **En el examen:** si un PVC queda en estado *Pending*, comprueba que exista un PV con capacidad, modo de acceso y StorageClass que coincidan."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué objeto representa la solicitud de un usuario por almacenamiento persistente?",
+          "opciones": ["PersistentVolume", "PersistentVolumeClaim", "StorageClass", "ConfigMap"],
+          "correctas": [1],
+          "explicacion": "El PersistentVolumeClaim es la petición de capacidad y modo de acceso que se enlaza con un PersistentVolume disponible."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre almacenamiento en Kubernetes son correctas?",
+          "opciones": ["Una StorageClass permite aprovisionamiento dinámico de PVs", "ReadWriteMany permite montaje de lectura/escritura desde varios nodos", "reclaimPolicy puede ser Retain o Delete", "Un PVC se enlaza a varios PV simultáneamente siempre", "Un Volume normal sobrevive a la eliminación del Pod"],
+          "correctas": [0, 1, 2],
+          "explicacion": "La StorageClass habilita aprovisionamiento dinámico; RWX permite varios nodos; reclaimPolicy controla el destino del PV. Un PVC se enlaza a un solo PV y un Volume estándar no sobrevive al Pod."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un PVC queda en estado Pending. ¿Cuál es la causa más probable?",
+          "opciones": ["El Pod no tiene la imagen correcta", "No hay un PV compatible en capacidad, modo de acceso o StorageClass", "El nodo está cordonado", "Falta un Service ClusterIP"],
+          "correctas": [1],
+          "explicacion": "Un PVC permanece en Pending cuando no encuentra un PV que coincida en capacidad, modo de acceso y StorageClass, ni hay aprovisionamiento dinámico disponible."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-y-rbac",
+      "nombre": "Seguridad y RBAC",
+      "dominio": "Cluster Architecture, Installation & Configuration",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Autenticación, autorización y RBAC",
+        "markdown": "## Quién eres y qué puedes hacer\n\nCada petición al apiserver pasa por tres filtros: **autenticación** (¿quién eres?), **autorización** (¿puedes?) y **admission control** (validación final).\n\n## RBAC\n\nEl control de acceso basado en roles usa cuatro objetos:\n\n- **Role**: permisos dentro de un namespace.\n- **ClusterRole**: permisos a nivel de clúster o reutilizables.\n- **RoleBinding**: asocia un Role a un sujeto en un namespace.\n- **ClusterRoleBinding**: asocia un ClusterRole en todo el clúster.\n\nLos sujetos pueden ser **usuarios**, **grupos** o **ServiceAccounts**.\n\n## ServiceAccounts\n\nLos Pods se autentican ante la API con una **ServiceAccount**. Aplica el **principio de mínimo privilegio**: concede solo los *verbs* (`get`, `list`, `create`, `delete`) y recursos necesarios.\n\n> **En el examen:** prueba permisos con `kubectl auth can-i <verbo> <recurso> --as=<usuario>` antes de dar por terminado un RBAC."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué objeto asocia un Role a un sujeto dentro de un namespace específico?",
+          "opciones": ["ClusterRoleBinding", "RoleBinding", "ClusterRole", "ServiceAccount"],
+          "correctas": [1],
+          "explicacion": "El RoleBinding vincula un Role (o un ClusterRole) a usuarios, grupos o ServiceAccounts dentro de un namespace."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué tipos de sujetos puede referenciar un RoleBinding?",
+          "opciones": ["Usuarios", "Grupos", "ServiceAccounts", "Nodos físicos", "Volúmenes"],
+          "correctas": [0, 1, 2],
+          "explicacion": "RBAC admite como sujetos usuarios, grupos y ServiceAccounts. Nodos y volúmenes no son sujetos de autorización."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué comando verifica si un usuario puede realizar una acción concreta?",
+          "opciones": ["kubectl get rbac", "kubectl auth can-i", "kubectl describe role", "kubectl rollout status"],
+          "correctas": [1],
+          "explicacion": "`kubectl auth can-i <verbo> <recurso> --as=<usuario>` consulta directamente al autorizador si la acción está permitida."
+        }
+      ]
+    },
+    {
+      "slug": "troubleshooting",
+      "nombre": "Diagnóstico y resolución de problemas",
+      "dominio": "Troubleshooting",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Depurar Pods, nodos y el plano de control",
+        "markdown": "## El flujo de diagnóstico\n\nAnte un fallo, sigue una ruta de lo general a lo específico:\n\n1. `kubectl get pods` para ver estados como **CrashLoopBackOff**, **ImagePullBackOff** o **Pending**.\n2. `kubectl describe pod` para leer los **eventos** al final de la salida.\n3. `kubectl logs <pod>` (con `--previous` para el contenedor anterior si reinició).\n\n## Nodos y servicios del sistema\n\nSi un nodo está **NotReady**, conéctate por SSH y revisa el **kubelet** con `systemctl status kubelet` y `journalctl -u kubelet`. Los componentes del plano de control suelen correr como **Pods estáticos** en `/etc/kubernetes/manifests/`.\n\n## Pistas frecuentes\n\n- **ImagePullBackOff**: nombre de imagen o credenciales incorrectos.\n- **CrashLoopBackOff**: la aplicación falla al arrancar; mira sus logs.\n- **Pending**: no hay recursos o no se cumple una restricción de scheduling.\n\n> **En el examen:** ante un nodo NotReady, casi siempre empieza por reiniciar y diagnosticar el kubelet con journalctl."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un Pod muestra el estado ImagePullBackOff. ¿Cuál es la causa más probable?",
+          "opciones": ["La aplicación falla al arrancar", "El nombre de la imagen o las credenciales son incorrectos", "No hay recursos en el nodo", "Falta una NetworkPolicy"],
+          "correctas": [1],
+          "explicacion": "ImagePullBackOff indica que kubelet no pudo descargar la imagen, normalmente por nombre, tag o credenciales del registro incorrectos."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Un nodo aparece como NotReady. ¿Qué pasos de diagnóstico son apropiados?",
+          "opciones": ["Revisar systemctl status kubelet en el nodo", "Leer journalctl -u kubelet", "Verificar conectividad del nodo con el apiserver", "Eliminar todos los Pods del clúster de inmediato", "Borrar etcd para forzar una recreación"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Un nodo NotReady suele deberse al kubelet o a la red; se diagnostica con systemctl, journalctl y comprobando conectividad. Borrar Pods o etcd sería destructivo e injustificado."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué comando muestra los eventos recientes asociados a un Pod problemático?",
+          "opciones": ["kubectl logs pod", "kubectl describe pod", "kubectl top pod", "kubectl edit pod"],
+          "correctas": [1],
+          "explicacion": "`kubectl describe pod` incluye al final una sección de Events con las razones de fallo, ideal como primer paso de diagnóstico."
+        }
+      ]
+    }
+  ]
+}

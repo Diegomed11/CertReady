@@ -1,0 +1,192 @@
+{
+  "slug": "databricks-data-engineer-associate",
+  "nombre": "Databricks Certified Data Engineer Associate",
+  "proveedor": "Databricks",
+  "nivel": "associate",
+  "area": "Datos",
+  "descripcion": "Certificacion que valida la capacidad de construir tareas de ingenieria de datos sobre la plataforma Lakehouse de Databricks, usando Spark SQL y el formato Delta Lake. Orientada a perfiles que ingieren, transforman y publican datos de forma incremental y gobernada.",
+  "skills": ["lakehouse", "delta lake", "spark sql", "pyspark", "auto loader", "medallion", "delta live tables", "unity catalog", "incremental", "merge", "workflows", "pivote"],
+  "roles": ["ingeniero de datos", "desarrollador de etl", "analista de datos", "ingeniero de analitica", "desarrollador de pipelines"],
+  "temas": [
+    {
+      "slug": "plataforma-lakehouse",
+      "nombre": "La plataforma Lakehouse de Databricks",
+      "dominio": "Databricks Lakehouse Platform",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Arquitectura, computo y formato Delta",
+        "markdown": "## Que es el Lakehouse\nUn **Lakehouse** combina la flexibilidad y bajo costo de un data lake con las garantias transaccionales de un almacen de datos. En Databricks su base es **Delta Lake**, un formato abierto sobre archivos Parquet con un **registro de transacciones** que aporta propiedades **ACID**.\n\n## Computo\n- Un **cluster** ejecuta el trabajo: un **driver** coordina y los **workers** procesan en paralelo.\n- Los **clusters all-purpose** sirven para desarrollo interactivo; los **job clusters** se crean y destruyen por cada tarea programada, reduciendo costo.\n\n## Espacios de trabajo\n- Los **notebooks** mezclan codigo (SQL, Python) y resultados; permiten magias como `%sql` o `%python` para cambiar de lenguaje por celda.\n- Los datos se organizan en **catalogos**, **esquemas** y **tablas**.\n\n## Tablas\n- Una **tabla gestionada** guarda datos y metadatos administrados por Databricks; al borrarla se eliminan los archivos.\n- Una **tabla externa** referencia una ruta externa; al borrarla solo se quita el metadato.\n\n> **En el examen:** asocia Delta Lake con transacciones ACID y registro de transacciones, usa job clusters para tareas programadas y recuerda que borrar una tabla gestionada elimina sus archivos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Que componente de Delta Lake permite ofrecer garantias transaccionales ACID sobre archivos almacenados en el data lake?",
+          "opciones": ["El registro de transacciones (transaction log)", "El driver del cluster", "El formato CSV", "El catalogo de notebooks"],
+          "correctas": [0],
+          "explicacion": "Delta Lake mantiene un registro de transacciones que ordena los cambios y habilita atomicidad, consistencia, aislamiento y durabilidad sobre archivos Parquet."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Que diferencia clave existe entre una tabla gestionada y una tabla externa al ejecutar DROP TABLE?",
+          "opciones": ["Ambas conservan siempre los archivos de datos", "En la gestionada se eliminan los archivos de datos; en la externa solo se quita el metadato", "En la externa se eliminan los archivos; en la gestionada no", "Ninguna de las dos puede eliminarse"],
+          "correctas": [1],
+          "explicacion": "Al borrar una tabla gestionada Databricks elimina datos y metadatos; en una tabla externa solo se elimina la referencia, conservando los archivos en su ruta."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de las siguientes afirmaciones sobre los clusters en Databricks son correctas? Selecciona todas las que apliquen.",
+          "opciones": ["El driver coordina y distribuye el trabajo", "Los workers ejecutan tareas en paralelo", "Un job cluster suele crearse y destruirse por cada tarea programada", "El driver almacena permanentemente todos los datos del Lakehouse", "Un cluster no necesita ningun nodo para ejecutarse"],
+          "correctas": [0, 1, 2],
+          "explicacion": "El driver coordina, los workers procesan en paralelo y los job clusters son efimeros para tareas. El driver no almacena los datos del Lakehouse y siempre se requieren nodos."
+        }
+      ]
+    },
+    {
+      "slug": "transformaciones-spark-sql",
+      "nombre": "Transformacion de datos con Spark SQL",
+      "dominio": "ELT with Spark SQL and Python",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Consultas, vistas y manipulacion de datos",
+        "markdown": "## Leer y crear\n- `CREATE TABLE ... AS SELECT` (CTAS) materializa el resultado de una consulta como tabla Delta.\n- Para datos externos se puede leer directamente con la sintaxis `SELECT * FROM formato.ruta`.\n\n## Vistas\n- Una **vista** guarda solo la definicion de la consulta y se recalcula al usarla.\n- Una **vista temporal** existe solo durante la sesion actual del notebook.\n\n## Limpieza y combinacion\n- Funciones como `coalesce` y filtros con `WHERE` ayudan a depurar valores nulos.\n- Los **JOIN** combinan tablas; las **UNION** apilan filas con el mismo esquema.\n\n## Datos anidados y complejos\n- Operadores como `:` y la notacion de punto navegan estructuras y campos anidados.\n- `explode` convierte cada elemento de un arreglo en una fila.\n- El **pivote** (`PIVOT`) reorganiza filas en columnas para reportes.\n\n## Funciones definidas por el usuario\nUna **UDF** registra logica personalizada reutilizable dentro de consultas SQL.\n\n> **En el examen:** usa CTAS para materializar resultados, recuerda que una vista no almacena datos sino su definicion, y aplica explode para desanidar arreglos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Que sentencia crea una nueva tabla Delta a partir del resultado de una consulta SELECT?",
+          "opciones": ["CREATE TABLE ... AS SELECT (CTAS)", "DROP TABLE", "DESCRIBE HISTORY", "REFRESH TABLE"],
+          "correctas": [0],
+          "explicacion": "CTAS (CREATE TABLE AS SELECT) ejecuta la consulta y materializa su resultado como una nueva tabla Delta gestionada."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Cual es la principal diferencia entre una tabla y una vista en Spark SQL?",
+          "opciones": ["La vista almacena fisicamente los datos y la tabla no", "La vista guarda la definicion de la consulta y se recalcula al usarla; la tabla persiste los datos", "Ambas almacenan datos de forma identica", "La tabla solo existe en la sesion actual"],
+          "correctas": [1],
+          "explicacion": "Una vista guarda unicamente la consulta y se evalua cada vez que se referencia, mientras que la tabla persiste los datos en el Lakehouse."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Cuales de las siguientes operaciones son utiles al trabajar con datos anidados o complejos en Spark SQL? Selecciona todas las que apliquen.",
+          "opciones": ["Usar explode para convertir elementos de un arreglo en filas", "Navegar campos anidados con la notacion de punto", "Aplicar PIVOT para reorganizar filas en columnas", "Cifrar cada fila para poder desanidarla", "Borrar la tabla para poder leer su estructura"],
+          "correctas": [0, 1, 2],
+          "explicacion": "explode, la navegacion con punto y PIVOT manipulan datos complejos. Cifrar o borrar la tabla no tiene relacion con desanidar estructuras."
+        }
+      ]
+    },
+    {
+      "slug": "procesamiento-incremental",
+      "nombre": "Procesamiento incremental de datos",
+      "dominio": "Incremental Data Processing",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Delta, MERGE, time travel y Auto Loader",
+        "markdown": "## Caracteristicas de Delta\n- **Viaje en el tiempo (time travel)**: consultar versiones previas con `VERSION AS OF` o `TIMESTAMP AS OF`.\n- `DESCRIBE HISTORY` muestra las operaciones realizadas sobre la tabla.\n- `OPTIMIZE` compacta archivos pequenos y `ZORDER` agrupa datos por columnas de filtro frecuente.\n- `VACUUM` elimina archivos antiguos no referenciados tras el periodo de retencion.\n\n## Upserts con MERGE\nLa sentencia `MERGE INTO` aplica en una sola operacion insercion, actualizacion y borrado segun coincida la condicion; es la base de cargas incrementales idempotentes.\n\n## Ingesta incremental\n- **Auto Loader** (`cloudFiles`) detecta y procesa archivos nuevos de forma incremental a medida que llegan, sin reprocesar lo ya ingerido.\n- `COPY INTO` carga archivos de forma incremental e idempotente hacia una tabla Delta.\n\n## Streaming estructurado\nUna lectura como flujo procesa datos de forma continua; los **checkpoints** guardan el progreso para reanudar sin perder ni duplicar registros.\n\n> **En el examen:** usa MERGE para upserts idempotentes, Auto Loader para ingerir archivos nuevos de forma incremental y time travel para auditar o restaurar versiones."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Que sentencia permite aplicar en una sola operacion inserciones, actualizaciones y borrados (upsert) sobre una tabla Delta?",
+          "opciones": ["MERGE INTO", "SELECT DISTINCT", "DESCRIBE DETAIL", "TRUNCATE TABLE"],
+          "correctas": [0],
+          "explicacion": "MERGE INTO combina filas de origen y destino segun una condicion, ejecutando insert, update o delete en una unica operacion idempotente."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Que funcion de Databricks detecta y procesa archivos nuevos de forma incremental a medida que llegan al almacenamiento?",
+          "opciones": ["Auto Loader (cloudFiles)", "VACUUM", "DESCRIBE HISTORY", "Una vista temporal"],
+          "correctas": [0],
+          "explicacion": "Auto Loader, mediante la fuente cloudFiles, detecta archivos nuevos y los ingiere de forma incremental sin reprocesar los ya cargados."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Cuales de las siguientes son caracteristicas reales de Delta Lake en Databricks? Selecciona todas las que apliquen.",
+          "opciones": ["Viaje en el tiempo para consultar versiones anteriores", "OPTIMIZE para compactar archivos pequenos", "VACUUM para eliminar archivos antiguos no referenciados", "Imposibilidad total de actualizar o borrar registros", "Perdida del historial despues de cada consulta"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Delta ofrece time travel, OPTIMIZE y VACUUM. Si soporta actualizaciones y borrados, y conserva el historial de versiones segun la retencion configurada."
+        }
+      ]
+    },
+    {
+      "slug": "pipelines-produccion",
+      "nombre": "Canalizaciones de datos en produccion",
+      "dominio": "Production Pipelines",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Arquitectura medallion, DLT y Workflows",
+        "markdown": "## Arquitectura medallion\nOrganiza el flujo en capas progresivas de calidad:\n- **Bronce**: datos crudos tal como se ingieren.\n- **Plata**: datos limpios, validados y conformados.\n- **Oro**: agregados y modelos listos para consumo analitico.\n\n## Delta Live Tables (DLT)\n- DLT declara pipelines mediante `STREAMING TABLE` y `MATERIALIZED VIEW`, gestionando dependencias y orden de ejecucion automaticamente.\n- Las **expectativas (expectations)** con `CONSTRAINT ... EXPECT` validan la calidad: pueden registrar, descartar o fallar ante filas que no cumplen.\n- Soporta modos **triggered** (ejecuta y termina) y **continuous** (procesa sin parar).\n\n## Orquestacion con Workflows\n- Un **Workflow (Job)** encadena varias **tareas** con dependencias y reintentos.\n- Puede programarse por **horario (cron)** o dispararse por eventos.\n- Las **alertas** y notificaciones avisan ante exito o fallo de una ejecucion.\n\n> **En el examen:** asocia bronce/plata/oro con la arquitectura medallion, usa expectativas de DLT para calidad de datos y Workflows para orquestar tareas con dependencias y reintentos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "En la arquitectura medallion, que capa contiene los datos crudos tal como fueron ingeridos, sin transformar?",
+          "opciones": ["Capa oro", "Capa plata", "Capa bronce", "Capa diamante"],
+          "correctas": [2],
+          "explicacion": "La capa bronce almacena los datos crudos tal como llegan; plata los limpia y conforma, y oro entrega agregados listos para analisis."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En Delta Live Tables, que mecanismo se usa para validar la calidad de los datos y decidir si se conservan, descartan o fallan las filas que no cumplen?",
+          "opciones": ["Las expectativas (CONSTRAINT ... EXPECT)", "El comando VACUUM", "Una vista temporal", "El operador explode"],
+          "correctas": [0],
+          "explicacion": "Las expectativas de DLT definen reglas de calidad y permiten registrar, descartar o detener el pipeline cuando una fila no las cumple."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de las siguientes son capacidades de un Workflow (Job) de Databricks? Selecciona todas las que apliquen.",
+          "opciones": ["Encadenar varias tareas con dependencias", "Configurar reintentos ante fallos", "Programarse por horario con expresiones cron", "Garantizar que ninguna tarea pueda fallar jamas", "Eliminar la necesidad de cualquier cluster de computo"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Un Workflow orquesta tareas con dependencias, reintentos y programacion cron. No garantiza ausencia de fallos ni elimina la necesidad de computo."
+        }
+      ]
+    },
+    {
+      "slug": "gobernanza-unity-catalog",
+      "nombre": "Gobernanza de datos con Unity Catalog",
+      "dominio": "Data Governance",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Permisos, entidades y seguridad",
+        "markdown": "## Que es Unity Catalog\n**Unity Catalog** centraliza la gobernanza de datos en Databricks: un unico lugar para administrar permisos, linaje y auditoria a traves de los espacios de trabajo.\n\n## Jerarquia de objetos\nLos datos se organizan en tres niveles: **catalogo** -> **esquema** -> **tabla/vista**. Una referencia completa usa la notacion `catalogo.esquema.tabla`.\n\n## Control de acceso\n- Se otorgan privilegios con `GRANT` y se revocan con `REVOKE` (por ejemplo `SELECT`, `MODIFY`, `USAGE`).\n- Los privilegios se asignan a **usuarios** y **grupos**; usar grupos simplifica la administracion.\n- El acceso es **heredable**: conceder un privilegio en un catalogo puede propagarse a sus esquemas y tablas.\n\n## Buenas practicas\n- Aplicar **minimo privilegio**: otorgar solo lo necesario.\n- Aprovechar el **linaje** para rastrear el origen y los consumidores de cada tabla.\n- Centralizar la auditoria para saber quien accedio a que datos.\n\n> **En el examen:** recuerda la jerarquia catalogo/esquema/tabla, usa GRANT y REVOKE sobre grupos para gestionar el acceso y aplica el principio de minimo privilegio."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Cual es la jerarquia de tres niveles que usa Unity Catalog para organizar los objetos de datos?",
+          "opciones": ["Tabla -> fila -> columna", "Catalogo -> esquema -> tabla", "Cluster -> notebook -> celda", "Bronce -> plata -> oro"],
+          "correctas": [1],
+          "explicacion": "Unity Catalog organiza los datos en catalogo, esquema y tabla/vista, referenciados con la notacion catalogo.esquema.tabla."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Que sentencia se utiliza para otorgar a un grupo el privilegio de leer una tabla en Unity Catalog?",
+          "opciones": ["GRANT SELECT ON TABLE ... TO grupo", "DROP TABLE", "OPTIMIZE", "VACUUM"],
+          "correctas": [0],
+          "explicacion": "GRANT concede privilegios como SELECT sobre objetos de datos; asignarlos a grupos simplifica la gestion de accesos."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de las siguientes son buenas practicas o capacidades de la gobernanza con Unity Catalog? Selecciona todas las que apliquen.",
+          "opciones": ["Aplicar el principio de minimo privilegio", "Asignar permisos a grupos para simplificar la administracion", "Aprovechar el linaje para rastrear el origen de los datos", "Compartir las credenciales del administrador con todos los usuarios", "Desactivar la auditoria para mejorar el rendimiento"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Minimo privilegio, permisos por grupo y linaje son buenas practicas. Compartir credenciales de admin y desactivar la auditoria comprometen la seguridad y el control."
+        }
+      ]
+    }
+  ]
+}

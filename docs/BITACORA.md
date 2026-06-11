@@ -1136,3 +1136,44 @@ real** (TestClient, modelo descargado): CV de perfil AWS → `aws-saa` #1 (73 %)
 caminos coherentes (Nube/DevOps/Desarrollo). Web `npm run check` + `npm run build`
 verdes (24 rutas; `/recomendaciones`, `/api/recommendations`). E2E en vivo del
 upload queda para cuando el stack esté levantado (`dev-up` arranca el DSS).
+
+---
+
+## 2026-06-10 · Catálogo extendido: ~50 certificaciones con camino + estudio + quiz
+
+**Contexto:** dar peso al recomendador poblando el catálogo. Antes solo `aws-saa`
+tenía contenido. Decisiones (plan aprobado): **lineup completo de AWS, Azure y
+Google Cloud + las del recomendador** (~50 certs); **contenido ligero y original**
+(se refina cert por cert); `aws-saa` se conserva como la profunda. La app ya es
+**genérica por cert+tema** (Estudiar/quizzes/progreso), así que no hubo cambios de
+servicios ni de web.
+
+**Hecho:**
+- **`scripts/catalog/_lista.json`** + **51 manifiestos** `scripts/catalog/<slug>.json`
+  (uno por cert), generados por **agentes en paralelo** (uno por cert, en tandas):
+  metadata + skills/roles + **5-6 temas** con 1 hoja original (cierra "> En el
+  examen") + ~3 preguntas (mezcla opción/respuesta múltiple). Validados: **297
+  temas, 891 preguntas**, JSON/índices/slugs correctos.
+- **`scripts/seed-catalog.py`** (nuevo): siembra idempotente — Postgres
+  (`certificaciones` + `temas`, limpieza por cert) y Mongo (`materiales` `_id =
+  m_<cert>_<tema>`, `preguntas` `_id = q_<cert>_<tema>_<n>`; el **prefijo por cert
+  evita colisiones de `_id`**; `aws-saa` no se toca).
+- **`scripts/build-reco-dataset.py`** (nuevo): regenera `data/dss/certificaciones.json`
+  desde los manifiestos (conservando la entrada curada de `aws-saa`), con
+  `slug_estudio = slug` para que **todas** enlacen a Estudiar → recomendador y
+  catálogo comparten exactamente los mismos slugs.
+- **`dev-up.ps1`**: tras el seed de `aws-saa`, corre `build-reco-dataset.py` +
+  `seed-catalog.py`.
+
+**Verificación:** seeders ejecutados → Postgres **52 certs / 309 temas**; Mongo
+**347 materiales / 1068 preguntas** (aws-saa intacto, 48 materiales; sin colisión
+de `_id`). `ruff`/`black`/`py_compile` de los scripts en verde; `dev-up.ps1`
+parsea. Smoke del recomendador (proceso fresco): **52 certs, todas con
+`slug_estudio`**; un CV de datos recomienda certs de datos de varios proveedores,
+todas con `tiene_contenido=true`.
+
+**Pendiente (refinamiento futuro, como acordamos):** el contenido nuevo es
+**ligero** (1 hoja/tema, ~3 preguntas) — se refinará cert por cert; el simulacro de
+las certs no-SAA usa muestreo **uniforme** (los pesos por dominio son los de SAA) y
+el corte de aprobación (72%) es global; el catálogo (web) pide los temas de cada
+cert al render (~50 llamadas), aceptable por ahora.

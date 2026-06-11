@@ -1,0 +1,228 @@
+{
+  "slug": "gcp-cloud-digital-leader",
+  "nombre": "Google Cloud Digital Leader",
+  "proveedor": "Google",
+  "nivel": "foundational",
+  "area": "Nube",
+  "descripcion": "Certificación introductoria que valida el conocimiento de los productos y servicios de Google Cloud y su capacidad para impulsar resultados de negocio. Está pensada para perfiles no técnicos que necesitan entender el valor de la nube en la transformación digital.",
+  "skills": ["transformacion digital", "computo en la nube", "compute engine", "bigquery", "machine learning", "kubernetes", "modernizacion de datos", "seguridad en la nube", "costos en la nube", "infraestructura", "analitica", "inteligencia artificial"],
+  "roles": ["gerente de proyecto", "analista de negocio", "lider de transformacion digital", "ejecutivo de ventas tecnicas", "consultor de nube"],
+  "temas": [
+    {
+      "slug": "transformacion-digital-con-nube",
+      "nombre": "Transformación digital con Google Cloud",
+      "dominio": "Digital Transformation with Google Cloud",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Por qué la nube impulsa el cambio",
+        "markdown": "## Qué resuelve la nube\nLa **transformación digital** consiste en usar tecnología para crear o reinventar productos, procesos y experiencias. La nube acelera ese cambio al eliminar la fricción de comprar y mantener hardware propio.\n\n## Conceptos clave\n- **Migración**: mover cargas existentes a la nube tal cual o adaptándolas.\n- **Modernización**: rediseñar aplicaciones para aprovechar servicios gestionados.\n- **Datos como activo**: convertir información en decisiones mediante analítica.\n\n## Beneficios del modelo\n- **Escalabilidad** elástica: pagar solo por lo que se usa.\n- **Agilidad**: lanzar funcionalidades en días, no en meses.\n- **Innovación** con IA y analítica sin inversión inicial fuerte.\n\nUn motor frecuente del cambio son las **disrupciones del mercado**: nuevos competidores nativos digitales que obligan a las empresas tradicionales a reaccionar con rapidez.\n\n> **En el examen:** distingue entre migrar (mover) y modernizar (rediseñar); la nube reduce el gasto de capital (CapEx) a favor del gasto operativo (OpEx)."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál de las siguientes afirmaciones describe mejor la diferencia entre migrar y modernizar una aplicación?",
+          "opciones": ["Migrar implica rediseñar el código y modernizar solo copiar archivos", "Migrar es mover la carga a la nube y modernizar es rediseñarla para usar servicios gestionados", "Ambos términos significan exactamente lo mismo", "Modernizar solo aplica a bases de datos y migrar solo a redes"],
+          "correctas": [1],
+          "explicacion": "Migrar es trasladar cargas existentes a la nube; modernizar va más allá y rediseña la aplicación para aprovechar servicios gestionados y arquitecturas nativas."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una empresa tradicional ve cómo un competidor nativo digital gana cuota de mercado rápidamente. ¿Qué concepto describe esta presión?",
+          "opciones": ["Disrupción del mercado", "Bloqueo de proveedor", "Deuda técnica", "Tolerancia a fallos"],
+          "correctas": [0],
+          "explicacion": "La disrupción del mercado ocurre cuando nuevos actores digitales cambian las reglas del sector y obligan a los incumbentes a transformarse."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles son beneficios típicos de adoptar un modelo de nube? Selecciona todas las que apliquen.",
+          "opciones": ["Escalabilidad elástica según la demanda", "Pago por uso en lugar de inversión inicial fija", "Eliminación total de la necesidad de seguridad", "Mayor agilidad para lanzar funcionalidades", "Garantía de que nunca habrá costos inesperados"],
+          "correctas": [0, 1, 3],
+          "explicacion": "La nube aporta escalabilidad, modelo de pago por uso y agilidad. La seguridad sigue siendo responsabilidad compartida y los costos pueden crecer si no se gobiernan."
+        }
+      ]
+    },
+    {
+      "slug": "infraestructura-y-aplicaciones",
+      "nombre": "Innovar con infraestructura y aplicaciones",
+      "dominio": "Innovating with Google Cloud Infrastructure and Application Development",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Cómputo: del servidor al contenedor",
+        "markdown": "## Opciones de cómputo\nGoogle Cloud ofrece varios niveles de control y abstracción:\n- **Compute Engine**: máquinas virtuales (IaaS) con control total del sistema operativo.\n- **Google Kubernetes Engine (GKE)**: orquestación de **contenedores** a escala.\n- **Cloud Run**: ejecuta contenedores sin gestionar servidores (serverless).\n- **App Engine**: plataforma totalmente gestionada para desplegar código.\n\n## Modernización de aplicaciones\nLos **microservicios** dividen una aplicación monolítica en piezas pequeñas e independientes. Los **contenedores** empaquetan código y dependencias para que se ejecuten igual en cualquier entorno.\n\n## Disponibilidad y resiliencia\n- Las **regiones** y **zonas** permiten distribuir cargas para tolerar fallos.\n- El balanceo de carga reparte el tráfico y mejora la continuidad.\n\n> **En el examen:** cuanto más a la izquierda (Compute Engine) más control y gestión; cuanto más a la derecha (Cloud Run) menos operación y más enfoque en el código."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un equipo quiere ejecutar contenedores sin administrar servidores ni clústeres. ¿Qué servicio es el más adecuado?",
+          "opciones": ["Compute Engine", "Cloud Run", "Persistent Disk", "Cloud VPN"],
+          "correctas": [1],
+          "explicacion": "Cloud Run ejecuta contenedores en un modelo serverless, sin que el equipo gestione la infraestructura subyacente."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuál es la principal ventaja de usar contenedores frente a desplegar directamente en una máquina virtual completa?",
+          "opciones": ["Eliminan la necesidad de escribir código", "Empaquetan la aplicación y sus dependencias para portabilidad y consistencia", "Garantizan que la aplicación nunca falle", "Sustituyen por completo a las bases de datos"],
+          "correctas": [1],
+          "explicacion": "Los contenedores empaquetan el código junto con sus dependencias, logrando que se ejecute de forma consistente en distintos entornos."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre regiones y zonas en Google Cloud son correctas? Selecciona todas las que apliquen.",
+          "opciones": ["Una región contiene múltiples zonas", "Distribuir cargas entre zonas mejora la tolerancia a fallos", "Una zona siempre abarca varios continentes", "Desplegar en varias regiones puede reducir la latencia para usuarios globales", "Las zonas eliminan la necesidad de copias de seguridad"],
+          "correctas": [0, 1, 3],
+          "explicacion": "Una región agrupa varias zonas; distribuir entre zonas aporta resiliencia y usar varias regiones acerca el servicio a los usuarios. Las zonas no abarcan continentes ni reemplazan los respaldos."
+        }
+      ]
+    },
+    {
+      "slug": "datos-y-analitica",
+      "nombre": "Datos y analítica en la nube",
+      "dominio": "Innovating with Data and Google Cloud",
+      "orden": 3,
+      "hoja": {
+        "titulo": "De datos crudos a decisiones",
+        "markdown": "## Tipos de datos\n- **Estructurados**: tablas con filas y columnas (ventas, clientes).\n- **No estructurados**: imágenes, video, texto libre.\n- **Streaming**: datos que llegan de forma continua en tiempo real.\n\n## Servicios clave\n- **BigQuery**: almacén de datos (data warehouse) para analítica a gran escala con SQL.\n- **Cloud Storage**: almacenamiento de objetos para cualquier tipo de archivo.\n- **Pub/Sub**: ingesta de mensajes y eventos en tiempo real.\n- **Looker**: visualización e inteligencia de negocio.\n\n## El ciclo del dato\nIngerir → almacenar → procesar → analizar → visualizar. Convertir datos en **insights** permite tomar decisiones basadas en evidencia en lugar de intuición.\n\n> **En el examen:** asocia BigQuery con analítica SQL a gran escala, Cloud Storage con archivos no estructurados y Pub/Sub con eventos en tiempo real."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio de Google Cloud está diseñado como almacén de datos para análisis a gran escala usando SQL?",
+          "opciones": ["BigQuery", "Cloud VPN", "Compute Engine", "Cloud CDN"],
+          "correctas": [0],
+          "explicacion": "BigQuery es el data warehouse serverless de Google Cloud, optimizado para consultas analíticas masivas con SQL."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una plataforma necesita ingerir eventos de sensores de forma continua y en tiempo real. ¿Qué servicio encaja mejor?",
+          "opciones": ["Looker", "Pub/Sub", "Cloud Storage", "Persistent Disk"],
+          "correctas": [1],
+          "explicacion": "Pub/Sub es el servicio de mensajería y ingesta de eventos en tiempo real, ideal para flujos de datos continuos como sensores."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de los siguientes se consideran datos no estructurados? Selecciona todas las que apliquen.",
+          "opciones": ["Imágenes de productos", "Una tabla de transacciones bancarias", "Grabaciones de audio de soporte", "Documentos de texto libre", "Una hoja de cálculo con columnas definidas"],
+          "correctas": [0, 2, 3],
+          "explicacion": "Imágenes, audio y texto libre son datos no estructurados. Las tablas y hojas de cálculo con columnas definidas son datos estructurados."
+        }
+      ]
+    },
+    {
+      "slug": "inteligencia-artificial",
+      "nombre": "Inteligencia artificial y aprendizaje automático",
+      "dominio": "Innovating with Google Cloud Artificial Intelligence",
+      "orden": 4,
+      "hoja": {
+        "titulo": "IA aplicada al negocio",
+        "markdown": "## IA, ML y modelos\n- **Inteligencia artificial (IA)**: sistemas que ejecutan tareas que requieren inteligencia.\n- **Aprendizaje automático (ML)**: subconjunto que aprende patrones a partir de datos.\n- Un modelo se **entrena** con datos y luego se usa para **inferir** sobre datos nuevos.\n\n## Opciones en Google Cloud\n- **APIs preentrenadas**: visión, lenguaje y traducción listas para usar sin entrenar nada.\n- **Vertex AI**: plataforma para construir, entrenar y desplegar modelos propios.\n- **IA generativa**: crea texto, imágenes o código a partir de instrucciones.\n\n## Buenas prácticas\nLa **calidad de los datos** determina la calidad del modelo. La **IA responsable** exige evitar sesgos, cuidar la privacidad y mantener transparencia.\n\n> **En el examen:** usa APIs preentrenadas cuando el caso es común y no quieres entrenar; usa Vertex AI cuando necesitas un modelo personalizado."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Una empresa quiere detectar objetos en fotos sin contar con científicos de datos ni entrenar un modelo. ¿Qué opción es la más rápida?",
+          "opciones": ["Construir un modelo desde cero en Vertex AI", "Usar una API de visión preentrenada", "Instalar un servidor físico propio", "Migrar la base de datos a otra región"],
+          "correctas": [1],
+          "explicacion": "Las APIs preentrenadas como la de visión ofrecen capacidades listas para usar sin necesidad de entrenar modelos ni equipos especializados."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuál es la relación correcta entre inteligencia artificial y aprendizaje automático?",
+          "opciones": ["Son términos sin relación entre sí", "El aprendizaje automático es un subconjunto de la inteligencia artificial", "La inteligencia artificial es un subconjunto del aprendizaje automático", "Ambos significan exactamente lo mismo"],
+          "correctas": [1],
+          "explicacion": "El aprendizaje automático es una rama de la inteligencia artificial centrada en aprender patrones a partir de datos."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué principios forman parte de una práctica de IA responsable? Selecciona todas las que apliquen.",
+          "opciones": ["Mitigar sesgos en los datos y modelos", "Proteger la privacidad de las personas", "Maximizar la precisión ignorando el impacto social", "Mantener transparencia sobre cómo decide el modelo", "Ocultar al usuario que interactúa con un sistema automatizado"],
+          "correctas": [0, 1, 3],
+          "explicacion": "La IA responsable busca mitigar sesgos, proteger la privacidad y ser transparente. Ignorar el impacto social u ocultar el uso de IA contradice esos principios."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-en-la-nube",
+      "nombre": "Confianza, seguridad y responsabilidad compartida",
+      "dominio": "Trust and Security with Google Cloud",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Seguridad como responsabilidad compartida",
+        "markdown": "## Modelo de responsabilidad compartida\nLa seguridad se reparte: **Google protege la infraestructura** (centros de datos, hardware, red) y el **cliente protege sus datos, accesos y configuraciones**. El reparto exacto depende del servicio usado (IaaS, PaaS, SaaS).\n\n## Pilares de seguridad\n- **IAM (gestión de identidades y accesos)**: define quién puede hacer qué, siguiendo el **mínimo privilegio**.\n- **Cifrado**: los datos se protegen en reposo y en tránsito.\n- **Defensa en profundidad**: varias capas de control en lugar de una sola barrera.\n\n## Cumplimiento\nGoogle Cloud ofrece certificaciones y controles que ayudan a cumplir normativas de privacidad y de industria.\n\n> **En el examen:** recuerda que la seguridad es compartida; el cliente nunca delega por completo la protección de sus datos y accesos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Bajo el modelo de responsabilidad compartida, ¿qué elemento es siempre responsabilidad del cliente?",
+          "opciones": ["La seguridad física de los centros de datos", "La gestión de los accesos y permisos de sus usuarios", "El mantenimiento del hardware de red de Google", "La refrigeración de los servidores"],
+          "correctas": [1],
+          "explicacion": "El cliente siempre es responsable de gestionar sus identidades, accesos y la configuración de sus datos; Google protege la infraestructura física."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué principio recomienda otorgar a cada usuario solo los permisos estrictamente necesarios para su tarea?",
+          "opciones": ["Mínimo privilegio", "Acceso total por defecto", "Cifrado en tránsito", "Alta disponibilidad"],
+          "correctas": [0],
+          "explicacion": "El principio de mínimo privilegio limita los permisos a lo imprescindible, reduciendo la superficie de ataque."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué prácticas refuerzan la seguridad de los datos en la nube? Selecciona todas las que apliquen.",
+          "opciones": ["Cifrar datos en reposo y en tránsito", "Aplicar defensa en profundidad con varias capas de control", "Compartir una misma contraseña entre todo el equipo", "Configurar accesos con mínimo privilegio mediante IAM", "Desactivar todos los registros de auditoría"],
+          "correctas": [0, 1, 3],
+          "explicacion": "Cifrar, aplicar defensa en profundidad y usar mínimo privilegio fortalecen la seguridad. Compartir contraseñas o desactivar auditorías la debilitan."
+        }
+      ]
+    },
+    {
+      "slug": "costos-y-operacion",
+      "nombre": "Costos, escalado y operación en la nube",
+      "dominio": "Scaling with Google Cloud Operations",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Gobernar el gasto y la operación",
+        "markdown": "## Modelo de costos\nLa nube cambia el **gasto de capital (CapEx)** por **gasto operativo (OpEx)**: en lugar de comprar servidores, se paga por consumo. Esto exige **gobernar el gasto** activamente.\n\n## Herramientas de control\n- **Presupuestos y alertas**: avisan cuando el gasto se acerca a un límite.\n- **Descuentos por uso comprometido**: precios menores a cambio de compromiso de consumo.\n- **Etiquetas (labels)**: clasifican recursos para entender quién gasta qué.\n\n## Operación y soporte\n- **TCO (costo total de propiedad)**: compara el costo real de la nube frente a infraestructura propia.\n- Las opciones de **soporte** y los **acuerdos de nivel de servicio (SLA)** definen disponibilidad y tiempos de respuesta.\n- El monitoreo continuo mantiene la salud de los sistemas.\n\n> **En el examen:** asocia OpEx con pago por uso, los compromisos con descuentos y los presupuestos con alertas para evitar sorpresas de facturación."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué cambio de modelo financiero representa típicamente el paso a la nube?",
+          "opciones": ["De gasto operativo (OpEx) a gasto de capital (CapEx)", "De gasto de capital (CapEx) a gasto operativo (OpEx)", "Eliminación total de cualquier gasto", "Pago único de por vida sin más costos"],
+          "correctas": [1],
+          "explicacion": "La nube reemplaza la compra de infraestructura (CapEx) por un modelo de pago por consumo (OpEx)."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una organización quiere recibir un aviso automático cuando su gasto mensual se acerque a un límite definido. ¿Qué debe configurar?",
+          "opciones": ["Un presupuesto con alertas", "Una nueva región", "Un balanceador de carga", "Una API preentrenada"],
+          "correctas": [0],
+          "explicacion": "Los presupuestos con alertas notifican cuando el gasto se aproxima o supera un umbral, ayudando a evitar facturas inesperadas."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué mecanismos ayudan a optimizar y entender los costos en Google Cloud? Selecciona todas las que apliquen.",
+          "opciones": ["Descuentos por uso comprometido", "Etiquetas para clasificar recursos por equipo o proyecto", "Apagar el monitoreo para ahorrar tiempo", "Presupuestos y alertas de facturación", "Comprar siempre la instancia más grande disponible"],
+          "correctas": [0, 1, 3],
+          "explicacion": "Los compromisos de uso, las etiquetas y los presupuestos con alertas optimizan y dan visibilidad al gasto. Apagar el monitoreo o sobredimensionar recursos no ayuda a controlar costos."
+        }
+      ]
+    }
+  ]
+}

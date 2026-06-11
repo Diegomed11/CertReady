@@ -1,0 +1,343 @@
+{
+  "slug": "azure-developer",
+  "nombre": "Microsoft Certified: Azure Developer Associate (AZ-204)",
+  "proveedor": "Microsoft",
+  "nivel": "associate",
+  "area": "Desarrollo",
+  "descripcion": "Certificación para personas desarrolladoras que diseñan, construyen, prueban y mantienen soluciones en la nube de Azure. Valida la capacidad de implementar cómputo, almacenamiento, seguridad, monitoreo y servicios conectados de forma profesional.",
+  "skills": [
+    "azure functions",
+    "app service",
+    "contenedores",
+    "blob storage",
+    "cosmos db",
+    "microsoft entra id",
+    "key vault",
+    "managed identity",
+    "azure sdk",
+    "event grid",
+    "service bus",
+    "api management"
+  ],
+  "roles": [
+    "Desarrollador de aplicaciones cloud",
+    "Ingeniero backend",
+    "Desarrollador full stack",
+    "Ingeniero de integraciones",
+    "DevOps junior"
+  ],
+  "temas": [
+    {
+      "slug": "computo-azure",
+      "nombre": "Desarrollo de soluciones de cómputo en Azure",
+      "dominio": "Develop Azure compute solutions",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Elegir entre App Service, Functions y contenedores",
+        "markdown": "## Opciones de cómputo\nAzure ofrece varias formas de ejecutar código según el grado de control y el modelo de costo que necesites.\n\n## Cuándo usar cada una\n- **App Service**: hospeda aplicaciones web y APIs HTTP de forma administrada, con escalado y ranuras de despliegue (*deployment slots*).\n- **Azure Functions**: cómputo **sin servidor** orientado a eventos; pagas por ejecución en el plan de **consumo**.\n- **Container Apps / ACI**: ejecutan contenedores cuando necesitas tu propia imagen o microservicios.\n\n## Conceptos clave de Functions\n- Un **trigger** inicia la función (HTTP, temporizador, cola).\n- Los **bindings** conectan entradas y salidas sin código repetitivo.\n- El plan de consumo escala a cero y puede sufrir **arranque en frío**.\n\n## Despliegue seguro\nLas **ranuras** permiten validar en *staging* y hacer *swap* a producción sin tiempo de inactividad.\n\n> **En el examen:** si el escenario menciona eventos esporádicos y pago por uso, piensa en Functions; si pide web administrada con slots, App Service."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Necesitas ejecutar una pequeña función que solo se dispara cuando llega un mensaje a una cola, pagando únicamente por las ejecuciones. ¿Qué servicio eliges?",
+          "opciones": [
+            "Azure App Service en plan dedicado",
+            "Azure Functions en plan de consumo",
+            "Una máquina virtual de Azure",
+            "Azure Batch"
+          ],
+          "correctas": [1],
+          "explicacion": "El plan de consumo de Azure Functions es serverless y orientado a eventos: solo pagas por ejecución, ideal para disparos esporádicos desde una cola."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Quieres desplegar una nueva versión de tu app web y validarla antes de exponerla a producción sin tiempo de inactividad. ¿Qué característica de App Service usas?",
+          "opciones": [
+            "Application Insights",
+            "Deployment slots (ranuras de despliegue)",
+            "Managed identity",
+            "Autoescalado"
+          ],
+          "correctas": [1],
+          "explicacion": "Las ranuras de despliegue permiten validar una versión en staging y hacer swap con producción, logrando despliegues sin downtime."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de las siguientes afirmaciones sobre Azure Functions son correctas?",
+          "opciones": [
+            "Un trigger define qué evento inicia la ejecución de la función",
+            "Los bindings simplifican la conexión a entradas y salidas",
+            "El plan de consumo puede sufrir arranque en frío (cold start)",
+            "Una función solo puede ejecutarse mediante un trigger HTTP",
+            "El plan de consumo factura por máquina encendida las 24 horas"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Los triggers inician la función, los bindings simplifican E/S y el consumo puede tener cold start. Existen triggers no HTTP (cola, temporizador) y el consumo factura por ejecución, no por hora encendida."
+        }
+      ]
+    },
+    {
+      "slug": "almacenamiento-azure",
+      "nombre": "Desarrollo con almacenamiento de Azure",
+      "dominio": "Develop for Azure storage",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Blob Storage y Cosmos DB para desarrolladores",
+        "markdown": "## Dos motores de datos\nAzure separa el almacenamiento de **objetos no estructurados** del de **datos NoSQL** de baja latencia.\n\n## Azure Blob Storage\n- Guarda archivos, imágenes y backups como **blobs** dentro de **contenedores**.\n- Niveles de acceso: **hot**, **cool** y **archive**, según frecuencia de uso y costo.\n- El acceso temporal se concede con **SAS** (firma de acceso compartido), sin exponer la clave de cuenta.\n\n## Azure Cosmos DB\n- Base **NoSQL** distribuida globalmente con baja latencia.\n- La **clave de partición** determina cómo se distribuyen los datos; elegirla bien evita *hot partitions*.\n- El rendimiento se mide en **RU/s** (unidades de solicitud).\n- Ofrece **niveles de consistencia** (de *strong* a *eventual*) que equilibran latencia y coherencia.\n\n> **En el examen:** asocia blobs con archivos no estructurados y SAS con acceso temporal; en Cosmos DB recuerda que la clave de partición y las RU/s definen escalabilidad y costo."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Quieres dar acceso temporal de solo lectura a un archivo en Blob Storage sin compartir la clave de la cuenta. ¿Qué mecanismo usas?",
+          "opciones": [
+            "Una firma de acceso compartido (SAS)",
+            "La cadena de conexión completa de la cuenta",
+            "Una managed identity del cliente",
+            "Un nivel de acceso cool"
+          ],
+          "correctas": [0],
+          "explicacion": "Una SAS otorga acceso temporal y acotado (permisos, recursos y caducidad) sin exponer la clave de la cuenta de almacenamiento."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En Azure Cosmos DB, ¿qué impacto tiene elegir una clave de partición adecuada?",
+          "opciones": [
+            "Cifra automáticamente los datos en reposo",
+            "Distribuye los datos de forma equilibrada y evita particiones calientes",
+            "Reduce el costo de las cuentas de almacenamiento de blobs",
+            "Convierte la base en relacional"
+          ],
+          "correctas": [1],
+          "explicacion": "Una buena clave de partición reparte la carga de forma uniforme, evitando hot partitions que degradan el rendimiento y elevan el consumo de RU/s."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles de los siguientes son niveles de acceso (tiers) válidos para Azure Blob Storage?",
+          "opciones": [
+            "Hot",
+            "Cool",
+            "Archive",
+            "Premium relacional",
+            "Strong"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Hot, Cool y Archive son niveles de acceso de Blob Storage según la frecuencia de uso. 'Premium relacional' no existe como tier de blob y 'Strong' es un nivel de consistencia de Cosmos DB."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-azure",
+      "nombre": "Seguridad de las soluciones en Azure",
+      "dominio": "Implement Azure security",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Microsoft Entra ID, Key Vault e identidades administradas",
+        "markdown": "## Identidad primero\nLa seguridad en Azure se centra en **quién** accede y **con qué permisos**, más que en redes.\n\n## Microsoft Entra ID\n- Proveedor de identidad para autenticar usuarios y aplicaciones (**OAuth2 / OIDC**).\n- La **MSAL** (Microsoft Authentication Library) gestiona la obtención de tokens.\n\n## Identidades administradas\n- Permiten que un servicio (App Service, Function) acceda a otros recursos **sin credenciales en el código**.\n- **Asignada por el sistema**: ligada al recurso. **Asignada por el usuario**: reutilizable entre recursos.\n\n## Azure Key Vault\n- Almacena **secretos**, **claves** y **certificados** fuera del código.\n- Combinado con una identidad administrada, una app lee secretos sin guardar contraseñas.\n\n> **En el examen:** si ves credenciales escritas en código o configuración, la respuesta suele ser **managed identity + Key Vault**; recuerda que Entra ID emite los tokens."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Tu App Service necesita leer un secreto de Key Vault sin almacenar credenciales en el código. ¿Qué enfoque recomiendas?",
+          "opciones": [
+            "Guardar la clave maestra en una variable de entorno",
+            "Usar una identidad administrada con acceso a Key Vault",
+            "Incluir la contraseña en el archivo de configuración",
+            "Compartir una SAS de Blob Storage"
+          ],
+          "correctas": [1],
+          "explicacion": "Una identidad administrada permite que la app se autentique ante Key Vault sin credenciales en el código, eliminando secretos embebidos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuál es la diferencia entre una identidad administrada asignada por el sistema y una asignada por el usuario?",
+          "opciones": [
+            "La del sistema se reutiliza entre recursos; la del usuario no",
+            "La del sistema está ligada al ciclo de vida de un recurso; la del usuario es independiente y reutilizable",
+            "Solo la del usuario funciona con Key Vault",
+            "No existe diferencia funcional entre ambas"
+          ],
+          "correctas": [1],
+          "explicacion": "La identidad asignada por el sistema vive y muere con el recurso; la asignada por el usuario es un recurso independiente que puede compartirse entre varios servicios."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué tipos de objetos puede almacenar y administrar Azure Key Vault?",
+          "opciones": [
+            "Secretos como contraseñas o cadenas de conexión",
+            "Claves criptográficas",
+            "Certificados",
+            "Tablas relacionales de una base de datos",
+            "Imágenes de contenedor"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Key Vault gestiona secretos, claves criptográficas y certificados. Las tablas relacionales viven en bases de datos y las imágenes de contenedor en un registro como ACR."
+        }
+      ]
+    },
+    {
+      "slug": "monitoreo-optimizacion",
+      "nombre": "Monitoreo, solución de problemas y optimización",
+      "dominio": "Monitor, troubleshoot, and optimize Azure solutions",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Application Insights, caché y CDN",
+        "markdown": "## Observabilidad y rendimiento\nUna solución profesional se **monitorea** y se **optimiza**: medir antes de mejorar.\n\n## Application Insights\n- Servicio de **APM** integrado en Azure Monitor.\n- Recoge **telemetría**: solicitudes, dependencias, excepciones y métricas.\n- **Live Metrics** muestra datos casi en tiempo real; **transaction search** ayuda a diagnosticar fallos.\n\n## Caché con Azure Cache for Redis\n- Almacén **en memoria** que reduce latencia y descarga la base de datos.\n- Patrón común: **cache-aside** (lee de caché y, si falla, de la base y rellena).\n\n## Distribución de contenido\n- Una **CDN** sirve contenido estático desde nodos cercanos al usuario, reduciendo latencia.\n\n> **En el examen:** asocia diagnóstico y telemetría con Application Insights, baja latencia de datos con Redis, y entrega global de estáticos con CDN."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Quieres rastrear excepciones, tiempos de respuesta y dependencias de tu API en Azure. ¿Qué servicio usas?",
+          "opciones": [
+            "Azure Key Vault",
+            "Application Insights",
+            "Azure Cache for Redis",
+            "Azure Blob Storage"
+          ],
+          "correctas": [1],
+          "explicacion": "Application Insights es la solución de APM que recopila telemetría de solicitudes, dependencias y excepciones para monitorear y diagnosticar la aplicación."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En el patrón cache-aside con Azure Cache for Redis, ¿qué ocurre cuando el dato NO está en la caché?",
+          "opciones": [
+            "La aplicación devuelve un error al usuario",
+            "Se lee de la base de datos y luego se guarda en la caché",
+            "Redis genera el dato automáticamente",
+            "Se reinicia la instancia de Redis"
+          ],
+          "correctas": [1],
+          "explicacion": "En cache-aside, ante un fallo de caché la app consulta la base de datos, devuelve el resultado y rellena la caché para futuras lecturas."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de las siguientes son capacidades o usos correctos de Application Insights?",
+          "opciones": [
+            "Visualizar métricas casi en tiempo real con Live Metrics",
+            "Registrar excepciones y trazas de la aplicación",
+            "Buscar transacciones para diagnosticar fallos",
+            "Servir contenido estático desde nodos cercanos al usuario",
+            "Medir tiempos de respuesta de dependencias externas"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Application Insights ofrece Live Metrics, registro de excepciones, búsqueda de transacciones y medición de dependencias. Servir contenido estático cercano al usuario es función de una CDN."
+        }
+      ]
+    },
+    {
+      "slug": "servicios-conectados",
+      "nombre": "Conexión y consumo de servicios y APIs",
+      "dominio": "Connect to and consume Azure services and third-party services",
+      "orden": 5,
+      "hoja": {
+        "titulo": "API Management, Event Grid y Service Bus",
+        "markdown": "## Integración entre componentes\nLas soluciones modernas conectan servicios mediante **gateways**, **eventos** y **mensajes**.\n\n## API Management (APIM)\n- **Gateway** que publica, protege y controla APIs.\n- Aplica **políticas**: límites de tasa, autenticación, transformación y caché.\n\n## Eventos vs. mensajes\n- **Event Grid**: distribución **reactiva** de eventos ligeros mediante publicación/suscripción; ideal para *notificaciones* (\"algo ocurrió\").\n- **Service Bus**: **mensajería empresarial** con colas y temas, entrega fiable y orden; ideal para *comandos* y procesamiento desacoplado.\n- **Event Hubs**: ingesta de grandes volúmenes de telemetría/streaming.\n\n## Cómo elegir\n- ¿Reacción a un hecho ligero? Event Grid.\n- ¿Trabajo a procesar de forma fiable y desacoplada? Service Bus.\n\n> **En el examen:** distingue **evento** (notificación de que algo pasó) de **mensaje** (dato con intención de ser procesado), y recuerda que APIM es el front door de tus APIs."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Necesitas procesar pedidos de forma fiable y desacoplada, garantizando que ningún mensaje se pierda aunque el receptor esté ocupado. ¿Qué servicio eliges?",
+          "opciones": [
+            "Azure Event Grid",
+            "Azure Service Bus",
+            "Azure CDN",
+            "Application Insights"
+          ],
+          "correctas": [1],
+          "explicacion": "Service Bus ofrece colas y temas con entrega fiable y desacople, ideal para procesar mensajes (comandos) sin perderlos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Quieres aplicar límites de tasa (rate limiting) y autenticación centralizada a varias APIs publicadas. ¿Qué servicio usas?",
+          "opciones": [
+            "Azure API Management con políticas",
+            "Azure Event Grid",
+            "Azure Key Vault",
+            "Azure Functions"
+          ],
+          "correctas": [0],
+          "explicacion": "API Management actúa como gateway y aplica políticas como rate limiting, autenticación, transformación y caché sobre las APIs publicadas."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles de las siguientes afirmaciones sobre Event Grid y Service Bus son correctas?",
+          "opciones": [
+            "Event Grid usa un modelo de publicación/suscripción de eventos",
+            "Service Bus está pensado para mensajería empresarial fiable con colas y temas",
+            "Event Grid es ideal para notificar reactivamente que algo ocurrió",
+            "Service Bus solo funciona con disparadores HTTP",
+            "Event Grid garantiza el orden estricto de procesamiento de grandes lotes de trabajo"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Event Grid es pub/sub reactivo de eventos y Service Bus es mensajería fiable con colas/temas. Service Bus no se limita a HTTP, y el procesamiento ordenado y desacoplado de trabajo corresponde a Service Bus, no a Event Grid."
+        }
+      ]
+    },
+    {
+      "slug": "contenedores-azure",
+      "nombre": "Despliegue de aplicaciones en contenedores",
+      "dominio": "Develop Azure compute solutions",
+      "orden": 6,
+      "hoja": {
+        "titulo": "ACR, Container Instances y Container Apps",
+        "markdown": "## Contenedores en Azure\nCuando necesitas tu propia imagen, dependencias específicas o microservicios, los **contenedores** son la opción adecuada.\n\n## Azure Container Registry (ACR)\n- Registro **privado** para almacenar y versionar **imágenes** de contenedor.\n- Las imágenes se identifican por **etiqueta** (*tag*); el acceso se controla con identidades o credenciales.\n\n## Dónde ejecutarlos\n- **Azure Container Instances (ACI)**: ejecuta un contenedor aislado de forma rápida, sin orquestador, para tareas puntuales.\n- **Azure Container Apps**: plataforma **serverless** para microservicios; escala según demanda (incluso a cero) y soporta revisiones.\n\n## Buenas prácticas\n- Imágenes pequeñas y versionadas con tags claros (evita `latest` en producción).\n- Lee secretos desde **Key Vault**, no desde la imagen.\n\n> **En el examen:** ACR guarda imágenes, ACI ejecuta contenedores puntuales y Container Apps orquesta microservicios serverless con escalado a cero."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál es la función principal de Azure Container Registry (ACR)?",
+          "opciones": [
+            "Ejecutar microservicios con escalado automático",
+            "Almacenar y versionar imágenes de contenedor de forma privada",
+            "Distribuir contenido estático por CDN",
+            "Gestionar secretos y certificados"
+          ],
+          "correctas": [1],
+          "explicacion": "ACR es un registro privado que almacena, versiona y distribuye imágenes de contenedor; no ejecuta los contenedores ni gestiona secretos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Necesitas una plataforma serverless para varios microservicios que escale según la demanda, incluso a cero, sin administrar un clúster. ¿Qué eliges?",
+          "opciones": [
+            "Azure Container Apps",
+            "Azure Container Registry",
+            "Una máquina virtual con Docker",
+            "Azure Key Vault"
+          ],
+          "correctas": [0],
+          "explicacion": "Azure Container Apps es serverless, escala según demanda (hasta cero) y soporta revisiones para microservicios, sin que administres infraestructura del clúster."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de las siguientes son buenas prácticas al trabajar con contenedores en Azure?",
+          "opciones": [
+            "Versionar las imágenes con tags claros en lugar de depender de 'latest' en producción",
+            "Leer los secretos desde Key Vault en vez de incrustarlos en la imagen",
+            "Usar ACR como registro privado para las imágenes",
+            "Incluir contraseñas en texto plano dentro del Dockerfile",
+            "Mantener imágenes lo más pequeñas y enfocadas posible"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Versionar con tags, leer secretos desde Key Vault, usar ACR y mantener imágenes pequeñas son buenas prácticas. Incluir contraseñas en texto plano en el Dockerfile es un riesgo de seguridad."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,343 @@
+{
+  "slug": "azure-data-fundamentals",
+  "nombre": "Microsoft Certified: Azure Data Fundamentals (DP-900)",
+  "proveedor": "Microsoft",
+  "nivel": "foundational",
+  "area": "Datos",
+  "descripcion": "Certificación introductoria que valida el entendimiento de los conceptos de datos centrales y de cómo se trabajan datos relacionales, no relacionales y analíticos en Azure. Pensada para perfiles técnicos y de negocio que arrancan su camino en datos en la nube.",
+  "skills": [
+    "datos relacionales",
+    "datos no relacionales",
+    "bases de datos",
+    "almacenamiento de datos",
+    "análisis de datos",
+    "azure sql",
+    "cosmos db",
+    "azure storage",
+    "data warehouse",
+    "etl",
+    "olap",
+    "visualización"
+  ],
+  "roles": [
+    "Analista de datos junior",
+    "Administrador de bases de datos",
+    "Ingeniero de datos en formación",
+    "Analista de negocio",
+    "Estudiante de datos en la nube"
+  ],
+  "temas": [
+    {
+      "slug": "conceptos-de-datos",
+      "nombre": "Conceptos de datos centrales",
+      "dominio": "Describir conceptos de datos centrales",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Tipos de datos y formas de almacenarlos",
+        "markdown": "## Cómo se presentan los datos\nLos datos se clasifican por su grado de estructura, y esa forma decide dónde conviene guardarlos.\n\n- **Estructurados**: encajan en filas y columnas con un esquema fijo (tablas relacionales).\n- **Semiestructurados**: tienen estructura flexible mediante etiquetas o claves (**JSON**, XML, documentos).\n- **No estructurados**: sin esquema definido (imágenes, video, audio, archivos de texto libre).\n\n## Cargas de trabajo\n- **Transaccional (OLTP)**: muchas operaciones pequeñas y rápidas de lectura/escritura; prioriza la consistencia (compras, reservas).\n- **Analítica (OLAP)**: pocas consultas grandes que agregan históricos para tomar decisiones.\n\n## Roles de datos\n- **Administrador de base de datos**: disponibilidad, seguridad y respaldos.\n- **Ingeniero de datos**: construye canalizaciones e integra fuentes.\n- **Analista de datos**: modela y visualiza para generar conocimiento.\n\n> **En el examen:** asocia cada dato (tabla, JSON, imagen) con su tipo y distingue siempre **OLTP** (operación diaria) de **OLAP** (análisis histórico)."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un archivo JSON con campos anidados que pueden variar entre registros, ¿qué tipo de datos representa?",
+          "opciones": [
+            "Datos estructurados",
+            "Datos semiestructurados",
+            "Datos no estructurados",
+            "Datos transaccionales"
+          ],
+          "correctas": [1],
+          "explicacion": "El JSON tiene estructura flexible basada en claves que puede variar entre registros, lo que define a los datos semiestructurados."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una tienda en línea registra cada compra al instante con operaciones pequeñas y frecuentes. ¿Qué tipo de carga de trabajo es?",
+          "opciones": [
+            "Analítica (OLAP)",
+            "Transaccional (OLTP)",
+            "Minería de texto",
+            "Procesamiento por lotes histórico"
+          ],
+          "correctas": [1],
+          "explicacion": "Muchas operaciones pequeñas y rápidas de lectura/escritura en tiempo real son propias de una carga transaccional (OLTP)."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de las siguientes son responsabilidades típicas de un ingeniero de datos?",
+          "opciones": [
+            "Construir canalizaciones que muevan datos entre sistemas",
+            "Integrar y transformar fuentes de datos heterogéneas",
+            "Diseñar paneles e informes finales para el negocio",
+            "Orquestar procesos de ingesta y carga de datos",
+            "Aprobar el presupuesto anual de marketing"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "El ingeniero de datos construye e integra canalizaciones de ingesta y transformación. Diseñar informes es del analista y aprobar presupuestos no es un rol de datos."
+        }
+      ]
+    },
+    {
+      "slug": "datos-relacionales-azure",
+      "nombre": "Datos relacionales en Azure",
+      "dominio": "Identificar cómo trabajar con datos relacionales en Azure",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Servicios relacionales y modelo de datos",
+        "markdown": "## El modelo relacional\nLos datos relacionales se organizan en **tablas** con filas y columnas, vinculadas mediante **claves primarias** y **claves foráneas**. El esquema se define antes de cargar los datos.\n\n## Servicios relacionales en Azure\n- **Azure SQL Database**: base de datos PaaS totalmente administrada, ideal para apps modernas.\n- **Azure SQL Managed Instance**: máxima compatibilidad con SQL Server para migraciones.\n- **SQL Server en máquina virtual (IaaS)**: control total del sistema operativo y del motor.\n- **Azure Database for PostgreSQL / MySQL / MariaDB**: motores de código abierto administrados.\n\n## IaaS frente a PaaS\n- **IaaS**: tú administras parches, respaldos y alta disponibilidad.\n- **PaaS**: Azure se encarga de la infraestructura y el mantenimiento; tú te enfocas en los datos.\n\n## Consultar los datos\nSe usa **SQL**: `SELECT` lee, `INSERT` agrega, `UPDATE` modifica y `DELETE` elimina filas.\n\n> **En el examen:** recuerda que PaaS reduce la administración frente a IaaS y que Managed Instance es la opción de máxima compatibilidad para migrar SQL Server."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué elemento vincula una tabla con otra en un modelo relacional?",
+          "opciones": [
+            "Una clave foránea",
+            "Un índice de texto completo",
+            "Una partición",
+            "Un contenedor de blobs"
+          ],
+          "correctas": [0],
+          "explicacion": "La clave foránea referencia la clave primaria de otra tabla y establece la relación entre ambas."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Necesitas migrar SQL Server local a Azure con la máxima compatibilidad y mínimos cambios. ¿Qué servicio eliges?",
+          "opciones": [
+            "Azure Cosmos DB",
+            "Azure SQL Managed Instance",
+            "Azure Blob Storage",
+            "Azure Table Storage"
+          ],
+          "correctas": [1],
+          "explicacion": "Azure SQL Managed Instance ofrece casi total compatibilidad con SQL Server, ideal para migraciones con cambios mínimos."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles de las siguientes son ventajas de usar una oferta PaaS como Azure SQL Database frente a SQL Server en una máquina virtual?",
+          "opciones": [
+            "Azure aplica los parches del motor automáticamente",
+            "Respaldos automáticos administrados por la plataforma",
+            "Control total sobre el sistema operativo subyacente",
+            "Alta disponibilidad integrada sin configurarla manualmente",
+            "Menor carga de administración de infraestructura"
+          ],
+          "correctas": [0, 1, 3, 4],
+          "explicacion": "PaaS automatiza parches, respaldos y alta disponibilidad y reduce la administración. El control total del sistema operativo es propio de IaaS (la máquina virtual), no de PaaS."
+        }
+      ]
+    },
+    {
+      "slug": "datos-no-relacionales-azure",
+      "nombre": "Datos no relacionales en Azure",
+      "dominio": "Describir cómo trabajar con datos no relacionales en Azure",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Almacenamiento NoSQL y Azure Storage",
+        "markdown": "## Datos no relacionales\nLos datos **no relacionales (NoSQL)** no exigen un esquema fijo y escalan bien con grandes volúmenes y formatos variados.\n\n## Servicios de Azure Cosmos DB\n**Azure Cosmos DB** es la base de datos NoSQL distribuida globalmente, con varias APIs:\n- **API for NoSQL**: documentos JSON.\n- **API for MongoDB**: compatible con apps Mongo existentes.\n- **API for Cassandra**: datos en columnas anchas.\n- **API for Table** y **API for Gremlin** (grafos).\n\n## Azure Storage\n- **Blob Storage**: objetos no estructurados (imágenes, video, copias de seguridad).\n- **Azure Files**: recursos compartidos de archivos por SMB.\n- **Table Storage**: pares clave-valor económicos a gran escala.\n- **Queue Storage**: mensajes para comunicar componentes.\n\n## Cuándo elegirlo\nNoSQL brilla cuando el esquema cambia, se requiere baja latencia global o se manejan documentos y grandes archivos.\n\n> **En el examen:** vincula cada necesidad (documentos JSON, grafos, archivos binarios, colas) con la API de Cosmos DB o el tipo de Azure Storage correcto."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Necesitas guardar imágenes y videos de gran tamaño como objetos no estructurados. ¿Qué servicio de Azure Storage usarías?",
+          "opciones": [
+            "Queue Storage",
+            "Blob Storage",
+            "Table Storage",
+            "Azure Files"
+          ],
+          "correctas": [1],
+          "explicacion": "Blob Storage está diseñado para almacenar objetos binarios no estructurados como imágenes, video y copias de seguridad."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una aplicación existente usa MongoDB y quieres migrarla a Azure con cambios mínimos en el código. ¿Qué API de Cosmos DB eliges?",
+          "opciones": [
+            "API for Cassandra",
+            "API for Gremlin",
+            "API for MongoDB",
+            "API for Table"
+          ],
+          "correctas": [2],
+          "explicacion": "La API for MongoDB de Cosmos DB es compatible con aplicaciones MongoDB existentes, lo que minimiza los cambios al migrar."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de los siguientes son servicios incluidos en una cuenta de Azure Storage?",
+          "opciones": [
+            "Blob Storage para objetos no estructurados",
+            "Queue Storage para mensajería entre componentes",
+            "Azure Files para recursos compartidos por SMB",
+            "Table Storage para pares clave-valor",
+            "Azure Synapse Analytics para almacenamiento de datos analíticos"
+          ],
+          "correctas": [0, 1, 2, 3],
+          "explicacion": "Blob, Queue, Files y Table son servicios de una cuenta de Azure Storage. Azure Synapse Analytics es un servicio analítico independiente, no parte de Azure Storage."
+        }
+      ]
+    },
+    {
+      "slug": "almacenamiento-analitico",
+      "nombre": "Almacenamiento de datos analíticos en Azure",
+      "dominio": "Describir una carga de trabajo de análisis de datos en Azure",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Data warehouse, data lake y arquitectura analítica",
+        "markdown": "## De los datos operativos al análisis\nLa **analítica a gran escala** consolida datos de muchas fuentes para responder preguntas de negocio sobre grandes históricos.\n\n## Componentes clave\n- **Data lake**: repositorio que guarda datos en bruto de cualquier formato (sobre Azure Data Lake Storage).\n- **Data warehouse**: almacén con datos modelados y limpios, optimizado para consultas analíticas.\n- **ETL / ELT**: procesos que **extraen**, **transforman** y **cargan** datos. En **ELT** la transformación ocurre tras cargar, aprovechando el motor destino.\n\n## Servicios de Azure\n- **Azure Synapse Analytics**: plataforma unificada de ingesta, almacén y análisis a gran escala.\n- **Azure Data Factory**: orquesta canalizaciones de ingesta y transformación sin/con poco código.\n- **Azure Databricks**: análisis y procesamiento basado en Apache Spark.\n- **Microsoft Fabric**: solución integral de analítica de extremo a extremo.\n\n> **En el examen:** distingue **data lake** (datos en bruto) de **data warehouse** (datos modelados) y recuerda que Data Factory orquesta, mientras Synapse consolida ingesta, almacén y consulta."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál es la principal diferencia entre un data lake y un data warehouse?",
+          "opciones": [
+            "El data lake guarda datos en bruto de cualquier formato; el data warehouse guarda datos modelados y limpios",
+            "El data warehouse solo almacena imágenes y video",
+            "El data lake únicamente admite datos relacionales con esquema fijo",
+            "No existe diferencia real entre ambos"
+          ],
+          "correctas": [0],
+          "explicacion": "El data lake almacena datos en bruto de cualquier formato, mientras que el data warehouse contiene datos ya modelados y optimizados para análisis."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué servicio de Azure está pensado principalmente para orquestar canalizaciones de ingesta y transformación de datos?",
+          "opciones": [
+            "Azure Data Factory",
+            "Azure Blob Storage",
+            "Azure SQL Managed Instance",
+            "Azure Files"
+          ],
+          "correctas": [0],
+          "explicacion": "Azure Data Factory es el servicio de orquestación de canalizaciones de ingesta y transformación (ETL/ELT) en Azure."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "En un proceso de ELT (extraer, cargar, transformar), ¿cuáles de las siguientes afirmaciones son correctas?",
+          "opciones": [
+            "Los datos se cargan en el destino antes de transformarlos",
+            "La transformación aprovecha la potencia del motor de destino",
+            "Es útil para grandes volúmenes en almacenes analíticos modernos",
+            "La transformación siempre ocurre antes de cargar los datos",
+            "Es lo mismo que ETL solo que con otro nombre, sin diferencia de orden"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "En ELT se carga primero y se transforma después usando el motor de destino, lo que conviene para grandes volúmenes. Transformar antes de cargar describe a ETL, y el orden sí marca la diferencia entre ambos."
+        }
+      ]
+    },
+    {
+      "slug": "procesamiento-analitico",
+      "nombre": "Procesamiento analítico y modelado",
+      "dominio": "Describir una carga de trabajo de análisis de datos en Azure",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Lotes, streaming y modelos analíticos",
+        "markdown": "## Formas de procesar datos\n- **Por lotes (batch)**: se acumulan datos y se procesan en grupos a intervalos; alta latencia, gran volumen (informes nocturnos).\n- **En streaming**: se procesa cada evento al llegar, en tiempo casi real (sensores IoT, telemetría).\n\n## Servicios de streaming en Azure\n- **Azure Stream Analytics**: consultas en tiempo real sobre flujos de eventos.\n- **Azure Event Hubs**: ingesta de grandes volúmenes de eventos.\n\n## Modelado analítico\nEl **modelo analítico** suele seguir un **esquema en estrella**:\n- **Tablas de hechos**: contienen las métricas o medidas numéricas (ventas, cantidades).\n- **Tablas de dimensiones**: describen el contexto (tiempo, producto, cliente).\n\n## Agregación\nLas consultas analíticas **agregan** datos (sumas, promedios, conteos) a distintos niveles de detalle para descubrir tendencias.\n\n> **En el examen:** asocia latencia alta y volumen con **batch**, y tiempo real con **streaming**; recuerda que en un esquema en estrella los **hechos** llevan las medidas y las **dimensiones** el contexto."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Una fábrica analiza la telemetría de sus sensores en tiempo casi real conforme llegan los eventos. ¿Qué tipo de procesamiento es?",
+          "opciones": [
+            "Procesamiento por lotes",
+            "Procesamiento en streaming",
+            "Carga de data warehouse nocturna",
+            "Respaldo programado"
+          ],
+          "correctas": [1],
+          "explicacion": "Procesar cada evento conforme llega, en tiempo casi real, es procesamiento en streaming, ideal para telemetría de sensores."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En un esquema en estrella, ¿qué contiene una tabla de hechos?",
+          "opciones": [
+            "Descripciones de productos y clientes",
+            "Las métricas o medidas numéricas del negocio",
+            "Únicamente la fecha y la hora",
+            "Definiciones de seguridad y permisos"
+          ],
+          "correctas": [1],
+          "explicacion": "La tabla de hechos almacena las medidas numéricas (ventas, cantidades); las dimensiones aportan el contexto descriptivo."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de las siguientes afirmaciones sobre el procesamiento por lotes y en streaming son correctas?",
+          "opciones": [
+            "El procesamiento por lotes suele tener mayor latencia que el streaming",
+            "El streaming procesa los eventos casi en el momento en que llegan",
+            "Azure Stream Analytics permite consultas en tiempo real sobre flujos",
+            "El procesamiento por lotes es ideal para detectar fraude en tiempo real",
+            "El batch es adecuado para informes periódicos sobre grandes volúmenes"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "El batch tiene más latencia y sirve para informes periódicos; el streaming procesa al instante y Stream Analytics consulta flujos en tiempo real. Detectar fraude en tiempo real es un caso de streaming, no de batch."
+        }
+      ]
+    },
+    {
+      "slug": "visualizacion-power-bi",
+      "nombre": "Visualización de datos con Power BI",
+      "dominio": "Describir una carga de trabajo de análisis de datos en Azure",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Informes, paneles y visualizaciones",
+        "markdown": "## El último paso del análisis\nDespués de almacenar y procesar, los datos se **visualizan** para convertirlos en decisiones. **Power BI** es la herramienta de Microsoft para esta capa.\n\n## Componentes de Power BI\n- **Power BI Desktop**: aplicación de escritorio para modelar datos y crear informes.\n- **Servicio Power BI**: plataforma en la nube para publicar y compartir.\n- **Aplicaciones móviles**: consumo de informes desde el teléfono.\n\n## Conceptos clave\n- **Informe (report)**: una o varias páginas de visualizaciones sobre un modelo de datos.\n- **Panel (dashboard)**: lienzo de una sola página que reúne los elementos más relevantes.\n- **Visualización**: representación gráfica de los datos.\n\n## Elegir la visualización correcta\n- **Gráfico de barras/columnas**: comparar categorías.\n- **Gráfico de líneas**: tendencias a lo largo del tiempo.\n- **Gráfico circular**: proporción respecto a un total.\n- **Tarjeta**: mostrar un único valor o KPI.\n\n> **En el examen:** distingue **informe** (varias páginas y detalle) de **panel** (resumen de una página) y asocia cada gráfico con su propósito: tendencia temporal usa líneas, comparación usa barras."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Quieres mostrar la evolución de las ventas mes a mes durante un año. ¿Qué visualización es la más adecuada?",
+          "opciones": [
+            "Gráfico circular",
+            "Gráfico de líneas",
+            "Tarjeta de KPI único",
+            "Mapa de calor de tabla"
+          ],
+          "correctas": [1],
+          "explicacion": "El gráfico de líneas es el más adecuado para mostrar tendencias y la evolución de un valor a lo largo del tiempo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuál es la diferencia principal entre un informe y un panel en Power BI?",
+          "opciones": [
+            "El informe es de una sola página y el panel tiene varias",
+            "El panel es un lienzo de una sola página que resume lo más relevante; el informe puede tener varias páginas con detalle",
+            "El panel solo se ve en escritorio y el informe solo en la nube",
+            "No hay diferencia, son sinónimos"
+          ],
+          "correctas": [1],
+          "explicacion": "El panel (dashboard) es un lienzo de una página con lo más relevante, mientras que el informe puede contener varias páginas con mayor nivel de detalle."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles de los siguientes forman parte del ecosistema de Power BI?",
+          "opciones": [
+            "Power BI Desktop para crear y modelar informes",
+            "El servicio Power BI para publicar y compartir en la nube",
+            "Las aplicaciones móviles de Power BI",
+            "Azure Cosmos DB como motor de visualización integrado",
+            "El bloc de notas de Windows como editor oficial de informes"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Power BI Desktop, el servicio en la nube y las apps móviles forman el ecosistema de Power BI. Cosmos DB es una base de datos, no un motor de visualización, y el bloc de notas no es una herramienta de Power BI."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,343 @@
+{
+  "slug": "aws-machine-learning-engineer-associate",
+  "nombre": "AWS Certified Machine Learning Engineer – Associate",
+  "proveedor": "AWS",
+  "nivel": "associate",
+  "area": "IA",
+  "descripcion": "Valida la capacidad de construir, desplegar y operar modelos de machine learning en producción sobre AWS, cubriendo el ciclo completo desde la preparación de datos hasta el monitoreo continuo. Enfocada en perfiles que llevan modelos a producción con prácticas de MLOps.",
+  "skills": [
+    "SageMaker",
+    "ingenieria de features",
+    "pipelines de datos",
+    "entrenamiento de modelos",
+    "ajuste de hiperparametros",
+    "despliegue de endpoints",
+    "MLOps",
+    "monitoreo de modelos",
+    "deteccion de drift",
+    "seguridad en ML",
+    "CI/CD para ML",
+    "optimizacion de costos"
+  ],
+  "roles": [
+    "Ingeniero de Machine Learning",
+    "Ingeniero de MLOps",
+    "Cientifico de datos aplicado",
+    "Ingeniero de datos con foco en ML",
+    "Arquitecto de soluciones de IA"
+  ],
+  "temas": [
+    {
+      "slug": "preparacion-de-datos",
+      "nombre": "Preparación de datos para ML",
+      "dominio": "Dominio 1: Preparación de datos para el modelado de machine learning",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Ingesta, limpieza y transformación de datos",
+        "markdown": "## Por qué importa\nUn modelo solo es tan bueno como los datos que recibe. Esta etapa convierte datos crudos en **features** listos para entrenar.\n\n## Ingesta y formatos\n- Para entrenamiento masivo prefiere formatos columnares como **Parquet** sobre CSV: menor tamaño y lectura selectiva.\n- Usa **Amazon S3** como lago central y catalogа esquemas con **AWS Glue Data Catalog**.\n\n## Transformación\n- **SageMaker Data Wrangler**: exploración visual y más de 300 transformaciones sin código.\n- **AWS Glue** (Spark) para ETL a gran escala; **SageMaker Processing** para jobs de limpieza reproducibles.\n\n## Calidad y fugas\n- Maneja **valores faltantes** (imputación) y **categóricas** (one-hot, embeddings).\n- Evita el **data leakage**: nunca calcules estadísticas de normalización usando el conjunto de prueba.\n- Aplica **estratificación** al dividir train/validation/test si hay clases desbalanceadas.\n\n> **En el examen:** distingue cuándo usar Data Wrangler (exploración interactiva) frente a Glue (ETL productivo a escala) y reconoce los síntomas de fuga de datos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un equipo entrena modelos sobre datasets de cientos de GB y necesita lectura eficiente de columnas específicas. ¿Qué formato de almacenamiento es el más adecuado?",
+          "opciones": [
+            "CSV sin comprimir",
+            "Parquet",
+            "JSON línea por línea",
+            "Texto plano delimitado por tabuladores"
+          ],
+          "correctas": [1],
+          "explicacion": "Parquet es un formato columnar comprimido que permite leer solo las columnas necesarias, reduciendo I/O y costos frente a formatos de texto fila por fila como CSV o JSON."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de las siguientes prácticas ayudan a prevenir el data leakage durante la preparación de datos? (Selecciona todas las que apliquen.)",
+          "opciones": [
+            "Calcular la media y desviación para normalizar usando solo el conjunto de entrenamiento",
+            "Dividir los datos en train/test antes de ajustar transformaciones",
+            "Incluir una variable que solo se conoce después del evento a predecir",
+            "Aplicar la misma transformación ajustada en train al conjunto de prueba",
+            "Usar el dataset completo para seleccionar features por correlación con la etiqueta"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "Ajustar estadísticas solo con train, dividir antes de transformar y reaplicar la transformación ya ajustada evitan fugas. Incluir variables del futuro o seleccionar features con todo el dataset filtra información del conjunto de prueba al modelo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un analista quiere explorar visualmente un dataset y aplicar transformaciones rápidas sin escribir código antes de entrenar. ¿Qué servicio encaja mejor?",
+          "opciones": [
+            "Amazon Athena",
+            "SageMaker Data Wrangler",
+            "AWS Lambda",
+            "Amazon Kinesis Data Streams"
+          ],
+          "correctas": [1],
+          "explicacion": "SageMaker Data Wrangler ofrece una interfaz visual con cientos de transformaciones predefinidas para preparar datos sin código, ideal para exploración previa al entrenamiento."
+        }
+      ]
+    },
+    {
+      "slug": "ingenieria-de-features",
+      "nombre": "Ingeniería de features y Feature Store",
+      "dominio": "Dominio 1: Preparación de datos para el modelado de machine learning",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Creación, escalado y reutilización de features",
+        "markdown": "## Qué es un feature\nUn **feature** es una variable de entrada que el modelo usa para aprender. Buena ingeniería suele rendir más que un algoritmo más complejo.\n\n## Técnicas comunes\n- **Escalado**: normalización (0–1) o estandarización (media 0, desviación 1) para algoritmos sensibles a magnitud.\n- **Codificación**: one-hot para categóricas de baja cardinalidad; **target/embedding** para alta cardinalidad.\n- **Binning** y features de fecha (día de semana, hora) para capturar estacionalidad.\n\n## Feature Store\n- **SageMaker Feature Store** centraliza features con un **online store** (baja latencia para inferencia) y un **offline store** (histórico en S3 para entrenamiento).\n- Resuelve el **training–serving skew**: las mismas definiciones se usan en entrenamiento e inferencia.\n\n## Desbalance\n- Para clases raras considera **SMOTE**, sobremuestreo o ponderación de clases.\n\n> **En el examen:** recuerda que el online store sirve features con baja latencia y el offline store alimenta el entrenamiento; ambos garantizan consistencia."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una aplicación de inferencia en tiempo real necesita recuperar features con muy baja latencia por cada petición. ¿Qué componente de SageMaker Feature Store debe consultar?",
+          "opciones": [
+            "El offline store en S3",
+            "El online store",
+            "El Data Catalog de Glue",
+            "Un bucket de respaldo en S3 Glacier"
+          ],
+          "correctas": [1],
+          "explicacion": "El online store de Feature Store está diseñado para lecturas de baja latencia durante la inferencia en tiempo real; el offline store sirve para entrenamiento por lotes."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué problemas ayuda a mitigar SageMaker Feature Store en un flujo de ML? (Selecciona todas las que apliquen.)",
+          "opciones": [
+            "Inconsistencia entre features de entrenamiento e inferencia (training–serving skew)",
+            "Duplicación de lógica de transformación entre equipos",
+            "El sesgo inherente del algoritmo de aprendizaje",
+            "Reutilización de features ya calculados entre múltiples modelos",
+            "La elección del valor óptimo de tasa de aprendizaje"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "Feature Store centraliza definiciones de features para evitar skew, reduce duplicación de lógica y permite reutilizarlos entre modelos. No afecta el sesgo del algoritmo ni el ajuste de hiperparámetros como la tasa de aprendizaje."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un dataset de fraude tiene 99% de transacciones legítimas y 1% fraudulentas. ¿Qué técnica aborda directamente este desbalance de clases?",
+          "opciones": [
+            "Aumentar el número de épocas de entrenamiento",
+            "Aplicar sobremuestreo de la clase minoritaria con SMOTE",
+            "Reducir la dimensionalidad con PCA",
+            "Cambiar el formato de los datos a Parquet"
+          ],
+          "correctas": [1],
+          "explicacion": "SMOTE genera ejemplos sintéticos de la clase minoritaria para equilibrar la distribución, lo que ayuda al modelo a aprender los patrones de la clase rara (fraude)."
+        }
+      ]
+    },
+    {
+      "slug": "entrenamiento-y-tuning",
+      "nombre": "Entrenamiento y ajuste de modelos",
+      "dominio": "Dominio 2: Desarrollo de modelos de machine learning",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Algoritmos, hiperparámetros y evaluación",
+        "markdown": "## Opciones de entrenamiento\n- **Algoritmos integrados** de SageMaker (XGBoost, Linear Learner) para casos comunes.\n- **Script mode / contenedores propios** para frameworks como PyTorch o TensorFlow.\n- **JumpStart** para modelos preentrenados y fine-tuning rápido.\n\n## Ajuste de hiperparámetros\n- **Automatic Model Tuning (AMT)** busca el mejor conjunto con estrategias **Bayesiana**, aleatoria o grid.\n- Define una **métrica objetivo** (p. ej. validación AUC) que el tuner optimiza.\n\n## Diagnóstico\n- **Overfitting**: bueno en train, malo en validación → regularización, más datos, early stopping.\n- **Underfitting**: malo en ambos → modelo más complejo o mejores features.\n\n## Métricas\n- Clasificación: **precisión, recall, F1, AUC**; usa recall cuando los falsos negativos son costosos.\n- Regresión: **RMSE, MAE**.\n\n> **En el examen:** elige la métrica según el costo del error y reconoce overfitting por la brecha entre train y validación."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un modelo de detección de enfermedades debe minimizar los casos positivos que pasan desapercibidos. ¿Qué métrica conviene priorizar?",
+          "opciones": [
+            "Recall (sensibilidad)",
+            "Precisión",
+            "RMSE",
+            "Exactitud (accuracy) global"
+          ],
+          "correctas": [0],
+          "explicacion": "El recall mide la proporción de positivos reales detectados. Cuando los falsos negativos (casos no detectados) son costosos, como en diagnóstico médico, se prioriza el recall."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un modelo alcanza 98% de exactitud en entrenamiento pero solo 70% en validación. ¿Qué situación describe esto?",
+          "opciones": [
+            "Underfitting",
+            "Overfitting",
+            "Data leakage en el conjunto de prueba",
+            "Un problema de escalado de features"
+          ],
+          "correctas": [1],
+          "explicacion": "La gran brecha entre el desempeño en entrenamiento y validación indica overfitting: el modelo memoriza el train pero no generaliza. Se mitiga con regularización, más datos o early stopping."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué afirmaciones sobre SageMaker Automatic Model Tuning (AMT) son correctas? (Selecciona todas las que apliquen.)",
+          "opciones": [
+            "Puede usar una estrategia de búsqueda Bayesiana para encontrar hiperparámetros",
+            "Optimiza una métrica objetivo definida por el usuario",
+            "Garantiza que se eliminará por completo el overfitting",
+            "Permite acotar rangos para cada hiperparámetro a explorar",
+            "Reemplaza la necesidad de un conjunto de validación"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "AMT soporta búsqueda Bayesiana, aleatoria y grid; optimiza una métrica objetivo dentro de rangos definidos por el usuario. No elimina el overfitting por sí solo ni sustituye el conjunto de validación, que es justamente donde mide la métrica."
+        }
+      ]
+    },
+    {
+      "slug": "despliegue-de-modelos",
+      "nombre": "Despliegue e inferencia",
+      "dominio": "Dominio 3: Despliegue y orquestación de flujos de trabajo de ML",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Endpoints, batch y estrategias de release",
+        "markdown": "## Opciones de inferencia\n- **Real-time endpoints**: baja latencia, tráfico constante; escalan con auto scaling.\n- **Serverless inference**: tráfico intermitente; sin gestionar capacidad.\n- **Asynchronous inference**: payloads grandes o latencia tolerante; cola interna.\n- **Batch Transform**: predicción masiva offline sobre datos en S3.\n\n## Estrategias de release\n- **Blue/Green** y **canary** para desplegar nuevas versiones con riesgo controlado.\n- **Shadow testing**: el modelo nuevo recibe tráfico real sin afectar respuestas.\n- **Multi-model endpoints** para servir muchos modelos tras un mismo endpoint y ahorrar costos.\n\n## Orquestación\n- **SageMaker Pipelines** define el flujo (procesar → entrenar → evaluar → registrar → desplegar).\n- **Model Registry** versiona modelos y gestiona su aprobación.\n\n> **En el examen:** asocia el patrón de tráfico con el tipo de inferencia (constante→real-time, intermitente→serverless, payload grande→async, masivo offline→batch)."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una empresa necesita generar predicciones sobre 50 millones de registros almacenados en S3 una vez por noche, sin requisitos de latencia. ¿Qué opción de inferencia es la más adecuada y económica?",
+          "opciones": [
+            "Un endpoint en tiempo real con auto scaling",
+            "Batch Transform",
+            "Inferencia serverless",
+            "Inferencia asíncrona"
+          ],
+          "correctas": [1],
+          "explicacion": "Batch Transform está diseñado para inferencia masiva offline sobre datos en S3. Al no mantener un endpoint encendido, es más económico para cargas programadas sin necesidad de latencia baja."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un servicio recibe tráfico muy intermitente e impredecible y el equipo no quiere gestionar capacidad ni pagar por instancias inactivas. ¿Qué tipo de endpoint conviene?",
+          "opciones": [
+            "Real-time endpoint con instancia dedicada permanente",
+            "SageMaker Serverless Inference",
+            "Batch Transform",
+            "Un cluster EMR con Spark"
+          ],
+          "correctas": [1],
+          "explicacion": "Serverless Inference escala automáticamente según la demanda y cobra por uso, evitando pagar por instancias inactivas. Es ideal para tráfico intermitente e impredecible."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué estrategias permiten validar un modelo nuevo en producción reduciendo el riesgo para los usuarios? (Selecciona todas las que apliquen.)",
+          "opciones": [
+            "Despliegue canary que envía un pequeño porcentaje del tráfico al modelo nuevo",
+            "Shadow testing que replica tráfico real sin devolver sus respuestas al usuario",
+            "Despliegue blue/green con conmutación controlada y rollback rápido",
+            "Eliminar el conjunto de validación para acelerar el release",
+            "Entrenar el modelo directamente sobre el endpoint de producción"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Canary, shadow testing y blue/green permiten introducir un modelo nuevo gradualmente o en paralelo con rollback rápido. Eliminar la validación o entrenar sobre producción aumenta el riesgo en lugar de reducirlo."
+        }
+      ]
+    },
+    {
+      "slug": "mlops-cicd",
+      "nombre": "MLOps, CI/CD y automatización",
+      "dominio": "Dominio 3: Despliegue y orquestación de flujos de trabajo de ML",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Pipelines reproducibles y entrega continua",
+        "markdown": "## Qué es MLOps\nLleva prácticas de DevOps al ciclo de ML: **reproducibilidad, automatización y gobernanza** de datos, modelos y despliegues.\n\n## Componentes en AWS\n- **SageMaker Pipelines**: orquesta pasos (procesar, entrenar, evaluar, registrar).\n- **Model Registry**: versiona y aprueba modelos antes de producción.\n- **SageMaker Projects**: plantillas de MLOps con CI/CD integrado.\n- **CodePipeline / CodeBuild** para automatizar build, test y despliegue.\n\n## Buenas prácticas\n- Versiona **datos, código y modelos**; registra **lineage** para auditoría.\n- Automatiza el **reentrenamiento** disparado por eventos (nuevos datos o drift).\n- Usa **infraestructura como código** (CloudFormation/CDK) para entornos consistentes.\n\n## Disparadores\n- **EventBridge** para orquestar reentrenamientos programados o por eventos.\n\n> **En el examen:** identifica qué servicio versiona y aprueba modelos (Model Registry) y cómo se automatiza un reentrenamiento ante la llegada de nuevos datos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué componente de SageMaker se usa para versionar modelos y gestionar su aprobación antes de pasar a producción?",
+          "opciones": [
+            "SageMaker Model Registry",
+            "SageMaker Data Wrangler",
+            "Amazon S3 Glacier",
+            "SageMaker Ground Truth"
+          ],
+          "correctas": [0],
+          "explicacion": "El Model Registry cataloga versiones de modelos y permite gestionar su estado de aprobación, integrándose con pipelines de CI/CD para promover solo modelos aprobados."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Para automatizar el reentrenamiento de un modelo cuando llegan datos nuevos, ¿qué elementos podrían formar parte de la solución? (Selecciona todas las que apliquen.)",
+          "opciones": [
+            "Una regla de Amazon EventBridge que dispara el pipeline",
+            "Un SageMaker Pipeline que reentrena y evalúa el modelo",
+            "Registro del nuevo modelo en el Model Registry tras pasar la evaluación",
+            "Editar manualmente los pesos del modelo en el endpoint",
+            "Un cuaderno ejecutado a mano cada vez por un ingeniero"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "EventBridge dispara el pipeline, SageMaker Pipelines reentrena y evalúa, y el Model Registry versiona el resultado aprobado. Editar pesos a mano o depender de ejecuciones manuales contradice la automatización de MLOps."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un equipo quiere garantizar que sus entornos de entrenamiento y despliegue sean reproducibles y versionados. ¿Qué práctica lo logra mejor?",
+          "opciones": [
+            "Crear los recursos manualmente desde la consola cada vez",
+            "Definir la infraestructura como código con CloudFormation o CDK",
+            "Guardar capturas de pantalla de la configuración",
+            "Compartir credenciales de larga duración entre el equipo"
+          ],
+          "correctas": [1],
+          "explicacion": "La infraestructura como código (CloudFormation/CDK) hace que los entornos sean versionables, reproducibles y auditables, eliminando la deriva de configuración propia del aprovisionamiento manual."
+        }
+      ]
+    },
+    {
+      "slug": "monitoreo-seguridad",
+      "nombre": "Monitoreo, drift y seguridad",
+      "dominio": "Dominio 4: Monitoreo, mantenimiento y seguridad de soluciones de ML",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Observabilidad, drift y control de acceso",
+        "markdown": "## Monitoreo de modelos\n- **SageMaker Model Monitor** detecta **data drift** (cambia la distribución de entrada) y **model quality drift** (cae la calidad de predicción).\n- Define una **baseline** y recibe alertas vía **CloudWatch** cuando se superan umbrales.\n- **Clarify** ayuda a detectar **sesgo** y a explicar predicciones (feature importance).\n\n## Observabilidad operativa\n- **CloudWatch** para latencia, invocaciones y errores del endpoint.\n- **CloudTrail** para auditar llamadas a la API.\n\n## Seguridad\n- **IAM** con privilegio mínimo para roles de SageMaker.\n- **VPC, cifrado en reposo (KMS)** y en tránsito (TLS) para datos y modelos.\n- Aísla cargas sensibles con **endpoints en subredes privadas** sin salida a internet.\n\n## Costos\n- Apaga endpoints ociosos, usa **multi-model endpoints** y considera **Inferentia** para abaratar inferencia.\n\n> **En el examen:** asocia Model Monitor con drift, Clarify con sesgo/explicabilidad y aplica privilegio mínimo y cifrado por defecto."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Tras meses en producción, un modelo empieza a recibir datos de entrada con una distribución distinta a la del entrenamiento, degradando su precisión. ¿Qué herramienta detecta esta situación?",
+          "opciones": [
+            "AWS Cost Explorer",
+            "SageMaker Model Monitor",
+            "Amazon Macie",
+            "AWS Config"
+          ],
+          "correctas": [1],
+          "explicacion": "SageMaker Model Monitor compara los datos de producción contra una baseline para detectar data drift y caídas de calidad, emitiendo alertas vía CloudWatch."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué medidas refuerzan la seguridad de un endpoint de SageMaker que procesa datos sensibles? (Selecciona todas las que apliquen.)",
+          "opciones": [
+            "Asignar roles IAM con privilegio mínimo",
+            "Cifrar los datos en reposo con AWS KMS",
+            "Desplegar el endpoint en subredes privadas dentro de una VPC",
+            "Usar credenciales de acceso embebidas en el código del modelo",
+            "Cifrar el tráfico en tránsito con TLS"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Privilegio mínimo, cifrado en reposo con KMS, aislamiento en VPC privada y TLS en tránsito son controles correctos. Embeber credenciales en el código es una mala práctica que expone secretos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un equipo de cumplimiento necesita explicar qué features influyeron en las predicciones de un modelo y verificar que no haya sesgo contra ciertos grupos. ¿Qué servicio usar?",
+          "opciones": [
+            "SageMaker Clarify",
+            "Amazon Kinesis Data Firehose",
+            "AWS Glue DataBrew",
+            "Amazon QuickSight"
+          ],
+          "correctas": [0],
+          "explicacion": "SageMaker Clarify analiza la importancia de features para explicar predicciones y detecta sesgo en datos y modelos, lo que apoya requisitos de transparencia y cumplimiento."
+        }
+      ]
+    }
+  ]
+}

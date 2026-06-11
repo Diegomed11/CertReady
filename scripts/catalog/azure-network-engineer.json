@@ -1,0 +1,228 @@
+{
+  "slug": "azure-network-engineer",
+  "nombre": "Microsoft Certified: Azure Network Engineer Associate (AZ-700)",
+  "proveedor": "Microsoft",
+  "nivel": "associate",
+  "area": "Redes",
+  "descripcion": "Certificacion enfocada en el diseno, la implementacion y el mantenimiento de la infraestructura de red en Azure: conectividad hibrida, enrutamiento, entrega de aplicaciones, acceso privado y seguridad de red. Dirigida a profesionales de redes que operan entornos en la nube de Microsoft.",
+  "skills": ["redes virtuales", "emparejamiento de vnet", "vpn gateway", "expressroute", "enrutamiento", "tablas de rutas", "balanceo de carga", "load balancer", "application gateway", "private endpoint", "grupos de seguridad de red", "azure firewall"],
+  "roles": ["ingeniero de redes en la nube", "administrador de infraestructura", "arquitecto de conectividad", "especialista en seguridad de red", "ingeniero de operaciones de red"],
+  "temas": [
+    {
+      "slug": "infraestructura-red-nucleo",
+      "nombre": "Infraestructura de red de nucleo",
+      "dominio": "Disenar e implementar infraestructura de red de nucleo",
+      "orden": 1,
+      "hoja": {
+        "titulo": "VNets, subredes y conectividad hibrida",
+        "markdown": "## Red virtual y subredes\nLa **red virtual (VNet)** es el limite de red privado en Azure. Se define con uno o varios **espacios de direcciones** (CIDR) que se dividen en **subredes**. Los rangos no deben solaparse entre VNets que vayas a conectar.\n\n## Conectar VNets\n- **Emparejamiento (peering)**: conexion privada y de baja latencia entre dos VNets a traves de la red troncal de Microsoft. **No es transitivo**: si A se empareja con B y B con C, A no alcanza a C sin pasos extra.\n- El **transito por puerta de enlace** permite que una VNet emparejada use la VPN o ExpressRoute de otra.\n\n## Conectividad hibrida\n- **VPN Gateway**: tunel **IPsec/IKE** cifrado sobre internet hacia la red local (site-to-site) o usuarios (point-to-site).\n- **ExpressRoute**: circuito **privado y dedicado** de un proveedor, sin pasar por internet, con mayor ancho de banda y latencia estable.\n\n> **En el examen:** recuerda que el peering no es transitivo, evita CIDR solapados al conectar VNets y elige ExpressRoute cuando se exija una conexion privada que no use internet publico."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Una empresa necesita conectar su red local con Azure mediante una conexion privada y dedicada que no utilice internet publico. Que servicio debe elegir?",
+          "opciones": ["VPN Gateway site-to-site", "ExpressRoute", "Emparejamiento de VNet", "Punto de conexion privado"],
+          "correctas": [1],
+          "explicacion": "ExpressRoute provee un circuito privado y dedicado a traves de un proveedor de conectividad, sin atravesar internet publico, a diferencia de la VPN site-to-site que usa un tunel cifrado sobre internet."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "La VNet A esta emparejada con la VNet B, y la VNet B esta emparejada con la VNet C. Por que la VNet A no puede comunicarse con la VNet C de forma predeterminada?",
+          "opciones": ["Porque el emparejamiento de VNet no es transitivo", "Porque los espacios de direcciones se replican automaticamente", "Porque falta una VPN Gateway en la VNet B", "Porque el peering solo admite dos subredes"],
+          "correctas": [0],
+          "explicacion": "El emparejamiento de VNet no es transitivo: cada par de VNets requiere su propia conexion o un componente de transito (como un hub con NVA o puerta de enlace) para encadenar el trafico."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de las siguientes afirmaciones sobre redes virtuales y su conectividad en Azure son correctas? Selecciona todas las que apliquen.",
+          "opciones": ["Los espacios de direcciones de dos VNets emparejadas no deben solaparse", "El emparejamiento usa la red troncal de Microsoft y no internet publico", "Una VPN Gateway site-to-site establece un tunel IPsec/IKE", "El emparejamiento de VNet es transitivo de forma predeterminada", "ExpressRoute enruta el trafico a traves de internet publico cifrado"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Los rangos no deben solaparse, el peering viaja por la troncal de Microsoft y la VPN site-to-site usa IPsec/IKE. El peering no es transitivo y ExpressRoute es una conexion privada que no pasa por internet publico."
+        }
+      ]
+    },
+    {
+      "slug": "enrutamiento",
+      "nombre": "Enrutamiento de red",
+      "dominio": "Disenar e implementar enrutamiento",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Rutas del sistema, UDR y NVA",
+        "markdown": "## Rutas del sistema\nAzure crea **rutas del sistema** automaticas para el trafico dentro de la VNet, hacia internet y entre redes conectadas. No se pueden borrar, pero **se pueden anular**.\n\n## Rutas definidas por el usuario (UDR)\nUna **tabla de rutas** con **UDR** sobrescribe las rutas del sistema y se asocia a una **subred**. Cada ruta define un **prefijo de destino** y un **siguiente salto**:\n- **Aplicacion virtual de red (NVA)**: firewall o router de terceros (se indica su IP privada).\n- **Puerta de enlace de red virtual**, **Internet**, **VNet local** o **Ninguno** (descarta el trafico).\n\n## Forzar tunel y seleccion de ruta\n- El **forced tunneling** redirige el trafico saliente a internet hacia la red local para inspeccionarlo.\n- Azure elige por **prefijo mas especifico**; ante empate, prioriza UDR sobre BGP y BGP sobre rutas del sistema.\n\n## BGP\nLa VPN Gateway y ExpressRoute pueden intercambiar rutas dinamicamente con **BGP**, propagando prefijos sin configuracion manual.\n\n> **En el examen:** para forzar el paso por un firewall, crea una UDR con siguiente salto a la IP de la NVA; recuerda el orden de prioridad UDR > BGP > sistema y la regla del prefijo mas especifico."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Necesitas que todo el trafico saliente de una subred pase por un firewall virtual de terceros antes de salir. Que debes configurar?",
+          "opciones": ["Una ruta definida por el usuario con siguiente salto a la IP privada de la NVA", "Un grupo de seguridad de red con una regla de denegacion", "Un emparejamiento de VNet hacia el firewall", "Una etiqueta de servicio en la subred"],
+          "correctas": [0],
+          "explicacion": "Una UDR con prefijo 0.0.0.0/0 y siguiente salto de tipo aplicacion virtual apuntando a la IP privada de la NVA fuerza a que el trafico de la subred pase por el firewall. Los NSG filtran pero no redirigen el siguiente salto."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Para un mismo destino existen una ruta del sistema, una ruta BGP aprendida y una ruta definida por el usuario con igual prefijo. Cual aplica Azure?",
+          "opciones": ["La ruta del sistema", "La ruta BGP", "La ruta definida por el usuario", "Se descarta el trafico por conflicto"],
+          "correctas": [2],
+          "explicacion": "Cuando el prefijo es igual, Azure prioriza la ruta definida por el usuario (UDR) sobre la BGP, y la BGP sobre la ruta del sistema."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de los siguientes son tipos validos de siguiente salto en una ruta definida por el usuario? Selecciona todas las que apliquen.",
+          "opciones": ["Aplicacion virtual de red", "Puerta de enlace de red virtual", "Ninguno (descarta el trafico)", "Grupo de recursos", "Cuenta de almacenamiento"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Los siguientes saltos validos incluyen aplicacion virtual de red, puerta de enlace de red virtual, internet, VNet local y ninguno. Un grupo de recursos o una cuenta de almacenamiento no son destinos de enrutamiento."
+        }
+      ]
+    },
+    {
+      "slug": "entrega-aplicaciones",
+      "nombre": "Servicios de entrega de aplicaciones",
+      "dominio": "Disenar e implementar servicios de entrega de aplicaciones",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Balanceo de carga y entrega global",
+        "markdown": "## Balanceo segun la capa\n- **Load Balancer**: opera en **capa 4** (TCP/UDP). Distribuye conexiones sin inspeccionar el contenido. Variante **publica** o **interna**.\n- **Application Gateway**: opera en **capa 7** (HTTP/S). Permite enrutamiento por **ruta de URL** o por **host**, terminacion TLS e integra el **WAF**.\n\n## Distribucion global\n- **Traffic Manager**: balanceo basado en **DNS** que dirige al cliente al punto de conexion mas adecuado por metodos como rendimiento, prioridad o geografia. No ve el trafico de datos, solo resuelve nombres.\n- **Front Door**: entrega global en **capa 7** con aceleracion, cache, terminacion TLS y WAF en el borde de la red.\n\n## Conceptos de soporte\n- **Sondas de estado (health probes)** retiran del rotacion los back-ends no saludables.\n- **Reglas de NAT de entrada** mapean un puerto frontal a una instancia concreta.\n\n> **En el examen:** usa Load Balancer para TCP/UDP de capa 4, Application Gateway cuando necesites enrutamiento por URL o WAF regional, y Front Door o Traffic Manager para distribuir entre regiones (DNS vs capa 7 en el borde)."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una aplicacion web necesita enrutar las solicitudes a distintos grupos de servidores segun la ruta de la URL (por ejemplo /imagenes y /api) y aplicar un firewall de aplicaciones. Que servicio se ajusta mejor?",
+          "opciones": ["Azure Load Balancer", "Application Gateway con WAF", "Traffic Manager", "VPN Gateway"],
+          "correctas": [1],
+          "explicacion": "Application Gateway opera en capa 7 y permite enrutamiento basado en ruta de URL o host, ademas de integrar el WAF. Load Balancer es capa 4 y no inspecciona HTTP, y Traffic Manager solo balancea por DNS."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "En que capa del modelo OSI opera Azure Load Balancer?",
+          "opciones": ["Capa 7 (aplicacion)", "Capa 4 (transporte)", "Capa 3 (red)", "Capa 2 (enlace)"],
+          "correctas": [1],
+          "explicacion": "Azure Load Balancer trabaja en la capa 4 (transporte), distribuyendo flujos TCP y UDP sin inspeccionar el contenido de la aplicacion."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Cuales de los siguientes servicios permiten distribuir trafico entre puntos de conexion ubicados en distintas regiones? Selecciona todas las que apliquen.",
+          "opciones": ["Traffic Manager", "Azure Front Door", "Azure Load Balancer regional", "Application Gateway regional", "Grupo de seguridad de red"],
+          "correctas": [0, 1],
+          "explicacion": "Traffic Manager (basado en DNS) y Front Door (capa 7 en el borde) ofrecen distribucion global entre regiones. Load Balancer y Application Gateway son servicios regionales, y un NSG no balancea trafico."
+        }
+      ]
+    },
+    {
+      "slug": "acceso-privado",
+      "nombre": "Acceso privado a servicios de Azure",
+      "dominio": "Disenar e implementar acceso privado a servicios de Azure",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Private Endpoint y Service Endpoint",
+        "markdown": "## El problema\nServicios PaaS como el almacenamiento o las bases de datos exponen un **punto de conexion publico** por defecto. Para evitar exponerlos a internet existen dos mecanismos.\n\n## Punto de conexion privado (Private Endpoint)\n- Crea una **interfaz de red con IP privada** dentro de tu subred que representa al servicio PaaS.\n- El trafico viaja por la **red privada** y se integra con **Private Link**.\n- Requiere resolucion DNS adecuada, normalmente con una **zona DNS privada** que mapea el nombre del servicio a la IP privada.\n\n## Punto de conexion de servicio (Service Endpoint)\n- Extiende la identidad de la **subred** hasta el servicio PaaS por la red troncal.\n- El recurso sigue usando su **IP publica**, pero se restringe el acceso a subredes concretas.\n\n## Diferencia clave\n- Private Endpoint = **IP privada dedicada** dentro de tu VNet, accesible incluso desde redes locales.\n- Service Endpoint = se mantiene la IP publica del servicio, pero limitado a subredes autorizadas.\n\n> **En el examen:** si necesitas una IP privada para el servicio o acceso desde la red local, usa Private Endpoint con zona DNS privada; si solo quieres restringir el acceso del PaaS a ciertas subredes, basta un Service Endpoint."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Quieres acceder a una cuenta de almacenamiento usando una direccion IP privada dentro de tu red virtual y tambien desde tu red local. Que solucion debes implementar?",
+          "opciones": ["Punto de conexion de servicio (Service Endpoint)", "Punto de conexion privado (Private Endpoint)", "Una regla de NSG que permita el trafico publico", "Un emparejamiento de VNet con la cuenta de almacenamiento"],
+          "correctas": [1],
+          "explicacion": "El Private Endpoint crea una interfaz con IP privada en tu subred mediante Private Link, accesible desde la VNet y desde redes locales conectadas. El Service Endpoint mantiene la IP publica del servicio."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Tras crear un punto de conexion privado hacia una cuenta de almacenamiento, las aplicaciones siguen resolviendo el nombre del servicio a su IP publica. Que falta configurar?",
+          "opciones": ["Una zona DNS privada que resuelva el nombre a la IP privada", "Una segunda VPN Gateway", "Una regla de enrutamiento BGP", "Un balanceador de carga interno"],
+          "correctas": [0],
+          "explicacion": "El Private Endpoint requiere que la resolucion DNS apunte a la IP privada; sin una zona DNS privada vinculada a la VNet, el nombre se sigue resolviendo a la IP publica del servicio."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de las siguientes afirmaciones describen correctamente a un punto de conexion privado (Private Endpoint)? Selecciona todas las que apliquen.",
+          "opciones": ["Asigna una IP privada de tu subred al servicio PaaS", "Se basa en la tecnologia Azure Private Link", "Suele requerir una zona DNS privada para la resolucion correcta", "Mantiene la IP publica del servicio sin cambios", "Solo funciona dentro de la misma subred del servicio"],
+          "correctas": [0, 1, 2],
+          "explicacion": "El Private Endpoint asigna una IP privada de la subred, se apoya en Private Link y necesita DNS privado para resolver el nombre. No conserva la IP publica (eso es el Service Endpoint) ni se limita a una sola subred."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-red",
+      "nombre": "Seguridad de red",
+      "dominio": "Disenar e implementar seguridad de red",
+      "orden": 5,
+      "hoja": {
+        "titulo": "NSG, Azure Firewall y proteccion DDoS",
+        "markdown": "## Grupos de seguridad de red (NSG)\nFiltran trafico **entrante y saliente** con reglas por **prioridad** (numero menor gana). Cada regla usa origen, destino, puerto, protocolo y accion (permitir/denegar). Se aplican a **subredes** o **interfaces de red**.\n- Las **etiquetas de servicio** (por ejemplo Internet o Storage) y los **grupos de seguridad de aplicaciones (ASG)** simplifican las reglas.\n\n## Azure Firewall\nServicio gestionado de **estado** (stateful) a nivel de red y aplicacion. Ofrece **reglas de aplicacion** (por FQDN), **reglas de red** (IP/puerto) y **NAT de destino (DNAT)**. Suele desplegarse en el **hub** de una topologia hub-and-spoke.\n\n## Proteccion DDoS\nEl plan de **proteccion DDoS** anade mitigacion adaptativa, telemetria y alertas frente a ataques volumetricos sobre las IP publicas.\n\n## Buenas practicas\n- Combinar NSG (microsegmentacion) con Azure Firewall (perimetro centralizado).\n- Aplicar **minimo privilegio** y denegar por defecto.\n\n> **En el examen:** usa NSG para filtrado por capa 3/4 cercano al recurso, Azure Firewall para control centralizado por FQDN y DNAT, y recuerda que las reglas de NSG se evaluan por prioridad ascendente."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Necesitas permitir trafico saliente solo hacia determinados nombres de dominio (FQDN) de forma centralizada para varias subredes. Que servicio es el mas adecuado?",
+          "opciones": ["Un grupo de seguridad de red (NSG)", "Azure Firewall con reglas de aplicacion", "Una ruta definida por el usuario", "Un punto de conexion privado"],
+          "correctas": [1],
+          "explicacion": "Azure Firewall permite reglas de aplicacion basadas en FQDN y un control centralizado para multiples subredes. Los NSG filtran por IP y puerto (capa 3/4) y no entienden nombres de dominio."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "En un grupo de seguridad de red, como decide Azure que regla aplicar cuando varias coinciden con un mismo trafico?",
+          "opciones": ["Aplica la regla con el numero de prioridad mas bajo primero", "Aplica siempre la ultima regla creada", "Aplica todas las reglas a la vez", "Aplica la regla con el numero de prioridad mas alto primero"],
+          "correctas": [0],
+          "explicacion": "Las reglas de un NSG se evaluan por prioridad ascendente: el numero mas bajo tiene mayor precedencia y, una vez que una regla coincide, se aplica su accion."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Cuales de las siguientes son capacidades propias de Azure Firewall? Selecciona todas las que apliquen.",
+          "opciones": ["Reglas de aplicacion basadas en FQDN", "NAT de destino (DNAT)", "Filtrado con estado (stateful) de trafico de red", "Balanceo de carga HTTP por ruta de URL", "Resolucion DNS publica autoritativa de tus dominios"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Azure Firewall ofrece reglas de aplicacion por FQDN, DNAT y filtrado stateful. El enrutamiento HTTP por URL corresponde a Application Gateway, y la zona DNS publica es un servicio distinto."
+        }
+      ]
+    },
+    {
+      "slug": "monitoreo-red",
+      "nombre": "Monitoreo de la infraestructura de red",
+      "dominio": "Disenar y supervisar la infraestructura de red",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Network Watcher y diagnostico de red",
+        "markdown": "## Network Watcher\nConjunto de herramientas para **supervisar y diagnosticar** la red:\n- **Verificacion de flujo IP (IP flow verify)**: indica si un paquete se permite o deniega y que **regla de NSG** lo causa.\n- **Solucion de problemas de siguiente salto (next hop)**: muestra a donde se enruta un paquete y por que.\n- **Diagnostico de conexion (connection troubleshoot)**: prueba la conectividad entre dos extremos.\n\n## Registros y captura\n- **Registros de flujo de NSG**: guardan que trafico se permitio o denego, utiles para auditoria y analisis con el **analisis de trafico**.\n- **Captura de paquetes**: graba el trafico de una VM para inspeccion detallada.\n\n## Metricas y alertas\n- **Azure Monitor** recopila metricas (por ejemplo, salud de la VPN Gateway o latencia) y permite definir **alertas** y paneles.\n- Los registros se centralizan en un **area de trabajo de Log Analytics** y se consultan con **KQL**.\n\n> **En el examen:** usa IP flow verify para saber que regla de NSG bloquea un paquete, next hop para entender el enrutamiento, y registros de flujo de NSG mas analisis de trafico para auditar patrones de comunicacion."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una maquina virtual no recibe conexiones en un puerto y sospechas de una regla de seguridad. Que herramienta de Network Watcher confirma si un NSG permite o bloquea el paquete y cual regla lo decide?",
+          "opciones": ["Captura de paquetes", "Verificacion de flujo IP (IP flow verify)", "Diagnostico de siguiente salto", "Analisis de trafico"],
+          "correctas": [1],
+          "explicacion": "IP flow verify indica si un paquete con origen, destino, puerto y protocolo dados se permite o deniega, y senala exactamente que regla de NSG toma la decision."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Donde se centralizan los registros de red para consultarlos con el lenguaje de consultas KQL?",
+          "opciones": ["En un area de trabajo de Log Analytics", "En una cuenta de almacenamiento de blobs unicamente", "En una zona DNS privada", "En una tabla de rutas"],
+          "correctas": [0],
+          "explicacion": "Los registros se centralizan en un area de trabajo de Log Analytics dentro de Azure Monitor, donde se consultan con el lenguaje KQL."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de las siguientes capacidades forman parte de Azure Network Watcher? Selecciona todas las que apliquen.",
+          "opciones": ["Verificacion de flujo IP", "Diagnostico de siguiente salto (next hop)", "Captura de paquetes de una VM", "Creacion de reglas de Application Gateway", "Despliegue de circuitos ExpressRoute"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Network Watcher incluye IP flow verify, diagnostico de siguiente salto y captura de paquetes. Crear reglas de Application Gateway o desplegar circuitos ExpressRoute son tareas de configuracion de otros servicios, no de monitoreo."
+        }
+      ]
+    }
+  ]
+}

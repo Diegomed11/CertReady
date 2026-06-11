@@ -1,0 +1,343 @@
+{
+  "slug": "azure-ai-engineer",
+  "nombre": "Microsoft Certified: Azure AI Engineer Associate (AI-102)",
+  "proveedor": "Microsoft",
+  "nivel": "associate",
+  "area": "IA",
+  "descripcion": "Certificación que valida la capacidad de diseñar, construir y desplegar soluciones de IA usando los servicios de Azure AI. Dirigida a ingenieros que integran visión, lenguaje, búsqueda y IA generativa en aplicaciones productivas.",
+  "skills": [
+    "azure ai services",
+    "azure openai",
+    "computer vision",
+    "procesamiento de lenguaje natural",
+    "azure ai search",
+    "document intelligence",
+    "ia generativa",
+    "rag",
+    "ia responsable",
+    "contenedores",
+    "embeddings",
+    "prompt engineering"
+  ],
+  "roles": [
+    "Ingeniero de IA",
+    "Desarrollador de software",
+    "Arquitecto de soluciones",
+    "Ingeniero de machine learning",
+    "Desarrollador backend"
+  ],
+  "temas": [
+    {
+      "slug": "planear-gestionar-soluciones-ia",
+      "nombre": "Planear y gestionar una solución de Azure AI",
+      "dominio": "Plan and manage an Azure AI solution",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Recursos, autenticación y monitoreo de Azure AI",
+        "markdown": "## Aprovisionamiento de recursos\nLos servicios de Azure AI se consumen mediante **recursos** creados en una suscripción. Puedes crear un recurso **multiservicio** (Azure AI Services) que agrupa varias capacidades bajo una sola clave y endpoint, o un recurso **de servicio único** cuando solo necesitas una capacidad.\n\n## Autenticación\n- **Claves de suscripción**: simples, pero deben rotarse y guardarse en **Key Vault**, nunca en el código.\n- **Microsoft Entra ID con identidades administradas**: opción recomendada porque evita gestionar secretos.\n- Cada recurso expone un **endpoint** regional al que apunta el SDK o la API REST.\n\n## Despliegue y operación\n- Los servicios pueden ejecutarse en la nube o, para datos sensibles, en **contenedores** locales o en el borde.\n- Monitorea con **Azure Monitor** y métricas de coste, latencia y uso para controlar cuotas.\n- Aplica **IA responsable** y filtros de contenido desde el diseño.\n\n> **En el examen:** prefiere identidades administradas frente a claves, recuerda que un recurso multiservicio comparte clave y endpoint, y asocia los contenedores con escenarios de soberanía o desconexión de datos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Necesitas consumir varias capacidades de Azure AI (visión y lenguaje) desde una sola clave y endpoint. ¿Qué recurso aprovisionas?",
+          "opciones": [
+            "Un recurso de servicio único por cada capacidad",
+            "Un recurso multiservicio de Azure AI Services",
+            "Una cuenta de almacenamiento de Azure",
+            "Un recurso de Azure Key Vault"
+          ],
+          "correctas": [1],
+          "explicacion": "El recurso multiservicio de Azure AI Services agrupa varias capacidades bajo una misma clave y endpoint, simplificando la gestión."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una solución debe procesar datos altamente regulados que no pueden salir de la red corporativa. ¿Qué opción de despliegue es la más adecuada?",
+          "opciones": [
+            "Ejecutar el servicio en un contenedor de Azure AI en local o en el borde",
+            "Subir los datos a una cuenta de almacenamiento pública",
+            "Usar siempre el endpoint global en la nube",
+            "Compartir la clave de suscripción con un tercero"
+          ],
+          "correctas": [0],
+          "explicacion": "Los contenedores de Azure AI permiten ejecutar el servicio dentro de la red propia, manteniendo los datos bajo control para cumplir requisitos de soberanía."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles de las siguientes son buenas prácticas para asegurar y gestionar recursos de Azure AI?",
+          "opciones": [
+            "Autenticar con identidades administradas de Microsoft Entra ID",
+            "Guardar las claves de suscripción en Azure Key Vault",
+            "Incrustar la clave directamente en el código fuente del cliente",
+            "Monitorear uso y latencia con Azure Monitor",
+            "Rotar periódicamente las claves de acceso"
+          ],
+          "correctas": [0, 1, 3, 4],
+          "explicacion": "Identidades administradas, Key Vault, monitoreo y rotación de claves son prácticas correctas. Incrustar la clave en el código del cliente la expone y es una mala práctica."
+        }
+      ]
+    },
+    {
+      "slug": "soluciones-vision-computadora",
+      "nombre": "Soluciones de visión por computadora",
+      "dominio": "Implement computer vision solutions",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Azure AI Vision y Custom Vision",
+        "markdown": "## Análisis de imágenes\n**Azure AI Vision** ofrece análisis listo para usar: genera **descripciones**, etiquetas, detección de objetos, **OCR (lectura de texto)** y recorte inteligente. No requiere entrenamiento previo.\n\n## Modelos personalizados\nCuando las categorías son propias del negocio, **Custom Vision** entrena modelos de:\n- **Clasificación de imágenes**: una o varias etiquetas por imagen.\n- **Detección de objetos**: etiqueta más cuadro delimitador con la posición.\n\nEl flujo es: subir imágenes, **etiquetarlas**, entrenar, evaluar (precisión y exhaustividad) y **publicar** el modelo como endpoint.\n\n## Rostros y documentos\n- **Face** detecta caras, atributos y permite verificación, con controles de acceso responsable.\n- Para extraer texto y campos de formularios conviene **Document Intelligence** más que la visión genérica.\n\n> **En el examen:** usa Azure AI Vision para escenarios genéricos y OCR; elige Custom Vision cuando necesites categorías propias, y distingue clasificación (etiqueta global) de detección de objetos (etiqueta + ubicación)."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Una fábrica necesita identificar y localizar tres tipos de piezas defectuosas en fotos de la línea de producción, con sus posiciones. ¿Qué proyecto de Custom Vision usas?",
+          "opciones": [
+            "Clasificación de imágenes",
+            "Detección de objetos",
+            "Análisis de sentimiento",
+            "Reconocimiento de voz"
+          ],
+          "correctas": [1],
+          "explicacion": "Localizar elementos y devolver su posición con cuadros delimitadores requiere un proyecto de detección de objetos, no de clasificación."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Quieres extraer el texto impreso visible en fotografías de carteles sin entrenar ningún modelo. ¿Qué capacidad usas?",
+          "opciones": [
+            "Custom Vision",
+            "El OCR de Azure AI Vision",
+            "Azure AI Search",
+            "Azure OpenAI"
+          ],
+          "correctas": [1],
+          "explicacion": "La capacidad de lectura (OCR) de Azure AI Vision extrae texto de imágenes de forma inmediata, sin entrenamiento previo."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de los siguientes son pasos del flujo para crear un modelo en Custom Vision?",
+          "opciones": [
+            "Subir y etiquetar las imágenes de entrenamiento",
+            "Entrenar el modelo y revisar sus métricas",
+            "Publicar el modelo como un endpoint de predicción",
+            "Configurar manualmente los pesos de la red neuronal",
+            "Compilar el modelo en lenguaje ensamblador"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "El flujo consiste en subir y etiquetar imágenes, entrenar, evaluar y publicar como endpoint. Custom Vision abstrae los pesos internos y no requiere compilación en ensamblador."
+        }
+      ]
+    },
+    {
+      "slug": "soluciones-lenguaje-natural",
+      "nombre": "Soluciones de procesamiento de lenguaje natural",
+      "dominio": "Implement natural language processing solutions",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Azure AI Language, Speech y Translator",
+        "markdown": "## Análisis de texto\n**Azure AI Language** ofrece capacidades preconstruidas:\n- **Análisis de sentimiento** y opinión.\n- **Extracción de frases clave** y **entidades nombradas (NER)**.\n- **Reconocimiento de información personal (PII)** para redactar datos sensibles.\n- **Detección de idioma**.\n\n## Comprensión conversacional\nLa **comprensión del lenguaje conversacional (CLU)** identifica **intenciones** y **entidades** a partir de las frases del usuario. Se entrena con ejemplos y es la base de bots junto con **orquestación** y **respuesta a preguntas (question answering)** sobre una base de conocimiento.\n\n## Voz y traducción\n- **Azure AI Speech**: voz a texto, texto a voz y traducción de voz.\n- **Azure AI Translator**: traducción de texto entre idiomas.\n\n> **En el examen:** asocia cada tarea con su servicio, recuerda que CLU = intención + entidades, y usa question answering cuando la solución debe responder desde un conjunto de pares pregunta-respuesta."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un bot debe interpretar frases como 'quiero reservar una mesa para dos' y entender qué desea el usuario. ¿Qué capacidad de Azure AI Language usas?",
+          "opciones": [
+            "Comprensión del lenguaje conversacional (CLU)",
+            "Análisis de sentimiento",
+            "Detección de idioma",
+            "Reconocimiento óptico de caracteres"
+          ],
+          "correctas": [0],
+          "explicacion": "CLU identifica la intención del usuario y las entidades de su frase, lo que permite al bot decidir la acción correcta."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Antes de almacenar transcripciones de soporte necesitas ocultar números de tarjeta y correos. ¿Qué capacidad de Azure AI Language aplicas?",
+          "opciones": [
+            "Extracción de frases clave",
+            "Reconocimiento y redacción de información personal (PII)",
+            "Traducción de texto",
+            "Resumen extractivo"
+          ],
+          "correctas": [1],
+          "explicacion": "La detección de PII reconoce y permite redactar datos sensibles como tarjetas o correos antes de almacenar el texto."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de las siguientes son capacidades preconstruidas de Azure AI Language?",
+          "opciones": [
+            "Reconocimiento de entidades nombradas (NER)",
+            "Análisis de sentimiento",
+            "Detección de idioma",
+            "Detección de objetos en imágenes",
+            "Extracción de frases clave"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "NER, sentimiento, detección de idioma y frases clave son capacidades de Azure AI Language. La detección de objetos pertenece a visión por computadora."
+        }
+      ]
+    },
+    {
+      "slug": "extraccion-conocimiento-documentos",
+      "nombre": "Extracción de conocimiento y Document Intelligence",
+      "dominio": "Implement knowledge mining and document intelligence solutions",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Azure AI Search y Document Intelligence",
+        "markdown": "## Búsqueda e indexación\n**Azure AI Search** crea un **índice** consultable a partir de documentos. Sus piezas clave son:\n- **Origen de datos** (por ejemplo, Blob Storage).\n- **Conjunto de habilidades (skillset)**: enriquece el contenido con OCR, entidades o traducción durante el **enriquecimiento cognitivo**.\n- **Indexador**: orquesta la extracción, el enriquecimiento y la carga al índice.\n\nSoporta **búsqueda vectorial** y **semántica**, base para escenarios de RAG.\n\n## Extracción de formularios\n**Document Intelligence** extrae texto, pares clave-valor, tablas y campos de documentos:\n- **Modelos preconstruidos** para facturas, recibos, tarjetas de identidad.\n- **Modelos personalizados** entrenados con tus propios formularios.\n\n> **En el examen:** usa Document Intelligence para extraer campos estructurados de formularios y Azure AI Search para indexar y consultar grandes colecciones; recuerda que el skillset es donde ocurre el enriquecimiento cognitivo."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Necesitas extraer automáticamente el total, la fecha y el proveedor de miles de facturas en PDF. ¿Qué servicio es el más adecuado?",
+          "opciones": [
+            "Azure AI Translator",
+            "Document Intelligence",
+            "Azure AI Speech",
+            "Custom Vision"
+          ],
+          "correctas": [1],
+          "explicacion": "Document Intelligence ofrece modelos preconstruidos y personalizados para extraer campos clave-valor y tablas de documentos como facturas."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En Azure AI Search, ¿dónde se define el enriquecimiento cognitivo (por ejemplo, aplicar OCR o extraer entidades) durante la indexación?",
+          "opciones": [
+            "En el conjunto de habilidades (skillset)",
+            "En la cadena de conexión del origen de datos",
+            "En la clave de suscripción del recurso",
+            "En el modelo de Custom Vision"
+          ],
+          "correctas": [0],
+          "explicacion": "El skillset agrupa las habilidades cognitivas (OCR, entidades, traducción) que enriquecen el contenido antes de cargarlo al índice."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles de los siguientes son componentes de una solución de Azure AI Search?",
+          "opciones": [
+            "Origen de datos",
+            "Indexador",
+            "Conjunto de habilidades (skillset)",
+            "Índice consultable",
+            "Modelo de detección de objetos de Custom Vision"
+          ],
+          "correctas": [0, 1, 2, 3],
+          "explicacion": "Origen de datos, indexador, skillset e índice son componentes de Azure AI Search. Un modelo de detección de objetos pertenece a Custom Vision, no a la arquitectura de búsqueda."
+        }
+      ]
+    },
+    {
+      "slug": "soluciones-ia-generativa",
+      "nombre": "Soluciones de IA generativa con Azure OpenAI",
+      "dominio": "Implement generative AI solutions",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Azure OpenAI: modelos, despliegues y prompts",
+        "markdown": "## El servicio\n**Azure OpenAI** da acceso a modelos como **GPT** (texto y código), **embeddings** (vectores) y **DALL-E** (imágenes), con la seguridad y gobernanza de Azure. Antes de consumir un modelo debes crear un **despliegue** del mismo.\n\n## Ingeniería de prompts\nLa calidad de la respuesta depende del **prompt**. Buenas prácticas:\n- Dar **instrucciones claras** y contexto.\n- Usar el **mensaje de sistema** para fijar el rol y las reglas.\n- Aplicar **ejemplos (few-shot)** cuando ayuda.\n- Ajustar parámetros como **temperature** para controlar la creatividad.\n\n## Grounding y RAG\nPara reducir alucinaciones y responder con datos propios se usa **RAG (generación aumentada por recuperación)**: se buscan fragmentos relevantes (a menudo con **Azure AI Search**) y se inyectan en el prompt como contexto.\n\n## IA responsable\nLos **filtros de contenido** y la supervisión humana siguen siendo obligatorios.\n\n> **En el examen:** recuerda que hay que desplegar el modelo antes de usarlo, que el mensaje de sistema fija el comportamiento y que RAG conecta el modelo con datos propios para fundamentar las respuestas."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Antes de poder enviar solicitudes a un modelo GPT en Azure OpenAI, ¿qué debes hacer primero?",
+          "opciones": [
+            "Entrenar el modelo desde cero",
+            "Crear un despliegue del modelo en el recurso",
+            "Convertir el modelo a un contenedor",
+            "Publicar un índice de Azure AI Search"
+          ],
+          "correctas": [1],
+          "explicacion": "En Azure OpenAI debes crear un despliegue del modelo elegido; ese despliegue es el que expone el endpoint para las solicitudes."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Quieres que un asistente conteste preguntas usando los manuales internos de la empresa y reduzca las alucinaciones. ¿Qué patrón aplicas?",
+          "opciones": [
+            "RAG (generación aumentada por recuperación)",
+            "Aumentar la temperature al máximo",
+            "Usar únicamente DALL-E",
+            "Eliminar el mensaje de sistema"
+          ],
+          "correctas": [0],
+          "explicacion": "RAG recupera fragmentos relevantes de los datos propios y los inyecta en el prompt como contexto, fundamentando la respuesta y reduciendo alucinaciones."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles de las siguientes son buenas prácticas de ingeniería de prompts en Azure OpenAI?",
+          "opciones": [
+            "Usar el mensaje de sistema para fijar el rol y las reglas",
+            "Dar instrucciones claras y suficiente contexto",
+            "Incluir ejemplos few-shot cuando aportan valor",
+            "Confiar siempre en la salida sin filtros de contenido",
+            "Ajustar la temperature según se requiera más o menos creatividad"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "El mensaje de sistema, las instrucciones claras, los ejemplos few-shot y el ajuste de temperature son buenas prácticas. Prescindir de los filtros de contenido contradice la IA responsable."
+        }
+      ]
+    },
+    {
+      "slug": "soluciones-agenticas-ia",
+      "nombre": "Soluciones agénticas de IA",
+      "dominio": "Implement agentic solutions",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Agentes en Azure AI Foundry",
+        "markdown": "## Qué es un agente de IA\nUn **agente** es una aplicación basada en un modelo de lenguaje que, además de generar texto, puede **razonar** sobre una meta y **actuar** invocando herramientas para cumplirla. Va más allá de un único prompt-respuesta.\n\n## Componentes de un agente\n- **Modelo**: el LLM que razona y decide.\n- **Instrucciones**: definen el rol, el objetivo y las restricciones (similar al mensaje de sistema).\n- **Herramientas (tools)**: capacidades que el agente puede llamar, como búsqueda en datos propios, ejecución de código o funciones personalizadas.\n- **Hilos (threads) y mensajes**: mantienen el estado de la conversación.\n\n## Orquestación\nEn escenarios complejos varios agentes especializados colaboran, cada uno con sus herramientas. La **IA responsable**, los filtros de contenido y la supervisión humana siguen siendo esenciales para acciones sensibles.\n\n> **En el examen:** distingue un agente (razona + usa herramientas para lograr una meta) de una simple llamada al modelo, e identifica modelo, instrucciones y herramientas como sus piezas centrales."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué diferencia principalmente a un agente de IA de una simple llamada de completado a un modelo?",
+          "opciones": [
+            "El agente puede razonar sobre una meta e invocar herramientas para cumplirla",
+            "El agente no necesita ningún modelo de lenguaje",
+            "El agente solo genera imágenes",
+            "El agente funciona sin instrucciones de ningún tipo"
+          ],
+          "correctas": [0],
+          "explicacion": "Un agente añade razonamiento orientado a una meta y la capacidad de actuar mediante herramientas, frente a una única respuesta de texto."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un agente debe consultar la base de conocimiento interna para responder. ¿Mediante qué elemento accede a esa capacidad?",
+          "opciones": [
+            "Una herramienta (tool) conectada al agente",
+            "Aumentando el número de tokens del prompt",
+            "Cambiando la región del recurso",
+            "Eliminando las instrucciones del sistema"
+          ],
+          "correctas": [0],
+          "explicacion": "Los agentes acceden a capacidades externas, como buscar en datos propios, a través de herramientas registradas que el modelo puede invocar."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de los siguientes son componentes centrales de un agente de IA?",
+          "opciones": [
+            "El modelo de lenguaje que razona",
+            "Las instrucciones que definen rol y objetivo",
+            "Las herramientas que puede invocar",
+            "El estado conversacional en hilos y mensajes",
+            "El esquema relacional de una base de datos transaccional"
+          ],
+          "correctas": [0, 1, 2, 3],
+          "explicacion": "Modelo, instrucciones, herramientas y el estado en hilos/mensajes son componentes de un agente. El esquema de una base de datos transaccional no forma parte de su definición."
+        }
+      ]
+    }
+  ]
+}

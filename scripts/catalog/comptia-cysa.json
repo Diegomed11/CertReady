@@ -1,0 +1,272 @@
+{
+  "slug": "comptia-cysa",
+  "nombre": "CompTIA CySA+",
+  "proveedor": "CompTIA",
+  "nivel": "professional",
+  "area": "Seguridad",
+  "descripcion": "Certificación enfocada en operaciones defensivas de ciberseguridad. Valida la capacidad de detectar, analizar y responder a amenazas usando análisis de comportamiento y monitoreo continuo.",
+  "skills": ["soc", "deteccion", "vulnerabilidades", "threat hunting", "siem", "respuesta a incidentes", "forense", "inteligencia de amenazas", "monitoreo", "remediacion", "analisis de logs", "mitre att&ck"],
+  "roles": ["Analista SOC", "Analista de seguridad", "Cazador de amenazas", "Responder de incidentes", "Analista de vulnerabilidades"],
+  "temas": [
+    {
+      "slug": "gestion-vulnerabilidades",
+      "nombre": "Gestión de vulnerabilidades",
+      "dominio": "Security Operations",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Ciclo de vida de la gestión de vulnerabilidades",
+        "markdown": "## Qué cubre\nLa gestión de vulnerabilidades es un proceso **continuo**, no un evento único. Busca identificar, priorizar y reducir la exposición de los activos.\n\n## Fases clave\n- **Identificación**: descubrimiento de activos y escaneo (autenticado vs. no autenticado).\n- **Análisis**: validar hallazgos y descartar **falsos positivos**.\n- **Priorización**: combinar la puntuación **CVSS** con el contexto del negocio y la criticidad del activo.\n- **Remediación o mitigación**: parchear, segmentar o aplicar controles compensatorios.\n- **Validación**: re-escanear para confirmar el cierre.\n\n## Conceptos de scoring\n- El escaneo **autenticado** detecta más fallos internos que el no autenticado.\n- **CVSS** mide severidad técnica; no sustituye al riesgo real del entorno.\n- Las exposiciones se rastrean con identificadores **CVE**.\n\n> **En el examen:** prioriza por riesgo contextual (criticidad del activo + explotabilidad), nunca solo por el número CVSS más alto."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué ventaja principal ofrece un escaneo autenticado frente a uno no autenticado?",
+          "opciones": [
+            "Genera menos tráfico de red durante el escaneo",
+            "Detecta vulnerabilidades internas como parches faltantes con mayor precisión",
+            "Evita por completo los falsos positivos",
+            "No requiere permisos sobre los sistemas objetivo"
+          ],
+          "correctas": [1],
+          "explicacion": "El escaneo autenticado inicia sesión en el host y revisa configuración y parches desde dentro, lo que mejora la precisión sobre fallos internos que un escaneo externo no ve."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué factores deben considerarse al priorizar la remediación de vulnerabilidades? (selecciona todas las que apliquen)",
+          "opciones": [
+            "La puntuación CVSS de la vulnerabilidad",
+            "La criticidad del activo afectado para el negocio",
+            "La existencia de exploits públicos conocidos",
+            "El orden alfabético del identificador CVE",
+            "La exposición del activo a internet"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "La priorización combina severidad técnica (CVSS), valor del activo, explotabilidad real y exposición. El orden alfabético del CVE es irrelevante para el riesgo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Tras aplicar un parche a un servidor reportado como vulnerable, ¿cuál es el paso correcto para cerrar el hallazgo?",
+          "opciones": [
+            "Marcar el hallazgo como cerrado en el ticket sin más acción",
+            "Ejecutar un re-escaneo de validación sobre el activo",
+            "Eliminar el activo del inventario de escaneo",
+            "Aumentar manualmente la puntuación CVSS a cero"
+          ],
+          "correctas": [1],
+          "explicacion": "La validación mediante re-escaneo confirma que la remediación fue efectiva; cerrar el ticket sin verificar puede dejar la exposición activa."
+        }
+      ]
+    },
+    {
+      "slug": "deteccion-y-monitoreo",
+      "nombre": "Detección y monitoreo continuo",
+      "dominio": "Security Operations",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Telemetría, SIEM y detección de anomalías",
+        "markdown": "## Fuentes de datos\nUn analista correlaciona telemetría diversa para encontrar actividad maliciosa:\n- **Logs** de endpoints, firewall, DNS y autenticación.\n- **Flujos de red** (NetFlow) y capturas de paquetes.\n- **EDR** para visibilidad de procesos en el host.\n\n## Correlación con SIEM\nEl **SIEM** agrega y normaliza eventos para generar alertas por reglas y correlación. Dos enfoques de detección:\n- **Basada en firmas**: rápida, pero ciega ante amenazas nuevas.\n- **Basada en comportamiento/anomalías**: detecta desviaciones de una **línea base** (baseline).\n\n## Buenas prácticas\n- Establecer una línea base de actividad normal reduce falsos positivos.\n- Mapear detecciones a **MITRE ATT&CK** ayuda a cubrir tácticas y técnicas.\n- El **threat hunting** es proactivo: busca amenazas que evadieron las alertas.\n\n> **En el examen:** la detección por comportamiento es la mejor opción para amenazas desconocidas o de día cero; las firmas solo cubren lo ya conocido."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un atacante usa malware nunca antes visto. ¿Qué método de detección tiene más probabilidad de identificarlo?",
+          "opciones": [
+            "Detección basada en firmas",
+            "Detección basada en comportamiento y anomalías",
+            "Listas negras de hashes conocidos",
+            "Reglas estáticas de IDS sin actualizar"
+          ],
+          "correctas": [1],
+          "explicacion": "Las firmas y hashes solo reconocen amenazas previamente catalogadas. La detección de anomalías compara contra una línea base y puede señalar comportamiento malicioso desconocido."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué fuentes de telemetría son útiles para detectar un movimiento lateral dentro de la red? (selecciona todas las que apliquen)",
+          "opciones": [
+            "Logs de autenticación de Active Directory",
+            "Flujos de red entre hosts internos",
+            "Eventos de EDR sobre creación de procesos remotos",
+            "El brillo de pantalla de las estaciones de trabajo",
+            "Logs de acceso a recursos compartidos SMB"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "El movimiento lateral deja rastro en autenticación, tráfico host a host, procesos remotos y accesos a recursos compartidos. El brillo de pantalla no es telemetría de seguridad."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál es la función principal de un SIEM en un SOC?",
+          "opciones": [
+            "Reemplazar al firewall perimetral",
+            "Agregar, normalizar y correlacionar eventos para generar alertas",
+            "Aplicar parches automáticamente a los servidores",
+            "Cifrar el tráfico entre sucursales"
+          ],
+          "correctas": [1],
+          "explicacion": "El SIEM centraliza eventos de múltiples fuentes, los normaliza y los correlaciona mediante reglas para producir alertas accionables."
+        }
+      ]
+    },
+    {
+      "slug": "inteligencia-de-amenazas",
+      "nombre": "Inteligencia de amenazas",
+      "dominio": "Security Operations",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Threat intelligence e IoC",
+        "markdown": "## Para qué sirve\nLa **inteligencia de amenazas** convierte datos crudos en conocimiento accionable sobre adversarios, sus motivaciones y métodos.\n\n## Tipos\n- **Estratégica**: tendencias y riesgo de alto nivel para liderazgo.\n- **Táctica**: tácticas, técnicas y procedimientos (**TTP**) de los atacantes.\n- **Operativa/técnica**: indicadores concretos (**IoC**) como IP, dominios y hashes.\n\n## Conceptos clave\n- **IoC** vs. **IoA**: el indicador de compromiso señala que algo ya ocurrió; el de ataque describe comportamiento en curso.\n- Los marcos como **MITRE ATT&CK** y la **Cyber Kill Chain** estructuran el comportamiento adversario.\n- Compartir inteligencia con formatos como **STIX/TAXII** acelera la defensa colectiva.\n\n## Confiabilidad\n- Evalúa cada fuente por su **confianza, relevancia y oportunidad** (timeliness).\n\n> **En el examen:** los TTP son más duraderos y valiosos que los IoC; un atacante cambia una IP fácilmente, pero su comportamiento es más estable."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Por qué los TTP suelen considerarse más valiosos que los IoC atómicos como una dirección IP?",
+          "opciones": [
+            "Porque las IP nunca se reutilizan entre campañas",
+            "Porque los TTP describen comportamiento estable que el atacante no cambia con facilidad",
+            "Porque los IoC son siempre falsos positivos",
+            "Porque los TTP se generan automáticamente sin análisis"
+          ],
+          "correctas": [1],
+          "explicacion": "Un adversario cambia IP, dominios o hashes con poco esfuerzo, pero modificar sus técnicas y procedimientos es costoso; por eso los TTP ofrecen detección más resiliente."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué criterios deben usarse para evaluar la calidad de una fuente de inteligencia de amenazas? (selecciona todas las que apliquen)",
+          "opciones": [
+            "Confiabilidad de la fuente",
+            "Relevancia para el entorno propio",
+            "Oportunidad o vigencia de la información",
+            "Cantidad total de caracteres del informe",
+            "Capacidad de ser verificada o corroborada"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "La inteligencia útil es confiable, relevante, oportuna y verificable. La longitud del informe no determina su valor."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un hash de un archivo malicioso encontrado tras un incidente es un ejemplo de:",
+          "opciones": [
+            "Indicador de compromiso (IoC)",
+            "Política de control de acceso",
+            "Control compensatorio",
+            "Plan de continuidad del negocio"
+          ],
+          "correctas": [0],
+          "explicacion": "Un hash de malware es un indicador de compromiso: evidencia técnica de que un sistema pudo verse afectado."
+        }
+      ]
+    },
+    {
+      "slug": "respuesta-a-incidentes",
+      "nombre": "Respuesta a incidentes",
+      "dominio": "Incident Response and Management",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Ciclo de vida de la respuesta a incidentes",
+        "markdown": "## Fases del proceso\nUn proceso maduro sigue etapas ordenadas (alineadas con NIST):\n- **Preparación**: políticas, herramientas y entrenamiento del equipo.\n- **Detección y análisis**: confirmar el incidente y determinar su alcance.\n- **Contención**: limitar el daño, a corto y largo plazo.\n- **Erradicación**: eliminar la causa raíz y los artefactos del atacante.\n- **Recuperación**: restaurar servicios de forma segura y monitoreada.\n- **Lecciones aprendidas**: post-mortem para mejorar.\n\n## Decisiones críticas\n- La **contención** evita que el incidente se propague mientras se preserva evidencia.\n- No erradicar antes de entender el alcance puede dejar persistencia oculta.\n- Documentar la **cadena de custodia** mantiene la evidencia admisible.\n\n## Comunicación\n- Define umbrales de **escalamiento** y notificación a las partes interesadas.\n\n> **En el examen:** ante un sistema comprometido en curso, contener primero; erradicar y recuperar después de comprender el alcance completo."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Se detecta un servidor activamente comprometido propagándose a otros hosts. ¿Cuál es la acción inmediata más adecuada?",
+          "opciones": [
+            "Reinstalar el sistema operativo de inmediato",
+            "Contener el host para frenar la propagación",
+            "Redactar el informe de lecciones aprendidas",
+            "Ignorar la alerta hasta el siguiente turno"
+          ],
+          "correctas": [1],
+          "explicacion": "La contención limita la propagación y preserva evidencia. Reinstalar de inmediato destruiría evidencia y podría no eliminar la persistencia si no se conoce el alcance."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué actividades corresponden a la fase de erradicación? (selecciona todas las que apliquen)",
+          "opciones": [
+            "Eliminar malware y cuentas creadas por el atacante",
+            "Cerrar la vulnerabilidad que permitió el acceso inicial",
+            "Restaurar sistemas desde respaldos limpios verificados",
+            "Programar la reunión de capacitación anual del personal de RRHH",
+            "Quitar mecanismos de persistencia del adversario"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Erradicar implica remover artefactos, cerrar el vector de entrada, eliminar persistencia y restaurar limpio. La capacitación de RRHH no forma parte de esta fase técnica."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál es el propósito de mantener la cadena de custodia durante un incidente?",
+          "opciones": [
+            "Acelerar la restauración de servicios",
+            "Preservar la integridad y admisibilidad de la evidencia",
+            "Reducir el costo de las licencias de software",
+            "Evitar la fase de lecciones aprendidas"
+          ],
+          "correctas": [1],
+          "explicacion": "La cadena de custodia documenta quién manipuló la evidencia y cuándo, garantizando su integridad y validez legal."
+        }
+      ]
+    },
+    {
+      "slug": "reporte-y-comunicacion",
+      "nombre": "Reporte y comunicación",
+      "dominio": "Reporting and Communication",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Métricas, reporte y partes interesadas",
+        "markdown": "## Por qué importa\nUn buen análisis pierde valor si no se comunica con claridad. El analista traduce hallazgos técnicos en información útil para distintas audiencias.\n\n## Métricas de vulnerabilidades\n- **Tiempo medio de detección (MTTD)** y **tiempo medio de respuesta (MTTR)**.\n- Tendencia de vulnerabilidades abiertas y **SLA** de remediación.\n- Cobertura de escaneo y porcentaje de activos parchados.\n\n## Comunicación efectiva\n- Adapta el mensaje: **ejecutivos** quieren riesgo e impacto; **técnicos** quieren detalle de remediación.\n- Define umbrales de **escalamiento** y rutas de notificación.\n- Considera obligaciones de **cumplimiento** y de divulgación a reguladores o clientes.\n\n## Acción correctiva\n- Recomienda controles concretos: parcheo, segmentación, endurecimiento de configuración.\n\n> **En el examen:** ajusta el nivel de detalle a la audiencia; un reporte ejecutivo enfatiza riesgo de negocio, no comandos ni CVE individuales."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué métrica mide el tiempo que tarda la organización en detectar un incidente?",
+          "opciones": [
+            "MTTR (tiempo medio de respuesta)",
+            "MTTD (tiempo medio de detección)",
+            "CVSS",
+            "SLA de licenciamiento"
+          ],
+          "correctas": [1],
+          "explicacion": "El MTTD mide cuánto tarda la organización en identificar que ocurrió un incidente; el MTTR mide el tiempo hasta responderlo o resolverlo."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Al preparar un reporte para la dirección ejecutiva, ¿qué elementos son más apropiados? (selecciona todas las que apliquen)",
+          "opciones": [
+            "Resumen del riesgo de negocio y su impacto potencial",
+            "Tendencias de exposición y cumplimiento de SLA",
+            "Recomendaciones de inversión y priorización",
+            "El volcado completo de logs crudos del firewall",
+            "Estado general del programa de seguridad"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Un reporte ejecutivo se centra en riesgo, tendencias, decisiones y estado del programa. Los logs crudos corresponden a un público técnico, no a la dirección."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Por qué es importante definir umbrales de escalamiento en el proceso de comunicación?",
+          "opciones": [
+            "Para reducir la cobertura de escaneo de activos",
+            "Para asegurar que los incidentes graves lleguen a tiempo a las personas adecuadas",
+            "Para eliminar la necesidad de un SIEM",
+            "Para evitar documentar la cadena de custodia"
+          ],
+          "correctas": [1],
+          "explicacion": "Los umbrales de escalamiento garantizan que la severidad correcta active la notificación apropiada, evitando que incidentes críticos queden sin atención oportuna."
+        }
+      ]
+    }
+  ]
+}

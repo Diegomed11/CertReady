@@ -1,0 +1,343 @@
+{
+  "slug": "azure-security-engineer",
+  "nombre": "Microsoft Certified: Azure Security Engineer Associate (AZ-500)",
+  "proveedor": "Microsoft",
+  "nivel": "associate",
+  "area": "Seguridad",
+  "descripcion": "Certificación que valida la capacidad de implementar, gestionar y monitorear la seguridad de identidades, redes, datos y plataforma en Azure. Dirigida a perfiles que protegen cargas de trabajo en la nube y entornos híbridos.",
+  "skills": [
+    "microsoft entra id",
+    "control de acceso basado en roles",
+    "acceso condicional",
+    "managed identities",
+    "network security groups",
+    "azure firewall",
+    "azure key vault",
+    "microsoft defender for cloud",
+    "microsoft sentinel",
+    "cifrado de datos",
+    "privileged identity management",
+    "azure policy"
+  ],
+  "roles": [
+    "Ingeniero de seguridad en la nube",
+    "Administrador de seguridad de Azure",
+    "Analista de seguridad (SOC)",
+    "Arquitecto de identidad",
+    "Especialista en cumplimiento"
+  ],
+  "temas": [
+    {
+      "slug": "identidad-y-acceso",
+      "nombre": "Gestión de identidad con Microsoft Entra ID",
+      "dominio": "Administrar identidad y acceso",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Identidades, RBAC y acceso condicional",
+        "markdown": "## El centro de la seguridad\nEn Azure, la identidad es el nuevo perímetro. **Microsoft Entra ID** (antes Azure AD) es el servicio que autentica usuarios, grupos y aplicaciones, y autoriza qué pueden hacer.\n\n## Tipos de identidad\n- **Usuarios y grupos**: personas y conjuntos a los que se asignan permisos.\n- **Service principals**: identidad de una aplicación que accede a recursos.\n- **Managed identities**: identidad gestionada por Azure, sin contraseñas que rotar; ideal para que un recurso (VM, App Service) acceda a otro de forma segura.\n\n## Autorización con RBAC\nEl **control de acceso basado en roles (RBAC)** concede permisos asignando un **rol** a una **identidad** sobre un **ámbito** (suscripción, grupo de recursos o recurso). Sigue el **mínimo privilegio**.\n\n## Acceso condicional\nLas políticas de **acceso condicional** evalúan señales (usuario, dispositivo, ubicación, riesgo) y deciden conceder, bloquear o exigir **MFA**.\n\n> **En el examen:** ante un escenario sin contraseñas usa una managed identity; para reforzar inicios de sesión riesgosos aplica acceso condicional con MFA, no más permisos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Una máquina virtual necesita leer secretos de Key Vault sin almacenar credenciales en el código. ¿Qué deberías usar?",
+          "opciones": [
+            "Una managed identity",
+            "Una cuenta de usuario compartida",
+            "Una clave de acceso en una variable de entorno",
+            "Una contraseña en el código fuente"
+          ],
+          "correctas": [0],
+          "explicacion": "Una managed identity da a la VM una identidad gestionada por Azure, sin credenciales que almacenar ni rotar, para acceder a otros recursos como Key Vault."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Quieres exigir autenticación multifactor solo cuando un inicio de sesión proviene de una ubicación no confiable. ¿Qué mecanismo aplicas?",
+          "opciones": [
+            "Una asignación de rol RBAC",
+            "Una política de acceso condicional",
+            "Un network security group",
+            "Una directiva de Azure Policy"
+          ],
+          "correctas": [1],
+          "explicacion": "El acceso condicional evalúa señales como la ubicación y puede exigir MFA de forma selectiva. RBAC controla permisos, no condiciones de inicio de sesión."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de los siguientes son elementos que define una asignación de rol RBAC en Azure?",
+          "opciones": [
+            "La identidad (a quién se asigna)",
+            "El rol (qué permisos otorga)",
+            "El ámbito (sobre qué recurso aplica)",
+            "El plan de facturación de la suscripción",
+            "La región física del centro de datos"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Una asignación RBAC vincula una identidad, un rol y un ámbito. El plan de facturación y la región no forman parte de la asignación de permisos."
+        }
+      ]
+    },
+    {
+      "slug": "identidad-privilegiada",
+      "nombre": "Acceso privilegiado y protección de identidades",
+      "dominio": "Administrar identidad y acceso",
+      "orden": 2,
+      "hoja": {
+        "titulo": "PIM, identidades protegidas y gobierno de acceso",
+        "markdown": "## El riesgo de los privilegios permanentes\nLas cuentas con permisos elevados constantes son un blanco de ataque. La estrategia es conceder privilegio **justo a tiempo** y solo lo necesario.\n\n## Privileged Identity Management (PIM)\n**PIM** permite que un rol administrativo sea **elegible** en vez de permanente: el usuario lo **activa** cuando lo necesita, por un tiempo limitado y, opcionalmente, con **aprobación** y **MFA**. Así se reduce la superficie de ataque.\n\n## Protección de identidades\n**Entra ID Protection** detecta riesgos como inicios de sesión imposibles o credenciales filtradas, y los clasifica por nivel. Puede integrarse con acceso condicional **basado en riesgo**.\n\n## Buenas prácticas\n- Usar **cuentas separadas** para tareas administrativas.\n- Revisar accesos con **access reviews** periódicas.\n- Auditar las activaciones de roles privilegiados.\n\n> **En el examen:** para eliminar administradores permanentes y exigir activación temporal con aprobación, la respuesta es PIM; para reaccionar a inicios de sesión riesgosos, combina Identity Protection con acceso condicional."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "La auditoría exige que nadie tenga el rol de administrador global de forma permanente, sino que lo active por tiempo limitado y con aprobación. ¿Qué función usas?",
+          "opciones": [
+            "Privileged Identity Management (PIM)",
+            "Network Watcher",
+            "Azure Bastion",
+            "Azure Monitor"
+          ],
+          "correctas": [0],
+          "explicacion": "PIM convierte roles permanentes en elegibles, que se activan justo a tiempo con límite de tiempo, aprobación y MFA opcionales."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio detecta que las credenciales de un usuario podrían estar filtradas o que hay un inicio de sesión sospechoso?",
+          "opciones": [
+            "Azure Key Vault",
+            "Microsoft Entra ID Protection",
+            "Azure Firewall",
+            "Azure Blueprints"
+          ],
+          "correctas": [1],
+          "explicacion": "Entra ID Protection identifica y clasifica riesgos de identidad como credenciales filtradas o viajes imposibles, y puede activar respuestas automatizadas."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles de las siguientes son capacidades que ofrece PIM al activar un rol privilegiado?",
+          "opciones": [
+            "Requerir aprobación de otra persona",
+            "Exigir MFA durante la activación",
+            "Limitar la duración de la activación",
+            "Cifrar automáticamente todos los discos de la suscripción",
+            "Registrar la activación para auditoría"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "PIM puede exigir aprobación, MFA, límite de tiempo y deja registro de auditoría. El cifrado de discos lo gestionan otras funciones como Azure Disk Encryption, no PIM."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-de-red",
+      "nombre": "Seguridad de red y conectividad",
+      "dominio": "Asegurar las redes",
+      "orden": 3,
+      "hoja": {
+        "titulo": "NSG, Azure Firewall y acceso privado",
+        "markdown": "## Defensa en capas en la red\nProteger la red en Azure significa controlar qué tráfico entra, sale y se mueve entre subredes, aplicando **defensa en profundidad**.\n\n## Network Security Groups (NSG)\nUn **NSG** filtra tráfico a nivel de subred o de interfaz de red mediante reglas de **permitir/denegar** por origen, destino, puerto y protocolo. Es un firewall con estado básico y gratuito.\n\n## Azure Firewall\nServicio gestionado de firewall **con estado** a nivel de red y aplicación. Ofrece filtrado por FQDN, inteligencia de amenazas y reglas centralizadas para varias redes virtuales.\n\n## Acceso sin exponer a Internet\n- **Private Endpoint**: da una IP privada a un servicio PaaS (como Storage o SQL) dentro de tu red.\n- **Azure Bastion**: acceso RDP/SSH a las VMs sin exponer IPs públicas.\n- **Service Endpoints**: extienden la identidad de la red virtual a servicios de Azure.\n\n> **En el examen:** NSG para reglas simples por subred/NIC; Azure Firewall para control centralizado por FQDN; Private Endpoint y Bastion para eliminar exposición pública."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Necesitas bloquear el tráfico entrante en el puerto 3389 hacia una subred. ¿Cuál es la herramienta más directa?",
+          "opciones": [
+            "Una regla en un Network Security Group",
+            "Una política de acceso condicional",
+            "Una asignación RBAC",
+            "Un secreto en Key Vault"
+          ],
+          "correctas": [0],
+          "explicacion": "Los NSG filtran tráfico por puerto, origen y destino a nivel de subred o NIC, ideal para bloquear el RDP (3389) entrante."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Quieres acceder por RDP a tus máquinas virtuales sin asignarles direcciones IP públicas. ¿Qué servicio usas?",
+          "opciones": [
+            "Azure Bastion",
+            "Azure Firewall",
+            "Application Gateway",
+            "Azure DDoS Protection"
+          ],
+          "correctas": [0],
+          "explicacion": "Azure Bastion proporciona conectividad RDP/SSH segura a las VMs a través del portal, sin necesidad de IPs públicas en las máquinas."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de las siguientes opciones ayudan a acceder a un servicio PaaS de Azure sin exponer su tráfico a la Internet pública?",
+          "opciones": [
+            "Private Endpoint",
+            "Service Endpoint",
+            "Una regla de NSG que permite todo el tráfico saliente",
+            "Asignar una IP pública al servicio",
+            "Azure Firewall con reglas por FQDN"
+          ],
+          "correctas": [0, 1, 4],
+          "explicacion": "Private Endpoint, Service Endpoint y Azure Firewall con control de FQDN mantienen el tráfico privado o controlado. Abrir todo el tráfico o asignar IP pública aumentan la exposición."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-del-computo",
+      "nombre": "Seguridad del cómputo y la plataforma",
+      "dominio": "Asegurar el cómputo, el almacenamiento y las bases de datos",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Protección de VMs, contenedores y secretos",
+        "markdown": "## Endurecer las cargas de trabajo\nMás allá de la red, hay que proteger el cómputo: máquinas virtuales, contenedores y las credenciales que usan.\n\n## Máquinas virtuales\n- Aplicar **actualizaciones** y endurecer la configuración base.\n- **Just-in-Time VM access**: abre puertos de administración solo cuando se solicitan y por tiempo limitado.\n- **Azure Disk Encryption** para cifrar los discos del sistema operativo y de datos.\n\n## Contenedores\n- Usar **Azure Container Registry** con escaneo de vulnerabilidades de imágenes.\n- En **AKS**, integrar identidades gestionadas, políticas y secretos seguros.\n\n## Gestión de secretos con Key Vault\n**Azure Key Vault** almacena de forma central **secretos**, **claves** y **certificados**. Controla el acceso con RBAC o políticas de acceso, registra auditoría y permite rotación. Nunca incrustes secretos en el código.\n\n> **En el examen:** para reducir la exposición de puertos de gestión usa Just-in-Time; para centralizar y auditar credenciales, Key Vault; para cifrar discos, Azure Disk Encryption."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Quieres que el puerto SSH de tus VMs esté cerrado por defecto y solo se abra de forma temporal cuando un administrador lo solicite. ¿Qué función usas?",
+          "opciones": [
+            "Just-in-Time VM access",
+            "Azure Disk Encryption",
+            "Service Endpoints",
+            "Azure Policy"
+          ],
+          "correctas": [0],
+          "explicacion": "El acceso Just-in-Time mantiene cerrados los puertos de administración y los abre solo bajo solicitud, por tiempo limitado, reduciendo la superficie de ataque."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál es el servicio recomendado para almacenar de forma centralizada secretos, claves de cifrado y certificados?",
+          "opciones": [
+            "Azure Key Vault",
+            "Azure Blob Storage",
+            "Azure Monitor",
+            "Azure Bastion"
+          ],
+          "correctas": [0],
+          "explicacion": "Azure Key Vault centraliza secretos, claves y certificados con control de acceso, auditoría y rotación, evitando credenciales en el código."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de las siguientes son buenas prácticas para asegurar el cómputo en Azure?",
+          "opciones": [
+            "Cifrar los discos de las VMs con Azure Disk Encryption",
+            "Escanear las imágenes de contenedor en busca de vulnerabilidades",
+            "Almacenar secretos en Key Vault en lugar del código",
+            "Dejar abiertos permanentemente los puertos de administración",
+            "Habilitar el acceso Just-in-Time para puertos de gestión"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Cifrar discos, escanear imágenes, usar Key Vault y aplicar Just-in-Time son prácticas correctas. Dejar puertos de administración abiertos permanentemente aumenta el riesgo."
+        }
+      ]
+    },
+    {
+      "slug": "proteccion-de-datos",
+      "nombre": "Protección de datos y cifrado",
+      "dominio": "Asegurar el cómputo, el almacenamiento y las bases de datos",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Cifrado, claves y control de acceso a datos",
+        "markdown": "## Proteger los datos en reposo y en tránsito\nLos datos deben estar cifrados **en reposo** y **en tránsito**, y su acceso debe ser controlado y auditado.\n\n## Cifrado en almacenamiento\n- Azure Storage cifra los datos en reposo por defecto.\n- Puedes elegir **claves gestionadas por Microsoft** o **claves gestionadas por el cliente (CMK)** alojadas en Key Vault para mayor control.\n\n## Control de acceso a Storage\n- **Microsoft Entra ID** con RBAC para acceso basado en identidad (preferido).\n- **SAS (Shared Access Signature)**: acceso delegado y temporal con permisos acotados.\n- Evitar compartir las **claves de cuenta** de forma amplia.\n\n## Bases de datos\n- **Transparent Data Encryption (TDE)** cifra Azure SQL en reposo.\n- **Always Encrypted** protege columnas sensibles incluso del administrador de la base.\n- **Enmascaramiento dinámico de datos** oculta datos a usuarios sin privilegio.\n\n> **En el examen:** si exigen controlar la clave de cifrado, usa CMK en Key Vault; para acceso temporal acotado a Storage, una SAS; para proteger columnas frente al propio DBA, Always Encrypted."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una política de cumplimiento exige que tu organización controle y rote las claves que cifran los datos en Azure Storage. ¿Qué opción cumple este requisito?",
+          "opciones": [
+            "Claves gestionadas por el cliente (CMK) en Key Vault",
+            "Claves gestionadas por Microsoft",
+            "Una Shared Access Signature",
+            "El enmascaramiento dinámico de datos"
+          ],
+          "correctas": [0],
+          "explicacion": "Las claves gestionadas por el cliente (CMK) en Key Vault permiten que la organización controle, rote y revoque las claves de cifrado."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Necesitas dar a una aplicación acceso temporal y limitado a un contenedor de Blob Storage, solo de lectura y por 24 horas. ¿Qué usas?",
+          "opciones": [
+            "Una Shared Access Signature (SAS)",
+            "La clave de cuenta completa de Storage",
+            "Transparent Data Encryption",
+            "Un Network Security Group"
+          ],
+          "correctas": [0],
+          "explicacion": "Una SAS otorga acceso delegado, acotado en permisos y tiempo, sin exponer la clave completa de la cuenta de almacenamiento."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles de los siguientes mecanismos ayudan a proteger datos en Azure SQL Database?",
+          "opciones": [
+            "Transparent Data Encryption para cifrar en reposo",
+            "Always Encrypted para proteger columnas sensibles",
+            "Enmascaramiento dinámico de datos",
+            "Eliminar todas las reglas de firewall de la base de datos",
+            "Auditoría de la base de datos"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "TDE, Always Encrypted, el enmascaramiento dinámico y la auditoría protegen los datos. Eliminar las reglas de firewall expondría la base de datos en lugar de protegerla."
+        }
+      ]
+    },
+    {
+      "slug": "monitoreo-y-respuesta",
+      "nombre": "Monitoreo de seguridad y respuesta a amenazas",
+      "dominio": "Administrar operaciones de seguridad",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Defender for Cloud y Microsoft Sentinel",
+        "markdown": "## Ver, detectar y responder\nLa seguridad operativa consiste en evaluar la postura, detectar amenazas y responder de forma coordinada.\n\n## Microsoft Defender for Cloud\nEvalúa la **postura de seguridad** con el **Secure Score** y recomendaciones, aplica el **cumplimiento normativo** y, con los planes de **Defender**, protege cargas (servidores, Storage, SQL, contenedores) detectando amenazas en tiempo real.\n\n## Microsoft Sentinel\nEs el **SIEM/SOAR** nativo de Azure. Recolecta registros con **conectores de datos**, detecta con **reglas de análisis**, investiga con **incidentes** y automatiza la respuesta con **playbooks** (Logic Apps).\n\n## Registros y consultas\n**Log Analytics** centraliza los registros y se consultan con **KQL (Kusto Query Language)**, base tanto de las alertas como de las investigaciones.\n\n> **En el examen:** para mejorar la postura y proteger cargas usa Defender for Cloud; para correlacionar registros de toda la organización, investigar incidentes y automatizar respuestas, usa Microsoft Sentinel."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio te da una puntuación (Secure Score) y recomendaciones para mejorar la postura de seguridad de tus recursos de Azure?",
+          "opciones": [
+            "Microsoft Defender for Cloud",
+            "Azure Bastion",
+            "Azure Key Vault",
+            "Azure DNS"
+          ],
+          "correctas": [0],
+          "explicacion": "Defender for Cloud calcula el Secure Score y ofrece recomendaciones priorizadas para mejorar la postura de seguridad."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Quieres correlacionar registros de seguridad de toda la organización, investigar incidentes y automatizar la respuesta. ¿Qué servicio es el adecuado?",
+          "opciones": [
+            "Microsoft Sentinel",
+            "Network Watcher",
+            "Azure Policy",
+            "Azure Blueprints"
+          ],
+          "correctas": [0],
+          "explicacion": "Microsoft Sentinel es el SIEM/SOAR nativo: recolecta y correlaciona registros, gestiona incidentes y automatiza respuestas con playbooks."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de los siguientes son componentes o capacidades de Microsoft Sentinel?",
+          "opciones": [
+            "Conectores de datos para ingerir registros",
+            "Reglas de análisis para detectar amenazas",
+            "Playbooks para automatizar la respuesta",
+            "Cifrado de discos de máquinas virtuales",
+            "Investigación de incidentes"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Sentinel usa conectores, reglas de análisis, playbooks e investigación de incidentes. El cifrado de discos corresponde a Azure Disk Encryption, no a Sentinel."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,343 @@
+{
+  "slug": "aws-solutions-architect-professional",
+  "nombre": "AWS Certified Solutions Architect – Professional",
+  "proveedor": "AWS",
+  "nivel": "professional",
+  "area": "Nube",
+  "descripcion": "Certificación avanzada que valida la capacidad de diseñar arquitecturas distribuidas, resilientes y rentables en AWS para organizaciones complejas. Cubre soluciones multicuenta, migraciones de gran escala y optimización continua de costos y rendimiento.",
+  "skills": [
+    "AWS Organizations",
+    "VPC avanzado",
+    "alta disponibilidad",
+    "recuperación ante desastres",
+    "migración de cargas",
+    "optimización de costos",
+    "seguridad multicuenta",
+    "IAM y SCP",
+    "arquitectura serverless",
+    "interconexión híbrida",
+    "Well-Architected",
+    "automatización con IaC"
+  ],
+  "roles": [
+    "Arquitecto de soluciones cloud",
+    "Arquitecto empresarial",
+    "Ingeniero de plataforma",
+    "Líder técnico de migración",
+    "Consultor de nube"
+  ],
+  "temas": [
+    {
+      "slug": "diseno-soluciones-organizacionales",
+      "nombre": "Diseño de soluciones para organizaciones complejas",
+      "dominio": "Design Solutions for Organizational Complexity",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Arquitecturas multicuenta y conectividad a escala",
+        "markdown": "## Estructura multicuenta\n\nLas organizaciones grandes separan cargas en múltiples cuentas para aislar fallos, límites de seguridad y facturación. **AWS Organizations** agrupa cuentas en unidades organizativas (OU) y aplica **Service Control Policies (SCP)** como techo de permisos máximo.\n\n## Conectividad de red\n\n- **Transit Gateway**: hub central que conecta miles de VPC y redes on-premises, reemplazando mallas de peering.\n- **VPC Peering**: ideal para pocas VPC con tráfico directo, sin tránsito transitivo.\n- **PrivateLink**: expone servicios de forma privada sin exponer toda la VPC.\n\n## Gobernanza centralizada\n\n- **RAM** comparte subredes y recursos entre cuentas.\n- **IAM Identity Center** federa el acceso humano con SSO.\n- **Centralizar logs** (CloudTrail, VPC Flow Logs) en una cuenta de auditoría dedicada.\n\nEl objetivo es equilibrar autonomía de equipos con control central.\n\n> **En el examen:** ante \"cientos de VPC que deben comunicarse\", elige Transit Gateway; el peering no escala por su falta de transitividad."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una empresa con 200 VPC en varias cuentas necesita comunicación centralizada y transitiva entre todas ellas y su red on-premises. ¿Qué servicio es el más adecuado?",
+          "opciones": [
+            "VPC Peering en malla completa",
+            "AWS Transit Gateway",
+            "Internet Gateway compartido",
+            "NAT Gateway centralizado"
+          ],
+          "correctas": [1],
+          "explicacion": "Transit Gateway actúa como hub central y permite enrutamiento transitivo entre miles de VPC y enlaces híbridos, algo que el peering no ofrece y que sería inmanejable en malla completa."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Para reforzar la gobernanza en una organización con AWS Organizations, ¿qué prácticas son correctas? Selecciona TODAS las que apliquen.",
+          "opciones": [
+            "Usar SCP para definir el permiso máximo aplicable a las OU",
+            "Centralizar los logs de CloudTrail en una cuenta de auditoría dedicada",
+            "Conceder credenciales de usuario raíz a cada equipo de desarrollo",
+            "Federar el acceso humano mediante IAM Identity Center",
+            "Compartir subredes entre cuentas con AWS RAM"
+          ],
+          "correctas": [0, 1, 3, 4],
+          "explicacion": "SCP, logs centralizados, federación con Identity Center y compartición con RAM son prácticas recomendadas. Distribuir credenciales de usuario raíz viola el principio de mínimo privilegio y es un riesgo grave."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué mecanismo permite exponer un servicio de forma privada a otras VPC sin abrir toda la red?",
+          "opciones": [
+            "AWS PrivateLink",
+            "Internet Gateway",
+            "Public Subnet con ACL",
+            "Elastic IP compartida"
+          ],
+          "correctas": [0],
+          "explicacion": "PrivateLink publica un servicio mediante endpoints de interfaz, manteniendo el tráfico dentro de la red de AWS sin exponer la VPC completa."
+        }
+      ]
+    },
+    {
+      "slug": "nuevas-soluciones-aws",
+      "nombre": "Diseño de soluciones nuevas",
+      "dominio": "Design for New Solutions",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Arquitecturas resilientes y desacopladas desde cero",
+        "markdown": "## Desacoplamiento\n\nDiseñar sistemas nuevos exige reducir el acoplamiento. **SQS** absorbe picos de carga, **SNS** distribuye eventos a múltiples suscriptores y **EventBridge** enruta eventos por reglas hacia destinos heterogéneos.\n\n## Cómputo según el caso\n\n- **Lambda** para cargas event-driven y picos imprevisibles.\n- **Fargate** para contenedores sin gestionar servidores.\n- **EC2 con Auto Scaling** cuando se requiere control fino o instancias especializadas.\n\n## Datos\n\n- **DynamoDB** para acceso de baja latencia y escala masiva.\n- **Aurora** para relacional gestionado con alta disponibilidad.\n- **S3** como almacén durable y económico para objetos.\n\n## Resiliencia\n\nDistribuir en **múltiples zonas de disponibilidad**, usar **health checks** y diseñar para **idempotencia** ante reintentos.\n\n> **En el examen:** si necesitas amortiguar tráfico irregular entre productor y consumidor, una **cola SQS** es casi siempre la respuesta correcta."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un sistema recibe picos impredecibles de pedidos que saturan el componente de procesamiento. ¿Qué patrón mitiga mejor este problema?",
+          "opciones": [
+            "Aumentar el tamaño de instancia manualmente",
+            "Insertar una cola SQS entre productor y consumidor",
+            "Conectar productor y consumidor de forma síncrona",
+            "Replicar la base de datos en otra región"
+          ],
+          "correctas": [1],
+          "explicacion": "Una cola SQS desacopla y amortigua los picos: el productor encola y el consumidor procesa a su ritmo, evitando la saturación y permitiendo escalar de forma independiente."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué afirmaciones sobre opciones de cómputo serverless en AWS son correctas? Selecciona TODAS las que apliquen.",
+          "opciones": [
+            "Lambda es adecuada para cargas event-driven con picos imprevisibles",
+            "Fargate ejecuta contenedores sin gestionar servidores",
+            "Lambda permite ejecuciones de horas sin límite de tiempo",
+            "EventBridge enruta eventos según reglas hacia múltiples destinos",
+            "DynamoDB ofrece baja latencia a gran escala"
+          ],
+          "correctas": [0, 1, 3, 4],
+          "explicacion": "Lambda tiene un límite de ejecución (15 minutos), por lo que no sirve para procesos de horas. Las demás afirmaciones describen correctamente cada servicio."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio es el más indicado para almacenar objetos de forma durable y económica?",
+          "opciones": [
+            "Amazon S3",
+            "Amazon EBS",
+            "Instance Store",
+            "Amazon FSx para tareas de cómputo"
+          ],
+          "correctas": [0],
+          "explicacion": "S3 ofrece almacenamiento de objetos altamente durable (11 nueves) y de bajo costo, ideal para datos no estructurados y respaldos."
+        }
+      ]
+    },
+    {
+      "slug": "mejora-continua",
+      "nombre": "Mejora continua de soluciones existentes",
+      "dominio": "Continuous Improvement for Existing Solutions",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Optimizar rendimiento, observabilidad y operaciones",
+        "markdown": "## Observabilidad\n\nNo se puede mejorar lo que no se mide. **CloudWatch** recoge métricas, logs y alarmas; **X-Ray** traza solicitudes a través de microservicios para detectar cuellos de botella.\n\n## Rendimiento\n\n- **Caché** con ElastiCache o DAX para reducir latencia y carga de la base de datos.\n- **CloudFront** acerca contenido al usuario y descarga el origen.\n- **Réplicas de lectura** en Aurora/RDS escalan consultas.\n\n## Operación segura\n\n- **Despliegues canary o blue/green** para reducir riesgo.\n- **Auto Scaling** ajusta capacidad a la demanda real.\n- **Runbooks automatizados** con Systems Manager para respuesta a incidentes.\n\n## Iteración\n\nRevisar periódicamente con el marco **Well-Architected** para detectar deuda y oportunidades.\n\n> **En el examen:** si la base de datos sufre por lecturas repetitivas, introducir una **capa de caché** suele ser la mejora con mayor impacto y menor cambio."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una base de datos relacional sufre alta carga por consultas de lectura idénticas y frecuentes. ¿Qué mejora reduce mejor esa presión con cambios mínimos?",
+          "opciones": [
+            "Migrar a una instancia de menor tamaño",
+            "Añadir una capa de caché como ElastiCache",
+            "Eliminar los índices de la tabla",
+            "Convertir todas las lecturas en escrituras"
+          ],
+          "correctas": [1],
+          "explicacion": "Una caché en memoria como ElastiCache responde a las consultas repetidas sin tocar la base de datos, reduciendo latencia y carga con un cambio acotado en la aplicación."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué técnicas mejoran la observabilidad y la operación segura de una solución existente? Selecciona TODAS las que apliquen.",
+          "opciones": [
+            "Usar X-Ray para trazar solicitudes entre microservicios",
+            "Configurar alarmas de CloudWatch sobre métricas clave",
+            "Desplegar en producción sin pruebas para acelerar entregas",
+            "Adoptar despliegues blue/green para reducir riesgo",
+            "Automatizar runbooks con Systems Manager"
+          ],
+          "correctas": [0, 1, 3, 4],
+          "explicacion": "Tracing, alarmas, despliegues blue/green y runbooks automatizados elevan la observabilidad y la seguridad operativa. Desplegar sin pruebas aumenta el riesgo en lugar de reducirlo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio distribuye contenido cerca del usuario final para reducir latencia y descargar el origen?",
+          "opciones": [
+            "Amazon CloudFront",
+            "AWS Direct Connect",
+            "Amazon Route 53 Resolver",
+            "AWS Global Accelerator únicamente para TCP"
+          ],
+          "correctas": [0],
+          "explicacion": "CloudFront es la CDN de AWS: cachea y entrega contenido desde ubicaciones de borde próximas al usuario, reduciendo latencia y carga sobre el origen."
+        }
+      ]
+    },
+    {
+      "slug": "migracion-modernizacion",
+      "nombre": "Migración y modernización de cargas",
+      "dominio": "Accelerate Workload Migration and Modernization",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Estrategias de migración y movimiento de datos",
+        "markdown": "## Las 7 estrategias\n\nLas \"7 R\" guían cada carga: **Rehost** (lift-and-shift), **Replatform** (ajustes menores), **Repurchase** (cambiar a SaaS), **Refactor** (rediseñar), **Retire**, **Retain** y **Relocate**.\n\n## Herramientas clave\n\n- **AWS Application Migration Service (MGN)** automatiza el rehost de servidores.\n- **DMS** migra bases de datos con mínima interrupción, incluso entre motores con **SCT**.\n- **DataSync** transfiere grandes volúmenes de archivos hacia S3, EFS o FSx.\n- **Snowball** mueve petabytes cuando la red es insuficiente.\n\n## Planeación\n\n- Descubrir dependencias con **Migration Hub** y **Application Discovery Service**.\n- Migrar en **olas** por afinidad de aplicaciones.\n- Validar costos y rendimiento tras cada ola.\n\n> **En el examen:** para grandes volúmenes de datos con red limitada y plazos ajustados, **Snowball** suele superar a la transferencia por internet."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una empresa debe mover 80 TB a S3 en dos semanas, pero su enlace de internet tardaría meses. ¿Qué solución es la más adecuada?",
+          "opciones": [
+            "Subir los datos por internet con multipart upload",
+            "Usar AWS Snowball para el traslado físico",
+            "Comprimir los datos y enviarlos por correo electrónico",
+            "Crear una réplica de lectura en S3"
+          ],
+          "correctas": [1],
+          "explicacion": "Snowball permite transferir decenas de TB físicamente, evitando la limitación del enlace de red y cumpliendo el plazo, algo inviable subiendo por internet."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Sobre las estrategias de migración y sus herramientas, ¿qué afirmaciones son correctas? Selecciona TODAS las que apliquen.",
+          "opciones": [
+            "Rehost (lift-and-shift) mueve la carga con cambios mínimos",
+            "DMS migra bases de datos con interrupción reducida",
+            "Refactor implica rediseñar la aplicación para la nube",
+            "Repurchase significa retener la carga sin cambios on-premises",
+            "DataSync transfiere grandes volúmenes de archivos hacia S3 o EFS"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Repurchase significa reemplazar la aplicación por una solución SaaS, no retenerla. Las demás describen correctamente las estrategias y herramientas de migración."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio automatiza el rehost de servidores físicos o virtuales hacia AWS?",
+          "opciones": [
+            "AWS Application Migration Service (MGN)",
+            "Amazon Inspector",
+            "AWS Config",
+            "Amazon Macie"
+          ],
+          "correctas": [0],
+          "explicacion": "MGN replica los servidores de origen y los convierte automáticamente para ejecutarse en AWS, simplificando las migraciones de tipo lift-and-shift."
+        }
+      ]
+    },
+    {
+      "slug": "alta-disponibilidad-dr",
+      "nombre": "Alta disponibilidad y recuperación ante desastres",
+      "dominio": "Design for New Solutions",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Resiliencia multi-AZ, multirregión y estrategias de DR",
+        "markdown": "## Niveles de aislamiento\n\n- **Multi-AZ**: protege contra fallos de un centro de datos dentro de una región (estándar para producción).\n- **Multirregión**: protege contra fallos regionales completos y reduce latencia global.\n\n## Métricas que mandan\n\n- **RTO**: tiempo máximo aceptable para restaurar el servicio.\n- **RPO**: pérdida máxima de datos tolerable.\n\n## Estrategias de DR (costo creciente)\n\n1. **Backup & Restore**: barato, RTO/RPO altos.\n2. **Pilot Light**: núcleo mínimo siempre encendido.\n3. **Warm Standby**: copia reducida pero activa.\n4. **Multi-Site Active/Active**: máxima disponibilidad, mayor costo.\n\n## Enrutamiento\n\n**Route 53** con health checks y failover dirige el tráfico a la región sana automáticamente.\n\n> **En el examen:** un **RTO/RPO casi nulo** exige **Active/Active multirregión**; si el presupuesto es ajustado y se toleran minutos de caída, **Warm Standby** o **Pilot Light** equilibran costo y recuperación."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una aplicación crítica exige un RTO y RPO cercanos a cero ante el fallo de una región completa. ¿Qué estrategia de DR cumple ese requisito?",
+          "opciones": [
+            "Backup & Restore en una sola región",
+            "Pilot Light con arranque manual",
+            "Multi-Site Active/Active multirregión",
+            "Snapshots diarios sin réplica"
+          ],
+          "correctas": [2],
+          "explicacion": "Active/Active en varias regiones mantiene capacidad operativa simultánea, logrando RTO y RPO casi nulos al servir tráfico desde la región sana sin pausas de recuperación."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre alta disponibilidad y DR en AWS son correctas? Selecciona TODAS las que apliquen.",
+          "opciones": [
+            "Multi-AZ protege ante el fallo de una zona de disponibilidad",
+            "RPO define la pérdida máxima de datos tolerable",
+            "Backup & Restore ofrece el RTO más bajo de todas las estrategias",
+            "Route 53 puede hacer failover según health checks",
+            "Warm Standby mantiene una copia reducida pero activa de la carga"
+          ],
+          "correctas": [0, 1, 3, 4],
+          "explicacion": "Backup & Restore es la estrategia más económica pero con el RTO más alto, no el más bajo. Las demás describen correctamente conceptos de resiliencia y DR."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué métrica define el tiempo máximo aceptable para restaurar un servicio tras un fallo?",
+          "opciones": [
+            "RTO (Recovery Time Objective)",
+            "RPO (Recovery Point Objective)",
+            "TTL (Time To Live)",
+            "SLA de facturación"
+          ],
+          "correctas": [0],
+          "explicacion": "El RTO marca cuánto tiempo puede tardar la recuperación del servicio; el RPO, en cambio, mide la cantidad de datos que se puede perder."
+        }
+      ]
+    },
+    {
+      "slug": "optimizacion-costos-seguridad",
+      "nombre": "Optimización de costos y seguridad",
+      "dominio": "Continuous Improvement for Existing Solutions",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Eficiencia de costos y seguridad en profundidad",
+        "markdown": "## Modelos de precio\n\n- **On-Demand**: flexibilidad sin compromiso, mayor costo por hora.\n- **Savings Plans / Reserved**: descuentos por compromiso de uso sostenido.\n- **Spot**: hasta ~90% más barato para cargas tolerantes a interrupción.\n\n## Palancas de ahorro\n\n- **Right-sizing** de instancias según uso real.\n- **S3 Lifecycle** mueve datos a clases frías (IA, Glacier).\n- **Auto Scaling** elimina capacidad ociosa.\n- **Cost Explorer** y **Budgets** dan visibilidad y alertas.\n\n## Seguridad en profundidad\n\n- **Cifrado** en reposo (KMS) y en tránsito (TLS).\n- **Mínimo privilegio** con IAM y SCP.\n- **GuardDuty** detecta amenazas; **Security Hub** centraliza hallazgos; **Macie** protege datos sensibles.\n\n> **En el examen:** para procesamiento por lotes tolerante a fallos y sensible al costo, **instancias Spot** ofrecen el mayor ahorro; combínalas con On-Demand para la capacidad base."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un proceso de renderizado por lotes puede reintentarse si se interrumpe y debe minimizar costos. ¿Qué opción de compra es la más adecuada?",
+          "opciones": [
+            "Instancias On-Demand a tiempo completo",
+            "Instancias Spot",
+            "Instancias Reserved de 3 años",
+            "Dedicated Hosts"
+          ],
+          "correctas": [1],
+          "explicacion": "Las instancias Spot ofrecen el mayor descuento y son ideales para cargas tolerantes a interrupción como el renderizado por lotes, que puede reanudarse sin pérdida crítica."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué prácticas combinan optimización de costos y seguridad de forma correcta? Selecciona TODAS las que apliquen.",
+          "opciones": [
+            "Aplicar right-sizing a instancias según el uso real",
+            "Usar S3 Lifecycle para mover datos fríos a Glacier",
+            "Desactivar el cifrado para reducir costos de cómputo",
+            "Cifrar datos en reposo con KMS y en tránsito con TLS",
+            "Detectar amenazas con GuardDuty y centralizar hallazgos en Security Hub"
+          ],
+          "correctas": [0, 1, 3, 4],
+          "explicacion": "El ahorro nunca debe lograrse desactivando el cifrado, que es esencial para la seguridad. Las demás prácticas combinan correctamente eficiencia de costos y protección de datos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué herramienta proporciona visibilidad y alertas sobre el gasto de AWS?",
+          "opciones": [
+            "AWS Budgets",
+            "Amazon GuardDuty",
+            "AWS WAF",
+            "Amazon Kinesis"
+          ],
+          "correctas": [0],
+          "explicacion": "AWS Budgets permite fijar presupuestos y recibir alertas cuando el costo o el uso superan los umbrales definidos, apoyando la optimización financiera."
+        }
+      ]
+    }
+  ]
+}

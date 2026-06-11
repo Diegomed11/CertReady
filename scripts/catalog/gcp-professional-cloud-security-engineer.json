@@ -1,0 +1,290 @@
+{
+  "slug": "gcp-professional-cloud-security-engineer",
+  "nombre": "Google Cloud Professional Cloud Security Engineer",
+  "proveedor": "Google",
+  "nivel": "professional",
+  "area": "Seguridad",
+  "descripcion": "Valida la capacidad de diseñar y operar controles de seguridad en Google Cloud, abarcando identidad, redes, cifrado, cumplimiento y respuesta a incidentes. Está orientada a profesionales que protegen cargas de trabajo en la nube de forma integral.",
+  "skills": [
+    "iam",
+    "vpc",
+    "kms",
+    "cifrado",
+    "cumplimiento",
+    "organization policy",
+    "security command center",
+    "vpc service controls",
+    "cloud armor",
+    "registro de auditoria",
+    "respuesta a incidentes",
+    "gestion de secretos"
+  ],
+  "roles": [
+    "Ingeniero de Seguridad en la Nube",
+    "Arquitecto de Seguridad",
+    "Especialista en Cumplimiento",
+    "Ingeniero DevSecOps"
+  ],
+  "temas": [
+    {
+      "slug": "gestion-identidad-y-acceso",
+      "nombre": "Gestión de identidad y acceso",
+      "dominio": "Configuring access within a cloud solution environment",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Identidad, roles y jerarquía de recursos",
+        "markdown": "## Modelo de identidad\nEn Google Cloud el acceso se concede mediante **políticas IAM** que vinculan *principales* (usuarios, grupos, cuentas de servicio) a **roles** sobre un recurso. Conviene preferir **grupos** frente a usuarios individuales para escalar la administración.\n\n## Tipos de roles\n- **Básicos**: Propietario, Editor, Visualizador. Demasiado amplios para producción.\n- **Predefinidos**: granularidad por servicio, mantenidos por Google.\n- **Personalizados**: combinan permisos puntuales cuando ningún predefinido encaja.\n\n## Jerarquía y herencia\nLas políticas se aplican en **Organización → Carpeta → Proyecto → Recurso** y se **heredan hacia abajo**. Una concesión en la carpeta alcanza a todos sus proyectos.\n\n## Buenas prácticas\n- Aplicar **mínimo privilegio** y revisar con *IAM Recommender*.\n- Evitar claves de cuenta de servicio descargables; usar **identidad de carga de trabajo** o suplantación.\n\n> **En el examen:** ante un acceso demasiado amplio, busca el rol predefinido más acotado y recuerda que IAM concede, nunca deniega salvo *deny policies*."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué práctica reduce mejor la carga administrativa al asignar permisos a muchos empleados de un mismo equipo?",
+          "opciones": [
+            "Asignar roles a un grupo y agregar a las personas al grupo",
+            "Asignar roles individualmente a cada usuario",
+            "Compartir una sola cuenta de servicio entre todos",
+            "Usar siempre el rol básico de Editor"
+          ],
+          "correctas": [0],
+          "explicacion": "Vincular roles a un grupo permite gestionar el acceso de todo el equipo desde la pertenencia al grupo, en lugar de editar cada principal por separado."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles afirmaciones sobre la jerarquía de recursos y la herencia de IAM son correctas?",
+          "opciones": [
+            "Las políticas concedidas en una carpeta se heredan en sus proyectos",
+            "La organización es el nodo raíz de la jerarquía",
+            "Un permiso heredado puede revocarse poniendo un rol más bajo en el recurso hijo",
+            "Cada proyecto debe repetir manualmente las políticas de su carpeta",
+            "Las cuentas de servicio también son principales de IAM"
+          ],
+          "correctas": [0, 1, 4],
+          "explicacion": "La herencia fluye de organización a recurso y suma permisos; no se revoca con un rol inferior. Las cuentas de servicio son principales válidos y no hace falta repetir políticas heredadas."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Una aplicación en GKE debe acceder a un bucket sin usar claves de cuenta de servicio descargables. ¿Qué mecanismo es el más adecuado?",
+          "opciones": [
+            "Workload Identity Federation o Workload Identity de GKE",
+            "Incrustar una clave JSON en la imagen del contenedor",
+            "Conceder el rol de Propietario al nodo",
+            "Compartir la clave por variable de entorno en texto plano"
+          ],
+          "correctas": [0],
+          "explicacion": "Workload Identity permite que los pods asuman una cuenta de servicio sin manejar claves estáticas, eliminando el riesgo de credenciales filtradas."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-de-red",
+      "nombre": "Seguridad de red",
+      "dominio": "Configuring network security",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Defensa perimetral y segmentación de la VPC",
+        "markdown": "## Segmentación de la red\nUna **VPC** global aísla cargas mediante subredes regionales y **reglas de firewall** con estado. Las reglas se priorizan por número (menor gana) y por defecto bloquean entrada y permiten salida.\n\n## Perímetros de servicio\nLos **VPC Service Controls** crean un perímetro alrededor de APIs gestionadas (como Cloud Storage) para mitigar la **exfiltración de datos**, incluso si una credencial se filtra.\n\n## Protección de borde\n- **Cloud Armor** filtra tráfico L7 y mitiga DDoS y ataques de aplicación con reglas WAF.\n- **Private Google Access** permite que instancias sin IP pública lleguen a servicios de Google.\n- **Cloud NAT** habilita salida controlada sin exponer IPs entrantes.\n\n## Conectividad híbrida\nPara unir on-premises se usan **Cloud VPN** o **Cloud Interconnect**, manteniendo el tráfico fuera de Internet público.\n\n> **En el examen:** si el escenario menciona exfiltración hacia un proyecto externo, la respuesta suele ser VPC Service Controls; si menciona DDoS o WAF, es Cloud Armor."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Se quiere evitar que datos de Cloud Storage se copien hacia un proyecto fuera de la organización aunque alguien obtenga credenciales válidas. ¿Qué control aplica?",
+          "opciones": [
+            "VPC Service Controls con un perímetro de servicio",
+            "Una regla de firewall de salida",
+            "Cloud Armor con reglas WAF",
+            "Etiquetas de red en las instancias"
+          ],
+          "correctas": [0],
+          "explicacion": "VPC Service Controls limita el acceso a las APIs gestionadas a un perímetro definido, mitigando la exfiltración incluso con credenciales comprometidas."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué mecanismos permiten que instancias sin dirección IP pública sigan operando de forma segura?",
+          "opciones": [
+            "Private Google Access para alcanzar APIs de Google",
+            "Cloud NAT para salida a Internet sin IP entrante",
+            "Asignar IP pública efímera a cada instancia",
+            "Cloud VPN para conectividad con la red on-premises",
+            "Desactivar todas las reglas de firewall"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "Private Google Access, Cloud NAT y Cloud VPN dan conectividad sin exponer IPs públicas entrantes. Asignar IPs públicas o quitar el firewall aumenta la superficie de ataque."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál es el comportamiento por defecto de las reglas de firewall implícitas en una VPC nueva?",
+          "opciones": [
+            "Bloquean toda entrada y permiten toda salida",
+            "Permiten toda entrada y bloquean toda salida",
+            "Permiten todo el tráfico en ambas direcciones",
+            "Bloquean todo el tráfico en ambas direcciones"
+          ],
+          "correctas": [0],
+          "explicacion": "Por defecto la VPC deniega el tráfico de entrada y permite el de salida; las reglas explícitas ajustan ese comportamiento."
+        }
+      ]
+    },
+    {
+      "slug": "cifrado-y-gestion-de-claves",
+      "nombre": "Cifrado y gestión de claves",
+      "dominio": "Ensuring data protection",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Cifrado en reposo, en tránsito y control de claves",
+        "markdown": "## Cifrado por defecto\nGoogle Cloud cifra **automáticamente los datos en reposo** sin configuración. La decisión de diseño está en **quién controla las claves**.\n\n## Opciones de claves\n- **Google-managed**: transparentes, sin esfuerzo del cliente.\n- **CMEK** (*Customer-Managed*): claves en **Cloud KMS** que tú creas, rotas y deshabilitas.\n- **CSEK** (*Customer-Supplied*): aportas el material de clave; Google no lo almacena.\n- **Cloud HSM** y **External Key Manager (EKM)** para requisitos de hardware o claves fuera de la nube.\n\n## Gestión de secretos\nLas credenciales y tokens van en **Secret Manager**, con versiones, IAM y registro de acceso, nunca en el código.\n\n## Rotación\nDefine **rotación automática** de claves en KMS y separa funciones para que quien usa la clave no pueda eliminarla.\n\n> **En el examen:** si exigen control y rotación de claves propias, piensa en CMEK con Cloud KMS; si la clave nunca debe residir en Google, es EKM o CSEK."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una normativa obliga a que la organización controle y rote sus propias claves de cifrado dentro de Google Cloud. ¿Qué opción cumple el requisito?",
+          "opciones": [
+            "Claves gestionadas por el cliente (CMEK) en Cloud KMS",
+            "Cifrado por defecto gestionado por Google",
+            "Deshabilitar el cifrado en reposo",
+            "Guardar las claves en un bucket público"
+          ],
+          "correctas": [0],
+          "explicacion": "CMEK permite crear, rotar y deshabilitar claves en Cloud KMS, dando a la organización control directo sobre el material criptográfico."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué afirmaciones sobre la gestión de secretos y claves son correctas?",
+          "opciones": [
+            "Secret Manager versiona los secretos y registra el acceso",
+            "Cloud KMS admite rotación automática de claves",
+            "Las credenciales deben incrustarse en el código fuente para mayor velocidad",
+            "EKM permite mantener claves fuera de la infraestructura de Google",
+            "Conviene separar funciones entre quien usa una clave y quien la elimina"
+          ],
+          "correctas": [0, 1, 3, 4],
+          "explicacion": "Secret Manager y Cloud KMS aportan versionado, rotación y separación de funciones; EKM externaliza el material de clave. Incrustar credenciales en el código es una mala práctica."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Dónde deberían almacenarse las contraseñas y tokens que usa una aplicación en Google Cloud?",
+          "opciones": [
+            "En Secret Manager con control de IAM y versiones",
+            "En un archivo de texto dentro del repositorio",
+            "En variables de entorno escritas en la imagen",
+            "En comentarios del código fuente"
+          ],
+          "correctas": [0],
+          "explicacion": "Secret Manager centraliza secretos con cifrado, control de acceso, versionado y auditoría, evitando exponerlos en el código o las imágenes."
+        }
+      ]
+    },
+    {
+      "slug": "operaciones-de-seguridad-y-monitoreo",
+      "nombre": "Operaciones de seguridad y monitoreo",
+      "dominio": "Managing operations within a cloud solution environment",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Detección, registro y respuesta a incidentes",
+        "markdown": "## Visibilidad centralizada\n**Security Command Center (SCC)** agrega hallazgos de vulnerabilidades, errores de configuración y amenazas en una vista única de la organización. Sus servicios (como *Event Threat Detection*) analizan logs en busca de actividad anómala.\n\n## Registros de auditoría\nLos **Cloud Audit Logs** se dividen en:\n- **Admin Activity**: siempre activo, registra cambios de configuración.\n- **Data Access**: opcional, registra lecturas y escrituras de datos.\n- **System Event** y **Policy Denied**.\n\n## Respuesta a incidentes\n- Exporta logs con **sinks** hacia un proyecto seguro o BigQuery para análisis.\n- Usa **alertas** en Cloud Monitoring para señales tempranas.\n- Contén con cambios de IAM, reglas de firewall o desactivación de claves.\n\n> **En el examen:** Admin Activity no se puede desactivar; si necesitas saber quién leyó datos, activa Data Access logs, que están deshabilitados por defecto."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "El equipo de seguridad necesita una vista unificada de vulnerabilidades y configuraciones inseguras en toda la organización. ¿Qué servicio usar?",
+          "opciones": [
+            "Security Command Center",
+            "Cloud Functions",
+            "Cloud Scheduler",
+            "Bigtable"
+          ],
+          "correctas": [0],
+          "explicacion": "Security Command Center centraliza hallazgos de seguridad, errores de configuración y amenazas a nivel de organización."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre los Cloud Audit Logs son correctas?",
+          "opciones": [
+            "Los registros de Admin Activity están siempre habilitados",
+            "Los registros de Data Access están deshabilitados por defecto",
+            "Se pueden exportar a BigQuery mediante un sink",
+            "Admin Activity puede desactivarse para reducir costos",
+            "Data Access registra lecturas y escrituras de datos"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Admin Activity está siempre activo y no se desactiva; Data Access es opcional y cubre lecturas y escrituras. Todos pueden exportarse mediante sinks."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Durante un incidente se quiere conservar registros fuera del proyecto comprometido para análisis forense. ¿Qué mecanismo es apropiado?",
+          "opciones": [
+            "Un log sink que exporte a un proyecto o destino seguro",
+            "Borrar los logs del proyecto afectado",
+            "Desactivar Cloud Logging temporalmente",
+            "Guardar capturas de pantalla manualmente"
+          ],
+          "correctas": [0],
+          "explicacion": "Un sink permite enrutar copias de los logs a un destino aislado y de confianza, preservando la evidencia aunque el proyecto original se vea comprometido."
+        }
+      ]
+    },
+    {
+      "slug": "cumplimiento-y-gobernanza",
+      "nombre": "Cumplimiento y gobernanza",
+      "dominio": "Ensuring compliance",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Políticas de organización y marcos regulatorios",
+        "markdown": "## Gobernanza preventiva\nLas **Organization Policies** imponen *constraints* a nivel de organización, carpeta o proyecto, por ejemplo prohibir la creación de claves de cuenta de servicio o restringir regiones de despliegue. Son **controles preventivos**, no detectivos.\n\n## Responsabilidad compartida\nGoogle protege la infraestructura; el cliente es responsable de **configuración, identidades y datos**. Entender el límite evita brechas de cumplimiento.\n\n## Marcos y residencia de datos\n- Asegura la **residencia de datos** con *location constraints* y selección de regiones.\n- **Assured Workloads** ayuda a cumplir requisitos regulatorios específicos.\n- Usa SCC y *Compliance Reports* para evidenciar controles ante auditorías.\n\n## Clasificación de datos\n**Cloud DLP / Sensitive Data Protection** descubre y enmascara información sensible (PII) antes de almacenarla o compartirla.\n\n> **En el examen:** para prevenir configuraciones no permitidas usa Organization Policy; para descubrir y desidentificar PII usa Sensitive Data Protection (DLP)."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Se debe impedir, de forma preventiva, que cualquier proyecto cree claves descargables de cuentas de servicio. ¿Qué herramienta lo logra?",
+          "opciones": [
+            "Una restricción de Organization Policy",
+            "Una alerta de Cloud Monitoring",
+            "Un hallazgo de Security Command Center",
+            "Una regla de firewall"
+          ],
+          "correctas": [0],
+          "explicacion": "Las Organization Policies aplican restricciones preventivas; existe una constraint específica para deshabilitar la creación de claves de cuenta de servicio."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué afirmaciones sobre cumplimiento y gobernanza en Google Cloud son correctas?",
+          "opciones": [
+            "Las Organization Policies son controles preventivos",
+            "El cliente es responsable de la configuración y los datos bajo el modelo de responsabilidad compartida",
+            "Sensitive Data Protection ayuda a descubrir y enmascarar PII",
+            "Google es responsable de la configuración de IAM del cliente",
+            "Las restricciones de ubicación apoyan la residencia de datos"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Las políticas de organización previenen configuraciones no deseadas, el cliente gestiona identidades y datos, y DLP desidentifica PII. Google no configura el IAM del cliente."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Una empresa necesita descubrir y enmascarar números de tarjeta y otros datos personales antes de cargarlos a un data lake. ¿Qué servicio aplica?",
+          "opciones": [
+            "Sensitive Data Protection (Cloud DLP)",
+            "Cloud CDN",
+            "Organization Policy",
+            "Cloud Armor"
+          ],
+          "correctas": [0],
+          "explicacion": "Sensitive Data Protection inspecciona, clasifica y desidentifica datos sensibles como PII, permitiendo enmascararlos antes de almacenarlos."
+        }
+      ]
+    }
+  ]
+}

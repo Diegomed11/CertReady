@@ -1,0 +1,342 @@
+{
+  "slug": "aws-data-engineer-associate",
+  "nombre": "AWS Certified Data Engineer – Associate",
+  "proveedor": "AWS",
+  "nivel": "associate",
+  "area": "Datos",
+  "descripcion": "Valida la capacidad de construir y operar canalizaciones de datos en AWS: ingesta, transformación, almacenamiento y exposición de datos de forma segura y eficiente. Está orientada a quienes diseñan pipelines con servicios gestionados y optimizan costo y rendimiento.",
+  "skills": [
+    "ingesta de datos",
+    "ETL",
+    "AWS Glue",
+    "Amazon Kinesis",
+    "Amazon S3",
+    "Amazon Redshift",
+    "Apache Spark",
+    "Lake Formation",
+    "particionamiento",
+    "orquestación",
+    "calidad de datos",
+    "gobierno de datos"
+  ],
+  "roles": [
+    "Ingeniero de datos",
+    "Ingeniero de ETL",
+    "Arquitecto de datos junior",
+    "Analista de plataformas de datos"
+  ],
+  "temas": [
+    {
+      "slug": "ingesta-y-transformacion",
+      "nombre": "Ingesta y transformación de datos",
+      "dominio": "Dominio 1: Ingestion and Transformation",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Patrones de ingesta y ETL",
+        "markdown": "## Modos de ingesta\n\nLa ingesta puede ser **por lotes** (batch) o en **streaming** según la latencia que tolere el caso.\n\n- **Batch**: cargas periódicas con AWS Glue, AWS DMS o transferencias a S3.\n- **Streaming**: eventos continuos con Amazon Kinesis Data Streams o Amazon MSK (Kafka gestionado).\n- **Near real-time**: Amazon Data Firehose entrega a S3, Redshift u OpenSearch con buffering configurable.\n\n## Transformación\n\nEl trabajo de **ETL/ELT** convierte datos crudos en formatos consultables.\n\n- **AWS Glue** ejecuta jobs de Apache Spark sin servidores que administrar.\n- Convierte a formatos **columnar** como Parquet u ORC para reducir costo de lectura.\n- Usa **marcadores de job** (job bookmarks) para procesar solo datos nuevos.\n\n## Decisiones clave\n\n- **Idempotencia**: reintentos no deben duplicar registros.\n- **Esquema cambiante**: el catálogo de Glue versiona definiciones.\n\n> **En el examen:** ante latencia de segundos elige streaming (Kinesis/MSK); para entrega gestionada con poco código, Firehose."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un equipo necesita entregar flujos de eventos a Amazon S3 con la menor administración posible y buffering automático. ¿Qué servicio se ajusta mejor?",
+          "opciones": [
+            "Amazon Data Firehose",
+            "AWS Batch",
+            "Amazon EC2 con un consumidor propio",
+            "AWS DataSync"
+          ],
+          "correctas": [0],
+          "explicacion": "Firehose es un servicio totalmente gestionado que recibe streaming, lo bufferiza y lo entrega a destinos como S3 sin necesidad de operar infraestructura."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué prácticas mejoran la eficiencia de un job de transformación en AWS Glue? (Elige dos)",
+          "opciones": [
+            "Escribir la salida en formato columnar como Parquet",
+            "Habilitar job bookmarks para procesar solo datos nuevos",
+            "Guardar siempre la salida como un único archivo de texto",
+            "Deshabilitar el catálogo de datos para evitar metadatos",
+            "Convertir todos los datos a JSON sin comprimir"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "Parquet reduce el costo de lectura por su formato columnar y los job bookmarks evitan reprocesar datos ya ingeridos. Las demás opciones aumentan costo o pierden gobierno de metadatos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una aplicación requiere procesar eventos con latencia de pocos segundos y permitir múltiples consumidores independientes. ¿Qué opción es más adecuada?",
+          "opciones": [
+            "Amazon Kinesis Data Streams",
+            "Una carga batch nocturna con AWS Glue",
+            "Amazon Athena consultando S3",
+            "AWS Snowball"
+          ],
+          "correctas": [0],
+          "explicacion": "Kinesis Data Streams ofrece ingesta de baja latencia y permite que varios consumidores lean el mismo flujo de forma independiente."
+        }
+      ]
+    },
+    {
+      "slug": "almacenamiento-y-gestion",
+      "nombre": "Almacenamiento y gestión de datos",
+      "dominio": "Dominio 2: Data Store Management",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Elección y diseño del almacén",
+        "markdown": "## Tipos de almacén\n\nElegir el almacén correcto depende del patrón de acceso.\n\n- **Amazon S3**: data lake económico y duradero; base del almacenamiento analítico.\n- **Amazon Redshift**: almacén de datos columnar para consultas analíticas a gran escala.\n- **Amazon DynamoDB**: clave-valor de baja latencia para acceso transaccional.\n\n## Organización en el lago\n\nUna buena estructura reduce costo y mejora el rendimiento.\n\n- **Particionamiento** por columnas como fecha limita los datos escaneados.\n- **Compactación** de archivos pequeños evita sobrecarga de metadatos.\n- **Clases de almacenamiento** y políticas de ciclo de vida mueven datos fríos a capas baratas.\n\n## Catálogo y formatos\n\n- El **catálogo de Glue** centraliza esquemas para Athena, Redshift y EMR.\n- Formatos de tabla como **Apache Iceberg** habilitan transacciones y evolución de esquema.\n\n> **En el examen:** para reducir lo que escanea Athena, particiona y usa formato columnar comprimido."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio es la base más común para un data lake económico y duradero en AWS?",
+          "opciones": [
+            "Amazon S3",
+            "Amazon RDS",
+            "Amazon ElastiCache",
+            "AWS Storage Gateway"
+          ],
+          "correctas": [0],
+          "explicacion": "Amazon S3 ofrece durabilidad alta y bajo costo por GB, por lo que es el cimiento típico de un data lake analítico."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Un data lake en S3 sufre escaneos costosos en Athena. ¿Qué medidas reducen los datos escaneados y el costo? (Elige dos)",
+          "opciones": [
+            "Particionar las tablas por fecha de evento",
+            "Convertir los archivos a Parquet comprimido",
+            "Almacenar todo como CSV sin comprimir en un solo prefijo",
+            "Aumentar el número de archivos diminutos por partición",
+            "Eliminar el catálogo de datos de Glue"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "Particionar limita las particiones leídas y Parquet columnar comprimido reduce los bytes escaneados. CSV plano, muchos archivos pequeños o quitar el catálogo empeoran rendimiento y costo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una aplicación necesita lecturas y escrituras clave-valor de un solo dígito de milisegundos a gran escala. ¿Qué almacén elegir?",
+          "opciones": [
+            "Amazon DynamoDB",
+            "Amazon Redshift",
+            "Amazon S3 Glacier",
+            "AWS Glue Data Catalog"
+          ],
+          "correctas": [0],
+          "explicacion": "DynamoDB está diseñado para acceso clave-valor de baja latencia y escalabilidad horizontal, no para analítica masiva ni archivado."
+        }
+      ]
+    },
+    {
+      "slug": "operacion-y-soporte",
+      "nombre": "Operación y soporte de canalizaciones",
+      "dominio": "Dominio 3: Data Operations and Support",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Orquestación, automatización y monitoreo",
+        "markdown": "## Orquestación\n\nLas canalizaciones encadenan pasos con dependencias y reintentos.\n\n- **AWS Step Functions** coordina flujos con estados y manejo de errores.\n- **Amazon MWAA** (Airflow gestionado) orquesta DAGs complejos.\n- Los **workflows de Glue** agrupan crawlers y jobs relacionados.\n\n## Automatización\n\n- **EventBridge** dispara procesos ante eventos o en horarios programados.\n- **Lambda** ejecuta lógica ligera sin servidores entre pasos.\n\n## Monitoreo y mantenimiento\n\nLa observabilidad detecta fallos y degradación.\n\n- **CloudWatch** recopila métricas, logs y alarmas de los jobs.\n- **Calidad de datos** con AWS Glue Data Quality valida reglas sobre los datos.\n- Reintentos con **backoff** evitan saturar dependencias durante fallos transitorios.\n\n> **En el examen:** para flujos serverless con ramas y reintentos finos, Step Functions; para DAGs de Airflow, MWAA."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio permite orquestar pasos de un pipeline serverless con estados, ramas y manejo de errores?",
+          "opciones": [
+            "AWS Step Functions",
+            "Amazon S3",
+            "AWS Certificate Manager",
+            "Amazon Route 53"
+          ],
+          "correctas": [0],
+          "explicacion": "Step Functions modela máquinas de estados que coordinan tareas con transiciones, reintentos y captura de errores sin servidores que administrar."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué componentes ayudan a monitorear y disparar canalizaciones de datos en AWS? (Elige dos)",
+          "opciones": [
+            "Amazon CloudWatch para métricas, logs y alarmas",
+            "Amazon EventBridge para disparar jobs por evento o programación",
+            "AWS Shield para ejecutar transformaciones de datos",
+            "Amazon CloudFront para orquestar DAGs",
+            "AWS Cost Explorer para reintentar jobs fallidos"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "CloudWatch aporta observabilidad (métricas, logs, alarmas) y EventBridge dispara procesos por eventos o cron. Las otras opciones describen servicios con propósitos distintos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Un job de Glue falla intermitentemente al llamar a una API externa con límites de tasa. ¿Cuál es la estrategia más adecuada?",
+          "opciones": [
+            "Reintentar con backoff exponencial ante errores transitorios",
+            "Eliminar todo manejo de errores para acelerar el job",
+            "Ejecutar el job una sola vez sin reintentos",
+            "Aumentar la concurrencia al máximo para forzar la API"
+          ],
+          "correctas": [0],
+          "explicacion": "El backoff exponencial espacia los reintentos y reduce la presión sobre la dependencia con límite de tasa, mejorando la probabilidad de éxito sin saturarla."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-y-gobierno",
+      "nombre": "Seguridad y gobierno de datos",
+      "dominio": "Dominio 4: Data Security and Governance",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Protección, acceso y cumplimiento",
+        "markdown": "## Cifrado\n\nLos datos deben protegerse en reposo y en tránsito.\n\n- **En reposo**: cifrado con claves de **AWS KMS** sobre S3, Redshift y otros.\n- **En tránsito**: TLS para todas las conexiones de datos.\n\n## Control de acceso\n\nEl acceso se otorga con mínimo privilegio.\n\n- **IAM** define quién puede hacer qué sobre los recursos.\n- **AWS Lake Formation** centraliza permisos finos a nivel de tabla, columna y fila sobre el lago.\n\n## Gobierno y privacidad\n\n- **Enmascaramiento** y tokenización protegen datos sensibles (PII).\n- **Auditoría** con CloudTrail registra accesos y cambios.\n- **Calidad y linaje** documentan el origen y la confianza de los datos.\n\n> **En el examen:** para permisos finos por columna o fila sobre el data lake, Lake Formation; para cifrado gestionado de claves, KMS."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio administra claves de cifrado para proteger datos en reposo en S3 y Redshift?",
+          "opciones": [
+            "AWS KMS",
+            "Amazon SNS",
+            "AWS Glue",
+            "Amazon QuickSight"
+          ],
+          "correctas": [0],
+          "explicacion": "AWS Key Management Service (KMS) crea y gestiona claves de cifrado que servicios como S3 y Redshift usan para proteger datos en reposo."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Una organización debe restringir el acceso a columnas con PII en su data lake y auditar todos los accesos. ¿Qué combinación aplica? (Elige dos)",
+          "opciones": [
+            "Usar AWS Lake Formation para permisos a nivel de columna",
+            "Habilitar AWS CloudTrail para auditar accesos a la API",
+            "Hacer públicos los buckets de S3 para simplificar el acceso",
+            "Desactivar el cifrado para mejorar el rendimiento",
+            "Compartir una sola clave de acceso entre todos los usuarios"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "Lake Formation aplica permisos finos a nivel de columna sobre el lago y CloudTrail registra los accesos para auditoría. Las demás opciones debilitan gravemente la seguridad."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Según el principio de mínimo privilegio, ¿cómo deben asignarse los permisos a un job de ETL?",
+          "opciones": [
+            "Solo los permisos necesarios para las acciones y recursos que usa",
+            "Permisos de administrador completos por comodidad",
+            "Las mismas credenciales que usa el equipo humano",
+            "Acceso de escritura a todos los buckets de la cuenta"
+          ],
+          "correctas": [0],
+          "explicacion": "El mínimo privilegio concede únicamente los permisos requeridos para la tarea, reduciendo la superficie de riesgo ante credenciales comprometidas."
+        }
+      ]
+    },
+    {
+      "slug": "modelado-y-formatos-analiticos",
+      "nombre": "Modelado y formatos analíticos",
+      "dominio": "Dominio 2: Data Store Management",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Esquemas, formatos y consulta",
+        "markdown": "## Modelado dimensional\n\nLos almacenes analíticos suelen usar **esquemas en estrella**.\n\n- **Tablas de hechos** guardan métricas (ventas, clics).\n- **Tablas de dimensiones** describen el contexto (cliente, fecha, producto).\n\n## Formatos de archivo\n\nLa elección impacta costo y velocidad.\n\n- **Columnar** (Parquet, ORC): ideal para analítica que lee pocas columnas.\n- **Fila** (CSV, JSON): útil para ingesta o cargas completas, menos eficiente al consultar.\n- La **compresión** (Snappy, GZIP) reduce almacenamiento y bytes leídos.\n\n## Consulta sin servidores\n\n- **Amazon Athena** consulta S3 con SQL estándar sin infraestructura.\n- **Redshift Spectrum** une datos del lago con tablas del almacén.\n\n> **En el examen:** para analítica que filtra y agrega columnas, prefiere formato columnar comprimido sobre filas planas."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En un esquema en estrella, ¿qué tabla contiene típicamente las métricas numéricas como el importe de venta?",
+          "opciones": [
+            "La tabla de hechos",
+            "La tabla de dimensiones",
+            "La tabla de catálogo",
+            "La tabla de auditoría"
+          ],
+          "correctas": [0],
+          "explicacion": "Las tablas de hechos almacenan las métricas medibles del proceso de negocio, mientras que las dimensiones aportan el contexto descriptivo."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué características hacen a Parquet adecuado para cargas analíticas? (Elige dos)",
+          "opciones": [
+            "Almacena los datos por columnas, leyendo solo las necesarias",
+            "Soporta compresión eficiente que reduce los bytes leídos",
+            "Obliga a leer siempre todas las columnas de cada fila",
+            "Solo admite datos sin tipado ni esquema",
+            "Impide la compatibilidad con Amazon Athena"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "El formato columnar de Parquet permite leer únicamente las columnas requeridas y comprimirlas con eficiencia, reduciendo el costo de consulta. Athena lo soporta de forma nativa."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio permite consultar datos en S3 con SQL estándar sin aprovisionar servidores?",
+          "opciones": [
+            "Amazon Athena",
+            "Amazon EC2",
+            "AWS Lambda",
+            "Amazon CloudWatch"
+          ],
+          "correctas": [0],
+          "explicacion": "Amazon Athena es un servicio de consulta serverless que ejecuta SQL directamente sobre archivos almacenados en S3, cobrando por datos escaneados."
+        }
+      ]
+    },
+    {
+      "slug": "optimizacion-costo-rendimiento",
+      "nombre": "Optimización de costo y rendimiento",
+      "dominio": "Dominio 3: Data Operations and Support",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Eficiencia en pipelines de datos",
+        "markdown": "## Reducir datos escaneados\n\nEn analítica, **menos datos leídos = menor costo y mayor velocidad**.\n\n- **Particionar** por columnas de filtro frecuentes (fecha, región).\n- **Comprimir** y usar formatos columnar.\n- **Pushdown de predicados**: filtrar lo antes posible en la lectura.\n\n## Dimensionar el cómputo\n\n- Ajustar el número de **DPU/workers** de Glue al volumen real.\n- Usar **Auto Scaling** donde esté disponible para seguir la demanda.\n- Elegir **Spot** para cargas tolerantes a interrupción en EMR.\n\n## Ciclo de vida del dato\n\n- Mover datos fríos a clases de S3 más baratas con **políticas de ciclo de vida**.\n- **Comprimir** y compactar evita el problema de muchos archivos pequeños.\n\n> **En el examen:** ante consultas lentas y caras en Athena, primero particiona y usa columnar antes de escalar cómputo."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Las consultas de Athena escanean todo el conjunto de datos aunque se filtre por fecha. ¿Qué cambio reduce los datos escaneados?",
+          "opciones": [
+            "Particionar la tabla por la columna de fecha",
+            "Aumentar el tamaño de los archivos a varios GB cada uno",
+            "Convertir los datos a JSON sin comprimir",
+            "Agregar más columnas a la tabla de hechos"
+          ],
+          "correctas": [0],
+          "explicacion": "Particionar por fecha permite que Athena lea solo las particiones relevantes (partition pruning), reduciendo drásticamente los bytes escaneados y el costo."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué técnicas optimizan el costo de almacenamiento y consulta en un data lake? (Elige dos)",
+          "opciones": [
+            "Aplicar políticas de ciclo de vida para mover datos fríos a clases más baratas",
+            "Compactar archivos pequeños en archivos de mayor tamaño",
+            "Almacenar millones de archivos diminutos por partición",
+            "Guardar todo el histórico en la clase más cara permanentemente",
+            "Desactivar la compresión de los datos"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "Las políticas de ciclo de vida reducen costo de almacenamiento de datos fríos y la compactación evita la sobrecarga de muchos archivos pequeños. Las demás opciones aumentan costo o degradan rendimiento."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una carga de procesamiento por lotes en EMR tolera interrupciones y busca minimizar costo de cómputo. ¿Qué opción conviene?",
+          "opciones": [
+            "Usar instancias Spot para los nodos de trabajo",
+            "Usar siempre instancias On-Demand de gran tamaño",
+            "Ejecutar el cluster permanentemente sin apagarlo",
+            "Procesar los datos en un único nodo sin escalado"
+          ],
+          "correctas": [0],
+          "explicacion": "Las instancias Spot ofrecen el menor costo para cargas tolerantes a interrupción, como procesamiento batch que puede reintentar tareas perdidas."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,342 @@
+{
+  "slug": "aws-developer-associate",
+  "nombre": "AWS Certified Developer – Associate",
+  "proveedor": "AWS",
+  "nivel": "associate",
+  "area": "Desarrollo",
+  "descripcion": "Valida la capacidad de construir, desplegar y depurar aplicaciones nativas de la nube usando los servicios de cómputo, almacenamiento, mensajería y despliegue de AWS. Pensada para personas con experiencia práctica escribiendo y operando código sobre la plataforma.",
+  "skills": [
+    "lambda",
+    "api gateway",
+    "dynamodb",
+    "s3",
+    "iam",
+    "sdk",
+    "cloudformation",
+    "ci/cd",
+    "sqs",
+    "cognito",
+    "cloudwatch",
+    "x-ray"
+  ],
+  "roles": [
+    "Desarrollador backend en la nube",
+    "Ingeniero de aplicaciones serverless",
+    "Desarrollador full-stack",
+    "Ingeniero de integración de APIs"
+  ],
+  "temas": [
+    {
+      "slug": "computo-serverless-lambda",
+      "nombre": "Cómputo serverless con Lambda",
+      "dominio": "Desarrollo con servicios de AWS",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Funciones Lambda: ejecución y configuración",
+        "markdown": "## Modelo de ejecución\n\nLambda corre tu código en respuesta a **eventos** sin que administres servidores. Pagas por **invocación** y por **GB-segundo** de duración.\n\n- El **handler** recibe `event` y `context`; este último expone tiempo restante, request id y memoria.\n- El **entorno de ejecución** se reutiliza entre invocaciones: variables globales y conexiones persisten (*warm start*).\n\n## Parámetros clave\n\n- **Memoria** (128 MB–10 GB): asignar más memoria también sube la CPU disponible.\n- **Timeout**: máximo 15 minutos por invocación.\n- **Concurrencia**: usa *reserved concurrency* para acotar y *provisioned concurrency* para eliminar el arranque en frío.\n\n## Buenas prácticas\n\n- Inicializa clientes SDK **fuera** del handler para aprovechar el reúso.\n- Guarda secretos en variables de entorno cifradas o en Secrets Manager, nunca en el código.\n\n> **En el examen:** si necesitas latencia predecible y evitar *cold starts*, la respuesta es **provisioned concurrency**, no aumentar la memoria."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál es la duración máxima que puede tener una sola invocación de una función Lambda antes de agotar su tiempo?",
+          "opciones": [
+            "5 minutos",
+            "15 minutos",
+            "30 minutos",
+            "60 minutos"
+          ],
+          "correctas": [1],
+          "explicacion": "El timeout máximo configurable de una invocación Lambda es de 15 minutos. Para cargas más largas conviene otro servicio de cómputo como ECS o Step Functions."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una función experimenta arranques en frío que añaden latencia inaceptable a una API sensible al tiempo. ¿Qué configuración los elimina de forma directa?",
+          "opciones": [
+            "Aumentar la memoria asignada al máximo",
+            "Activar provisioned concurrency",
+            "Reducir el tamaño del paquete de despliegue solamente",
+            "Cambiar el runtime a uno interpretado"
+          ],
+          "correctas": [1],
+          "explicacion": "La concurrencia aprovisionada mantiene entornos inicializados y listos, eliminando el arranque en frío. Subir memoria ayuda al rendimiento pero no garantiza entornos precalentados."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué prácticas mejoran el rendimiento o la reutilización del entorno de ejecución de una función Lambda? (Elige dos.)",
+          "opciones": [
+            "Crear los clientes del SDK dentro del handler en cada invocación",
+            "Inicializar conexiones y clientes fuera del handler, en el ámbito global",
+            "Reutilizar conexiones a bases de datos almacenadas en variables globales",
+            "Escribir todos los datos temporales en una variable de entorno",
+            "Aumentar el timeout a 15 minutos para todas las funciones"
+          ],
+          "correctas": [1, 2],
+          "explicacion": "El código en el ámbito global se ejecuta una vez por entorno y se reutiliza en invocaciones cálidas. Inicializar clientes y reusar conexiones ahí reduce latencia. Crearlos en cada invocación o abusar del timeout no aporta reutilización."
+        }
+      ]
+    },
+    {
+      "slug": "apis-rest-api-gateway",
+      "nombre": "APIs gestionadas con API Gateway",
+      "dominio": "Desarrollo con servicios de AWS",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Exponer APIs con Amazon API Gateway",
+        "markdown": "## Tipos de API\n\n- **REST API**: control fino, plantillas de mapeo, caché, validación de requests.\n- **HTTP API**: más simple, barata y de baja latencia para casos comunes.\n\n## Etapas y despliegues\n\nUna API se publica en **stages** (`dev`, `prod`). Las **stage variables** permiten apuntar a distintos backends sin cambiar el código.\n\n## Seguridad e integración\n\n- **Autorizadores**: IAM, Cognito o Lambda authorizers para validar tokens.\n- **Throttling** y **usage plans** con **API keys** controlan cuotas por cliente.\n- Integra con Lambda (*proxy*), servicios HTTP o servicios AWS directamente.\n\n## Caché\n\nEl caché por stage reduce llamadas al backend; se invalida con encabezados o por TTL.\n\n> **En el examen:** para limitar cuántas peticiones por segundo hace cada cliente, combina **usage plans + API keys** con **throttling**, no listas de IP."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué mecanismo de API Gateway permite que una misma API apunte a backends distintos según el entorno sin modificar el código?",
+          "opciones": [
+            "Mapeos de respuesta",
+            "Stage variables",
+            "API keys",
+            "Modelos de validación"
+          ],
+          "correctas": [1],
+          "explicacion": "Las variables de stage se asignan por etapa y pueden referenciar distintos endpoints o aliases, permitiendo que dev y prod usen backends diferentes con la misma definición."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Necesitas limitar a 100 solicitudes por segundo por cada cliente externo que consume tu API. ¿Qué combinación lo logra?",
+          "opciones": [
+            "Lambda authorizer con tokens JWT",
+            "Usage plans con API keys y throttling",
+            "Caché de stage con TTL alto",
+            "Plantillas de mapeo de integración"
+          ],
+          "correctas": [1],
+          "explicacion": "Los usage plans asocian API keys a cuotas y límites de throttling por cliente, que es exactamente el control de tasa por consumidor que se pide."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué tipos de autorizador puede usar una REST API de API Gateway para controlar el acceso? (Elige dos.)",
+          "opciones": [
+            "Autorizador basado en IAM (SigV4)",
+            "Autorizador de Cognito user pools",
+            "Autorizador de Route 53",
+            "Autorizador de CloudFront signed cookies",
+            "Autorizador de S3 bucket policy"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "API Gateway soporta autorización por IAM, por Cognito user pools y por Lambda authorizers. Route 53, CloudFront cookies y políticas de bucket de S3 no son mecanismos de autorización de API Gateway."
+        }
+      ]
+    },
+    {
+      "slug": "datos-dynamodb",
+      "nombre": "Modelado de datos con DynamoDB",
+      "dominio": "Desarrollo con servicios de AWS",
+      "orden": 3,
+      "hoja": {
+        "titulo": "DynamoDB: claves, índices y capacidad",
+        "markdown": "## Claves primarias\n\n- **Partition key**: determina la distribución de los datos.\n- **Sort key** (opcional): permite consultas por rango dentro de una partición.\n\nUna buena clave reparte el tráfico y evita *hot partitions*.\n\n## Índices\n\n- **LSI**: misma partition key, otra sort key; se define al crear la tabla.\n- **GSI**: partition y sort key distintas; se puede agregar después y tiene su propia capacidad.\n\n## Capacidad y consistencia\n\n- Modos **on-demand** o **provisioned** (con auto scaling).\n- Lecturas **eventualmente consistentes** (más baratas) o **fuertemente consistentes**.\n- **DynamoDB Streams** captura cambios para procesarlos con Lambda.\n\n## Operaciones\n\n`Query` usa la clave (eficiente); `Scan` recorre toda la tabla (evitar en producción).\n\n> **En el examen:** si una consulta filtra por un atributo que no es la clave, crea un **GSI**; no uses `Scan` repetidos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Tu aplicación necesita consultar pedidos por 'estado', un atributo que no forma parte de la clave primaria. ¿Cuál es la solución recomendada?",
+          "opciones": [
+            "Ejecutar operaciones Scan con un filtro por estado",
+            "Crear un índice secundario global (GSI) sobre el atributo estado",
+            "Aumentar la capacidad de lectura provisionada",
+            "Activar consistencia fuerte en todas las lecturas"
+          ],
+          "correctas": [1],
+          "explicacion": "Un GSI permite consultar eficientemente por un atributo distinto a la clave primaria. Scan recorre toda la tabla y es costoso e ineficiente para este patrón."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué función de DynamoDB captura las modificaciones a los ítems para poder procesarlas, por ejemplo, con una Lambda?",
+          "opciones": [
+            "DynamoDB Accelerator (DAX)",
+            "DynamoDB Streams",
+            "Global Tables",
+            "Time to Live (TTL)"
+          ],
+          "correctas": [1],
+          "explicacion": "DynamoDB Streams registra de forma ordenada las inserciones, modificaciones y borrados de ítems, y puede disparar funciones Lambda para procesarlos."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre los índices de DynamoDB son correctas? (Elige dos.)",
+          "opciones": [
+            "Un GSI puede tener una partition key distinta a la de la tabla base",
+            "Un LSI debe crearse junto con la tabla y comparte la partition key",
+            "Un LSI se puede agregar en cualquier momento tras crear la tabla",
+            "Un GSI comparte obligatoriamente la capacidad de la tabla base",
+            "Un LSI permite definir una partition key diferente a la de la tabla"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "El GSI admite partition y sort key distintas y tiene capacidad propia. El LSI conserva la partition key de la tabla, cambia solo la sort key y debe definirse al crear la tabla; no puede agregarse después."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-iam-cognito",
+      "nombre": "Seguridad: IAM y Cognito",
+      "dominio": "Seguridad",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Permisos, roles e identidades de usuario",
+        "markdown": "## IAM para aplicaciones\n\n- Las funciones y contenedores asumen **roles**; no incrustes credenciales de larga vida en el código.\n- Aplica el **mínimo privilegio**: políticas que otorgan solo las acciones necesarias.\n- Para credenciales temporales entre servicios usa **STS** (`AssumeRole`).\n\n## Amazon Cognito\n\n- **User pools**: directorio de usuarios; manejan registro, login y emiten **tokens JWT** (id, access, refresh).\n- **Identity pools**: cambian tokens por **credenciales AWS temporales** para acceder a servicios como S3.\n\n## Cifrado y secretos\n\n- **KMS** gestiona claves para cifrar datos en reposo.\n- **Secrets Manager** y **Parameter Store** guardan secretos fuera del código, con rotación.\n\n> **En el examen:** para dar a usuarios de una app móvil acceso temporal a S3, combina **user pool** (autenticación) con **identity pool** (credenciales AWS)."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una app móvil autentica usuarios y luego necesita que suban archivos directamente a S3 con permisos temporales. ¿Qué combinación de Cognito lo permite?",
+          "opciones": [
+            "Solo un user pool",
+            "User pool para autenticar e identity pool para obtener credenciales AWS temporales",
+            "Solo un identity pool sin autenticación",
+            "Un user pool emitiendo claves de acceso permanentes"
+          ],
+          "correctas": [1],
+          "explicacion": "El user pool autentica y emite tokens; el identity pool los intercambia por credenciales AWS temporales vía STS, que dan acceso directo y acotado a S3."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál es la forma recomendada de que una función Lambda obtenga permisos para escribir en una tabla de DynamoDB?",
+          "opciones": [
+            "Incluir claves de acceso de un usuario IAM en variables de entorno",
+            "Asignar un rol de ejecución IAM con la política mínima necesaria",
+            "Hacer la tabla pública",
+            "Usar las credenciales del usuario raíz de la cuenta"
+          ],
+          "correctas": [1],
+          "explicacion": "Las funciones asumen un rol de ejecución que provee credenciales temporales automáticamente. Incrustar claves de larga vida o usar el usuario raíz viola las buenas prácticas de seguridad."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué servicios de AWS sirven para almacenar y rotar secretos o parámetros de configuración fuera del código? (Elige dos.)",
+          "opciones": [
+            "AWS Secrets Manager",
+            "AWS Systems Manager Parameter Store",
+            "Amazon CloudFront",
+            "AWS Glue",
+            "Amazon Athena"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "Secrets Manager guarda secretos con rotación automática y Parameter Store almacena parámetros y secretos (SecureString). CloudFront, Glue y Athena cumplen funciones de CDN y datos, no de gestión de secretos."
+        }
+      ]
+    },
+    {
+      "slug": "despliegue-cicd",
+      "nombre": "Despliegue e IaC",
+      "dominio": "Despliegue",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Infraestructura como código y entregas",
+        "markdown": "## CloudFormation y SAM\n\n- **CloudFormation** describe infraestructura en plantillas YAML/JSON declarativas; gestiona **stacks** y *change sets*.\n- **AWS SAM** es una extensión para aplicaciones serverless: sintaxis breve para funciones, APIs y tablas.\n\n## Pipeline de despliegue\n\n- **CodeCommit/CodeBuild/CodeDeploy/CodePipeline** cubren control de versiones, build, despliegue y orquestación.\n- **CodeBuild** se configura con un `buildspec.yml`.\n\n## Estrategias de release\n\n- **All-at-once**, **rolling**, **blue/green** y **canary** balancean velocidad y riesgo.\n- Para Lambda, los **alias** con pesos de tráfico permiten despliegues canary y *rollback* rápido.\n\n## Empaquetado\n\nLas dependencias compartidas se distribuyen como **Lambda layers**.\n\n> **En el examen:** para liberar una nueva versión de Lambda enviando solo un porcentaje del tráfico, usa **alias con weighted routing** (canary)."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Quieres liberar una nueva versión de una función Lambda enviándole solo el 10% del tráfico al inicio para vigilar errores. ¿Qué mecanismo lo permite?",
+          "opciones": [
+            "Aumentar la concurrencia reservada de la nueva versión",
+            "Un alias de Lambda con enrutamiento ponderado entre versiones",
+            "Publicar la función en un nuevo stage de API Gateway sin alias",
+            "Reemplazar directamente la versión $LATEST"
+          ],
+          "correctas": [1],
+          "explicacion": "Un alias puede distribuir el tráfico por pesos entre dos versiones, habilitando despliegues canary y rollback inmediato si suben los errores."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué archivo define los pasos de compilación que ejecuta AWS CodeBuild?",
+          "opciones": [
+            "appspec.yml",
+            "buildspec.yml",
+            "template.yaml",
+            "pipeline.json"
+          ],
+          "correctas": [1],
+          "explicacion": "CodeBuild lee buildspec.yml, donde se declaran las fases (install, build, etc.) y los artefactos. appspec.yml pertenece a CodeDeploy."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre CloudFormation y SAM son correctas? (Elige dos.)",
+          "opciones": [
+            "Un change set muestra los cambios previstos antes de aplicarlos a un stack",
+            "SAM transforma su plantilla simplificada en una de CloudFormation al desplegar",
+            "CloudFormation solo acepta plantillas escritas en Python",
+            "Eliminar un stack nunca borra los recursos que creó",
+            "SAM solo puede crear buckets de S3, no funciones Lambda"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "Los change sets previsualizan el impacto de una actualización y SAM se expande a CloudFormation en el despliegue. Las plantillas usan YAML/JSON, eliminar un stack borra sus recursos (según la política) y SAM está orientado precisamente a Lambda y serverless."
+        }
+      ]
+    },
+    {
+      "slug": "observabilidad-troubleshooting",
+      "nombre": "Observabilidad y resolución de problemas",
+      "dominio": "Solución de problemas y optimización",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Monitoreo, logs y trazas distribuidas",
+        "markdown": "## CloudWatch\n\n- **Logs**: las funciones y servicios envían sus registros a *log groups*.\n- **Metrics**: métricas estándar y **custom metrics** publicadas por la app.\n- **Alarms**: disparan acciones (SNS, escalado) según umbrales.\n- **Logs Insights** consulta logs con un lenguaje propio.\n\n## AWS X-Ray\n\nTraza peticiones a través de varios servicios, mostrando un **service map** con latencias y errores. Útil para hallar cuellos de botella en arquitecturas distribuidas.\n\n## Mensajería resiliente\n\n- **SQS** desacopla productores y consumidores; usa **dead-letter queues** para mensajes que fallan repetidamente.\n- Ajusta el **visibility timeout** para evitar procesamiento duplicado.\n\n> **En el examen:** para diagnosticar qué servicio añade latencia en una cadena de microservicios, habilita **X-Ray** y revisa el **service map**, no solo los logs de una función."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En una arquitectura con varias funciones y servicios encadenados, necesitas identificar cuál introduce la mayor latencia. ¿Qué herramienta es la más adecuada?",
+          "opciones": [
+            "Revisar manualmente los CloudWatch Logs de cada función",
+            "AWS X-Ray y su service map",
+            "Aumentar la memoria de todas las funciones",
+            "Activar consistencia fuerte en DynamoDB"
+          ],
+          "correctas": [1],
+          "explicacion": "X-Ray traza la petición de extremo a extremo y el service map visualiza la latencia y errores por servicio, identificando el cuello de botella sin revisar logs uno por uno."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Algunos mensajes de una cola SQS fallan al procesarse una y otra vez. ¿Qué configuración los aísla para no bloquear la cola?",
+          "opciones": [
+            "Reducir el visibility timeout a cero",
+            "Configurar una dead-letter queue con un maxReceiveCount",
+            "Eliminar la cola y crearla de nuevo",
+            "Convertir la cola en FIFO"
+          ],
+          "correctas": [1],
+          "explicacion": "Una dead-letter queue recibe los mensajes que superan el maxReceiveCount, sacándolos del flujo principal para inspeccionarlos sin que bloqueen el procesamiento del resto."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué capacidades ofrece Amazon CloudWatch para observar una aplicación? (Elige dos.)",
+          "opciones": [
+            "Recopilar logs de la aplicación en log groups",
+            "Disparar alarmas cuando una métrica supera un umbral",
+            "Trazar peticiones individuales a través de microservicios con un service map",
+            "Almacenar objetos de forma duradera para archivado",
+            "Balancear el tráfico HTTP entre instancias"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "CloudWatch recopila logs en log groups y dispara alarmas según métricas. El trazado distribuido con service map corresponde a X-Ray, el archivado a S3 y el balanceo a ELB."
+        }
+      ]
+    }
+  ]
+}

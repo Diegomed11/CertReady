@@ -1,0 +1,343 @@
+{
+  "slug": "docker-dca",
+  "nombre": "Docker Certified Associate",
+  "proveedor": "Docker",
+  "nivel": "associate",
+  "area": "DevOps",
+  "descripcion": "Certificación que valida el dominio práctico de Docker para construir, distribuir y operar aplicaciones en contenedores. Cubre el ciclo de vida de imágenes, orquestación con Swarm, redes, almacenamiento y seguridad.",
+  "skills": [
+    "docker",
+    "contenedores",
+    "imagenes",
+    "dockerfile",
+    "swarm",
+    "redes",
+    "volumenes",
+    "registro",
+    "orquestacion",
+    "seguridad",
+    "compose",
+    "namespaces"
+  ],
+  "roles": [
+    "ingeniero devops",
+    "administrador de sistemas",
+    "desarrollador backend",
+    "ingeniero de plataforma",
+    "sre"
+  ],
+  "temas": [
+    {
+      "slug": "orquestacion",
+      "nombre": "Orquestación",
+      "dominio": "Orchestration",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Swarm: del nodo único al clúster",
+        "markdown": "## Inicializar y unir nodos\nUn clúster de **Swarm** se crea con `docker swarm init`, que convierte al host en el primer nodo **manager**. El comando devuelve un token: usa el de *worker* para sumar nodos que solo ejecutan tareas y el de *manager* para nodos que también participan en el consenso.\n\n## Managers y consenso\nLos managers mantienen el estado del clúster mediante el algoritmo **Raft**. Para tolerar fallos conviene un número **impar** de managers (3 o 5); con 3 se sobrevive a la caída de 1. Demasiados managers degradan el rendimiento del consenso.\n\n## Servicios y réplicas\n- `docker service create` despliega un servicio.\n- Modo **replicated**: defines cuántas copias quieres con `--replicas`.\n- Modo **global**: una tarea por cada nodo del clúster.\n- El **reconciliador** reprograma tareas si un nodo cae.\n\n> **En el examen:** recuerda que solo los *managers* ejecutan el plano de control Raft y que un quórum impar maximiza la tolerancia a fallos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué comando convierte un host en el primer nodo manager de un clúster Swarm?",
+          "opciones": [
+            "docker swarm join",
+            "docker swarm init",
+            "docker node promote",
+            "docker service create"
+          ],
+          "correctas": [1],
+          "explicacion": "`docker swarm init` inicializa el clúster y designa al host como primer manager, generando los tokens de unión."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Para tolerar la caída de un manager manteniendo el quórum, ¿cuántos managers se recomiendan como mínimo?",
+          "opciones": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctas": [2],
+          "explicacion": "Con 3 managers, Raft mantiene quórum (2 de 3) aun si uno cae. Un número par no mejora la tolerancia respecto al impar inferior."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles de las siguientes afirmaciones sobre los modos de despliegue de servicios en Swarm son correctas?",
+          "opciones": [
+            "El modo replicated permite fijar el número de tareas con --replicas",
+            "El modo global ejecuta exactamente una tarea por nodo elegible",
+            "El modo global requiere especificar --replicas obligatoriamente",
+            "El reconciliador reprograma tareas cuando un nodo deja de estar disponible",
+            "El modo replicated solo funciona con un único nodo manager"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "Replicated usa --replicas; global despliega una tarea por nodo sin --replicas; el reconciliador mantiene el estado deseado. El modo replicated no está limitado a un solo manager."
+        }
+      ]
+    },
+    {
+      "slug": "instalacion-configuracion",
+      "nombre": "Instalación y configuración",
+      "dominio": "Installation and Configuration",
+      "orden": 2,
+      "hoja": {
+        "titulo": "El daemon y su configuración",
+        "markdown": "## Arquitectura cliente-daemon\nDocker separa el **cliente** (`docker`) del **daemon** (`dockerd`). El cliente envía peticiones por la **API REST** a través de un socket Unix (`/var/run/docker.sock`) o TCP. El daemon gestiona imágenes, contenedores, redes y volúmenes.\n\n## daemon.json\nLa configuración persistente vive en `/etc/docker/daemon.json`. Allí defines opciones como:\n- `data-root`: dónde se almacenan imágenes y capas.\n- `storage-driver`: por ejemplo `overlay2`.\n- `log-driver`: controlador de logs por defecto.\n- `insecure-registries`: registros sin TLS.\n\nTras editarlo, recarga con `systemctl reload docker` o reinicia el servicio.\n\n## Habilitar y verificar\n- `systemctl enable --now docker` arranca el daemon al inicio.\n- `docker info` muestra driver de almacenamiento, controladores de logging y estado del clúster.\n\n> **En el examen:** distingue entre opciones de arranque por **flag** de `dockerd` y opciones declaradas en **daemon.json**; ambas no deben duplicarse para la misma clave."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿En qué archivo se define la configuración persistente del daemon de Docker en Linux?",
+          "opciones": [
+            "/etc/docker/config.yml",
+            "/etc/docker/daemon.json",
+            "/var/lib/docker/daemon.conf",
+            "~/.docker/config.json"
+          ],
+          "correctas": [1],
+          "explicacion": "`/etc/docker/daemon.json` es el archivo estándar de configuración del daemon. `~/.docker/config.json` es del cliente."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué comando muestra el storage-driver activo y el estado general del daemon?",
+          "opciones": [
+            "docker version",
+            "docker stats",
+            "docker info",
+            "docker inspect daemon"
+          ],
+          "correctas": [2],
+          "explicacion": "`docker info` reporta storage-driver, logging-driver, número de contenedores e información del clúster Swarm si aplica."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de estas opciones son válidas dentro de daemon.json?",
+          "opciones": [
+            "data-root",
+            "storage-driver",
+            "log-driver",
+            "insecure-registries",
+            "container-replicas"
+          ],
+          "correctas": [0, 1, 2, 3],
+          "explicacion": "data-root, storage-driver, log-driver e insecure-registries son claves reales del daemon. 'container-replicas' no existe."
+        }
+      ]
+    },
+    {
+      "slug": "imagenes-y-registro",
+      "nombre": "Imágenes y registro",
+      "dominio": "Image Creation, Management, and Registry",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Construir y distribuir imágenes",
+        "markdown": "## Capas y caché\nUna imagen es una pila de **capas** inmutables generadas por las instrucciones del **Dockerfile**. Cada `RUN`, `COPY` o `ADD` crea una capa nueva. Docker reutiliza la **caché** mientras la instrucción y su contexto no cambien, por eso conviene ordenar de lo menos a lo más volátil.\n\n## Buenas prácticas del Dockerfile\n- Usa **multi-stage builds** para separar compilación de runtime y reducir tamaño.\n- Combina comandos con `&&` para minimizar capas.\n- Aprovecha `.dockerignore` para excluir archivos del contexto.\n\n## Etiquetado y push\n- `docker tag imagen registro/repositorio:etiqueta`.\n- `docker push` sube al registro; `docker pull` descarga.\n- El **digest** (`sha256:...`) identifica la imagen de forma inmutable, a diferencia de una etiqueta reutilizable.\n\n> **En el examen:** una etiqueta puede reapuntarse, pero el **digest** siempre referencia el mismo contenido; úsalo cuando necesites inmutabilidad real."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué instrucción del Dockerfile NO genera por sí misma una nueva capa de sistema de archivos?",
+          "opciones": [
+            "RUN",
+            "COPY",
+            "ENV",
+            "ADD"
+          ],
+          "correctas": [2],
+          "explicacion": "ENV crea metadatos de configuración, no una capa de archivos. RUN, COPY y ADD sí modifican el sistema de archivos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué técnica reduce el tamaño final separando la fase de compilación de la de ejecución?",
+          "opciones": [
+            "Squash automático",
+            "Multi-stage build",
+            "Volúmenes anónimos",
+            "Capas overlay"
+          ],
+          "correctas": [1],
+          "explicacion": "El multi-stage build usa varias etapas FROM y copia solo los artefactos necesarios a la imagen final, descartando dependencias de compilación."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre etiquetas y digests de imágenes son correctas?",
+          "opciones": [
+            "Una etiqueta puede reasignarse a una imagen distinta",
+            "Un digest sha256 referencia siempre el mismo contenido",
+            "Hacer pull por digest garantiza inmutabilidad",
+            "El digest cambia cada vez que se reetiqueta la imagen",
+            "Dos etiquetas distintas nunca pueden apuntar al mismo digest"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Las etiquetas son mutables; el digest es estable e inmutable. El digest no depende del reetiquetado y múltiples etiquetas pueden compartir un mismo digest."
+        }
+      ]
+    },
+    {
+      "slug": "redes",
+      "nombre": "Redes",
+      "dominio": "Networking",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Drivers de red en Docker",
+        "markdown": "## Drivers integrados\nDocker incluye varios **drivers de red**:\n- **bridge**: red por defecto para contenedores en un solo host; aísla y permite mapear puertos con `-p`.\n- **host**: el contenedor comparte la pila de red del host, sin aislamiento de puertos.\n- **overlay**: conecta contenedores entre **varios nodos** del Swarm.\n- **macvlan**: asigna una MAC propia para que el contenedor aparezca como dispositivo físico.\n- **none**: sin conectividad.\n\n## DNS interno y descubrimiento\nEn redes **definidas por el usuario**, Docker provee resolución **DNS** por nombre de contenedor o de servicio, algo que la red bridge por defecto no ofrece de forma automática.\n\n## Publicación de puertos\n- `-p 8080:80` publica el puerto 80 del contenedor en el 8080 del host.\n- En Swarm, la **routing mesh** enruta el tráfico a cualquier nodo hacia las tareas del servicio.\n\n> **En el examen:** para comunicar servicios entre nodos del clúster necesitas un driver **overlay**; bridge es solo de host único."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué driver de red permite comunicar contenedores ubicados en distintos nodos de un Swarm?",
+          "opciones": [
+            "bridge",
+            "host",
+            "overlay",
+            "none"
+          ],
+          "correctas": [2],
+          "explicacion": "El driver overlay crea una red distribuida sobre varios hosts, esencial para servicios multi-nodo en Swarm."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué ofrece una red definida por el usuario que la red bridge por defecto no proporciona automáticamente?",
+          "opciones": [
+            "Resolución DNS por nombre de contenedor",
+            "Acceso a internet",
+            "Mapeo de puertos con -p",
+            "Mayor velocidad de CPU"
+          ],
+          "correctas": [0],
+          "explicacion": "Las redes definidas por el usuario habilitan descubrimiento por DNS interno entre contenedores; la bridge por defecto requiere enlaces manuales."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de los siguientes son drivers de red integrados en Docker?",
+          "opciones": [
+            "bridge",
+            "host",
+            "macvlan",
+            "overlay",
+            "tunnel"
+          ],
+          "correctas": [0, 1, 2, 3],
+          "explicacion": "bridge, host, macvlan y overlay son drivers nativos. 'tunnel' no es un driver de red de Docker."
+        }
+      ]
+    },
+    {
+      "slug": "almacenamiento-y-volumenes",
+      "nombre": "Almacenamiento y volúmenes",
+      "dominio": "Storage and Volumes",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Persistencia de datos",
+        "markdown": "## Tipos de montaje\nLos contenedores son **efímeros**: al eliminarlos se pierde su capa escribible. Para persistir datos Docker ofrece:\n- **Volúmenes**: gestionados por Docker en `/var/lib/docker/volumes`. Recomendados por portabilidad y respaldos.\n- **Bind mounts**: mapean una ruta concreta del host dentro del contenedor.\n- **tmpfs**: almacenamiento en memoria, no persiste tras detener el contenedor.\n\n## Comandos clave\n- `docker volume create datos` crea un volumen con nombre.\n- `-v datos:/app/data` o `--mount source=datos,target=/app/data` lo montan.\n- `docker volume prune` elimina volúmenes sin usar.\n\n## Storage driver\nEl **storage driver** (p. ej. `overlay2`) gestiona cómo se apilan las capas de imagen y la capa escribible mediante **copy-on-write**: una escritura copia el archivo a la capa superior antes de modificarlo.\n\n> **En el examen:** prefiere **volúmenes** sobre bind mounts para datos gestionados; recuerda que **tmpfs** nunca persiste en disco."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué tipo de almacenamiento NO persiste los datos tras detener el contenedor?",
+          "opciones": [
+            "Volumen con nombre",
+            "Bind mount",
+            "tmpfs",
+            "Volumen anónimo"
+          ],
+          "correctas": [2],
+          "explicacion": "tmpfs reside en memoria RAM y se descarta al detener el contenedor; no escribe en disco."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué mecanismo usan los storage drivers para modificar archivos de capas inferiores de solo lectura?",
+          "opciones": [
+            "Write-ahead logging",
+            "Copy-on-write",
+            "Journaling síncrono",
+            "Deduplicación en línea"
+          ],
+          "correctas": [1],
+          "explicacion": "Copy-on-write copia el archivo a la capa escribible antes de modificarlo, manteniendo intactas las capas de imagen subyacentes."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué afirmaciones sobre volúmenes Docker son correctas?",
+          "opciones": [
+            "Son gestionados por Docker bajo /var/lib/docker/volumes",
+            "Se pueden montar con -v o con --mount",
+            "docker volume prune elimina volúmenes no utilizados",
+            "Persisten aunque se elimine el contenedor que los usaba",
+            "Solo pueden ser montados por un contenedor a la vez de forma obligatoria"
+          ],
+          "correctas": [0, 1, 2, 3],
+          "explicacion": "Los volúmenes los gestiona Docker, admiten -v y --mount, prune limpia los huérfanos y sobreviven al contenedor. Varios contenedores pueden compartir un mismo volumen."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad",
+      "nombre": "Seguridad",
+      "dominio": "Security",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Aislamiento y superficie de ataque",
+        "markdown": "## Aislamiento del kernel\nLos contenedores se aíslan con primitivas del kernel de Linux:\n- **Namespaces**: separan la vista de PID, red, montajes, usuarios, etc.\n- **cgroups**: limitan CPU, memoria y otros recursos.\n- **capabilities**: dividen los privilegios de root; puedes quitar las innecesarias con `--cap-drop`.\n\n## Reducir privilegios\n- Evita `--privileged`, que desactiva la mayoría de protecciones.\n- Ejecuta procesos como usuario no root con `USER` en el Dockerfile.\n- Aplica perfiles **seccomp** y **AppArmor/SELinux** para restringir syscalls.\n\n## Cadena de confianza\n- **Docker Content Trust (DCT)** firma y verifica imágenes mediante Notary; se activa con `DOCKER_CONTENT_TRUST=1`.\n- Escanea imágenes en busca de vulnerabilidades antes de desplegarlas.\n\n> **En el examen:** asocia **namespaces** con aislamiento, **cgroups** con límites de recursos y **DCT** con verificación de firmas; `--privileged` debilita la seguridad."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué primitiva del kernel limita el uso de CPU y memoria de un contenedor?",
+          "opciones": [
+            "Namespaces",
+            "cgroups",
+            "Capabilities",
+            "Seccomp"
+          ],
+          "correctas": [1],
+          "explicacion": "Los cgroups controlan y limitan recursos como CPU y memoria. Los namespaces se encargan del aislamiento de vistas, no de los límites."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué variable de entorno activa la verificación de firmas de imágenes con Docker Content Trust?",
+          "opciones": [
+            "DOCKER_TLS_VERIFY=1",
+            "DOCKER_CONTENT_TRUST=1",
+            "DOCKER_SIGN=1",
+            "DOCKER_SECURE=1"
+          ],
+          "correctas": [1],
+          "explicacion": "DOCKER_CONTENT_TRUST=1 fuerza la firma y verificación de imágenes mediante Notary al hacer push/pull."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué prácticas mejoran la seguridad de un contenedor en producción?",
+          "opciones": [
+            "Eliminar capabilities innecesarias con --cap-drop",
+            "Ejecutar el proceso como usuario no root con USER",
+            "Aplicar perfiles seccomp para restringir syscalls",
+            "Usar siempre --privileged para evitar problemas de permisos",
+            "Verificar firmas con Docker Content Trust"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Reducir capabilities, correr como no root, aplicar seccomp y verificar firmas endurecen el contenedor. --privileged hace lo contrario: desactiva protecciones."
+        }
+      ]
+    }
+  ]
+}

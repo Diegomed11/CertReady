@@ -1,0 +1,341 @@
+{
+  "slug": "terraform-associate",
+  "nombre": "HashiCorp Certified: Terraform Associate",
+  "proveedor": "HashiCorp",
+  "nivel": "associate",
+  "area": "DevOps",
+  "descripcion": "Certificación que valida la capacidad de gestionar infraestructura como código con Terraform. Cubre el flujo de trabajo central, manejo de estado, módulos y buenas prácticas de aprovisionamiento.",
+  "skills": [
+    "terraform",
+    "infraestructura como código",
+    "hcl",
+    "estado remoto",
+    "módulos",
+    "providers",
+    "variables",
+    "plan y apply",
+    "ciclo de vida",
+    "aprovisionamiento",
+    "backends"
+  ],
+  "roles": [
+    "ingeniero de infraestructura",
+    "ingeniero devops",
+    "administrador de la nube",
+    "ingeniero de plataforma"
+  ],
+  "temas": [
+    {
+      "slug": "iac-conceptos",
+      "nombre": "Conceptos de infraestructura como código",
+      "dominio": "Understand infrastructure as code (IaC) concepts",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Por qué infraestructura como código",
+        "markdown": "## Idea central\n\nLa **infraestructura como código (IaC)** describe recursos en archivos de texto versionables, en lugar de configurarlos manualmente por consola. Esto convierte cada cambio en algo **revisable, repetible y auditable**.\n\n## Ventajas clave\n\n- **Reproducibilidad**: el mismo código genera entornos idénticos.\n- **Control de versiones**: el historial vive en Git, con revisiones por pares.\n- **Automatización**: encaja en pipelines de CI/CD sin pasos manuales.\n- **Documentación viva**: el código describe el estado deseado real.\n\n## Terraform en este contexto\n\nTerraform es **declarativo**: tú defines el estado final deseado y la herramienta calcula los pasos para llegar a él. Además es **agnóstico de proveedor**, por lo que un mismo flujo gestiona la nube, redes o servicios SaaS.\n\n> **En el examen:** recuerda que IaC aporta consistencia y que Terraform sigue un enfoque declarativo, no imperativo."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué enfoque describe mejor la forma en que Terraform gestiona la infraestructura?",
+          "opciones": [
+            "Imperativo, ejecutando comandos paso a paso",
+            "Declarativo, definiendo el estado deseado",
+            "Manual, mediante la consola del proveedor",
+            "Reactivo, respondiendo solo a alertas"
+          ],
+          "correctas": [1],
+          "explicacion": "Terraform es declarativo: describes el estado final y la herramienta determina cómo alcanzarlo."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles son beneficios directos de adoptar infraestructura como código?",
+          "opciones": [
+            "Reproducibilidad de entornos",
+            "Posibilidad de versionar los cambios en Git",
+            "Eliminación total de la necesidad de pruebas",
+            "Integración con pipelines de automatización",
+            "Garantía de costos cero en la nube"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "IaC aporta reproducibilidad, versionado y automatización. No elimina las pruebas ni garantiza costos nulos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Por qué se considera a Terraform agnóstico de proveedor?",
+          "opciones": [
+            "Solo funciona con un proveedor de nube específico",
+            "Puede gestionar recursos de múltiples plataformas mediante providers",
+            "Requiere reescribir todo el código para cada nube",
+            "No utiliza credenciales de ningún proveedor"
+          ],
+          "correctas": [1],
+          "explicacion": "Mediante distintos providers, Terraform gestiona recursos de muchas plataformas con un flujo de trabajo común."
+        }
+      ]
+    },
+    {
+      "slug": "flujo-terraform",
+      "nombre": "El flujo de trabajo de Terraform",
+      "dominio": "Understand the purpose of Terraform (vs other IaC) and core workflow",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Init, plan, apply, destroy",
+        "markdown": "## El ciclo central\n\nEl flujo de Terraform gira en torno a cuatro comandos:\n\n- **`terraform init`**: inicializa el directorio, descarga los **providers** y configura el backend.\n- **`terraform plan`**: calcula y muestra los cambios sin aplicarlos. Es una vista previa segura.\n- **`terraform apply`**: ejecuta los cambios para alcanzar el estado deseado.\n- **`terraform destroy`**: elimina los recursos gestionados.\n\n## Comandos de apoyo\n\n- **`terraform fmt`** ordena el formato del código.\n- **`terraform validate`** revisa la sintaxis y la coherencia interna.\n\n## Buenas prácticas\n\nSiempre ejecuta `init` tras clonar o cambiar providers. Revisa el resultado de `plan` antes de cada `apply`, especialmente en entornos productivos.\n\n> **En el examen:** `init` debe correrse primero; `plan` no modifica nada, solo `apply` y `destroy` cambian la infraestructura real."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál es el primer comando que debes ejecutar en un directorio nuevo de Terraform?",
+          "opciones": [
+            "terraform apply",
+            "terraform plan",
+            "terraform init",
+            "terraform destroy"
+          ],
+          "correctas": [2],
+          "explicacion": "terraform init inicializa el directorio, descarga providers y prepara el backend antes de cualquier otra operación."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué hace exactamente terraform plan?",
+          "opciones": [
+            "Aplica los cambios inmediatamente",
+            "Muestra una vista previa de los cambios sin modificar la infraestructura",
+            "Elimina los recursos existentes",
+            "Descarga los providers necesarios"
+          ],
+          "correctas": [1],
+          "explicacion": "plan calcula y presenta los cambios propuestos, pero no altera la infraestructura real."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de los siguientes comandos pueden modificar la infraestructura real?",
+          "opciones": [
+            "terraform apply",
+            "terraform plan",
+            "terraform destroy",
+            "terraform fmt",
+            "terraform validate"
+          ],
+          "correctas": [0, 2],
+          "explicacion": "Solo apply y destroy modifican recursos reales; plan, fmt y validate no aplican cambios."
+        }
+      ]
+    },
+    {
+      "slug": "providers",
+      "nombre": "Providers y su configuración",
+      "dominio": "Understand Terraform basics (providers and plugins)",
+      "orden": 3,
+      "hoja": {
+        "titulo": "El puente hacia cada plataforma",
+        "markdown": "## Qué son los providers\n\nUn **provider** es un plugin que traduce la configuración de Terraform en llamadas a la API de una plataforma. Cada recurso (`resource`) y fuente de datos (`data`) pertenece a un provider concreto.\n\n## Declaración y versiones\n\nLos providers se declaran en el bloque `required_providers` dentro de `terraform { ... }`, fijando una **fuente** y una **restricción de versión**:\n\n- Fijar versiones evita cambios inesperados al actualizar.\n- El operador `~>` permite actualizaciones menores compatibles.\n\n## Configuración y alias\n\nUn bloque `provider` define credenciales y región. Con **alias** puedes configurar varias instancias del mismo provider, por ejemplo para trabajar en distintas regiones simultáneamente.\n\n> **En el examen:** `init` descarga los providers según `required_providers`; los alias permiten múltiples configuraciones de un mismo provider."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál es la función principal de un provider en Terraform?",
+          "opciones": [
+            "Almacenar el archivo de estado",
+            "Traducir la configuración en llamadas a la API de una plataforma",
+            "Formatear el código HCL",
+            "Generar variables automáticamente"
+          ],
+          "correctas": [1],
+          "explicacion": "El provider es el plugin que comunica a Terraform con la API de la plataforma destino."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Para qué sirve el atributo alias en un bloque provider?",
+          "opciones": [
+            "Renombrar recursos existentes",
+            "Definir múltiples configuraciones del mismo provider",
+            "Cifrar las credenciales",
+            "Acelerar la descarga de plugins"
+          ],
+          "correctas": [1],
+          "explicacion": "El alias permite tener varias configuraciones del mismo provider, por ejemplo distintas regiones o cuentas."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre las versiones de providers son correctas?",
+          "opciones": [
+            "Fijar versiones evita actualizaciones inesperadas",
+            "El operador ~> permite actualizaciones menores compatibles",
+            "Los providers se descargan con terraform init",
+            "Las versiones se declaran dentro del bloque resource",
+            "Omitir la versión obliga a usar siempre la más antigua"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Las restricciones se declaran en required_providers y se descargan en init; ~> fija el rango. No se declaran en resource ni se fuerza la versión más antigua al omitirlas."
+        }
+      ]
+    },
+    {
+      "slug": "estado",
+      "nombre": "Manejo del estado",
+      "dominio": "Understand Terraform state and backends",
+      "orden": 4,
+      "hoja": {
+        "titulo": "El archivo de estado y los backends",
+        "markdown": "## Para qué sirve el estado\n\nTerraform guarda en un **archivo de estado** (`terraform.tfstate`) la correspondencia entre tu configuración y los recursos reales. Sin él, no sabría qué ya existe ni qué debe cambiar.\n\n## Backends remotos\n\nUn **backend** define dónde se almacena el estado:\n\n- **Local**: por defecto, en disco.\n- **Remoto**: en almacenamiento compartido para trabajo en equipo.\n\nLos backends remotos permiten **bloqueo de estado** (state locking), evitando que dos personas apliquen cambios a la vez y corrompan el archivo.\n\n## Cuidados importantes\n\nEl estado puede contener **datos sensibles**, así que debe protegerse. Comandos como `terraform state list` o `terraform state mv` permiten inspeccionar y reorganizar recursos sin tocar la infraestructura.\n\n> **En el examen:** el estado mapea configuración a recursos reales; los backends remotos habilitan bloqueo y colaboración segura."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál es el propósito del archivo de estado de Terraform?",
+          "opciones": [
+            "Almacenar las credenciales del provider",
+            "Mapear la configuración con los recursos reales existentes",
+            "Definir el formato del código",
+            "Listar los módulos disponibles"
+          ],
+          "correctas": [1],
+          "explicacion": "El estado registra qué recursos reales corresponden a la configuración, permitiendo calcular los cambios."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué ventaja principal ofrece un backend remoto frente al local?",
+          "opciones": [
+            "Reduce el número de providers necesarios",
+            "Permite bloqueo de estado y colaboración en equipo",
+            "Elimina la necesidad de ejecutar plan",
+            "Genera variables automáticamente"
+          ],
+          "correctas": [1],
+          "explicacion": "Un backend remoto centraliza el estado y habilita el bloqueo, evitando aplicaciones simultáneas conflictivas."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre el estado son correctas?",
+          "opciones": [
+            "Puede contener datos sensibles que deben protegerse",
+            "El bloqueo evita aplicaciones concurrentes conflictivas",
+            "terraform state list muestra recursos gestionados",
+            "El estado se regenera por completo en cada plan",
+            "El backend local es obligatorio en producción"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "El estado guarda datos sensibles, soporta bloqueo y se inspecciona con state list. No se regenera completo en cada plan ni el backend local es obligatorio en producción."
+        }
+      ]
+    },
+    {
+      "slug": "variables-outputs",
+      "nombre": "Variables, outputs y expresiones",
+      "dominio": "Read, generate, and modify configuration",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Parametrizar la configuración",
+        "markdown": "## Variables de entrada\n\nLas **variables** (`variable`) parametrizan la configuración para reutilizarla entre entornos. Pueden tener **tipo**, **valor por defecto** y **descripción**, y reciben valores por línea de comandos, archivos `.tfvars` o variables de entorno.\n\n## Outputs\n\nLos **outputs** (`output`) exponen valores útiles tras un `apply`, como una IP o un identificador. Sirven también para pasar datos entre módulos.\n\n## Locals y expresiones\n\n- **`locals`** define valores intermedios reutilizables dentro de un módulo.\n- Las **expresiones** permiten interpolar referencias como `var.region` o `aws_instance.web.id`.\n- Las **funciones integradas** (por ejemplo de listas o cadenas) transforman datos.\n\n## Sensibilidad\n\nMarcar una variable u output como `sensitive` evita que su valor aparezca en la salida.\n\n> **En el examen:** las variables parametrizan, los outputs exponen resultados y `locals` evita repetición dentro del módulo."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál es el propósito de un bloque output en Terraform?",
+          "opciones": [
+            "Definir credenciales del provider",
+            "Exponer valores resultantes tras aplicar la configuración",
+            "Descargar plugins",
+            "Bloquear el archivo de estado"
+          ],
+          "correctas": [1],
+          "explicacion": "Los outputs muestran valores útiles tras el apply y permiten compartir datos entre módulos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué efecto tiene marcar una variable como sensitive?",
+          "opciones": [
+            "Cifra el archivo de estado completo",
+            "Evita que su valor se muestre en la salida de Terraform",
+            "La convierte en obligatoria",
+            "Impide cambiar su valor"
+          ],
+          "correctas": [1],
+          "explicacion": "El atributo sensitive oculta el valor en las salidas, aunque puede seguir presente en el estado."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué formas existen para asignar valores a las variables de entrada?",
+          "opciones": [
+            "Argumentos en línea de comandos con -var",
+            "Archivos .tfvars",
+            "Variables de entorno con prefijo TF_VAR_",
+            "Editando directamente el archivo de estado",
+            "Valor por defecto en el bloque variable"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Las variables se asignan por CLI, archivos .tfvars, variables de entorno TF_VAR_ o valores por defecto; nunca editando el estado."
+        }
+      ]
+    },
+    {
+      "slug": "modulos",
+      "nombre": "Módulos y reutilización",
+      "dominio": "Interact with Terraform modules",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Empaquetar y reutilizar configuración",
+        "markdown": "## Qué es un módulo\n\nUn **módulo** es un contenedor de recursos agrupados con un propósito. El directorio raíz ya es un módulo (el **root module**); los demás se invocan como **módulos hijos**.\n\n## Fuentes de módulos\n\nUn bloque `module` referencia su código mediante `source`, que puede apuntar a:\n\n- Una **ruta local** (`./modules/red`).\n- El **Terraform Registry** público o privado.\n- Un repositorio **Git**.\n\nSe recomienda fijar `version` cuando el origen es el Registry.\n\n## Entradas y salidas\n\nLos módulos reciben **variables de entrada** y exponen **outputs**, formando una interfaz clara. Esto fomenta la **reutilización** y reduce la duplicación entre entornos.\n\n> **En el examen:** el directorio raíz es un módulo; `source` define el origen y conviene fijar `version` al usar el Registry."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cómo se denomina el módulo correspondiente al directorio principal de trabajo?",
+          "opciones": [
+            "Módulo hijo",
+            "Módulo raíz (root module)",
+            "Módulo remoto",
+            "Módulo de datos"
+          ],
+          "correctas": [1],
+          "explicacion": "El directorio donde ejecutas Terraform es el módulo raíz, que puede invocar módulos hijos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué argumento de un bloque module indica de dónde proviene su código?",
+          "opciones": [
+            "provider",
+            "backend",
+            "source",
+            "state"
+          ],
+          "correctas": [2],
+          "explicacion": "El argumento source define el origen del módulo: ruta local, Registry o repositorio Git."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles son orígenes válidos para el argumento source de un módulo?",
+          "opciones": [
+            "Una ruta local del sistema de archivos",
+            "El Terraform Registry público o privado",
+            "Un repositorio Git",
+            "El archivo de estado remoto",
+            "La salida de terraform plan"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "source admite rutas locales, el Registry y repositorios Git, entre otros; no el estado ni la salida de plan."
+        }
+      ]
+    }
+  ]
+}

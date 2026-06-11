@@ -1,0 +1,342 @@
+{
+  "slug": "gcp-professional-cloud-architect",
+  "nombre": "Google Cloud Professional Cloud Architect",
+  "proveedor": "Google",
+  "nivel": "professional",
+  "area": "Nube",
+  "descripcion": "Certificación que valida la capacidad de diseñar, planificar y gestionar soluciones empresariales sobre Google Cloud, equilibrando requisitos técnicos, de negocio, seguridad y costo. Pone el foco en traducir necesidades reales en arquitecturas escalables y confiables.",
+  "skills": [
+    "diseño de soluciones",
+    "compute engine",
+    "kubernetes",
+    "redes vpc",
+    "iam",
+    "seguridad",
+    "alta disponibilidad",
+    "recuperación ante desastres",
+    "optimización de costos",
+    "cumplimiento",
+    "migración",
+    "observabilidad"
+  ],
+  "roles": [
+    "Arquitecto de nube",
+    "Ingeniero de soluciones",
+    "Líder técnico de infraestructura",
+    "Consultor de migración cloud"
+  ],
+  "temas": [
+    {
+      "slug": "diseno-planificacion-arquitectura",
+      "nombre": "Diseño y planificación de la arquitectura",
+      "dominio": "Diseñar y planificar una arquitectura de solución cloud",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Traducir requisitos en arquitectura",
+        "markdown": "## De negocio a técnico\nUn buen diseño parte de **requisitos de negocio** (presupuesto, tiempo al mercado, regulación) y **requisitos técnicos** (latencia, throughput, durabilidad). El arquitecto los convierte en decisiones concretas de cómputo, almacenamiento y red.\n\n## Elección de cómputo\n- **Compute Engine**: control fino, cargas legadas o con dependencias de SO.\n- **GKE**: microservicios y portabilidad con orquestación.\n- **Cloud Run / Functions**: cargas event-driven y sin servidor.\n\n## Almacenamiento\n- Datos relacionales transaccionales: **Cloud SQL** o **Spanner** (escala global).\n- Objetos y archivos: **Cloud Storage** con clases según acceso.\n- Analítica masiva: **BigQuery**.\n\n## Costos y evolución\nEstima costos con la calculadora, prevé **crecimiento** y define una arquitectura que pueda escalar sin reescribirse.\n\n> **En el examen:** ante un escenario, identifica primero la restricción dominante (costo, latencia, cumplimiento) y elige el servicio que la satisface sin sobre-ingeniería."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Una startup necesita desplegar microservicios portables con escalado automático y mínima gestión de infraestructura. ¿Qué servicio de cómputo es el más adecuado?",
+          "opciones": [
+            "Compute Engine con instancias preemptibles",
+            "Google Kubernetes Engine (GKE)",
+            "Una única VM monolítica",
+            "Cloud Storage con páginas estáticas"
+          ],
+          "correctas": [1],
+          "explicacion": "GKE ofrece orquestación de contenedores, portabilidad y autoescalado, ideal para microservicios sin gestionar manualmente cada servidor."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué elementos debe contemplar un arquitecto al traducir requisitos de negocio en una solución técnica? Selecciona todas las correctas.",
+          "opciones": [
+            "Presupuesto y modelo de costos",
+            "Requisitos de cumplimiento y residencia de datos",
+            "El color corporativo del logotipo",
+            "Latencia y disponibilidad esperadas",
+            "La marca del teclado del equipo de desarrollo"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "Costo, cumplimiento y métricas de rendimiento/disponibilidad son entradas reales del diseño; los elementos estéticos o de hardware irrelevante no condicionan la arquitectura."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una aplicación requiere una base de datos relacional con consistencia fuerte y escala horizontal global. ¿Qué servicio recomiendas?",
+          "opciones": [
+            "Cloud Spanner",
+            "Cloud Storage",
+            "Memorystore",
+            "BigQuery"
+          ],
+          "correctas": [0],
+          "explicacion": "Cloud Spanner combina semántica relacional con consistencia fuerte y escalado horizontal global, algo que las otras opciones no ofrecen."
+        }
+      ]
+    },
+    {
+      "slug": "gestionar-aprovisionar-infraestructura",
+      "nombre": "Gestión y aprovisionamiento de infraestructura",
+      "dominio": "Gestionar y aprovisionar la infraestructura de la solución",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Redes, automatización y operación",
+        "markdown": "## Redes en GCP\nLa **VPC** es global; las subredes son regionales. Conecta entornos con **Cloud VPN** o **Cloud Interconnect**, y controla el tráfico con **reglas de firewall** y **rutas**. Para exponer servicios usa balanceadores **globales** (HTTP/S) o **regionales**.\n\n## Infraestructura como código\nAprovisiona de forma repetible con **Terraform** o Deployment Manager. Esto reduce errores manuales y permite revisar cambios en control de versiones.\n\n## Conectividad híbrida\n- **VPN**: rápido de montar, sobre Internet.\n- **Interconnect**: ancho de banda dedicado y baja latencia.\n\n## Resiliencia operativa\nUsa **grupos de instancias gestionados (MIG)** con autoescalado y autoreparación. Distribuye en varias **zonas** para tolerancia a fallos.\n\n> **En el examen:** distingue VPN (sobre Internet, económico) de Interconnect (dedicado, baja latencia) y recuerda que la VPC es global pero las subredes son regionales."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una empresa necesita conectividad dedicada de alto ancho de banda y baja latencia entre su datacenter y GCP, sin pasar por Internet pública. ¿Qué opción elige?",
+          "opciones": [
+            "Cloud VPN",
+            "Cloud Interconnect",
+            "Reglas de firewall",
+            "Cloud NAT"
+          ],
+          "correctas": [1],
+          "explicacion": "Cloud Interconnect provee conectividad física dedicada con baja latencia, a diferencia de la VPN que viaja sobre Internet."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre las redes VPC en Google Cloud son correctas? Selecciona todas las que apliquen.",
+          "opciones": [
+            "Una VPC es un recurso global",
+            "Las subredes son regionales",
+            "Las reglas de firewall controlan el tráfico hacia y desde las instancias",
+            "Cada zona requiere obligatoriamente su propia VPC independiente",
+            "Las direcciones IP internas no pueden enrutarse entre subredes de la misma VPC"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "La VPC es global y abarca varias regiones; las subredes son regionales y las reglas de firewall filtran el tráfico. No hace falta una VPC por zona y las subredes de una misma VPC sí se comunican por IP interna."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué herramienta permite aprovisionar infraestructura en GCP de forma declarativa, repetible y versionable?",
+          "opciones": [
+            "Editar recursos manualmente en la consola",
+            "Terraform",
+            "Conectarse por SSH a cada VM",
+            "Cloud Shell interactivo"
+          ],
+          "correctas": [1],
+          "explicacion": "Terraform es infraestructura como código: define recursos de forma declarativa y permite versionar y reproducir entornos."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-cumplimiento",
+      "nombre": "Seguridad y cumplimiento",
+      "dominio": "Diseñar para la seguridad y el cumplimiento",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Identidad, mínimo privilegio y cifrado",
+        "markdown": "## Identidad y acceso\n**IAM** otorga permisos mediante **roles** asignados a identidades (usuarios, grupos, **cuentas de servicio**). Aplica siempre el principio de **mínimo privilegio** y prefiere **roles predefinidos** o personalizados sobre roles básicos amplios.\n\n## Cuentas de servicio\nLas cargas de trabajo se autentican con **cuentas de servicio**, no con credenciales de usuario. Rota claves y, cuando sea posible, evita claves estáticas usando identidad gestionada.\n\n## Cifrado\n- **En reposo**: cifrado por defecto; puedes usar **CMEK** con Cloud KMS para controlar las claves.\n- **En tránsito**: TLS entre servicios.\n\n## Perímetro y cumplimiento\nUsa **VPC Service Controls** para crear perímetros que mitiguen exfiltración y **Organization Policies** para imponer restricciones a nivel corporativo.\n\n> **En el examen:** ante exfiltración de datos piensa en VPC Service Controls; ante 'controlar las claves de cifrado' piensa en CMEK/Cloud KMS; y siempre mínimo privilegio."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cómo deben autenticarse las cargas de trabajo (aplicaciones) que se ejecutan en GCP para acceder a otros servicios?",
+          "opciones": [
+            "Con la contraseña personal de un administrador",
+            "Mediante una cuenta de servicio",
+            "Con una API key pública compartida en el código",
+            "Sin autenticación, confiando en la red interna"
+          ],
+          "correctas": [1],
+          "explicacion": "Las cuentas de servicio son identidades destinadas a cargas de trabajo, evitando usar credenciales humanas o secretos incrustados."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Un cliente del sector salud exige controlar sus propias claves de cifrado y prevenir la exfiltración de datos sensibles. ¿Qué controles aplican? Selecciona todos los correctos.",
+          "opciones": [
+            "Claves gestionadas por el cliente (CMEK) con Cloud KMS",
+            "VPC Service Controls para definir un perímetro de servicio",
+            "Asignar el rol básico de Editor a todos los empleados",
+            "Aplicar el principio de mínimo privilegio en IAM",
+            "Publicar los buckets de datos como acceso público"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "CMEK da control de claves, VPC Service Controls mitiga exfiltración y el mínimo privilegio limita el acceso. Roles amplios o buckets públicos aumentan el riesgo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Según el principio de mínimo privilegio, ¿qué enfoque de asignación de roles IAM es preferible?",
+          "opciones": [
+            "Conceder el rol básico de Owner por comodidad",
+            "Asignar roles predefinidos acotados a la tarea necesaria",
+            "Compartir una sola cuenta con permisos totales",
+            "Deshabilitar IAM y usar reglas de firewall en su lugar"
+          ],
+          "correctas": [1],
+          "explicacion": "Los roles predefinidos acotados otorgan solo los permisos requeridos, reduciendo la superficie de riesgo frente a roles básicos amplios."
+        }
+      ]
+    },
+    {
+      "slug": "fiabilidad-operaciones",
+      "nombre": "Fiabilidad y operaciones",
+      "dominio": "Analizar y optimizar procesos técnicos y de negocio",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Observabilidad y mejora continua",
+        "markdown": "## Observabilidad\n**Cloud Monitoring** recoge métricas, **Cloud Logging** centraliza registros y **Cloud Trace** mide latencias de extremo a extremo. Define **SLI/SLO** para cuantificar la fiabilidad esperada y establece **alertas** sobre umbrales.\n\n## Confiabilidad del sitio (SRE)\n- **SLI**: indicador medible (p. ej. disponibilidad).\n- **SLO**: objetivo sobre ese indicador.\n- **Error budget**: margen de fallo tolerable que guía decisiones de despliegue.\n\n## Procesos y automatización\nAutomatiza despliegues con **CI/CD** y aplica **infraestructura como código** para repetibilidad. Reduce el trabajo manual repetitivo (toil).\n\n## Mejora continua\nRevisa incidentes con **post-mortems sin culpa** y ajusta capacidad, costos y arquitectura según los datos observados.\n\n> **En el examen:** asocia SLO/SLI/error budget con la gestión de fiabilidad, y recuerda que Monitoring, Logging y Trace cubren métricas, logs y latencias respectivamente."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué servicio usarías para centralizar y consultar los registros (logs) de tus aplicaciones y servicios en GCP?",
+          "opciones": [
+            "Cloud Trace",
+            "Cloud Logging",
+            "Cloud CDN",
+            "Cloud Build"
+          ],
+          "correctas": [1],
+          "explicacion": "Cloud Logging centraliza la recopilación, almacenamiento y consulta de logs; Trace mide latencias y los otros cumplen funciones distintas."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué conceptos forman parte de la práctica de SRE para gestionar la fiabilidad? Selecciona todos los correctos.",
+          "opciones": [
+            "SLI (indicador de nivel de servicio)",
+            "SLO (objetivo de nivel de servicio)",
+            "Error budget (presupuesto de error)",
+            "Aumentar siempre el precio para mejorar la fiabilidad",
+            "Desactivar el monitoreo para reducir ruido"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "SLI, SLO y error budget son pilares de SRE para medir y gestionar la fiabilidad. Subir precios o apagar el monitoreo no contribuye a ese objetivo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Tras un incidente, ¿qué práctica recomienda SRE para aprender y prevenir recurrencias?",
+          "opciones": [
+            "Post-mortem sin culpa enfocado en causas y mejoras",
+            "Identificar y sancionar al responsable individual",
+            "Ignorar el incidente si el servicio ya se recuperó",
+            "Eliminar los logs para evitar exponer fallos"
+          ],
+          "correctas": [0],
+          "explicacion": "El post-mortem sin culpa busca causas raíz y acciones de mejora, fomentando aprendizaje en lugar de castigo."
+        }
+      ]
+    },
+    {
+      "slug": "alta-disponibilidad-recuperacion",
+      "nombre": "Alta disponibilidad y recuperación ante desastres",
+      "dominio": "Gestionar la implementación y asegurar la fiabilidad de la solución",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Resiliencia, RTO y RPO",
+        "markdown": "## Diseño resiliente\nDistribuye cargas en varias **zonas** (alta disponibilidad) y, para resiliencia regional, en varias **regiones**. Usa **balanceo de carga** y **MIG** con autoreparación para tolerar fallos de instancia.\n\n## Métricas clave de DR\n- **RTO** (Recovery Time Objective): cuánto tiempo de inactividad se tolera.\n- **RPO** (Recovery Point Objective): cuánta pérdida de datos se tolera.\n\n## Estrategias de recuperación\n- **Backup/restore**: más barato, RTO/RPO mayores.\n- **Warm standby**: entorno reducido listo para escalar.\n- **Multiregión activo-activo**: menor RTO/RPO, mayor costo.\n\n## Datos\nUsa **almacenamiento multirregional** y réplicas de base de datos para durabilidad y conmutación por error.\n\n> **En el examen:** RTO mide tiempo de inactividad y RPO mide pérdida de datos; cuanto menores deban ser, mayor es el costo de la estrategia elegida."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "El RPO (Recovery Point Objective) de un sistema define principalmente:",
+          "opciones": [
+            "La cantidad máxima de pérdida de datos tolerable",
+            "El número de usuarios concurrentes soportados",
+            "El costo mensual del almacenamiento",
+            "La latencia de red entre regiones"
+          ],
+          "correctas": [0],
+          "explicacion": "El RPO expresa cuántos datos (medidos en tiempo) se pueden perder ante un desastre; el RTO, en cambio, mide el tiempo de inactividad."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué técnicas aumentan la disponibilidad y la resiliencia de una aplicación en GCP? Selecciona todas las correctas.",
+          "opciones": [
+            "Desplegar instancias en múltiples zonas",
+            "Usar grupos de instancias gestionados con autoreparación",
+            "Almacenar todo en una sola VM sin respaldo",
+            "Replicar datos en almacenamiento multirregional",
+            "Eliminar el balanceador de carga para ahorrar"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "Multizona, MIG con autoreparación y replicación multirregional mejoran la resiliencia. Un único punto sin respaldo o quitar el balanceador la reducen."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Para tolerar el fallo de una zona completa con interrupción mínima, ¿qué enfoque es el más adecuado?",
+          "opciones": [
+            "Una sola instancia muy grande en una zona",
+            "Distribuir la carga en varias zonas con balanceo",
+            "Apagar el servicio fuera del horario laboral",
+            "Guardar copias de seguridad solo localmente en la VM"
+          ],
+          "correctas": [1],
+          "explicacion": "Distribuir en varias zonas con balanceo de carga permite que el servicio siga operando aunque una zona falle."
+        }
+      ]
+    },
+    {
+      "slug": "optimizacion-costos",
+      "nombre": "Optimización de costos",
+      "dominio": "Gestionar y aprovisionar la infraestructura de la solución",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Pagar solo por lo que aporta valor",
+        "markdown": "## Modelos de precio\n- **Descuentos por uso sostenido**: automáticos al usar VMs gran parte del mes.\n- **Descuentos por compromiso (CUD)**: precio menor a cambio de 1-3 años de uso comprometido.\n- **VMs Spot/preemptibles**: muy baratas para cargas tolerantes a interrupción.\n\n## Dimensionar y autoescalar\nAjusta el tamaño de las instancias (**rightsizing**) según uso real y aplica **autoescalado** para no pagar capacidad ociosa. Usa **recomendaciones** del Recommender.\n\n## Almacenamiento por clase\nClasifica objetos en **Standard, Nearline, Coldline, Archive** según frecuencia de acceso para reducir costos de datos fríos.\n\n## Gobernanza\nUsa **etiquetas/labels**, **presupuestos y alertas** y **exportación de facturación a BigQuery** para visibilidad y control.\n\n> **En el examen:** carga batch tolerante a fallos → Spot/preemptibles; uso predecible a largo plazo → compromisos (CUD); datos accedidos rara vez → clases Nearline/Coldline/Archive."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un trabajo de procesamiento por lotes tolera interrupciones y puede reintentarse. ¿Qué opción de cómputo minimiza el costo?",
+          "opciones": [
+            "VMs Spot (preemptibles)",
+            "VMs on-demand de gama alta siempre encendidas",
+            "Compromiso a 3 años sobre instancias dedicadas",
+            "Spanner multirregional"
+          ],
+          "correctas": [0],
+          "explicacion": "Las VMs Spot/preemptibles cuestan mucho menos y son ideales para cargas batch que toleran ser interrumpidas y reintentadas."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué prácticas ayudan a optimizar los costos en Google Cloud? Selecciona todas las correctas.",
+          "opciones": [
+            "Aplicar rightsizing y autoescalado",
+            "Mover datos fríos a clases Nearline/Coldline/Archive",
+            "Configurar presupuestos y alertas de facturación",
+            "Dejar instancias encendidas sin uso por si acaso",
+            "Sobredimensionar siempre para evitar configurar"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Rightsizing, clases de almacenamiento adecuadas y presupuestos con alertas reducen el gasto. Dejar recursos ociosos o sobredimensionar lo aumenta."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un bucket guarda datos a los que se accede aproximadamente una vez al año. ¿Qué clase de almacenamiento es la más económica para ese patrón?",
+          "opciones": [
+            "Standard",
+            "Archive",
+            "Una base de datos Spanner",
+            "Memorystore"
+          ],
+          "correctas": [1],
+          "explicacion": "La clase Archive ofrece el menor costo de almacenamiento para datos de acceso muy poco frecuente, como respaldos a largo plazo."
+        }
+      ]
+    }
+  ]
+}

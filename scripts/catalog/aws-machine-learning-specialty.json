@@ -1,0 +1,343 @@
+{
+  "slug": "aws-machine-learning-specialty",
+  "nombre": "AWS Certified Machine Learning – Specialty",
+  "proveedor": "AWS",
+  "nivel": "specialty",
+  "area": "IA",
+  "descripcion": "Certificación enfocada en diseñar, entrenar, optimizar y operar soluciones de aprendizaje automático sobre AWS. Cubre todo el ciclo: ingeniería de datos, análisis exploratorio, modelado y despliegue en producción.",
+  "skills": [
+    "SageMaker",
+    "ingenieria de features",
+    "ajuste de hiperparametros",
+    "metricas de evaluacion",
+    "datos desbalanceados",
+    "deteccion de overfitting",
+    "pipelines de datos",
+    "inferencia en tiempo real",
+    "inferencia por lotes",
+    "MLOps",
+    "Kinesis",
+    "deep learning"
+  ],
+  "roles": [
+    "Ingeniero de Machine Learning",
+    "Data Scientist",
+    "Arquitecto de soluciones de IA",
+    "Ingeniero de datos",
+    "Ingeniero de MLOps"
+  ],
+  "temas": [
+    {
+      "slug": "ingenieria-de-datos",
+      "nombre": "Ingeniería de datos",
+      "dominio": "Data Engineering",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Construir repositorios y pipelines de datos para ML",
+        "markdown": "## Repositorios de datos\nEl punto de partida de todo proyecto de ML es disponer de los datos en un almacén adecuado. **Amazon S3** es el repositorio central por excelencia (data lake), barato y duradero. Para acceso de muy baja latencia desde el entrenamiento se usan sistemas como **FSx for Lustre**.\n\n## Ingesta y transformación\n- **Streaming**: `Kinesis Data Streams` para captura en tiempo real y `Kinesis Data Firehose` para entregar a S3 sin gestionar servidores.\n- **Lotes (batch)**: `AWS Glue` ejecuta trabajos ETL serverless con Spark; su **Data Catalog** centraliza el esquema.\n- **Consulta directa**: `Athena` permite consultar S3 con SQL sin mover datos.\n\n## Formatos\nPara entrenamiento eficiente conviene **Parquet** (columnar, comprimido) o **RecordIO/protobuf** para algoritmos de SageMaker. Evita CSV en datasets grandes.\n\n> **En el examen:** ante datos en streaming que deben caer en S3 con mínima gestión, la respuesta suele ser **Kinesis Data Firehose**, no Data Streams."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un equipo necesita ingerir eventos de clickstream en tiempo real y entregarlos automáticamente a Amazon S3 con el mínimo de administración. ¿Qué servicio es el más adecuado?",
+          "opciones": [
+            "Amazon Kinesis Data Firehose",
+            "Amazon SQS",
+            "AWS Glue Data Catalog",
+            "Amazon Athena"
+          ],
+          "correctas": [0],
+          "explicacion": "Kinesis Data Firehose es totalmente gestionado y entrega flujos directamente a destinos como S3 sin necesidad de administrar consumidores ni infraestructura."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Para reducir el tiempo de entrenamiento al leer grandes volúmenes desde S3, ¿qué decisiones de almacenamiento y formato ayudan? (Selecciona dos)",
+          "opciones": [
+            "Usar formato columnar Parquet con compresión",
+            "Almacenar todo en CSV sin comprimir",
+            "Montar un sistema FSx for Lustre vinculado a S3",
+            "Guardar cada registro en un archivo independiente",
+            "Convertir el dataset a texto plano sin esquema"
+          ],
+          "correctas": [0, 2],
+          "explicacion": "Parquet reduce el volumen leído gracias a su formato columnar comprimido, y FSx for Lustre ofrece acceso de alto rendimiento y baja latencia a datos en S3 durante el entrenamiento."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Se requiere ejecutar transformaciones ETL serverless con Spark y mantener un catálogo central de esquemas. ¿Qué servicio cumple ambos objetivos?",
+          "opciones": [
+            "AWS Glue",
+            "Amazon EMR con clúster permanente",
+            "Amazon Redshift",
+            "AWS Lambda con runtime Python"
+          ],
+          "correctas": [0],
+          "explicacion": "AWS Glue ofrece trabajos ETL serverless basados en Spark y su Data Catalog centraliza la definición de esquemas, sin necesidad de aprovisionar clústeres."
+        }
+      ]
+    },
+    {
+      "slug": "analisis-exploratorio",
+      "nombre": "Análisis exploratorio de datos",
+      "dominio": "Exploratory Data Analysis",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Limpiar, transformar y entender los datos",
+        "markdown": "## Limpieza y preparación\nAntes de modelar hay que tratar **valores faltantes** (imputación por media, mediana o modelos), detectar **outliers** y corregir tipos. Datasets desbalanceados se equilibran con **sobremuestreo** (p. ej. SMOTE) o **submuestreo**.\n\n## Ingeniería de features\n- **Escalado**: estandarización (media 0, varianza 1) o normalización min-max.\n- **Categóricas**: codificación *one-hot* o *label encoding*.\n- **Texto**: `TF-IDF`, *bag of words* o *embeddings*.\n- **Reducción de dimensionalidad**: `PCA` para comprimir variables correlacionadas.\n\n## Herramientas AWS\n`SageMaker Data Wrangler` ofrece transformaciones visuales; `Glue DataBrew` limpia sin código; `QuickSight` y notebooks con Matplotlib/Seaborn ayudan a **visualizar** distribuciones y correlaciones.\n\n> **En el examen:** un histograma revela la **distribución** de una variable; un diagrama de dispersión revela **correlación** entre dos. Elige la visualización según lo que quieras evidenciar."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un dataset de clasificación tiene 98% de ejemplos en una clase y 2% en otra. ¿Qué técnica ayuda a equilibrarlo antes de entrenar?",
+          "opciones": [
+            "Aplicar SMOTE para sobremuestrear la clase minoritaria",
+            "Eliminar la columna objetivo",
+            "Convertir todas las features a one-hot",
+            "Aumentar la tasa de aprendizaje"
+          ],
+          "correctas": [0],
+          "explicacion": "SMOTE genera ejemplos sintéticos de la clase minoritaria, mitigando el desbalance que sesgaría el modelo hacia la clase mayoritaria."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué afirmaciones sobre ingeniería de features son correctas? (Selecciona dos)",
+          "opciones": [
+            "La estandarización lleva las variables a media 0 y varianza 1",
+            "PCA sirve para reducir dimensionalidad agrupando varianza",
+            "One-hot encoding ordena las categorías por frecuencia",
+            "TF-IDF se usa para escalar variables numéricas continuas",
+            "El label encoding siempre supera al one-hot en modelos lineales"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "La estandarización normaliza a media 0 y varianza 1, y PCA reduce dimensionalidad proyectando sobre componentes que capturan la mayor varianza. Las demás opciones describen incorrectamente las técnicas."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Se desea preparar y limpiar datos de forma visual y sin escribir código dentro del ecosistema de SageMaker. ¿Qué herramienta conviene?",
+          "opciones": [
+            "SageMaker Data Wrangler",
+            "Amazon Athena",
+            "AWS CloudTrail",
+            "Amazon SNS"
+          ],
+          "correctas": [0],
+          "explicacion": "SageMaker Data Wrangler permite explorar, transformar y limpiar datos mediante una interfaz visual integrada en SageMaker Studio."
+        }
+      ]
+    },
+    {
+      "slug": "modelado",
+      "nombre": "Modelado",
+      "dominio": "Modeling",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Elegir, entrenar y ajustar modelos",
+        "markdown": "## Selección de algoritmo\nSegún el problema:\n- **Clasificación/regresión tabular**: `XGBoost`, `Linear Learner`.\n- **Visión**: redes convolucionales, `Image Classification`.\n- **NLP**: `BlazingText`, `Seq2Seq`, transformers.\n- **No supervisado**: `K-Means`, `Random Cut Forest` para anomalías.\n\n## Entrenamiento en SageMaker\nDefines un *estimator*, el contenedor del algoritmo, el tipo de instancia y los canales de datos. El **entrenamiento distribuido** acelera con varias instancias.\n\n## Ajuste de hiperparámetros\n`SageMaker Automatic Model Tuning` busca la mejor combinación con estrategias **bayesiana**, *random* o *grid*. Define rangos y una métrica objetivo.\n\n## Sobreajuste\nSe combate con **regularización** (L1/L2), *dropout*, *early stopping* y más datos. El subajuste se corrige con modelos más complejos o más entrenamiento.\n\n> **En el examen:** alta exactitud en entrenamiento y baja en validación = **overfitting**; la solución típica es regularización o más datos, no más épocas."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un modelo logra 99% de exactitud en el conjunto de entrenamiento pero solo 70% en validación. ¿Qué describe mejor la situación y su remedio?",
+          "opciones": [
+            "Overfitting; aplicar regularización o aportar más datos",
+            "Underfitting; reducir el número de features",
+            "Fuga de datos; eliminar la métrica de validación",
+            "Desbalance; aumentar la tasa de aprendizaje"
+          ],
+          "correctas": [0],
+          "explicacion": "La gran brecha entre entrenamiento y validación indica sobreajuste; se mitiga con regularización, dropout, early stopping o ampliando el dataset."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué técnicas ayudan a reducir el sobreajuste en una red neuronal? (Selecciona dos)",
+          "opciones": [
+            "Aplicar dropout en las capas ocultas",
+            "Usar early stopping según la pérdida de validación",
+            "Incrementar indefinidamente el número de épocas",
+            "Eliminar todo el conjunto de validación",
+            "Aumentar la profundidad de la red sin límite"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "Dropout desactiva neuronas aleatoriamente reduciendo la coadaptación, y early stopping detiene el entrenamiento cuando la validación deja de mejorar. Las demás opciones tienden a agravar el sobreajuste."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Para buscar automáticamente la mejor combinación de hiperparámetros optimizando una métrica objetivo, ¿qué capacidad de SageMaker se utiliza?",
+          "opciones": [
+            "Automatic Model Tuning",
+            "Model Monitor",
+            "Feature Store",
+            "Ground Truth"
+          ],
+          "correctas": [0],
+          "explicacion": "SageMaker Automatic Model Tuning ejecuta múltiples trabajos de entrenamiento, explorando rangos de hiperparámetros (por ejemplo con búsqueda bayesiana) para optimizar la métrica indicada."
+        }
+      ]
+    },
+    {
+      "slug": "evaluacion-de-modelos",
+      "nombre": "Evaluación de modelos",
+      "dominio": "Modeling",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Medir el rendimiento con la métrica correcta",
+        "markdown": "## Clasificación\nLa **matriz de confusión** resume aciertos y errores. De ella derivan:\n- **Precisión**: de lo predicho positivo, cuánto era correcto.\n- **Recall (sensibilidad)**: de lo positivo real, cuánto se detectó.\n- **F1**: media armónica de precisión y recall.\n- **AUC-ROC**: capacidad de separar clases independiente del umbral.\n\n## Cuándo usar cada una\nEn **fraude o enfermedades** importa el **recall** (no perder positivos). En filtros donde el falso positivo molesta, prioriza **precisión**. Con clases desbalanceadas, la *accuracy* engaña: usa F1 o AUC.\n\n## Regresión\nMétricas como **RMSE**, **MAE** y **R²** miden el error de predicción continua.\n\n> **En el examen:** si el coste de un **falso negativo** es alto (detección de fraude o cáncer), optimiza **recall**; la *accuracy* es engañosa con datos desbalanceados."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En un detector de fraude, el coste de no detectar una transacción fraudulenta es muy alto. ¿Qué métrica conviene priorizar?",
+          "opciones": [
+            "Recall (sensibilidad)",
+            "Exactitud (accuracy) global",
+            "RMSE",
+            "Velocidad de inferencia"
+          ],
+          "correctas": [0],
+          "explicacion": "Maximizar el recall reduce los falsos negativos, es decir, los fraudes no detectados, que son el error más costoso en este escenario."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre métricas de evaluación son correctas? (Selecciona dos)",
+          "opciones": [
+            "F1 es la media armónica de precisión y recall",
+            "AUC-ROC mide la separación de clases sin depender de un umbral fijo",
+            "La accuracy es siempre fiable con clases muy desbalanceadas",
+            "RMSE es una métrica adecuada para clasificación binaria",
+            "El recall mide la proporción de predicciones positivas correctas sobre todas las predichas"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "F1 combina precisión y recall como media armónica, y AUC-ROC evalúa la separabilidad de clases a través de todos los umbrales. La accuracy engaña con datos desbalanceados, RMSE es de regresión y la última opción describe precisión, no recall."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Para evaluar un modelo de regresión que predice precios de vivienda, ¿cuál es una métrica adecuada?",
+          "opciones": [
+            "RMSE (raíz del error cuadrático medio)",
+            "F1-score",
+            "Matriz de confusión",
+            "AUC-ROC"
+          ],
+          "correctas": [0],
+          "explicacion": "RMSE mide la magnitud del error entre valores predichos y reales en problemas de regresión; las demás métricas son propias de clasificación."
+        }
+      ]
+    },
+    {
+      "slug": "despliegue-e-inferencia",
+      "nombre": "Despliegue e inferencia",
+      "dominio": "Machine Learning Implementation and Operations",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Servir modelos en producción",
+        "markdown": "## Tipos de inferencia\n- **Endpoint en tiempo real**: respuesta inmediata, instancia siempre activa. Ideal para APIs de baja latencia.\n- **Serverless Inference**: escala a cero, paga por uso; bueno para tráfico intermitente.\n- **Asíncrona**: cargas grandes o tiempos largos, con cola interna.\n- **Batch Transform**: inferencia masiva sin endpoint persistente.\n\n## Despliegues seguros\nSageMaker soporta **variantes de producción** para *A/B testing* y despliegues **blue/green** o **canary**, repartiendo tráfico para validar nuevas versiones sin riesgo.\n\n## Optimización de coste\nUsa **autoescalado** del endpoint, **multi-model endpoints** para alojar muchos modelos en una instancia y `Elastic Inference`/instancias `Inf` para acelerar a menor coste.\n\n> **En el examen:** millones de predicciones offline una vez al día = **Batch Transform**; necesidad de respuesta inmediata por petición = **endpoint en tiempo real**."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una empresa debe generar predicciones para 50 millones de registros una vez por noche, sin necesidad de respuesta inmediata. ¿Qué opción de SageMaker es la más eficiente en coste?",
+          "opciones": [
+            "Batch Transform",
+            "Un endpoint en tiempo real siempre activo",
+            "Serverless Inference con concurrencia máxima",
+            "Inferencia asíncrona con un solo registro por petición"
+          ],
+          "correctas": [0],
+          "explicacion": "Batch Transform procesa grandes volúmenes de forma masiva sin mantener un endpoint persistente, lo que minimiza el coste para cargas programadas y offline."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué estrategias permiten reducir el coste de servir modelos en SageMaker? (Selecciona dos)",
+          "opciones": [
+            "Usar multi-model endpoints para alojar varios modelos en una instancia",
+            "Habilitar autoescalado en los endpoints según la demanda",
+            "Mantener siempre el máximo número de instancias activas",
+            "Desplegar cada modelo en su propio endpoint dedicado siempre",
+            "Desactivar todas las métricas de CloudWatch"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "Los multi-model endpoints comparten una instancia entre varios modelos y el autoescalado ajusta la capacidad a la demanda real, ambos reduciendo costes. Las otras opciones aumentan el gasto o no aplican."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Se quiere lanzar una nueva versión de modelo dirigiendo solo un 10% del tráfico al inicio para validar su comportamiento. ¿Qué mecanismo de SageMaker lo permite?",
+          "opciones": [
+            "Variantes de producción con despliegue canary",
+            "Batch Transform en paralelo",
+            "Feature Store con versiones",
+            "Un nuevo bucket de S3 por versión"
+          ],
+          "correctas": [0],
+          "explicacion": "Las variantes de producción permiten repartir el tráfico entre versiones (canary/blue-green), validando la nueva con un porcentaje reducido antes de la transición completa."
+        }
+      ]
+    },
+    {
+      "slug": "operaciones-y-seguridad",
+      "nombre": "Operaciones y seguridad de ML",
+      "dominio": "Machine Learning Implementation and Operations",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Monitorear, automatizar y proteger soluciones de ML",
+        "markdown": "## Monitoreo\n`SageMaker Model Monitor` detecta **drift** de datos y de calidad comparando la distribución en producción con la base. `CloudWatch` recoge métricas y `CloudTrail` audita llamadas a la API.\n\n## Automatización (MLOps)\n`SageMaker Pipelines` orquesta el flujo end-to-end (procesar → entrenar → evaluar → registrar → desplegar). El **Model Registry** versiona y aprueba modelos antes de producción.\n\n## Seguridad\n- **Cifrado**: KMS en reposo (S3, volúmenes) y TLS en tránsito.\n- **Aislamiento**: entrenar y servir dentro de una **VPC** privada, sin acceso a internet.\n- **Permisos**: roles **IAM** con privilegio mínimo para cada componente.\n\n> **En el examen:** una caída de calidad del modelo en producción por cambio en los datos se diagnostica con **Model Monitor** (detección de *data drift*), no reentrenando a ciegas."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "La precisión de un modelo en producción empeora con el tiempo y se sospecha que la distribución de los datos de entrada cambió. ¿Qué servicio ayuda a detectarlo?",
+          "opciones": [
+            "SageMaker Model Monitor",
+            "AWS Budgets",
+            "Amazon Macie",
+            "AWS Step Functions"
+          ],
+          "correctas": [0],
+          "explicacion": "SageMaker Model Monitor detecta data drift y desviaciones de calidad comparando los datos de producción con una línea base, alertando sobre el deterioro del modelo."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué medidas refuerzan la seguridad de un flujo de entrenamiento e inferencia en SageMaker? (Selecciona dos)",
+          "opciones": [
+            "Cifrar los datos en reposo con AWS KMS",
+            "Ejecutar trabajos de entrenamiento dentro de una VPC privada sin acceso a internet",
+            "Asignar permisos de administrador total a todos los roles",
+            "Guardar las credenciales en variables de entorno del contenedor",
+            "Deshabilitar el cifrado en tránsito para acelerar la transferencia"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "El cifrado con KMS protege los datos en reposo y la ejecución dentro de una VPC aislada limita la superficie de ataque. Las demás opciones violan el principio de privilegio mínimo y la protección de datos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Para orquestar de forma reproducible un flujo de procesamiento, entrenamiento, evaluación y registro de modelos, ¿qué servicio conviene?",
+          "opciones": [
+            "SageMaker Pipelines",
+            "Amazon SNS",
+            "AWS Config",
+            "Amazon CloudFront"
+          ],
+          "correctas": [0],
+          "explicacion": "SageMaker Pipelines define y automatiza flujos de trabajo de ML end-to-end, integrándose con el Model Registry para versionar y aprobar modelos antes del despliegue."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,343 @@
+{
+  "slug": "azure-data-scientist",
+  "nombre": "Microsoft Certified: Azure Data Scientist Associate (DP-100)",
+  "proveedor": "Microsoft",
+  "nivel": "associate",
+  "area": "IA",
+  "descripcion": "Certificación que valida la capacidad de diseñar y operar cargas de machine learning en Azure: preparar recursos, entrenar y ajustar modelos con Azure Machine Learning, y desplegarlos de forma confiable y responsable. Pensada para perfiles que ya programan en Python y trabajan con datos.",
+  "skills": [
+    "azure machine learning",
+    "mlflow",
+    "experimentos",
+    "ajuste de hiperparametros",
+    "automated ml",
+    "pipelines",
+    "endpoints",
+    "scikit-learn",
+    "python sdk v2",
+    "ia responsable",
+    "monitoreo de modelos",
+    "compute"
+  ],
+  "roles": [
+    "Científico de datos",
+    "Ingeniero de machine learning",
+    "Ingeniero de datos",
+    "Desarrollador de IA",
+    "MLOps engineer"
+  ],
+  "temas": [
+    {
+      "slug": "preparar-recursos",
+      "nombre": "Diseñar y preparar el entorno de trabajo",
+      "dominio": "Diseñar y preparar una solución de machine learning",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Workspace, almacenes de datos y cómputo",
+        "markdown": "## El workspace como centro\nEl **workspace de Azure Machine Learning** agrupa experimentos, modelos, datos y cómputo. Es el recurso raíz desde el que se gobierna todo el ciclo de vida.\n\n## Activos de datos\n- **Datastores**: referencias seguras a almacenamiento (Blob, Data Lake) sin exponer credenciales en el código.\n- **Data assets**: apuntan a archivos o tablas y se versionan; tipos `uri_file`, `uri_folder` y `mltable`.\n\n## Tipos de cómputo\n- **Compute instance**: estación de trabajo gestionada para desarrollo interactivo.\n- **Compute cluster**: nodos que **escalan a cero** y crecen bajo demanda para entrenamiento por lotes.\n- **Endpoints**: cómputo dedicado para servir inferencia.\n\n## Buenas prácticas\nElige el tamaño de VM según la carga (CPU vs GPU) y deja que el clúster escale a cero para controlar el costo.\n\n> **En el examen:** asocia desarrollo interactivo con compute instance y entrenamiento escalable con compute cluster; recuerda que el datastore guarda la conexión y el data asset apunta a los datos versionados."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Necesitas un recurso de cómputo gestionado para desarrollar y depurar notebooks de forma interactiva. ¿Cuál eliges?",
+          "opciones": [
+            "Compute cluster",
+            "Compute instance",
+            "Endpoint en línea",
+            "Datastore"
+          ],
+          "correctas": [1],
+          "explicacion": "La compute instance es una estación de trabajo gestionada de un solo nodo, ideal para desarrollo interactivo en notebooks; el clúster está orientado a entrenamiento escalable por lotes."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuál es la ventaja principal de definir un datastore en lugar de poner la cadena de conexión directamente en el script?",
+          "opciones": [
+            "Acelera el entrenamiento del modelo",
+            "Centraliza y protege las credenciales de acceso al almacenamiento",
+            "Convierte automáticamente los datos a formato Parquet",
+            "Elimina la necesidad de versionar los datos"
+          ],
+          "correctas": [1],
+          "explicacion": "El datastore guarda de forma segura la conexión al almacenamiento, evitando exponer credenciales en el código y centralizando el acceso."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de los siguientes son tipos válidos de data asset en Azure Machine Learning?",
+          "opciones": [
+            "uri_file",
+            "uri_folder",
+            "mltable",
+            "compute_cluster",
+            "datastore_blob"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Los data assets pueden ser uri_file, uri_folder o mltable. compute_cluster es un tipo de cómputo y datastore_blob no es un tipo de data asset."
+        }
+      ]
+    },
+    {
+      "slug": "explorar-datos-entrenar",
+      "nombre": "Explorar datos y entrenar modelos",
+      "dominio": "Explorar datos y entrenar modelos",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Del análisis exploratorio al primer modelo",
+        "markdown": "## Explorar antes de entrenar\nEl **análisis exploratorio (EDA)** revela calidad, distribución y relaciones de los datos. Se trabaja con `pandas` y visualización para detectar nulos, outliers y desbalance.\n\n## Preparación\n- **Limpieza**: imputar o descartar valores faltantes.\n- **Ingeniería de características**: escalar, codificar categóricas, crear nuevas variables.\n- **División**: separar en entrenamiento y prueba para evaluar sin fuga de datos.\n\n## Entrenar en el workspace\n- Ejecuta scripts como **jobs** (`command job`) sobre un cómputo del workspace.\n- Usa frameworks como **scikit-learn** y registra parámetros y métricas con **MLflow**.\n\n## Evaluación\nElige métricas según el problema: **exactitud, precisión, recall, F1** para clasificación; **RMSE, R²** para regresión.\n\n> **En el examen:** recuerda que un command job ejecuta tu script de entrenamiento en el cómputo elegido y que MLflow es la vía recomendada para registrar parámetros y métricas durante el entrenamiento."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Quieres ejecutar un script de entrenamiento en Python sobre un compute cluster del workspace. ¿Qué tipo de job defines?",
+          "opciones": [
+            "Un command job",
+            "Un endpoint en línea",
+            "Un datastore",
+            "Un registro de modelo"
+          ],
+          "correctas": [0],
+          "explicacion": "El command job ejecuta un comando o script (por ejemplo tu entrenamiento) sobre el cómputo indicado, con su entorno y entradas definidas."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Para un problema de clasificación con clases muy desbalanceadas, ¿qué métrica es preferible a la exactitud (accuracy)?",
+          "opciones": [
+            "RMSE",
+            "F1-score",
+            "R²",
+            "Tiempo de entrenamiento"
+          ],
+          "correctas": [1],
+          "explicacion": "Con clases desbalanceadas la exactitud puede ser engañosa; el F1-score combina precisión y recall y refleja mejor el desempeño. RMSE y R² son métricas de regresión."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de las siguientes son tareas típicas de ingeniería de características previas al entrenamiento?",
+          "opciones": [
+            "Escalar variables numéricas",
+            "Codificar variables categóricas",
+            "Imputar valores faltantes",
+            "Desplegar el modelo en un endpoint",
+            "Crear nuevas variables derivadas"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Escalar, codificar, imputar y derivar variables son tareas de preparación de datos. Desplegar el modelo es una fase posterior, no ingeniería de características."
+        }
+      ]
+    },
+    {
+      "slug": "automated-ml",
+      "nombre": "Entrenamiento automatizado con Automated ML",
+      "dominio": "Explorar datos y entrenar modelos",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Automated ML: probar muchos modelos sin código manual",
+        "markdown": "## Qué resuelve\n**Automated ML (AutoML)** prueba combinaciones de algoritmos y preprocesamiento para encontrar el mejor modelo según una métrica objetivo, ahorrando iteración manual.\n\n## Tareas soportadas\n- **Clasificación**\n- **Regresión**\n- **Pronóstico de series temporales (forecasting)**\n\n## Configuración clave\n- Define la **tarea**, el **dataset** y la **métrica primaria** a optimizar.\n- Establece límites: **tiempo máximo**, número de pruebas o criterio de salida.\n- AutoML aplica **featurization** automática (codificación, escalado, manejo de nulos).\n\n## Resultados\nGenera un **ranking** de modelos con sus métricas y permite descargar el mejor con explicaciones de importancia de características.\n\n> **En el examen:** recuerda que AutoML soporta clasificación, regresión y forecasting, que se controla por límites de tiempo o número de pruebas, y que aplica featurization automática antes de probar los algoritmos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál es el propósito principal de Automated ML?",
+          "opciones": [
+            "Servir modelos en tiempo real",
+            "Probar automáticamente algoritmos y preprocesamiento para hallar el mejor modelo",
+            "Versionar los datastores del workspace",
+            "Escalar manualmente el compute cluster"
+          ],
+          "correctas": [1],
+          "explicacion": "AutoML automatiza la búsqueda del mejor modelo probando distintos algoritmos y pasos de preprocesamiento contra una métrica objetivo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Quieres usar AutoML para predecir la demanda diaria de un producto a partir de datos históricos con fecha. ¿Qué tipo de tarea seleccionas?",
+          "opciones": [
+            "Clasificación",
+            "Clustering",
+            "Pronóstico de series temporales (forecasting)",
+            "Detección de anomalías"
+          ],
+          "correctas": [2],
+          "explicacion": "Predecir valores futuros a lo largo del tiempo a partir de datos con marca temporal es una tarea de forecasting, soportada por AutoML."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de los siguientes son parámetros que configuras en un trabajo de Automated ML?",
+          "opciones": [
+            "El tipo de tarea (clasificación, regresión o forecasting)",
+            "La métrica primaria a optimizar",
+            "Un criterio de salida o límite de tiempo",
+            "El color del tema de la interfaz",
+            "El conjunto de datos de entrenamiento"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Se configuran tarea, métrica primaria, límites de ejecución y dataset. El color del tema de la interfaz no es un parámetro del trabajo de AutoML."
+        }
+      ]
+    },
+    {
+      "slug": "optimizar-hiperparametros",
+      "nombre": "Optimizar modelos con ajuste de hiperparámetros",
+      "dominio": "Preparar un modelo para su despliegue",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Ajuste de hiperparámetros con sweep jobs",
+        "markdown": "## Por qué ajustar\nLos **hiperparámetros** (tasa de aprendizaje, profundidad, regularización) no se aprenden del dato y afectan mucho al desempeño. El **sweep job** los explora de forma sistemática.\n\n## Espacio de búsqueda\n- Distribuciones como `choice`, `uniform` o `loguniform` definen los valores posibles de cada hiperparámetro.\n\n## Algoritmos de muestreo\n- **Grid**: prueba todas las combinaciones (solo con `choice`).\n- **Random**: muestrea al azar, eficiente en espacios grandes.\n- **Bayesiano**: aprende de pruebas previas para enfocar la búsqueda.\n\n## Eficiencia\n- Las **políticas de terminación temprana** (por ejemplo bandit o por mediana) cortan ejecuciones poco prometedoras y ahorran cómputo.\n- Se optimiza una **métrica primaria** que el script registra en cada ejecución.\n\n> **En el examen:** asocia grid con espacios pequeños y discretos, random con espacios grandes y bayesiano con búsqueda guiada; recuerda que la terminación temprana ahorra costo descartando pruebas malas."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué tipo de job se usa en Azure Machine Learning para el ajuste de hiperparámetros?",
+          "opciones": [
+            "Command job",
+            "Sweep job",
+            "Pipeline job",
+            "Spark job"
+          ],
+          "correctas": [1],
+          "explicacion": "El sweep job ejecuta múltiples pruebas variando los hiperparámetros dentro de un espacio de búsqueda para optimizar una métrica."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Tienes un espacio de búsqueda amplio y continuo y quieres explorarlo de forma eficiente sin probar todas las combinaciones. ¿Qué método de muestreo es más adecuado?",
+          "opciones": [
+            "Muestreo en cuadrícula (grid)",
+            "Muestreo aleatorio (random)",
+            "Validación cruzada",
+            "Codificación one-hot"
+          ],
+          "correctas": [1],
+          "explicacion": "El muestreo aleatorio explora eficientemente espacios grandes y continuos; el grid exige enumerar todas las combinaciones y solo aplica a valores discretos."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles de las siguientes afirmaciones sobre el ajuste de hiperparámetros con sweep jobs son correctas?",
+          "opciones": [
+            "Las políticas de terminación temprana cancelan pruebas poco prometedoras para ahorrar cómputo",
+            "El muestreo bayesiano aprovecha los resultados de pruebas anteriores",
+            "El script de entrenamiento debe registrar la métrica primaria en cada ejecución",
+            "El muestreo en cuadrícula requiere distribuciones continuas como uniform",
+            "El espacio de búsqueda se define con distribuciones como choice o loguniform"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "La terminación temprana ahorra costo, el bayesiano aprende de pruebas previas, el script registra la métrica y el espacio usa distribuciones como choice o loguniform. El grid trabaja con valores discretos (choice), no con distribuciones continuas."
+        }
+      ]
+    },
+    {
+      "slug": "pipelines-componentes",
+      "nombre": "Construir pipelines reutilizables con componentes",
+      "dominio": "Preparar un modelo para su despliegue",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Pipelines y componentes para flujos repetibles",
+        "markdown": "## Por qué pipelines\nUn **pipeline** encadena pasos (preparación, entrenamiento, evaluación) en un flujo **repetible y orquestado**, clave para producción y MLOps.\n\n## Componentes\n- Un **componente** es una unidad de trabajo reutilizable y versionada con sus **entradas, salidas, código y entorno**.\n- Se combinan como bloques para formar el pipeline.\n\n## Beneficios\n- **Reutilización**: el mismo componente sirve en varios pipelines.\n- **Caché de salidas**: pasos sin cambios pueden reutilizar resultados previos.\n- **Modularidad**: cada paso se prueba y mantiene por separado.\n\n## Ejecución\nEl **pipeline job** orquesta los pasos, gestiona dependencias y pasa los datos de un paso al siguiente dentro del workspace.\n\n> **En el examen:** recuerda que un componente es la pieza reutilizable y versionada (entradas, salidas, código, entorno) y que el pipeline job orquesta esos componentes pasando datos entre pasos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué es un componente en Azure Machine Learning?",
+          "opciones": [
+            "Una unidad de trabajo reutilizable y versionada con entradas, salidas, código y entorno",
+            "Un tipo de almacenamiento de datos cifrado",
+            "Una métrica de evaluación de modelos",
+            "Un permiso de acceso al workspace"
+          ],
+          "correctas": [0],
+          "explicacion": "El componente es un bloque reutilizable y versionado que encapsula su código, entorno, entradas y salidas, y se combina para formar pipelines."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuál es un beneficio directo de usar pipelines con componentes para el entrenamiento?",
+          "opciones": [
+            "Eliminan la necesidad de un workspace",
+            "Permiten reutilizar pasos y cachear salidas no modificadas",
+            "Convierten cualquier modelo en uno de IA generativa",
+            "Garantizan exactitud del 100% en el modelo"
+          ],
+          "correctas": [1],
+          "explicacion": "Los pipelines aportan modularidad, reutilización de componentes y caché de salidas, lo que acelera y hace más confiables los flujos repetidos."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué elementos definen un componente reutilizable de un pipeline?",
+          "opciones": [
+            "Sus entradas",
+            "Sus salidas",
+            "El código que ejecuta",
+            "El entorno de ejecución",
+            "El número de usuarios del workspace"
+          ],
+          "correctas": [0, 1, 2, 3],
+          "explicacion": "Un componente se define por sus entradas, salidas, código y entorno. El número de usuarios del workspace no forma parte de su definición."
+        }
+      ]
+    },
+    {
+      "slug": "desplegar-monitorear",
+      "nombre": "Desplegar modelos y operar de forma responsable",
+      "dominio": "Desplegar y reentrenar un modelo",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Endpoints, despliegue y IA responsable",
+        "markdown": "## Servir el modelo\nUn modelo desplegado se expone mediante un **endpoint**:\n- **Endpoint en línea (online)**: inferencia en **tiempo real** con baja latencia para peticiones individuales.\n- **Endpoint por lotes (batch)**: procesa **grandes volúmenes** de datos de forma asíncrona.\n\n## Despliegue seguro\n- Varios **deployments** pueden vivir tras un endpoint y repartir tráfico, lo que habilita estrategias **blue/green** para actualizar sin interrupción.\n\n## Operación continua\n- **Monitorear** latencia, errores y, sobre todo, el **drift de datos** (cambio en la distribución de entradas) para decidir cuándo **reentrenar**.\n\n## IA responsable\n- Evaluar **equidad, interpretabilidad y errores** con el panel de IA responsable antes y después de producción.\n\n> **En el examen:** asocia tiempo real con endpoint online y grandes volúmenes asíncronos con endpoint batch; recuerda que el data drift es la señal típica para reentrenar y que blue/green permite actualizar repartiendo tráfico."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Una aplicación web necesita predicciones individuales con baja latencia cada vez que un usuario hace clic. ¿Qué tipo de endpoint usas?",
+          "opciones": [
+            "Endpoint por lotes (batch)",
+            "Endpoint en línea (online)",
+            "Compute instance",
+            "Sweep job"
+          ],
+          "correctas": [1],
+          "explicacion": "El endpoint en línea sirve inferencia en tiempo real con baja latencia para peticiones individuales, ideal para una app interactiva."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Observas que la distribución de los datos de entrada en producción difiere cada vez más de los datos con que entrenaste. ¿Cómo se llama este fenómeno?",
+          "opciones": [
+            "Sobreajuste (overfitting)",
+            "Fuga de datos (data leakage)",
+            "Desviación de datos (data drift)",
+            "Featurization"
+          ],
+          "correctas": [2],
+          "explicacion": "El data drift es el cambio en la distribución de los datos de entrada respecto al entrenamiento; monitorearlo indica cuándo conviene reentrenar el modelo."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles de las siguientes son prácticas adecuadas al desplegar y operar modelos de forma responsable?",
+          "opciones": [
+            "Usar despliegues blue/green para actualizar repartiendo el tráfico",
+            "Monitorear el data drift para decidir reentrenamientos",
+            "Evaluar equidad e interpretabilidad con el panel de IA responsable",
+            "Desplegar siempre sin registrar métricas para ahorrar costo",
+            "Elegir endpoint batch para procesar grandes volúmenes de forma asíncrona"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Blue/green, monitorear drift, evaluar equidad e interpretabilidad y usar batch para grandes volúmenes son buenas prácticas. Desplegar sin métricas impide detectar problemas y no es responsable."
+        }
+      ]
+    }
+  ]
+}

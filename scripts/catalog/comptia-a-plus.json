@@ -1,0 +1,228 @@
+{
+  "slug": "comptia-a-plus",
+  "nombre": "CompTIA A+",
+  "proveedor": "CompTIA",
+  "nivel": "foundational",
+  "area": "Soporte",
+  "descripcion": "Certificacion de entrada que valida las habilidades practicas de soporte tecnico: hardware, redes, dispositivos moviles, sistemas operativos y seguridad basica. Pensada para quien inicia una carrera en mesas de ayuda y soporte de campo.",
+  "skills": ["hardware", "redes", "dispositivos moviles", "windows", "linux", "virtualizacion", "troubleshooting", "seguridad", "malware", "cableado", "direccionamiento ip", "soporte tecnico"],
+  "roles": ["tecnico de soporte", "agente de mesa de ayuda", "tecnico de campo", "especialista de escritorio", "administrador junior de sistemas"],
+  "temas": [
+    {
+      "slug": "dispositivos-moviles",
+      "nombre": "Dispositivos moviles",
+      "dominio": "Mobile Devices",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Componentes y conectividad movil",
+        "markdown": "## Hardware portatil\nLos **laptops** y dispositivos moviles integran componentes en espacios reducidos. Conoce la diferencia entre:\n- **Almacenamiento M.2 / NVMe**: rapido y compacto, conecta directo a la placa.\n- **Memoria SO-DIMM**: modulos de RAM mas pequenos que los de escritorio.\n- **Pantallas**: paneles **IPS** (mejor color y angulos) frente a **TN** (mas economicos).\n\n## Conexiones inalambricas\n- **Bluetooth**: emparejamiento de perifericos a corta distancia.\n- **NFC**: pagos y emparejamiento por aproximacion.\n- **Hotspot**: comparte la conexion celular con otros equipos.\n\n## Sincronizacion\nLos datos se sincronizan a la **nube**, a un equipo local o por puerto. Configura cuentas de correo con **IMAP** (multidispositivo) en lugar de **POP3** cuando se requiera acceso desde varios equipos.\n\n> **En el examen:** asocia IMAP con sincronizacion multidispositivo, M.2 con almacenamiento compacto y recuerda que el emparejamiento Bluetooth exige confirmar un codigo en ambos extremos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un usuario necesita leer su correo desde el telefono, la laptop y la tablet manteniendo el estado de los mensajes sincronizado en todos. Que protocolo deberia configurar?",
+          "opciones": ["POP3", "IMAP", "SMTP", "FTP"],
+          "correctas": [1],
+          "explicacion": "IMAP mantiene los mensajes en el servidor y sincroniza su estado entre dispositivos. POP3 tiende a descargarlos a un solo equipo y SMTP solo sirve para enviar."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de las siguientes son tecnologias de comunicacion inalambrica de corto alcance usadas en dispositivos moviles? Selecciona todas las que apliquen.",
+          "opciones": ["Bluetooth", "NFC", "POP3", "Infrarrojo (IR)", "DDR4"],
+          "correctas": [0, 1, 3],
+          "explicacion": "Bluetooth, NFC e infrarrojo son tecnologias inalambricas de corto alcance. POP3 es un protocolo de correo y DDR4 es un tipo de memoria RAM."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Que tipo de modulo de memoria se utiliza tipicamente en laptops por su menor tamano fisico?",
+          "opciones": ["DIMM", "SO-DIMM", "DIP", "SIMM de escritorio"],
+          "correctas": [1],
+          "explicacion": "El SO-DIMM (Small Outline DIMM) es la version compacta de los modulos de memoria, disenada para el espacio reducido de las laptops."
+        }
+      ]
+    },
+    {
+      "slug": "redes",
+      "nombre": "Redes",
+      "dominio": "Networking",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Fundamentos de redes",
+        "markdown": "## Puertos y protocolos comunes\n- **HTTP (80)** y **HTTPS (443)**: navegacion web; HTTPS cifra el trafico.\n- **DNS (53)**: traduce nombres de dominio a direcciones IP.\n- **DHCP (67/68)**: asigna direcciones IP de forma automatica.\n- **RDP (3389)**: escritorio remoto.\n\n## Direccionamiento IP\n- **IPv4**: 32 bits, formato como 192.168.1.10.\n- **IPv6**: 128 bits, mas direcciones disponibles.\n- **APIPA (169.254.x.x)**: direccion automatica que indica que el equipo **no** obtuvo IP del servidor DHCP.\n\n## Dispositivos\n- **Switch**: conecta equipos dentro de una red local.\n- **Router**: enruta trafico entre redes distintas.\n- **Access point**: extiende la red por Wi-Fi.\n\n> **En el examen:** una direccion 169.254.x.x apunta a un fallo de DHCP, no a un cliente bien configurado. Memoriza los puertos clave: 80, 443, 53 y 3389."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Que protocolo se encarga de traducir nombres de dominio como ejemplo.com a direcciones IP?",
+          "opciones": ["DHCP", "DNS", "FTP", "SMTP"],
+          "correctas": [1],
+          "explicacion": "El DNS (Sistema de Nombres de Dominio) resuelve nombres legibles a direcciones IP que la red puede enrutar."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una estacion de trabajo muestra la direccion 169.254.45.12. Que indica con mayor probabilidad esta direccion?",
+          "opciones": ["Que el equipo tiene una IP publica valida", "Que el equipo no pudo obtener una IP del servidor DHCP", "Que el equipo usa IPv6", "Que el firewall esta bloqueando todo el trafico"],
+          "correctas": [1],
+          "explicacion": "El rango 169.254.x.x corresponde a APIPA, que el sistema se autoasigna cuando no logra contactar al servidor DHCP."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Asocia los servicios que usan trafico cifrado o seguro por defecto. Selecciona todas las que apliquen.",
+          "opciones": ["HTTPS (443)", "SSH (22)", "HTTP (80)", "Telnet (23)", "RDP (3389)"],
+          "correctas": [0, 1, 4],
+          "explicacion": "HTTPS, SSH y RDP cifran su trafico. HTTP y Telnet transmiten datos en texto plano, por lo que se consideran inseguros."
+        }
+      ]
+    },
+    {
+      "slug": "hardware",
+      "nombre": "Hardware",
+      "dominio": "Hardware",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Componentes de hardware",
+        "markdown": "## Componentes internos\n- **Placa base (motherboard)**: integra CPU, RAM y buses de expansion.\n- **CPU**: procesa instrucciones; se diferencia por sockets y nucleos.\n- **RAM**: memoria volatil de trabajo; tipos como **DDR4** y **DDR5** no son intercambiables.\n- **Fuente de poder (PSU)**: convierte corriente alterna en continua para los componentes.\n\n## Almacenamiento\n- **HDD**: disco mecanico, mayor capacidad por costo.\n- **SSD**: sin partes moviles, mucho mas rapido.\n- **NVMe**: SSD conectado por PCIe, el mas veloz.\n\n## Conexiones y perifericos\n- **USB**, **HDMI**, **DisplayPort** y **Thunderbolt** para datos y video.\n- Las **impresoras** pueden ser laser, de inyeccion de tinta o termicas, cada una con su flujo de mantenimiento.\n\n> **En el examen:** no mezcles generaciones de RAM (DDR4 vs DDR5), recuerda que NVMe usa PCIe y que la PSU debe entregar suficientes vatios para toda la carga del equipo."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Que componente convierte la corriente alterna de la pared en corriente continua que usan los componentes internos del equipo?",
+          "opciones": ["La placa base", "La fuente de poder (PSU)", "El procesador (CPU)", "El disipador"],
+          "correctas": [1],
+          "explicacion": "La fuente de poder (PSU) transforma la corriente alterna (AC) en corriente continua (DC) regulada para alimentar los componentes."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un tecnico quiere el almacenamiento mas rapido para un equipo nuevo. Que tecnologia deberia elegir?",
+          "opciones": ["HDD de 7200 RPM", "SSD SATA", "SSD NVMe (PCIe)", "Unidad optica"],
+          "correctas": [2],
+          "explicacion": "El SSD NVMe se conecta por PCIe y ofrece anchos de banda muy superiores a los de un SSD SATA o un disco mecanico."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de los siguientes son tipos de impresora que un tecnico de soporte podria encontrar en campo? Selecciona todas las que apliquen.",
+          "opciones": ["Laser", "Inyeccion de tinta", "Termica", "DDR5", "PCIe"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Laser, inyeccion de tinta y termica son tipos de impresora. DDR5 es memoria RAM y PCIe es un bus de expansion."
+        }
+      ]
+    },
+    {
+      "slug": "virtualizacion-nube",
+      "nombre": "Virtualizacion y computacion en la nube",
+      "dominio": "Virtualization and Cloud Computing",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Virtualizacion y nube",
+        "markdown": "## Maquinas virtuales\nUna **maquina virtual (VM)** ejecuta un sistema operativo completo sobre un **hipervisor**:\n- **Tipo 1 (bare metal)**: corre directo sobre el hardware, usado en servidores.\n- **Tipo 2 (hosted)**: corre sobre un sistema operativo anfitrion, comun en escritorios.\n\nLas VM requieren suficiente **RAM**, **CPU** y soporte de virtualizacion habilitado en la BIOS/UEFI.\n\n## Modelos de nube\n- **IaaS**: infraestructura bajo demanda (servidores, red).\n- **PaaS**: plataforma para desplegar aplicaciones.\n- **SaaS**: software listo para usar desde el navegador.\n\n## Caracteristicas clave\n- **Elasticidad**: ajustar recursos segun la demanda.\n- **Nube publica, privada e hibrida** segun quien controla la infraestructura.\n- **Medicion de recursos**: se paga por consumo.\n\n> **En el examen:** distingue hipervisor Tipo 1 (sobre hardware) de Tipo 2 (sobre un sistema operativo) y asocia SaaS con software listo para usar como el correo web."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Que componente de software permite que varias maquinas virtuales compartan el hardware fisico de un mismo equipo?",
+          "opciones": ["El hipervisor", "El gestor de arranque", "El controlador de red", "El antivirus"],
+          "correctas": [0],
+          "explicacion": "El hipervisor crea y administra las maquinas virtuales, repartiendo CPU, memoria y otros recursos del hardware fisico."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un usuario accede a su suite de correo y ofimatica completamente desde el navegador, sin instalar nada. Que modelo de servicio en la nube describe esto?",
+          "opciones": ["IaaS", "PaaS", "SaaS", "On-premises"],
+          "correctas": [2],
+          "explicacion": "SaaS entrega software listo para usar a traves del navegador; el proveedor gestiona toda la infraestructura subyacente."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Cuales de los siguientes son requisitos o caracteristicas reales de ejecutar maquinas virtuales en un equipo cliente? Selecciona todas las que apliquen.",
+          "opciones": ["Virtualizacion habilitada en la BIOS/UEFI", "Suficiente memoria RAM", "Un hipervisor instalado", "Desconectar la fuente de poder", "Eliminar el sistema operativo anfitrion"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Las VM requieren virtualizacion activada, RAM suficiente y un hipervisor. No es necesario desconectar la PSU ni eliminar el sistema anfitrion (un hipervisor Tipo 2 depende de el)."
+        }
+      ]
+    },
+    {
+      "slug": "sistemas-operativos",
+      "nombre": "Sistemas operativos",
+      "dominio": "Operating Systems",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Sistemas operativos y su gestion",
+        "markdown": "## Sistemas comunes\n- **Windows**: predominante en entornos corporativos de escritorio.\n- **macOS**: ecosistema de Apple.\n- **Linux**: codigo abierto, fuerte en servidores.\n- **Android / iOS**: sistemas moviles.\n\n## Herramientas de Windows\n- **Administrador de tareas**: procesos, rendimiento y servicios.\n- **Panel de control / Configuracion**: ajustes del sistema.\n- **Editor de registro (regedit)**: base de datos de configuracion; usar con cuidado.\n- **CMD / PowerShell**: linea de comandos para automatizar tareas.\n\n## Mantenimiento\n- Mantener el sistema **actualizado** con parches de seguridad.\n- Gestionar **permisos de usuario** con el minimo privilegio.\n- Realizar **copias de seguridad** periodicas antes de cambios mayores.\n\n> **En el examen:** asocia regedit con la base de datos de configuracion de Windows, usa el Administrador de tareas para procesos colgados y recuerda hacer respaldo antes de modificar el sistema."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Que herramienta de Windows permite ver y finalizar procesos que no responden, ademas de revisar el uso de CPU y memoria?",
+          "opciones": ["Editor de registro", "Administrador de tareas", "Visor de eventos", "Desfragmentador de disco"],
+          "correctas": [1],
+          "explicacion": "El Administrador de tareas muestra los procesos en ejecucion, su consumo de recursos y permite finalizar los que no responden."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de los siguientes son sistemas operativos que un tecnico de soporte podria necesitar manejar? Selecciona todas las que apliquen.",
+          "opciones": ["Windows", "Linux", "macOS", "DDR5", "HDMI"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Windows, Linux y macOS son sistemas operativos. DDR5 es un tipo de memoria y HDMI es una interfaz de video."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Antes de modificar manualmente claves del registro de Windows, cual es la mejor practica recomendada?",
+          "opciones": ["Desinstalar el antivirus", "Realizar una copia de seguridad del registro", "Cambiar la contrasena del usuario", "Formatear el disco"],
+          "correctas": [1],
+          "explicacion": "Editar el registro es riesgoso; respaldarlo antes permite restaurar el sistema si un cambio provoca fallas."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad",
+      "nombre": "Seguridad",
+      "dominio": "Security",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Seguridad para soporte tecnico",
+        "markdown": "## Amenazas comunes\n- **Malware**: virus, gusanos, troyanos, **ransomware** y spyware.\n- **Phishing**: enganos por correo para robar credenciales.\n- **Ingenieria social**: manipular a la persona, no al sistema.\n\n## Controles de acceso\n- **Autenticacion multifactor (MFA)**: combina algo que sabes, tienes o eres.\n- **Principio de minimo privilegio**: cada usuario solo los permisos que necesita.\n- **Contrasenas robustas** y bloqueo de cuenta tras intentos fallidos.\n\n## Proteccion practica\n- **Cifrado** de discos para datos en reposo.\n- **Cortafuegos (firewall)** para filtrar trafico.\n- **Antivirus actualizado** y parches al dia.\n- **Eliminacion segura** de datos antes de reutilizar o desechar equipos.\n\n> **En el examen:** asocia el ransomware con el secuestro y cifrado de archivos, identifica el phishing como ingenieria social por correo y aplica siempre el minimo privilegio."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Que tipo de malware cifra los archivos del usuario y exige un pago para restaurar el acceso?",
+          "opciones": ["Spyware", "Ransomware", "Adware", "Rootkit"],
+          "correctas": [1],
+          "explicacion": "El ransomware cifra o bloquea los datos de la victima y solicita un rescate, normalmente en criptomoneda, para devolver el acceso."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de las siguientes son buenas practicas para reforzar la seguridad de las cuentas de usuario? Selecciona todas las que apliquen.",
+          "opciones": ["Autenticacion multifactor (MFA)", "Aplicar el minimo privilegio", "Bloqueo tras varios intentos fallidos", "Compartir una sola contrasena de administrador", "Deshabilitar todas las actualizaciones"],
+          "correctas": [0, 1, 2],
+          "explicacion": "MFA, minimo privilegio y bloqueo por intentos fallidos fortalecen las cuentas. Compartir contrasenas y deshabilitar actualizaciones aumentan el riesgo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un empleado recibe un correo que aparenta venir del banco y le pide hacer clic e introducir sus credenciales. Que tipo de ataque es este?",
+          "opciones": ["Ataque de fuerza bruta", "Phishing", "Denegacion de servicio (DoS)", "Inyeccion SQL"],
+          "correctas": [1],
+          "explicacion": "El phishing es una forma de ingenieria social que suplanta a una entidad confiable por correo para robar credenciales u otra informacion sensible."
+        }
+      ]
+    }
+  ]
+}

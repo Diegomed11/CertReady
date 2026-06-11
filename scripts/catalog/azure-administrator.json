@@ -1,0 +1,192 @@
+{
+  "slug": "azure-administrator",
+  "nombre": "Microsoft Certified: Azure Administrator Associate (AZ-104)",
+  "proveedor": "Microsoft",
+  "nivel": "associate",
+  "area": "Sistemas",
+  "descripcion": "Certificacion intermedia que valida la capacidad de implementar, gestionar y monitorear identidades, almacenamiento, computo y redes en un entorno Azure. Dirigida a administradores que operan recursos en la nube en el dia a dia.",
+  "skills": ["identidades", "rbac", "directivas", "cuentas de almacenamiento", "maquinas virtuales", "redes virtuales", "balanceo de carga", "respaldos", "monitoreo", "plantillas arm", "escalado", "dns"],
+  "roles": ["administrador de azure", "administrador de sistemas", "ingeniero de infraestructura cloud", "operador de nube", "administrador de identidades"],
+  "temas": [
+    {
+      "slug": "identidades-gobernanza",
+      "nombre": "Administracion de identidades y gobernanza",
+      "dominio": "Administrar identidades y gobernanza de Azure",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Identidades, roles y gobernanza",
+        "markdown": "## Identidad en la nube\nEl servicio de identidad de Microsoft gestiona **usuarios**, **grupos** e identidades de aplicacion. Los **grupos** pueden ser de asignacion directa o **dinamicos**, donde la pertenencia se calcula por reglas sobre atributos del usuario.\n\n## Control de acceso (RBAC)\nUna **asignacion de rol** combina tres piezas:\n- **Entidad de seguridad**: quien recibe el permiso (usuario, grupo, identidad administrada).\n- **Definicion de rol**: que acciones permite (por ejemplo *Lector* o *Colaborador*).\n- **Ambito**: donde aplica (grupo de administracion, suscripcion, grupo de recursos o recurso).\n\nLos permisos se **heredan** hacia abajo en la jerarquia y siguen el principio de **minimo privilegio**.\n\n## Gobernanza\n- **Azure Policy**: impone reglas, por ejemplo permitir solo ciertas regiones o exigir etiquetas.\n- **Bloqueos (locks)**: del tipo *solo lectura* o *no eliminar*, evitan cambios accidentales.\n- **Etiquetas (tags)**: clasifican recursos y costos.\n\n> **En el examen:** distingue RBAC (que puedes hacer) de Azure Policy (que esta permitido crear), y recuerda que el ambito mas cercano al recurso es el que aplica al evaluar la herencia."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Necesitas otorgar a un equipo permiso para leer todos los recursos de una suscripcion sin poder modificarlos. Que combinacion deberias usar?",
+          "opciones": ["Rol Colaborador en el grupo de recursos", "Rol Lector en el ambito de la suscripcion", "Rol Propietario en cada recurso", "Una directiva de Azure Policy que niegue lecturas"],
+          "correctas": [1],
+          "explicacion": "El rol Lector concede acceso de solo lectura; asignarlo en el ambito de la suscripcion lo propaga por herencia a todos los recursos contenidos."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de los siguientes son componentes obligatorios de una asignacion de rol RBAC? Selecciona todas las que apliquen.",
+          "opciones": ["Entidad de seguridad (principal)", "Definicion de rol", "Ambito (scope)", "Una etiqueta de costo", "Un bloqueo de solo lectura"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Toda asignacion RBAC combina entidad de seguridad, definicion de rol y ambito. Las etiquetas y los bloqueos son mecanismos de gobernanza independientes, no parte de la asignacion."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "La organizacion exige que ningun recurso pueda crearse fuera de la region permitida. Que herramienta lo impone a gran escala?",
+          "opciones": ["Un bloqueo de no eliminar", "Una asignacion del rol Lector", "Azure Policy con restriccion de ubicaciones", "Una etiqueta de region"],
+          "correctas": [2],
+          "explicacion": "Azure Policy evalua y deniega la creacion de recursos que incumplen reglas como la lista de regiones permitidas; las etiquetas y bloqueos no impiden la creacion."
+        }
+      ]
+    },
+    {
+      "slug": "almacenamiento",
+      "nombre": "Implementacion y administracion de almacenamiento",
+      "dominio": "Implementar y administrar almacenamiento",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Cuentas de almacenamiento y acceso",
+        "markdown": "## Cuenta de almacenamiento\nExpone servicios de **blobs**, **archivos (Files)**, **colas** y **tablas**. El **nivel de acceso** de los blobs (frecuente, esporadico, archivo) equilibra costo de almacenamiento contra costo y latencia de lectura.\n\n## Redundancia\n- **LRS**: tres copias en un solo centro de datos.\n- **ZRS**: copias repartidas entre zonas de disponibilidad.\n- **GRS / GZRS**: replica ademas hacia una **region secundaria** para resistir un desastre regional.\n\n## Acceso seguro\n- **Firmas de acceso compartido (SAS)**: dan acceso temporal y acotado sin compartir la clave de cuenta.\n- **Identidades y RBAC** sobre el plano de datos para acceso sin claves.\n- **Reglas de red**: limitan el acceso a redes virtuales o IPs concretas.\n\n## Azure Files\nPermite montar recursos compartidos por **SMB**; con sincronizacion se extiende a servidores locales manteniendo una copia en la nube.\n\n> **En el examen:** elige el nivel archivo para datos historicos, usa SAS para acceso temporal acotado y recuerda que solo GRS/GZRS replican a una segunda region."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Debes conceder a una aplicacion externa acceso de lectura a un contenedor durante 24 horas, sin entregar la clave de la cuenta. Que mecanismo usas?",
+          "opciones": ["Una firma de acceso compartido (SAS) con expiracion", "La clave de acceso primaria de la cuenta", "Un bloqueo de solo lectura", "Una regla de Azure Policy"],
+          "correctas": [0],
+          "explicacion": "Una SAS otorga acceso temporal y limitado en permisos y tiempo sin exponer la clave de la cuenta, ideal para accesos acotados."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Que opcion de redundancia replica los datos a una region geografica secundaria para resistir un desastre regional?",
+          "opciones": ["LRS (localmente redundante)", "ZRS (entre zonas)", "GRS (geo-redundante)", "Disco no administrado"],
+          "correctas": [2],
+          "explicacion": "GRS replica los datos a una region secundaria distante; LRS y ZRS mantienen las copias dentro de una sola region."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de los siguientes servicios forman parte de una cuenta de almacenamiento de Azure? Selecciona todas las que apliquen.",
+          "opciones": ["Blobs", "Archivos (Files)", "Colas", "Maquinas virtuales", "Redes virtuales"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Una cuenta de almacenamiento agrupa blobs, archivos, colas y tablas. Las maquinas virtuales y las redes virtuales son recursos separados."
+        }
+      ]
+    },
+    {
+      "slug": "computo",
+      "nombre": "Implementacion y administracion de recursos de computo",
+      "dominio": "Implementar y administrar recursos de computo de Azure",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Maquinas virtuales, escalado y contenedores",
+        "markdown": "## Maquinas virtuales\nUna **VM** corre bajo el modelo IaaS: tu administras el sistema operativo y las aplicaciones. Para **alta disponibilidad** se usan:\n- **Conjuntos de disponibilidad**: distribuyen las VM en dominios de error y actualizacion.\n- **Zonas de disponibilidad**: ubican las VM en centros de datos fisicamente separados de una region.\n\n## Escalado\n- **Conjuntos de escalado (VMSS)**: crean o eliminan instancias identicas segun reglas de metrica (por ejemplo CPU).\n- **Vertical**: cambiar el tamano de la VM (mas CPU/RAM); requiere reinicio.\n- **Horizontal**: agregar o quitar instancias sin cambiar su tamano.\n\n## Plantillas e infraestructura\nLas **plantillas ARM / Bicep** describen recursos de forma **declarativa e idempotente**, permitiendo desplegar el mismo entorno de forma repetible.\n\n## Contenedores\n- **Container Instances**: ejecucion rapida de un contenedor aislado.\n- **Kubernetes gestionado (AKS)**: orquestacion de contenedores a escala.\n\n> **En el examen:** asocia conjuntos de disponibilidad y zonas con resiliencia, VMSS con autoescalado horizontal y plantillas ARM/Bicep con despliegues repetibles e idempotentes."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una aplicacion web debe agregar instancias automaticamente cuando la CPU supera el 70 por ciento y reducirlas al bajar la demanda. Que recurso lo proporciona?",
+          "opciones": ["Una unica VM de mayor tamano", "Un conjunto de escalado de maquinas virtuales (VMSS)", "Un conjunto de disponibilidad estatico", "Una cuenta de almacenamiento"],
+          "correctas": [1],
+          "explicacion": "Un conjunto de escalado (VMSS) ajusta el numero de instancias identicas segun reglas de metrica como la CPU, logrando autoescalado horizontal."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Cuales de las siguientes opciones mejoran la disponibilidad de maquinas virtuales en Azure? Selecciona todas las que apliquen.",
+          "opciones": ["Conjuntos de disponibilidad", "Zonas de disponibilidad", "Conjuntos de escalado de VM", "Un bloqueo de solo lectura", "Una firma de acceso compartido (SAS)"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Conjuntos de disponibilidad, zonas y VMSS aumentan la resiliencia y disponibilidad. Los bloqueos y las SAS son controles de gobernanza y acceso, no de disponibilidad."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Que tecnologia permite describir la infraestructura de forma declarativa e idempotente para desplegarla de manera repetible?",
+          "opciones": ["Plantillas ARM / Bicep", "Firmas de acceso compartido", "Grupos de seguridad de red", "Niveles de acceso de blobs"],
+          "correctas": [0],
+          "explicacion": "Las plantillas ARM y Bicep describen los recursos de forma declarativa e idempotente, permitiendo recrear el mismo entorno de manera consistente."
+        }
+      ]
+    },
+    {
+      "slug": "redes-virtuales",
+      "nombre": "Configuracion y administracion de redes virtuales",
+      "dominio": "Implementar y administrar redes virtuales de Azure",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Redes virtuales, seguridad y balanceo",
+        "markdown": "## Red virtual (VNet)\nEs la red privada y aislada donde viven los recursos. Se divide en **subredes** para segmentar por funcion o seguridad. El **emparejamiento (peering)** conecta dos VNets de forma privada, incluso entre regiones.\n\n## Filtrado de trafico\n- **Grupos de seguridad de red (NSG)**: reglas de permitir o denegar por puerto, protocolo, origen y destino. Se aplican a subredes o a interfaces de red.\n- Las reglas se evaluan por **prioridad** (numero menor gana primero).\n\n## Resolucion de nombres\n- **Azure DNS**: hospeda zonas publicas.\n- **Zonas DNS privadas**: resuelven nombres dentro de una o varias VNets.\n\n## Distribucion de trafico\n- **Load Balancer**: balanceo de capa 4 (TCP/UDP) dentro de una region.\n- **Application Gateway**: balanceo de capa 7 con enrutamiento por ruta o host y firewall de aplicaciones.\n- **Traffic Manager**: enrutamiento por DNS entre regiones.\n\n> **En el examen:** usa NSG para filtrar trafico por reglas con prioridad, Load Balancer para capa 4 y Application Gateway cuando necesites decisiones HTTP de capa 7."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Que recurso filtra el trafico de red hacia una subred mediante reglas de permitir o denegar por puerto y origen?",
+          "opciones": ["Grupo de seguridad de red (NSG)", "Cuenta de almacenamiento", "Conjunto de disponibilidad", "Azure Policy"],
+          "correctas": [0],
+          "explicacion": "El grupo de seguridad de red (NSG) contiene reglas que permiten o deniegan trafico por puerto, protocolo, origen y destino, aplicadas a subredes o interfaces."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Necesitas enrutar peticiones HTTP a distintos grupos de servidores segun la ruta de la URL, dentro de una misma region. Que servicio es el adecuado?",
+          "opciones": ["Azure Load Balancer", "Application Gateway", "Traffic Manager", "Azure DNS"],
+          "correctas": [1],
+          "explicacion": "Application Gateway opera en capa 7 y enruta segun ruta o host de la URL; Load Balancer trabaja en capa 4 y Traffic Manager enruta por DNS entre regiones."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Cuales de los siguientes servicios permiten distribuir o enrutar trafico hacia recursos en Azure? Selecciona todas las que apliquen.",
+          "opciones": ["Azure Load Balancer", "Application Gateway", "Traffic Manager", "Grupo de recursos", "Etiqueta (tag)"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Load Balancer, Application Gateway y Traffic Manager distribuyen o enrutan trafico en distintas capas y ambitos. El grupo de recursos y las etiquetas son construcciones organizativas."
+        }
+      ]
+    },
+    {
+      "slug": "monitoreo-mantenimiento",
+      "nombre": "Monitoreo y mantenimiento de recursos",
+      "dominio": "Monitorear y mantener recursos de Azure",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Monitoreo, alertas y respaldo",
+        "markdown": "## Azure Monitor\nRecolecta dos tipos de telemetria:\n- **Metricas**: valores numericos en el tiempo (CPU, latencia), de muestreo frecuente.\n- **Registros (logs)**: eventos detallados almacenados en un **area de trabajo de Log Analytics** y consultables con un lenguaje de consulta.\n\n## Alertas y acciones\nUna **regla de alerta** evalua una condicion sobre metricas o registros y dispara un **grupo de acciones** (correo, SMS, webhook, automatizacion).\n\n## Diagnostico de red\n- **Network Watcher**: verifica conectividad, flujos y siguiente salto entre recursos.\n\n## Respaldo y recuperacion\n- **Azure Backup**: respalda VM, discos y archivos hacia un **almacen de Recovery Services**, con politicas de retencion.\n- **Site Recovery**: replica cargas a otra region para continuidad ante desastres (DR).\n\n## Mantenimiento\nLas **instantaneas (snapshots)** de disco permiten puntos de restauracion rapidos antes de un cambio.\n\n> **En el examen:** usa metricas para condiciones en tiempo real y logs para analisis detallado; asocia Azure Backup con respaldo de datos y Site Recovery con replicacion para recuperacion ante desastres."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Quieres consultar eventos detallados y correlacionarlos con un lenguaje de consulta. Donde se almacenan esos registros en Azure Monitor?",
+          "opciones": ["En un area de trabajo de Log Analytics", "En una cuenta de almacenamiento de colas", "En un grupo de seguridad de red", "En una plantilla ARM"],
+          "correctas": [0],
+          "explicacion": "Los registros de Azure Monitor se almacenan en un area de trabajo de Log Analytics, donde se consultan y correlacionan mediante su lenguaje de consulta."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Que servicio respalda maquinas virtuales y archivos hacia un almacen de Recovery Services con politicas de retencion?",
+          "opciones": ["Azure Backup", "Azure DNS", "Application Gateway", "Azure Policy"],
+          "correctas": [0],
+          "explicacion": "Azure Backup protege VM, discos y archivos almacenando copias en un almacen de Recovery Services segun politicas de retencion definidas."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de los siguientes son componentes o capacidades de Azure Monitor? Selecciona todas las que apliquen.",
+          "opciones": ["Metricas", "Registros (logs)", "Reglas de alerta con grupos de acciones", "Firmas de acceso compartido (SAS)", "Niveles de acceso de blobs"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Azure Monitor abarca metricas, registros y reglas de alerta con grupos de acciones. Las SAS y los niveles de acceso de blobs pertenecen al almacenamiento, no al monitoreo."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,342 @@
+{
+  "slug": "azure-devops-engineer",
+  "nombre": "Microsoft Certified: DevOps Engineer Expert (AZ-400)",
+  "proveedor": "Microsoft",
+  "nivel": "professional",
+  "area": "DevOps",
+  "descripcion": "Valida la capacidad de combinar personas, procesos y tecnología para entregar software de forma continua en Azure. Cubre estrategia de DevOps, control de versiones con Git, pipelines de CI/CD, infraestructura como código, seguridad de la cadena de suministro y observabilidad operativa.",
+  "skills": [
+    "azure devops",
+    "github actions",
+    "ci/cd",
+    "git",
+    "infraestructura como código",
+    "bicep",
+    "contenedores",
+    "observabilidad",
+    "secretos",
+    "feature flags",
+    "yaml pipelines",
+    "shift-left security"
+  ],
+  "roles": [
+    "Ingeniero DevOps",
+    "Ingeniero de plataforma",
+    "SRE (Site Reliability Engineer)",
+    "Arquitecto de entrega continua"
+  ],
+  "temas": [
+    {
+      "slug": "estrategia-devops-y-procesos",
+      "nombre": "Diseño y estrategia de DevOps",
+      "dominio": "Configurar procesos y comunicaciones",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Estrategia, métricas y trazabilidad",
+        "markdown": "## Qué mide DevOps\nUna estrategia de DevOps madura se evalúa con las **métricas DORA**: frecuencia de despliegue, tiempo de entrega (lead time), tasa de fallos en cambios y tiempo medio de restauración (MTTR).\n\n## Trabajo y trazabilidad\n- **Azure Boards** organiza el trabajo con épicas, features y user stories vinculadas a commits y pull requests.\n- La trazabilidad de extremo a extremo conecta un requisito con el commit, el build y el release que lo entregaron.\n- Las **notificaciones** y los webhooks integran eventos con Teams, Slack o sistemas externos.\n\n## Visibilidad\n- Los **dashboards** y widgets exponen el estado del flujo (cumulative flow, burndown).\n- Define **definición de listo** y **definición de hecho** para reducir reprocesos.\n\n> **En el examen:** asocia cada síntoma (despliegues lentos, muchos rollbacks) con la métrica DORA correcta y recuerda que la trazabilidad work item → commit → release es lo que auditan."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué métrica DORA mide cuánto tarda el equipo en recuperarse de un incidente en producción?",
+          "opciones": [
+            "Frecuencia de despliegue",
+            "Tiempo medio de restauración (MTTR)",
+            "Lead time para cambios",
+            "Tasa de fallos en cambios"
+          ],
+          "correctas": [1],
+          "explicacion": "El MTTR (Mean Time To Restore) mide el tiempo promedio para restaurar el servicio tras un fallo, indicador clave de resiliencia operativa."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué elementos contribuyen a la trazabilidad de extremo a extremo en Azure Boards? (elige todas las correctas)",
+          "opciones": [
+            "Vincular commits y pull requests a work items",
+            "Asociar releases a los work items resueltos",
+            "Deshabilitar las ramas de feature",
+            "Eliminar el historial de Git tras cada sprint",
+            "Relacionar builds con los work items que los originaron"
+          ],
+          "correctas": [0, 1, 4],
+          "explicacion": "La trazabilidad se construye enlazando work items con commits, PRs, builds y releases; deshabilitar ramas o borrar historial rompe esa cadena."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "El equipo despliega rara vez y acumula muchos cambios por entrega. ¿Qué objetivo prioriza una buena estrategia DevOps?",
+          "opciones": [
+            "Aumentar el tamaño de cada release",
+            "Incrementar la frecuencia de despliegue con lotes más pequeños",
+            "Reducir el número de pull requests",
+            "Eliminar los entornos de prueba"
+          ],
+          "correctas": [1],
+          "explicacion": "Entregar en lotes pequeños y con mayor frecuencia reduce el riesgo por cambio y mejora el lead time, principios centrales del flujo continuo."
+        }
+      ]
+    },
+    {
+      "slug": "control-de-versiones-git",
+      "nombre": "Control de versiones con Git",
+      "dominio": "Diseñar e implementar una estrategia de control de código fuente",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Ramas, PRs y políticas",
+        "markdown": "## Estrategias de ramificación\n- **Trunk-based development** favorece integraciones frecuentes a una rama principal con feature flags.\n- **GitHub Flow** usa ramas cortas de feature y pull requests; **GitFlow** añade ramas de release y hotfix.\n\n## Calidad del repositorio\n- Las **branch policies** exigen revisores mínimos, build exitoso y resolución de comentarios antes de mergear.\n- Protege ramas con **status checks** obligatorios y revisión por **CODEOWNERS**.\n\n## Higiene\n- Usa **.gitignore** para excluir artefactos y secretos.\n- Para binarios grandes emplea **Git LFS**; para monorepos considera *sparse-checkout*.\n- Firma commits con **GPG/SSH** para garantizar autoría.\n\n> **En el examen:** distingue cuándo conviene trunk-based frente a GitFlow y recuerda que las branch policies (no los hooks locales) son la forma de imponer revisiones de PR en el servidor."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué mecanismo impone, del lado del servidor, que un pull request tenga al menos dos revisores aprobados antes de fusionarse?",
+          "opciones": [
+            "Un hook pre-commit local",
+            "Una política de rama (branch policy)",
+            "El archivo .gitignore",
+            "Un alias de Git"
+          ],
+          "correctas": [1],
+          "explicacion": "Las branch policies se aplican en el servidor y pueden requerir un número mínimo de revisores aprobados; los hooks locales son evitables por el desarrollador."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "El equipo quiere integrar a la rama principal varias veces al día ocultando funciones incompletas. ¿Qué combinación encaja mejor?",
+          "opciones": [
+            "GitFlow con ramas de release largas",
+            "Trunk-based development con feature flags",
+            "Una sola rama sin pull requests",
+            "Ramas de feature de varias semanas"
+          ],
+          "correctas": [1],
+          "explicacion": "El desarrollo trunk-based con feature flags permite integraciones frecuentes manteniendo desactivado el código no terminado."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué prácticas mejoran la integridad y el rendimiento de un repositorio Git? (elige todas las correctas)",
+          "opciones": [
+            "Firmar los commits con GPG o SSH",
+            "Almacenar binarios grandes con Git LFS",
+            "Subir secretos en texto plano al repositorio",
+            "Definir propietarios con CODEOWNERS",
+            "Versionar artefactos compilados en cada commit"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "Firmar commits, usar Git LFS para binarios y CODEOWNERS para responsabilidad mejoran integridad y rendimiento; subir secretos o artefactos compilados es contraproducente."
+        }
+      ]
+    },
+    {
+      "slug": "integracion-continua",
+      "nombre": "Integración continua y builds",
+      "dominio": "Diseñar e implementar canalizaciones de compilación y liberación",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Pipelines de CI con YAML",
+        "markdown": "## Pipelines como código\n- Define la CI en **YAML** versionado junto al código (`azure-pipelines.yml` o workflows de **GitHub Actions**).\n- Estructura con **stages → jobs → steps**; usa **triggers** y **path filters** para controlar cuándo corre.\n\n## Eficiencia\n- **Caching** de dependencias y **artefactos** acelera builds repetidos.\n- **Matrix builds** prueban varias versiones o plataformas en paralelo.\n- Elige entre **agentes alojados por Microsoft** o **self-hosted** según herramientas y red.\n\n## Calidad en la build\n- Ejecuta **pruebas unitarias**, cobertura y análisis estático en cada PR.\n- Publica resultados de pruebas y artefactos firmados para etapas posteriores.\n\n> **En el examen:** reconoce cuándo usar agentes self-hosted (software propietario, acceso a red privada) y recuerda que los path filters evitan ejecutar builds innecesarios en monorepos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Dónde se recomienda definir una canalización de CI moderna en Azure Pipelines?",
+          "opciones": [
+            "En la interfaz gráfica clásica, sin versionar",
+            "En un archivo YAML versionado junto al código",
+            "En variables de entorno del agente",
+            "En un documento de texto fuera del repositorio"
+          ],
+          "correctas": [1],
+          "explicacion": "Definir el pipeline como código YAML versionado permite revisión, historial y reproducibilidad, frente al editor clásico no versionado."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una build necesita una herramienta propietaria instalada y acceso a una base de datos en una red privada. ¿Qué tipo de agente usar?",
+          "opciones": [
+            "Agente alojado por Microsoft",
+            "Agente self-hosted en la red privada",
+            "Ningún agente, ejecutar localmente",
+            "Un agente serverless sin red"
+          ],
+          "correctas": [1],
+          "explicacion": "Un agente self-hosted permite preinstalar software propietario y alcanzar recursos de red privada que los agentes alojados no pueden ver."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué técnicas reducen el tiempo de una canalización de CI? (elige todas las correctas)",
+          "opciones": [
+            "Cachear dependencias entre ejecuciones",
+            "Ejecutar pruebas en paralelo con matrix",
+            "Compilar siempre todo el monorepo sin filtros",
+            "Reutilizar artefactos publicados entre stages",
+            "Esperar aprobación manual en cada paso de build"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "El caché, la paralelización con matrix y la reutilización de artefactos aceleran la CI; compilar todo sin filtros o exigir aprobaciones manuales la ralentizan."
+        }
+      ]
+    },
+    {
+      "slug": "entrega-continua-y-releases",
+      "nombre": "Entrega y despliegue continuo",
+      "dominio": "Diseñar e implementar estrategias de liberación",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Estrategias de despliegue y entornos",
+        "markdown": "## Patrones de despliegue\n- **Blue-green** mantiene dos entornos y cambia el tráfico con un *swap* casi instantáneo.\n- **Canary** libera a un subconjunto de usuarios y observa métricas antes de ampliar.\n- **Rolling** sustituye instancias por lotes; **feature flags** desacoplan despliegue de activación.\n\n## Control del flujo\n- Las **approvals** y **gates** (consultas a métricas, ventanas horarias) condicionan la promoción entre entornos.\n- Define **environments** con checks de seguridad y aprobadores por etapa (dev → staging → prod).\n\n## Seguridad operativa\n- Usa **slots de despliegue** en App Service para validar antes del swap.\n- Diseña **rollback** automático ante fallo de health checks.\n\n> **En el examen:** elige blue-green cuando necesitas rollback instantáneo y canary cuando quieres limitar el radio de impacto validando con métricas reales."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Necesitas liberar una nueva versión a un 5% de usuarios y observar errores antes de ampliar. ¿Qué estrategia aplica?",
+          "opciones": [
+            "Despliegue canary",
+            "Despliegue big-bang a todos a la vez",
+            "Recrear todo el entorno sin tráfico",
+            "Despliegue sin health checks"
+          ],
+          "correctas": [0],
+          "explicacion": "El despliegue canary expone la versión a un porcentaje pequeño de usuarios para validar con métricas reales antes de extenderla."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué permite un swap de slots en Azure App Service?",
+          "opciones": [
+            "Borrar la versión anterior permanentemente",
+            "Intercambiar el slot de staging con producción con corte mínimo",
+            "Desactivar el control de versiones",
+            "Compilar el código en el cliente"
+          ],
+          "correctas": [1],
+          "explicacion": "El swap de slots intercambia staging y producción casi sin downtime y facilita rollback rápido volviendo a intercambiar."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué controles ayudan a gobernar la promoción entre entornos en un release? (elige todas las correctas)",
+          "opciones": [
+            "Aprobaciones manuales por aprobadores designados",
+            "Gates que consultan métricas o estado de incidentes",
+            "Eliminar los entornos de staging",
+            "Ventanas horarias de despliegue permitidas",
+            "Desplegar a producción sin pasar por dev/staging"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "Aprobaciones, gates basados en métricas y ventanas horarias gobiernan la promoción; saltarse entornos o eliminarlos elimina los controles."
+        }
+      ]
+    },
+    {
+      "slug": "infraestructura-como-codigo",
+      "nombre": "Infraestructura y configuración como código",
+      "dominio": "Diseñar e implementar una estrategia de dependencias e infraestructura",
+      "orden": 5,
+      "hoja": {
+        "titulo": "IaC con Bicep, Terraform y contenedores",
+        "markdown": "## Provisionamiento declarativo\n- **Bicep** y plantillas **ARM** describen recursos de Azure de forma idempotente; **Terraform** ofrece IaC multinube con *state*.\n- Trata la infraestructura igual que el código: versionada, revisada en PR y desplegada por pipeline.\n\n## Gestión de dependencias\n- Centraliza paquetes con **Azure Artifacts** (feeds) o registros de **GitHub Packages**.\n- Define **versionado semántico** y escaneo de vulnerabilidades de dependencias.\n\n## Contenedores e imágenes\n- Publica imágenes en **Azure Container Registry**; aplica *scanning* y firma.\n- Gestiona configuración con **App Configuration** y secretos con **Key Vault**, nunca en el repositorio.\n\n> **En el examen:** recuerda que la IaC debe ser idempotente y versionada; usa Azure Artifacts para feeds privados y separa configuración (App Configuration) de secretos (Key Vault)."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál es una característica esencial de una plantilla de infraestructura como código bien diseñada?",
+          "opciones": [
+            "Que produzca un resultado distinto en cada ejecución",
+            "Que sea idempotente y versionada",
+            "Que se ejecute solo manualmente desde el portal",
+            "Que almacene los secretos en texto plano"
+          ],
+          "correctas": [1],
+          "explicacion": "Una IaC idempotente lleva al mismo estado deseado sin importar cuántas veces se aplique, y debe estar versionada para revisión y reproducibilidad."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué servicio de Azure usarías para alojar un feed privado de paquetes NuGet o npm para tus pipelines?",
+          "opciones": [
+            "Azure Key Vault",
+            "Azure Artifacts",
+            "Azure Monitor",
+            "Azure Boards"
+          ],
+          "correctas": [1],
+          "explicacion": "Azure Artifacts proporciona feeds privados para NuGet, npm, Maven y Python, integrables con las canalizaciones de build y release."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué prácticas son correctas al gestionar configuración y secretos en IaC? (elige todas las correctas)",
+          "opciones": [
+            "Almacenar secretos en Azure Key Vault",
+            "Externalizar configuración con Azure App Configuration",
+            "Hardcodear cadenas de conexión en la plantilla",
+            "Referenciar secretos desde el pipeline sin exponerlos en logs",
+            "Subir el archivo de variables con contraseñas al repositorio"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "Key Vault para secretos, App Configuration para parámetros y referencias seguras en el pipeline son correctas; hardcodear o subir contraseñas viola la seguridad por diseño."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-y-observabilidad",
+      "nombre": "Seguridad, cumplimiento y observabilidad",
+      "dominio": "Implementar seguridad y validar el cumplimiento; gestionar instrumentación",
+      "orden": 6,
+      "hoja": {
+        "titulo": "DevSecOps y monitorización continua",
+        "markdown": "## Seguridad en la cadena de entrega\n- Aplica **shift-left**: escaneo **SAST**, **DAST** y de dependencias (**SCA**) dentro del pipeline.\n- **GitHub Advanced Security** detecta secretos filtrados y vulnerabilidades en el código.\n- Genera y verifica un **SBOM** y firma artefactos para asegurar la cadena de suministro.\n\n## Observabilidad\n- **Application Insights** captura trazas, dependencias y excepciones; **Azure Monitor** y **Log Analytics** centralizan métricas y logs con **KQL**.\n- Define **alertas**, **SLIs/SLOs** y dashboards para detectar regresiones tras un release.\n\n## Retroalimentación\n- Cierra el ciclo conectando telemetría con work items y *feature flags* para experimentación.\n\n> **En el examen:** asocia cada control de seguridad con su fase (SAST en código, DAST en app desplegada, detección de secretos en el repo) y recuerda que KQL es el lenguaje para consultar Log Analytics."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué tipo de análisis inspecciona el código fuente en busca de vulnerabilidades sin ejecutar la aplicación?",
+          "opciones": [
+            "DAST (análisis dinámico)",
+            "SAST (análisis estático)",
+            "Pruebas de carga",
+            "Pruebas de usabilidad"
+          ],
+          "correctas": [1],
+          "explicacion": "El SAST (Static Application Security Testing) analiza el código fuente sin ejecutarlo; el DAST prueba la aplicación ya en ejecución."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué lenguaje se usa para consultar logs y métricas en Azure Monitor / Log Analytics?",
+          "opciones": [
+            "SQL estándar",
+            "KQL (Kusto Query Language)",
+            "GraphQL",
+            "MDX"
+          ],
+          "correctas": [1],
+          "explicacion": "Log Analytics y Application Insights se consultan con KQL, optimizado para grandes volúmenes de telemetría y series temporales."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué prácticas integran seguridad en el pipeline (DevSecOps)? (elige todas las correctas)",
+          "opciones": [
+            "Escaneo de dependencias (SCA) en cada build",
+            "Detección de secretos filtrados en el repositorio",
+            "Posponer toda revisión de seguridad al final del proyecto",
+            "Generar y verificar un SBOM de los artefactos",
+            "Desactivar las alertas de seguridad para acelerar releases"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "El SCA, la detección de secretos y el SBOM aplican el principio shift-left; posponer la seguridad o desactivar alertas contradice DevSecOps."
+        }
+      ]
+    }
+  ]
+}

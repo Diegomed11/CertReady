@@ -1,0 +1,228 @@
+{
+  "slug": "azure-fundamentals",
+  "nombre": "Microsoft Certified: Azure Fundamentals (AZ-900)",
+  "proveedor": "Microsoft",
+  "nivel": "foundational",
+  "area": "Nube",
+  "descripcion": "Certificación introductoria que valida el conocimiento base sobre los servicios de la nube de Azure, su modelo de precios y los principios de gobernanza y seguridad. Pensada para perfiles técnicos y no técnicos que inician su recorrido en la nube.",
+  "skills": ["computo en la nube", "modelos de servicio", "modelos de despliegue", "maquinas virtuales", "almacenamiento", "redes virtuales", "identidad y acceso", "gobernanza", "costos", "SLA", "regiones", "seguridad"],
+  "roles": ["estudiante de nube", "analista de negocio", "gerente de proyecto TI", "vendedor tecnico", "administrador junior"],
+  "temas": [
+    {
+      "slug": "conceptos-nube",
+      "nombre": "Conceptos de la computacion en la nube",
+      "dominio": "Describir los conceptos de la nube",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Fundamentos de la nube: modelos y beneficios",
+        "markdown": "## Que resuelve la nube\nLa **computacion en la nube** entrega recursos (computo, almacenamiento, red) a traves de internet, pagando solo por lo que usas. Elimina la necesidad de comprar y mantener hardware propio.\n\n## Modelos de servicio\n- **IaaS**: alquilas infraestructura (maquinas, red). Tu administras el sistema operativo y las aplicaciones.\n- **PaaS**: una plataforma lista para desplegar codigo. El proveedor gestiona el sistema operativo.\n- **SaaS**: software completo listo para usar desde el navegador.\n\n## Modelos de despliegue\n- **Publica**: recursos compartidos del proveedor.\n- **Privada**: infraestructura dedicada a una sola organizacion.\n- **Hibrida**: combina ambas para mover cargas segun convenga.\n\n## Beneficios clave\n- **Elasticidad**: escalas hacia arriba o abajo segun la demanda.\n- **Alta disponibilidad** y **recuperacion ante desastres**.\n- Gasto **operativo (OpEx)** en lugar de inversion inicial **(CapEx)**.\n\n> **En el examen:** asocia IaaS/PaaS/SaaS con quien gestiona el sistema operativo, y distingue escalabilidad (capacidad) de elasticidad (ajuste automatico)."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Una empresa quiere desplegar aplicaciones sin administrar el sistema operativo ni los parches del servidor, pero manteniendo control sobre su codigo. Que modelo de servicio se ajusta mejor?",
+          "opciones": ["IaaS", "PaaS", "SaaS", "On-premises"],
+          "correctas": [1],
+          "explicacion": "En PaaS el proveedor gestiona el sistema operativo y la plataforma subyacente; el cliente solo despliega y administra su propio codigo."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de las siguientes son ventajas tipicas de la computacion en la nube? Selecciona todas las que apliquen.",
+          "opciones": ["Modelo de pago por uso", "Eliminacion total del riesgo de fallos", "Escalabilidad bajo demanda", "Alta disponibilidad", "Acceso fisico garantizado a los servidores"],
+          "correctas": [0, 2, 3],
+          "explicacion": "La nube ofrece pago por uso, escalabilidad y alta disponibilidad. No elimina por completo los fallos ni brinda acceso fisico a los servidores del proveedor."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Que modelo de despliegue combina recursos locales con recursos de nube publica para mover cargas de trabajo segun la necesidad?",
+          "opciones": ["Nube publica", "Nube privada", "Nube hibrida", "Nube comunitaria"],
+          "correctas": [2],
+          "explicacion": "La nube hibrida integra infraestructura local (o privada) con nube publica, permitiendo trasladar cargas de trabajo entre ambos entornos."
+        }
+      ]
+    },
+    {
+      "slug": "computo-y-redes",
+      "nombre": "Servicios de computo y de red",
+      "dominio": "Describir la arquitectura y los servicios de Azure",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Computo y redes en Azure",
+        "markdown": "## Opciones de computo\n- **Maquinas virtuales (VM)**: control total del sistema operativo, ideal para migraciones tipo IaaS.\n- **Contenedores**: empaquetan la app y sus dependencias; se orquestan con servicios gestionados de Kubernetes.\n- **Servicios sin servidor (serverless)**: ejecutas funciones que escalan solas y pagas solo por ejecucion.\n\n## Escalado\n- **Vertical**: agregar mas CPU o memoria a una misma instancia.\n- **Horizontal**: agregar mas instancias para repartir la carga.\n\n## Redes\n- **Red virtual (VNet)**: red privada y aislada en la nube.\n- **Subredes**: segmentan la VNet por funcion o seguridad.\n- **Grupos de seguridad de red**: filtran trafico entrante y saliente por reglas.\n- **Emparejamiento (peering)**: conecta dos VNets para que se comuniquen de forma privada.\n\n> **En el examen:** usa VM para control total del sistema operativo y serverless cuando solo quieras ejecutar codigo. Distingue escalado vertical (mas potencia) de horizontal (mas instancias)."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Que recurso de Azure proporciona una red privada y aislada donde colocar maquinas virtuales y otros recursos?",
+          "opciones": ["Grupo de recursos", "Red virtual (VNet)", "Cuenta de almacenamiento", "Suscripcion"],
+          "correctas": [1],
+          "explicacion": "La red virtual (VNet) es el bloque de red privado y aislado de Azure dentro del cual se conectan recursos como las maquinas virtuales."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una aplicacion recibe picos de trafico impredecibles y se quiere agregar mas instancias automaticamente para repartir la carga. Que tipo de escalado describe esto?",
+          "opciones": ["Escalado vertical", "Escalado horizontal", "Escalado manual unico", "Sin escalado"],
+          "correctas": [1],
+          "explicacion": "Agregar mas instancias para distribuir la carga es escalado horizontal (scale out). El vertical anade potencia a una sola instancia."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Cuales de los siguientes son opciones de computo validas en Azure? Selecciona todas las que apliquen.",
+          "opciones": ["Maquinas virtuales", "Contenedores gestionados", "Funciones sin servidor", "Grupos de seguridad de red", "Tablas de enrutamiento"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Las VM, los contenedores y las funciones sin servidor son opciones de computo. Los grupos de seguridad de red y las tablas de enrutamiento son recursos de red, no de computo."
+        }
+      ]
+    },
+    {
+      "slug": "almacenamiento",
+      "nombre": "Servicios de almacenamiento",
+      "dominio": "Describir la arquitectura y los servicios de Azure",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Almacenamiento en Azure",
+        "markdown": "## Tipos de almacenamiento\n- **Blobs (objetos)**: ideal para datos no estructurados como imagenes, videos, copias de seguridad y archivos grandes.\n- **Archivos (file shares)**: recursos compartidos accesibles por protocolo de red estandar.\n- **Colas**: almacenan mensajes para comunicacion asincrona entre componentes.\n- **Tablas**: almacen NoSQL de pares clave-valor.\n- **Discos**: volumenes persistentes que se conectan a maquinas virtuales.\n\n## Niveles de acceso para blobs\n- **Frecuente (hot)**: datos consultados a menudo, mayor costo de almacenamiento.\n- **Esporadico (cool)**: datos poco accedidos, menor costo de almacenamiento.\n- **Archivo (archive)**: datos historicos rara vez leidos, el mas barato pero con mayor latencia de recuperacion.\n\n## Redundancia\nLas copias se replican localmente o entre regiones para resistir fallos de hardware o de un centro de datos completo.\n\n> **En el examen:** asocia datos no estructurados con blobs y elige el nivel de acceso por frecuencia de uso: hot para activos, archive para datos historicos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Que tipo de almacenamiento de Azure es el mas adecuado para guardar grandes cantidades de datos no estructurados como imagenes y videos?",
+          "opciones": ["Almacenamiento de archivos (File)", "Almacenamiento de blobs (Blob)", "Almacenamiento de colas (Queue)", "Almacenamiento de discos (Disk)"],
+          "correctas": [1],
+          "explicacion": "El almacenamiento de blobs esta optimizado para datos no estructurados como imagenes, videos y copias de seguridad."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una empresa debe conservar registros historicos que casi nunca se consultan y desea el menor costo de almacenamiento posible. Que nivel de acceso para blobs deberia usar?",
+          "opciones": ["Frecuente (hot)", "Esporadico (cool)", "Archivo (archive)", "Premium"],
+          "correctas": [2],
+          "explicacion": "El nivel de archivo (archive) ofrece el menor costo de almacenamiento para datos historicos rara vez accedidos, a cambio de mayor latencia al recuperarlos."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de los siguientes son servicios que ofrece una cuenta de almacenamiento de Azure? Selecciona todas las que apliquen.",
+          "opciones": ["Blobs", "Colas", "Tablas", "Maquinas virtuales", "Redes virtuales"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Una cuenta de almacenamiento expone blobs, colas, tablas y archivos. Las maquinas virtuales y las redes virtuales son recursos distintos."
+        }
+      ]
+    },
+    {
+      "slug": "identidad-seguridad",
+      "nombre": "Identidad, acceso y seguridad",
+      "dominio": "Describir la administracion y la gobernanza de Azure",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Identidad, acceso y seguridad",
+        "markdown": "## Autenticacion vs autorizacion\n- **Autenticacion**: verificar quien eres (identidad).\n- **Autorizacion**: determinar que puedes hacer (permisos).\n\n## Servicio de identidad\nEl servicio de identidad en la nube de Microsoft gestiona usuarios, grupos y el inicio de sesion centralizado para aplicaciones.\n\n## Defensas clave\n- **Autenticacion multifactor (MFA)**: agrega un segundo factor mas alla de la contrasena.\n- **Inicio de sesion unico (SSO)**: una credencial para multiples aplicaciones.\n- **Acceso condicional**: aplica reglas segun ubicacion, dispositivo o riesgo.\n- **Control de acceso basado en roles (RBAC)**: otorga el minimo permiso necesario.\n\n## Modelo Zero Trust\nNunca confiar por defecto; verificar de forma explicita cada solicitud, sin importar si proviene de dentro o fuera de la red.\n\n> **En el examen:** MFA mitiga el robo de contrasenas, RBAC aplica el minimo privilegio y autenticacion responde 'quien eres' mientras autorizacion responde 'que puedes hacer'."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Cual es la diferencia entre autenticacion y autorizacion?",
+          "opciones": ["Son sinonimos exactos", "Autenticacion verifica la identidad y autorizacion determina los permisos", "Autenticacion otorga permisos y autorizacion verifica la identidad", "Ambas solo aplican a maquinas virtuales"],
+          "correctas": [1],
+          "explicacion": "La autenticacion confirma quien eres; la autorizacion determina que acciones tienes permitido realizar."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de las siguientes medidas ayudan a reducir el riesgo de accesos no autorizados? Selecciona todas las que apliquen.",
+          "opciones": ["Autenticacion multifactor (MFA)", "Acceso condicional", "Control de acceso basado en roles (RBAC)", "Compartir una sola cuenta de administrador", "Deshabilitar todos los registros de auditoria"],
+          "correctas": [0, 1, 2],
+          "explicacion": "MFA, acceso condicional y RBAC fortalecen el control de acceso. Compartir cuentas y deshabilitar auditoria debilitan la seguridad."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Que principio de seguridad parte de la premisa de no confiar en ninguna solicitud por defecto y verificar cada una de forma explicita?",
+          "opciones": ["Seguridad perimetral clasica", "Zero Trust", "Acceso anonimo", "Confianza implicita interna"],
+          "correctas": [1],
+          "explicacion": "El modelo Zero Trust asume que ninguna solicitud es confiable por defecto y exige verificacion explicita de cada una, este o no dentro de la red."
+        }
+      ]
+    },
+    {
+      "slug": "gobernanza-cumplimiento",
+      "nombre": "Gobernanza y cumplimiento",
+      "dominio": "Describir la administracion y la gobernanza de Azure",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Gobernanza y cumplimiento",
+        "markdown": "## Jerarquia de organizacion\n- **Grupos de administracion**: agrupan varias suscripciones para aplicar politicas en conjunto.\n- **Suscripciones**: unidad de facturacion y limite de recursos.\n- **Grupos de recursos**: contenedor logico de recursos con un ciclo de vida comun.\n\n## Herramientas de gobernanza\n- **Politicas (Policy)**: imponen reglas, por ejemplo permitir solo ciertas regiones o tipos de recursos.\n- **Bloqueos (locks)**: evitan el borrado o la modificacion accidental de recursos.\n- **Etiquetas (tags)**: pares clave-valor para organizar y rastrear costos.\n- **RBAC**: asigna permisos por rol al alcance adecuado.\n\n## Cumplimiento\nPortales de confianza y centros de cumplimiento documentan certificaciones, normativas y como Azure cumple estandares regulatorios.\n\n> **En el examen:** usa Policy para imponer reglas a gran escala, locks para impedir borrados accidentales y tags para clasificar recursos y costos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una organizacion quiere impedir que se creen recursos fuera de determinadas regiones permitidas. Que herramienta de gobernanza deberia usar?",
+          "opciones": ["Etiquetas (tags)", "Politicas de Azure (Policy)", "Bloqueos de recursos (locks)", "Grupos de recursos"],
+          "correctas": [1],
+          "explicacion": "Las politicas de Azure imponen reglas como restringir las regiones o los tipos de recursos permitidos en el entorno."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Que recurso actua como contenedor logico para agrupar recursos que comparten un mismo ciclo de vida?",
+          "opciones": ["Grupo de recursos", "Cuenta de almacenamiento", "Red virtual", "Maquina virtual"],
+          "correctas": [0],
+          "explicacion": "El grupo de recursos es un contenedor logico que agrupa recursos relacionados que suelen compartir ciclo de vida y permisos."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Cuales de los siguientes elementos forman parte de la jerarquia de organizacion de recursos en Azure? Selecciona todas las que apliquen.",
+          "opciones": ["Grupos de administracion", "Suscripciones", "Grupos de recursos", "Niveles de acceso de blobs", "Reglas de firewall del sistema operativo"],
+          "correctas": [0, 1, 2],
+          "explicacion": "La jerarquia abarca grupos de administracion, suscripciones y grupos de recursos. Los niveles de acceso de blobs y las reglas de firewall del sistema operativo no forman parte de esa jerarquia organizativa."
+        }
+      ]
+    },
+    {
+      "slug": "costos-soporte",
+      "nombre": "Costos, SLA y ciclo de vida del servicio",
+      "dominio": "Describir la administracion y la gobernanza de Azure",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Costos, SLA y soporte",
+        "markdown": "## Factores que afectan el costo\n- **Tipo y tamano** del recurso (por ejemplo, capacidad de una VM).\n- **Region**: los precios varian segun la ubicacion geografica.\n- **Trafico de salida** de datos hacia internet.\n- **Tiempo de uso** y servicios adicionales contratados.\n\n## Herramientas de gestion de costos\n- **Calculadora de precios**: estima el costo antes de desplegar.\n- **Administracion de costos**: analiza el gasto real y define presupuestos con alertas.\n- **Etiquetas**: atribuyen costos a equipos o proyectos.\n\n## SLA (Acuerdo de Nivel de Servicio)\nDefine el porcentaje de disponibilidad garantizado. Combinar servicios en serie puede **reducir** el SLA compuesto; agregar redundancia lo **mejora**.\n\n## Ciclo de vida\n- **Vista previa (preview)**: funcion en evaluacion, sin garantia plena.\n- **Disponibilidad general (GA)**: funcion lista para produccion con soporte completo.\n\n> **En el examen:** recuerda que la region y el trafico de salida afectan el costo, usa la calculadora para estimar y no asumas SLA en funciones en vista previa."
+      },
+      "preguntas": [
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de los siguientes factores pueden afectar el costo de un recurso en Azure? Selecciona todas las que apliquen.",
+          "opciones": ["La region donde se despliega", "El tamano del recurso", "El trafico de salida de datos", "El color del portal", "El nombre del grupo de recursos"],
+          "correctas": [0, 1, 2],
+          "explicacion": "La region, el tamano del recurso y el trafico de salida influyen en el costo. El nombre del grupo de recursos y la apariencia del portal no tienen efecto economico."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Que herramienta permite estimar el costo de los servicios de Azure antes de desplegarlos?",
+          "opciones": ["Calculadora de precios", "Grupo de seguridad de red", "Centro de confianza", "Bloqueo de recursos"],
+          "correctas": [0],
+          "explicacion": "La calculadora de precios permite estimar el costo de los servicios antes de crearlos, ayudando a planificar el presupuesto."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Que describe un Acuerdo de Nivel de Servicio (SLA) en Azure?",
+          "opciones": ["El compromiso formal de disponibilidad y rendimiento del servicio", "El precio fijo mensual de una suscripcion", "La lista de regiones disponibles", "El numero maximo de usuarios por cuenta"],
+          "correctas": [0],
+          "explicacion": "Un SLA es el compromiso formal del proveedor sobre disponibilidad y rendimiento; la redundancia mejora el SLA compuesto y encadenar servicios puede reducirlo."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,342 @@
+{
+  "slug": "gcp-professional-ml-engineer",
+  "nombre": "Google Cloud Professional Machine Learning Engineer",
+  "proveedor": "Google",
+  "nivel": "professional",
+  "area": "IA",
+  "descripcion": "Valida la capacidad de diseñar, construir y operar sistemas de machine learning escalables en Google Cloud, equilibrando rigor experimental con prácticas responsables de producción.",
+  "skills": [
+    "vertex ai",
+    "bigquery ml",
+    "tensorflow",
+    "feature engineering",
+    "mlops",
+    "model monitoring",
+    "pipelines",
+    "hyperparameter tuning",
+    "data preprocessing",
+    "responsible ai",
+    "model serving",
+    "automl"
+  ],
+  "roles": [
+    "ingeniero de machine learning",
+    "científico de datos",
+    "ingeniero de mlops",
+    "arquitecto de soluciones de ia"
+  ],
+  "temas": [
+    {
+      "slug": "enmarcado-problema-ml",
+      "nombre": "Enmarcado del problema de ML",
+      "dominio": "Architecting low-code ML solutions and framing ML problems",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Traducir necesidades de negocio en problemas de ML",
+        "markdown": "## De negocio a modelo\nAntes de escribir código, traduce el objetivo de negocio en una **tarea de ML concreta**: clasificación, regresión, recomendación o pronóstico. Un error frecuente es saltar al modelado sin definir qué se predice ni cómo se medirá el éxito.\n\n## Decisiones clave\n- **Variable objetivo**: define con precisión qué predices y cómo se etiqueta.\n- **Métrica de éxito**: alinea la métrica técnica (precisión, recall, MAE) con un KPI de negocio.\n- **Viabilidad de datos**: confirma disponibilidad, volumen y calidad antes de comprometer recursos.\n- **¿Realmente necesitas ML?** Si una regla heurística resuelve el caso, evítalo.\n\n## Enfoque incremental\nValida con un **baseline simple** antes de invertir en arquitecturas complejas. Considera soluciones low-code como **AutoML** o **BigQuery ML** cuando el equipo prioriza velocidad sobre control fino.\n\n> **En el examen:** cuando el caso describe un objetivo de negocio difuso, la respuesta correcta casi siempre empieza por definir métrica de éxito y variable objetivo, no por elegir un algoritmo."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un equipo quiere predecir si un cliente cancelará su suscripción el próximo mes. ¿Qué tipo de problema de ML representa?",
+          "opciones": [
+            "Clasificación binaria",
+            "Regresión lineal",
+            "Agrupamiento no supervisado",
+            "Reducción de dimensionalidad"
+          ],
+          "correctas": [0],
+          "explicacion": "Predecir un resultado de dos categorías (cancela / no cancela) es una clasificación binaria, ya que la variable objetivo es discreta con dos clases."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué elementos debes definir al enmarcar un problema de ML antes de entrenar? Selecciona todas las que apliquen.",
+          "opciones": [
+            "La variable objetivo a predecir",
+            "La métrica de éxito alineada al negocio",
+            "El color de la interfaz de usuario final",
+            "La disponibilidad y calidad de los datos",
+            "El nombre comercial del producto"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "Enmarcar un problema requiere definir qué se predice, cómo se mide el éxito y si existen datos viables. El color de la UI y el nombre comercial no afectan la formulación del problema de ML."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una analista necesita un modelo predictivo rápido sin escribir código de entrenamiento y trabajando sobre datos ya en un almacén. ¿Qué opción es más adecuada?",
+          "opciones": [
+            "BigQuery ML con SQL",
+            "Entrenar una red neuronal personalizada en GPU",
+            "Implementar gradiente descendente desde cero",
+            "Construir un clúster de Spark manualmente"
+          ],
+          "correctas": [0],
+          "explicacion": "BigQuery ML permite crear modelos con sentencias SQL directamente sobre los datos del almacén, ideal para soluciones low-code y prototipado veloz."
+        }
+      ]
+    },
+    {
+      "slug": "preparacion-datos-features",
+      "nombre": "Preparación de datos y features",
+      "dominio": "Data preparation and feature engineering",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Construir datasets confiables y features útiles",
+        "markdown": "## Calidad antes que cantidad\nLa preparación de datos suele consumir la mayor parte del proyecto. Detecta **valores faltantes**, duplicados, sesgos y fugas de información (*data leakage*) que inflan artificialmente las métricas.\n\n## Transformaciones comunes\n- **Normalización / estandarización** para features numéricas en distinta escala.\n- **One-hot encoding** o *embeddings* para variables categóricas.\n- **Bucketing** para convertir continuas en rangos significativos.\n- **Feature crosses** para capturar interacciones entre columnas.\n\n## Consistencia entrenamiento-servicio\nEvita el **training-serving skew**: las transformaciones aplicadas al entrenar deben replicarse igual en inferencia. **Vertex AI Feature Store** centraliza features y reduce este riesgo al servir los mismos valores en ambos momentos.\n\n> **En el examen:** si una pregunta menciona que el modelo funciona bien en pruebas pero falla en producción, sospecha de *training-serving skew* o de *data leakage* en la preparación."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un modelo logra 99% de exactitud en entrenamiento pero rinde mal en producción. La feature 'monto_total' incluye datos generados después de la predicción. ¿Qué problema describe esto?",
+          "opciones": [
+            "Data leakage",
+            "Subajuste (underfitting)",
+            "Falta de regularización",
+            "Desbalanceo de clases"
+          ],
+          "correctas": [0],
+          "explicacion": "Usar información que no estará disponible al momento de predecir es data leakage: la feature filtra el futuro, inflando las métricas de entrenamiento sin generalizar."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué prácticas ayudan a evitar el training-serving skew? Selecciona todas las que apliquen.",
+          "opciones": [
+            "Reutilizar la misma lógica de transformación en entrenamiento e inferencia",
+            "Usar un Feature Store que sirva valores consistentes",
+            "Aplicar transformaciones distintas según el entorno por comodidad",
+            "Versionar las transformaciones de features",
+            "Calcular estadísticas de normalización solo en producción"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "La consistencia se logra reutilizando la misma lógica, centralizando features en un Feature Store y versionando transformaciones. Aplicar lógica distinta o recalcular estadísticas solo en producción introduce skew."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál es la técnica adecuada para representar una variable categórica con pocas categorías en un modelo lineal?",
+          "opciones": [
+            "One-hot encoding",
+            "Normalización min-max",
+            "Eliminación de la columna",
+            "Logaritmo natural de la columna"
+          ],
+          "correctas": [0],
+          "explicacion": "One-hot encoding convierte cada categoría en una columna binaria, permitiendo que un modelo lineal interprete variables categóricas sin asumir un orden numérico."
+        }
+      ]
+    },
+    {
+      "slug": "desarrollo-entrenamiento-modelos",
+      "nombre": "Desarrollo y entrenamiento de modelos",
+      "dominio": "ML model development and training",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Entrenar, evaluar y ajustar modelos",
+        "markdown": "## Ciclo de desarrollo\nEntrena con un conjunto de **train/validation/test** bien separado. La validación guía el ajuste; el test final estima el desempeño real sin contaminación.\n\n## Diagnóstico de errores\n- **Overfitting**: alto rendimiento en train, bajo en validación. Combátelo con regularización, *dropout* o más datos.\n- **Underfitting**: bajo en ambos. Usa modelos más expresivos o mejores features.\n\n## Ajuste de hiperparámetros\n**Vertex AI Vizier** y el servicio de *hyperparameter tuning* exploran el espacio de configuración con estrategias como búsqueda bayesiana, más eficientes que la búsqueda en rejilla exhaustiva.\n\n## Escalado del entrenamiento\nPara datasets grandes, usa **entrenamiento distribuido** y acelera con **GPU/TPU**. Vertex AI Training gestiona la infraestructura sin operar servidores manualmente.\n\n> **En el examen:** ante overfitting, prioriza regularización o más datos; ante necesidad de eficiencia en tuning, elige optimización bayesiana sobre grid search."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un modelo alcanza 98% en entrenamiento pero 70% en validación. ¿Qué describe mejor la situación y una solución?",
+          "opciones": [
+            "Overfitting; aplicar regularización o más datos",
+            "Underfitting; aumentar la complejidad del modelo",
+            "Datos balanceados; no requiere acción",
+            "Fuga de etiquetas; eliminar la variable objetivo"
+          ],
+          "correctas": [0],
+          "explicacion": "La brecha grande entre train y validación indica overfitting. Se mitiga con regularización, dropout o ampliando el conjunto de datos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Para qué sirve el conjunto de validación durante el entrenamiento?",
+          "opciones": [
+            "Guiar el ajuste de hiperparámetros sin tocar el test final",
+            "Entrenar los pesos del modelo",
+            "Reemplazar al conjunto de entrenamiento",
+            "Almacenar las predicciones de producción"
+          ],
+          "correctas": [0],
+          "explicacion": "La validación se usa para seleccionar hiperparámetros y detectar overfitting, manteniendo el test reservado para una estimación imparcial del desempeño final."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre el ajuste de hiperparámetros y el escalado de entrenamiento son correctas? Selecciona todas las que apliquen.",
+          "opciones": [
+            "La optimización bayesiana suele ser más eficiente que la búsqueda en rejilla",
+            "TPU y GPU aceleran el entrenamiento de modelos profundos",
+            "Vertex AI Vizier ayuda a buscar hiperparámetros óptimos",
+            "El grid search garantiza siempre el mínimo costo de cómputo",
+            "El entrenamiento distribuido nunca mejora el tiempo de cómputo"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "La optimización bayesiana explora el espacio con menos pruebas, los aceleradores reducen el tiempo y Vizier automatiza la búsqueda. El grid search puede ser muy costoso y el entrenamiento distribuido sí acelera con datasets grandes."
+        }
+      ]
+    },
+    {
+      "slug": "despliegue-servicio-modelos",
+      "nombre": "Despliegue y servicio de modelos",
+      "dominio": "Model deployment and serving",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Llevar modelos a producción de forma confiable",
+        "markdown": "## Patrones de inferencia\n- **Online (en línea)**: respuestas de baja latencia para peticiones individuales, vía endpoints de Vertex AI.\n- **Batch (por lotes)**: predicciones masivas sobre grandes volúmenes, sin requerir respuesta inmediata.\n\nElige según latencia y volumen: un sistema de recomendación en tiempo real necesita *online*; un scoring nocturno de millones de filas encaja en *batch*.\n\n## Despliegues seguros\nUsa **tráfico dividido (traffic splitting)** para liberar una nueva versión gradualmente (canary). Si las métricas empeoran, reviertes sin afectar a todos los usuarios.\n\n## Eficiencia\n- Empaqueta dependencias en contenedores reproducibles.\n- Escala con autoescalado según carga.\n- Considera **cuantización** o destilación para reducir costo y latencia.\n\n> **En el examen:** ante 'predicciones para millones de registros sin urgencia', elige batch; ante 'baja latencia por petición', elige online con endpoint."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Necesitas generar predicciones para 50 millones de registros una vez por noche, sin requisitos de latencia. ¿Qué método de servicio conviene?",
+          "opciones": [
+            "Predicción por lotes (batch prediction)",
+            "Endpoint online con autoescalado mínimo",
+            "Inferencia en el navegador del cliente",
+            "Streaming en tiempo real por petición"
+          ],
+          "correctas": [0],
+          "explicacion": "La predicción por lotes procesa grandes volúmenes de forma eficiente cuando no se necesita respuesta inmediata, optimizando costo frente a un endpoint online."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué ventajas ofrece el despliegue canary con tráfico dividido en Vertex AI? Selecciona todas las que apliquen.",
+          "opciones": [
+            "Permite enviar solo una fracción del tráfico a la nueva versión",
+            "Facilita revertir si las métricas empeoran",
+            "Elimina por completo la necesidad de monitoreo",
+            "Reduce el riesgo de exponer un modelo defectuoso a todos los usuarios",
+            "Garantiza que el nuevo modelo nunca tenga errores"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "El despliegue canary expone gradualmente la nueva versión, permite reversión rápida y limita el impacto de fallos. No elimina el monitoreo ni garantiza ausencia de errores."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un servicio de recomendaciones debe responder en milisegundos a cada solicitud de usuario. ¿Qué tipo de inferencia es apropiado?",
+          "opciones": [
+            "Inferencia online con endpoint",
+            "Predicción por lotes nocturna",
+            "Exportar a CSV y procesar manualmente",
+            "Reentrenar el modelo en cada petición"
+          ],
+          "correctas": [0],
+          "explicacion": "La inferencia online mediante endpoints de baja latencia es la adecuada para responder en tiempo real a cada solicitud individual."
+        }
+      ]
+    },
+    {
+      "slug": "automatizacion-orquestacion-mlops",
+      "nombre": "Automatización y orquestación MLOps",
+      "dominio": "ML pipeline automation and orchestration",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Pipelines reproducibles y CI/CD para ML",
+        "markdown": "## ¿Por qué pipelines?\nUn notebook manual no es reproducible ni auditable. Los **pipelines** encadenan pasos (ingesta, preprocesamiento, entrenamiento, evaluación, despliegue) de forma automatizada y versionada.\n\n## Herramientas\n- **Vertex AI Pipelines** orquesta flujos basados en **Kubeflow Pipelines** o **TFX**.\n- Cada paso es un componente contenerizado y reutilizable.\n- Los **artefactos y metadatos** quedan rastreados para linaje y reproducibilidad.\n\n## CI/CD para ML\n- **CI**: pruebas de datos y código en cada cambio.\n- **CD**: despliegue automatizado del modelo validado.\n- **CT (entrenamiento continuo)**: reentrena al detectar nuevos datos o degradación.\n\n## Disparadores\nAutomatiza el reentrenamiento por **calendario** o por **eventos** (llegada de datos, alerta de drift).\n\n> **En el examen:** cuando el caso pide reproducibilidad, linaje y reentrenamiento automatizado, la respuesta correcta involucra Vertex AI Pipelines y entrenamiento continuo, no scripts manuales."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un equipo ejecuta el entrenamiento a mano en notebooks y no puede reproducir resultados pasados. ¿Qué solución aborda mejor el problema?",
+          "opciones": [
+            "Vertex AI Pipelines para orquestar pasos versionados",
+            "Aumentar el tamaño de la máquina del notebook",
+            "Guardar capturas de pantalla de cada ejecución",
+            "Eliminar el conjunto de validación"
+          ],
+          "correctas": [0],
+          "explicacion": "Vertex AI Pipelines automatiza y versiona cada paso del flujo, registrando artefactos y metadatos que garantizan reproducibilidad y linaje, algo imposible con notebooks manuales."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué prácticas forman parte de un enfoque MLOps maduro? Selecciona todas las que apliquen.",
+          "opciones": [
+            "Integración continua con pruebas de código y datos",
+            "Entrenamiento continuo disparado por drift o nuevos datos",
+            "Despliegue manual sin pruebas automatizadas",
+            "Rastreo de artefactos y metadatos del pipeline",
+            "Ejecutar todo una sola vez sin versionar"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "MLOps maduro incluye CI con pruebas, entrenamiento continuo y rastreo de metadatos. El despliegue manual sin pruebas y la ejecución única sin versionado son antipatrones."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué significa 'entrenamiento continuo' (CT) en MLOps?",
+          "opciones": [
+            "Reentrenar automáticamente el modelo ante nuevos datos o degradación",
+            "Entrenar el modelo sin detenerse nunca por error",
+            "Mantener el mismo modelo para siempre sin cambios",
+            "Entrenar solo en horario de oficina"
+          ],
+          "correctas": [0],
+          "explicacion": "El entrenamiento continuo automatiza el reentrenamiento cuando llegan datos frescos o el desempeño se degrada, manteniendo el modelo actualizado sin intervención manual constante."
+        }
+      ]
+    },
+    {
+      "slug": "monitoreo-ia-responsable",
+      "nombre": "Monitoreo e IA responsable",
+      "dominio": "ML solution monitoring, optimization, and maintenance",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Vigilar, mantener y operar modelos con responsabilidad",
+        "markdown": "## Monitoreo en producción\nUn modelo se degrada con el tiempo. Vigila dos fenómenos clave:\n- **Data drift**: cambia la distribución de las features de entrada.\n- **Concept drift**: cambia la relación entre features y objetivo.\n\n**Vertex AI Model Monitoring** detecta desviaciones y dispara alertas para reentrenar.\n\n## IA responsable\n- **Equidad (fairness)**: evalúa sesgos por subgrupos sensibles.\n- **Explicabilidad**: usa *feature attributions* (p. ej. Vertex Explainable AI) para justificar predicciones.\n- **Privacidad**: minimiza datos sensibles y respeta cumplimiento normativo.\n\n## Mantenimiento\n- Registra versiones de modelo y datos.\n- Define umbrales de alerta y planes de reversión.\n- Optimiza costo revisando uso de endpoints y aceleradores.\n\n> **En el examen:** ante 'las predicciones empeoran con el tiempo aunque el código no cambió', sospecha de drift; ante requisitos de transparencia o sesgo, piensa en explicabilidad y evaluación de equidad."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Tres meses tras el despliegue, la exactitud del modelo cae aunque el código no cambió y la distribución de entradas se ha desplazado. ¿Qué fenómeno ocurre?",
+          "opciones": [
+            "Data drift",
+            "Overfitting durante el entrenamiento",
+            "Fuga de etiquetas",
+            "Error de sintaxis en el pipeline"
+          ],
+          "correctas": [0],
+          "explicacion": "Cuando la distribución de las features de entrada cambia respecto a los datos de entrenamiento, ocurre data drift, lo que degrada el desempeño y suele requerir reentrenamiento."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué prácticas corresponden a una IA responsable y bien monitoreada? Selecciona todas las que apliquen.",
+          "opciones": [
+            "Evaluar sesgos en subgrupos sensibles",
+            "Usar feature attributions para explicar predicciones",
+            "Ignorar la privacidad de datos sensibles",
+            "Configurar alertas de drift y planes de reversión",
+            "Ocultar deliberadamente cómo decide el modelo"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "La IA responsable evalúa equidad, ofrece explicabilidad y monitorea con alertas y reversión. Ignorar la privacidad u ocultar el razonamiento contradicen estos principios."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué herramienta de Google Cloud ayuda a explicar qué features influyen en una predicción?",
+          "opciones": [
+            "Vertex Explainable AI (feature attributions)",
+            "Cloud Storage",
+            "BigQuery solo para almacenamiento",
+            "Cloud DNS"
+          ],
+          "correctas": [0],
+          "explicacion": "Vertex Explainable AI proporciona atribuciones de features que cuantifican la contribución de cada variable a la predicción, apoyando la transparencia del modelo."
+        }
+      ]
+    }
+  ]
+}

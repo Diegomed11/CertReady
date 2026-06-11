@@ -1,0 +1,342 @@
+{
+  "slug": "cisco-ccnp-enterprise",
+  "nombre": "Cisco Certified Network Professional (CCNP) Enterprise",
+  "proveedor": "Cisco",
+  "nivel": "professional",
+  "area": "Redes",
+  "descripcion": "Certificación profesional que valida la capacidad de diseñar, implementar y operar redes empresariales avanzadas. Cubre enrutamiento, infraestructura, virtualización, automatización y seguridad de la infraestructura.",
+  "skills": [
+    "ospf",
+    "bgp",
+    "eigrp",
+    "vlan",
+    "spanning tree",
+    "sd-wan",
+    "sd-access",
+    "qos",
+    "netconf",
+    "python",
+    "wireless",
+    "troubleshooting"
+  ],
+  "roles": [
+    "Ingeniero de redes",
+    "Administrador de redes empresariales",
+    "Especialista en infraestructura",
+    "Arquitecto de soluciones de red"
+  ],
+  "temas": [
+    {
+      "slug": "arquitectura-empresarial",
+      "nombre": "Arquitectura de redes empresariales",
+      "dominio": "Architecture",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Diseño jerárquico y planos de operación",
+        "markdown": "## Modelo jerárquico\n\nLas redes empresariales se organizan en capas para escalar y aislar fallos:\n\n- **Acceso**: conecta dispositivos finales y aplica políticas de puerto.\n- **Distribución**: agrega enlaces, frontera de enrutamiento y políticas.\n- **Núcleo**: conmutación de alta velocidad sin lógica compleja.\n\n## Planos de la red\n\n- **Plano de datos**: reenvía paquetes según las tablas ya construidas.\n- **Plano de control**: construye esas tablas (protocolos de enrutamiento, STP).\n- **Plano de gestión**: administra el equipo (SSH, SNMP, NETCONF).\n\n## Diseños modernos\n\nLas arquitecturas **spine-leaf** sustituyen al modelo clásico en centros de datos, reduciendo saltos y ofreciendo latencia predecible. En el campus, los **fabrics** separan la conectividad física del transporte lógico mediante overlays.\n\n> **En el examen:** distingue siempre qué plano interviene; confundir control con datos lleva a respuestas incorrectas sobre dónde se toma una decisión de reenvío."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué capa del modelo jerárquico debe priorizar la conmutación rápida y evitar lógica de políticas complejas?",
+          "opciones": [
+            "Capa de acceso",
+            "Capa de distribución",
+            "Capa de núcleo",
+            "Capa de borde de usuario"
+          ],
+          "correctas": [2],
+          "explicacion": "El núcleo se diseña para mover tráfico a máxima velocidad; las políticas y filtrados se ubican en la distribución para no penalizar el reenvío central."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de las siguientes funciones corresponden al plano de control de un dispositivo de red?",
+          "opciones": [
+            "Calcular rutas mediante OSPF",
+            "Reenviar paquetes según la FIB ya construida",
+            "Elegir el puente raíz en spanning tree",
+            "Intercambiar adyacencias de enrutamiento",
+            "Aplicar SNMP para monitoreo"
+          ],
+          "correctas": [0, 2, 3],
+          "explicacion": "El plano de control construye la información de reenvío: cálculo de rutas, elección de raíz STP y adyacencias. Reenviar es plano de datos y SNMP es plano de gestión."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En una topología spine-leaf, ¿qué ventaja principal aporta frente al diseño jerárquico clásico de tres capas?",
+          "opciones": [
+            "Elimina la necesidad de protocolos de enrutamiento",
+            "Garantiza un número de saltos predecible entre nodos hoja",
+            "Permite prescindir totalmente de redundancia",
+            "Convierte todo el tráfico en broadcast"
+          ],
+          "correctas": [1],
+          "explicacion": "Cada hoja se conecta a cada spine, por lo que dos nodos hoja siempre están a la misma distancia, ofreciendo latencia uniforme y predecible."
+        }
+      ]
+    },
+    {
+      "slug": "virtualizacion",
+      "nombre": "Virtualización de red y túneles",
+      "dominio": "Virtualization",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Overlays, VRF y encapsulamientos",
+        "markdown": "## Separación de tráfico\n\nLa virtualización permite que una misma infraestructura física transporte múltiples redes lógicas aisladas:\n\n- **VRF (Virtual Routing and Forwarding)**: tablas de enrutamiento independientes en un mismo router, ideal para multitenencia.\n- **Túneles GRE**: encapsulan tráfico arbitrario sobre IP, sin cifrado nativo.\n- **VXLAN**: extiende dominios de capa 2 sobre una red de capa 3 usando un identificador de 24 bits.\n\n## Overlay y underlay\n\n- El **underlay** es la red física que provee conectividad IP básica.\n- El **overlay** es la red lógica construida con túneles sobre el underlay.\n\nEsta separación es la base de **SD-Access** y de los fabrics de campus, donde la dirección de un endpoint se desacopla de su ubicación física mediante un sistema de mapeo.\n\n> **En el examen:** recuerda que GRE no cifra; si necesitas confidencialidad debes combinarlo con IPsec. VXLAN amplía el espacio de segmentación muy por encima de las 4094 VLAN tradicionales."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué tecnología permite mantener tablas de enrutamiento independientes dentro de un mismo router físico?",
+          "opciones": [
+            "GRE",
+            "VRF",
+            "STP",
+            "NAT"
+          ],
+          "correctas": [1],
+          "explicacion": "VRF crea instancias de enrutamiento separadas en el mismo equipo, permitiendo aislar el tráfico de distintos clientes o servicios."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuántos bits emplea VXLAN para su identificador de segmento de red?",
+          "opciones": [
+            "12 bits",
+            "16 bits",
+            "24 bits",
+            "32 bits"
+          ],
+          "correctas": [2],
+          "explicacion": "El VNI de VXLAN usa 24 bits, lo que permite hasta unos 16 millones de segmentos, superando ampliamente el límite de 4094 VLAN."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre túneles GRE e IPsec son correctas?",
+          "opciones": [
+            "GRE puede encapsular protocolos no IP",
+            "GRE proporciona cifrado de extremo a extremo por sí mismo",
+            "IPsec aporta confidencialidad e integridad",
+            "Combinar GRE sobre IPsec permite transportar multicast cifrado",
+            "IPsec en modo transporte oculta siempre las direcciones IP originales"
+          ],
+          "correctas": [0, 2, 3],
+          "explicacion": "GRE encapsula tráfico variado pero no cifra; IPsec da confidencialidad e integridad. GRE-sobre-IPsec habilita multicast cifrado. El modo transporte conserva la cabecera IP original, no la oculta."
+        }
+      ]
+    },
+    {
+      "slug": "infraestructura",
+      "nombre": "Infraestructura: conmutación y enrutamiento",
+      "dominio": "Infrastructure",
+      "orden": 3,
+      "hoja": {
+        "titulo": "OSPF, EIGRP, BGP y conmutación de capa 2",
+        "markdown": "## Protocolos de enrutamiento\n\n- **OSPF**: estado de enlace, usa áreas y el algoritmo SPF; converge rápido y escala con buen diseño de áreas.\n- **EIGRP**: distancia de vector avanzado, usa el algoritmo DUAL y métricas compuestas.\n- **BGP**: vector de ruta, base de la interconexión entre dominios y de WAN empresariales.\n\n## Conmutación de capa 2\n\n- **VLAN**: segmentan dominios de broadcast.\n- **Trunk 802.1Q**: transporta varias VLAN por un enlace etiquetado.\n- **Spanning Tree**: evita bucles eligiendo un puente raíz y bloqueando enlaces redundantes.\n\n## Redundancia de primer salto\n\nProtocolos como **HSRP** y **VRRP** ofrecen una puerta de enlace virtual que sobrevive a la caída de un router.\n\n> **En el examen:** asocia cada protocolo con su tipo: OSPF es estado de enlace, EIGRP es vector de distancia avanzado y BGP es vector de ruta. Esa clasificación define cómo evitan bucles y cómo eligen rutas."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué algoritmo emplea OSPF para calcular las rutas más cortas?",
+          "opciones": [
+            "DUAL",
+            "SPF (Dijkstra)",
+            "Bellman-Ford",
+            "Vector de ruta"
+          ],
+          "correctas": [1],
+          "explicacion": "OSPF es un protocolo de estado de enlace que aplica el algoritmo SPF de Dijkstra sobre la base de datos topológica para hallar el camino más corto."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuál es la función principal de Spanning Tree Protocol en una red conmutada?",
+          "opciones": [
+            "Asignar direcciones IP a los hosts",
+            "Prevenir bucles de capa 2 bloqueando enlaces redundantes",
+            "Cifrar el tráfico entre switches",
+            "Balancear carga entre rutas de capa 3"
+          ],
+          "correctas": [1],
+          "explicacion": "STP construye una topología sin bucles eligiendo un puente raíz y bloqueando los enlaces redundantes que crearían lazos de conmutación."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones clasifican correctamente los protocolos de enrutamiento?",
+          "opciones": [
+            "OSPF es un protocolo de estado de enlace",
+            "EIGRP usa el algoritmo DUAL",
+            "BGP es un protocolo de estado de enlace",
+            "BGP es un protocolo de vector de ruta",
+            "EIGRP inunda LSAs por toda el área"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "OSPF es estado de enlace, EIGRP usa DUAL y es vector de distancia avanzado, y BGP es vector de ruta. BGP no es estado de enlace y EIGRP no inunda LSAs (eso es propio de OSPF)."
+        }
+      ]
+    },
+    {
+      "slug": "automatizacion",
+      "nombre": "Automatización y programabilidad",
+      "dominio": "Automation",
+      "orden": 4,
+      "hoja": {
+        "titulo": "APIs, modelos de datos y scripting",
+        "markdown": "## Interfaces programables\n\nLa red moderna se gestiona por código, no solo por CLI:\n\n- **NETCONF**: protocolo sobre SSH que usa **YANG** como modelo de datos y XML como codificación.\n- **RESTCONF**: expone los mismos modelos YANG vía HTTP con JSON o XML.\n- **APIs REST**: la base de las plataformas de controlador como Catalyst Center.\n\n## Formatos de datos\n\n- **JSON** y **XML** estructuran las solicitudes y respuestas.\n- **YANG** define el esquema de configuración y estado de forma estandarizada.\n\n## Herramientas\n\n- **Python** con librerías de red para automatizar tareas repetitivas.\n- **Ansible** para gestión de configuración declarativa e idempotente.\n\n> **En el examen:** no confundas el protocolo con el modelo ni con la codificación. NETCONF y RESTCONF usan YANG; la diferencia está en el transporte (SSH frente a HTTP) y en los formatos que aceptan."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué lenguaje de modelado de datos utilizan NETCONF y RESTCONF para describir la configuración?",
+          "opciones": [
+            "JSON",
+            "YANG",
+            "YAML",
+            "SQL"
+          ],
+          "correctas": [1],
+          "explicacion": "YANG es el lenguaje estándar que modela la configuración y el estado operativo; tanto NETCONF como RESTCONF se apoyan en él."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Sobre qué protocolo de transporte opera NETCONF de forma predeterminada?",
+          "opciones": [
+            "HTTP",
+            "SSH",
+            "Telnet",
+            "SNMP"
+          ],
+          "correctas": [1],
+          "explicacion": "NETCONF se ejecuta sobre SSH, lo que le da una sesión segura; RESTCONF en cambio utiliza HTTP/HTTPS."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué características distinguen a RESTCONF de NETCONF?",
+          "opciones": [
+            "RESTCONF usa métodos HTTP como GET, POST y DELETE",
+            "RESTCONF admite codificación en JSON",
+            "RESTCONF opera exclusivamente sobre Telnet",
+            "RESTCONF se apoya en modelos YANG",
+            "RESTCONF no puede usar XML bajo ninguna circunstancia"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "RESTCONF emplea verbos HTTP, soporta JSON y XML y se basa en YANG. No usa Telnet y sí admite XML, por lo que esas dos opciones son falsas."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-infraestructura",
+      "nombre": "Seguridad de la infraestructura y servicios",
+      "dominio": "Security",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Control de acceso, ACL y plano de gestión",
+        "markdown": "## Listas de control de acceso\n\nLas **ACL** filtran tráfico según criterios de origen, destino, puerto y protocolo:\n\n- **Estándar**: filtran solo por dirección de origen.\n- **Extendida**: filtran por origen, destino, protocolo y puertos.\n\n## Acceso administrativo\n\n- **AAA** centraliza autenticación, autorización y registro mediante servidores **TACACS+** o **RADIUS**.\n- **TACACS+** cifra todo el paquete y separa autorización; **RADIUS** combina autenticación y autorización.\n\n## Protección del dispositivo\n\n- **Control plane policing (CoPP)** limita el tráfico hacia el plano de control para mitigar ataques de agotamiento.\n- Endurecer la gestión con SSH en lugar de Telnet y deshabilitar servicios innecesarios.\n\n> **En el examen:** distingue TACACS+ de RADIUS. TACACS+ cifra el cuerpo completo y separa autorización por comando; RADIUS solo cifra la contraseña y une autenticación con autorización."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué tipo de ACL puede filtrar tráfico basándose en origen, destino, protocolo y número de puerto?",
+          "opciones": [
+            "ACL estándar",
+            "ACL extendida",
+            "ACL reflexiva pasiva",
+            "ACL nula"
+          ],
+          "correctas": [1],
+          "explicacion": "La ACL extendida permite criterios completos de origen, destino, protocolo y puertos; la estándar solo evalúa la dirección de origen."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuál es una ventaja distintiva de TACACS+ frente a RADIUS para administración de dispositivos?",
+          "opciones": [
+            "Cifra únicamente la contraseña",
+            "Cifra el cuerpo completo del paquete y separa la autorización",
+            "Funciona solo sobre UDP",
+            "No admite registro de eventos"
+          ],
+          "correctas": [1],
+          "explicacion": "TACACS+ cifra todo el cuerpo del paquete y separa autenticación, autorización y accounting, lo que facilita controlar comandos individuales por usuario."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué medidas endurecen el plano de gestión de un dispositivo de red?",
+          "opciones": [
+            "Usar SSH en lugar de Telnet",
+            "Aplicar Control Plane Policing (CoPP)",
+            "Habilitar servicios no utilizados por comodidad",
+            "Centralizar el acceso con AAA",
+            "Permitir contraseñas en texto plano para depurar más rápido"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "SSH, CoPP y AAA fortalecen la gestión. Dejar servicios innecesarios activos y usar contraseñas en texto plano amplían la superficie de ataque, por lo que son prácticas inseguras."
+        }
+      ]
+    },
+    {
+      "slug": "verificacion-troubleshooting",
+      "nombre": "Verificación y resolución de problemas",
+      "dominio": "Network Assurance",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Monitoreo, telemetría y diagnóstico",
+        "markdown": "## Herramientas de diagnóstico\n\nLa garantía de red combina medición continua y diagnóstico estructurado:\n\n- **SNMP**: sondea métricas y recibe traps de eventos.\n- **Syslog**: registra mensajes con niveles de severidad del 0 al 7.\n- **NetFlow / Flexible NetFlow**: caracteriza flujos de tráfico para visibilidad y capacidad.\n\n## Telemetría moderna\n\nLa **telemetría por streaming** envía datos de forma continua y basada en suscripción, en lugar del sondeo periódico de SNMP, reduciendo latencia y carga.\n\n## Captura y prueba\n\n- **SPAN / RSPAN**: replican tráfico de puertos hacia un analizador.\n- **IP SLA**: genera tráfico sintético para medir disponibilidad y retardo.\n- **Ping y traceroute**: pruebas básicas de conectividad y trayecto.\n\n> **En el examen:** el nivel de severidad de Syslog es inverso a la urgencia: 0 es emergencia y 7 es depuración. La telemetría por streaming se distingue del sondeo SNMP por ser continua y basada en suscripción."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "En la escala de severidad de Syslog, ¿qué nivel representa el mensaje más crítico?",
+          "opciones": [
+            "Nivel 0 (emergencia)",
+            "Nivel 3 (error)",
+            "Nivel 5 (notificación)",
+            "Nivel 7 (depuración)"
+          ],
+          "correctas": [0],
+          "explicacion": "La escala es inversa: el nivel 0 (emergency) indica el evento más grave y el 7 (debug) el menos urgente."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué herramienta replica el tráfico de un puerto hacia un analizador local para su captura?",
+          "opciones": [
+            "NetFlow",
+            "SPAN",
+            "IP SLA",
+            "Syslog"
+          ],
+          "correctas": [1],
+          "explicacion": "SPAN (Switched Port Analyzer) copia el tráfico de uno o varios puertos hacia un puerto destino donde se conecta el analizador."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué ventajas ofrece la telemetría por streaming frente al sondeo tradicional con SNMP?",
+          "opciones": [
+            "Envío continuo de datos por suscripción",
+            "Menor latencia para detectar cambios",
+            "Requiere consultar manualmente cada métrica",
+            "Reduce la carga del sondeo periódico",
+            "Elimina por completo la necesidad de cualquier protocolo de transporte"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "La telemetría por streaming transmite datos de forma continua y suscrita, baja la latencia y evita el sondeo repetitivo. Sigue necesitando transporte y no exige consultas manuales."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,342 @@
+{
+  "slug": "aws-advanced-networking-specialty",
+  "nombre": "AWS Certified Advanced Networking – Specialty",
+  "proveedor": "AWS",
+  "nivel": "specialty",
+  "area": "Redes",
+  "descripcion": "Valida el diseño, la implementación y la operación de arquitecturas de red híbridas y a gran escala en AWS. Cubre conectividad híbrida, VPC avanzada, DNS, balanceo de carga y seguridad de red en entornos multicuenta.",
+  "skills": [
+    "VPC",
+    "Transit Gateway",
+    "Direct Connect",
+    "Site-to-Site VPN",
+    "Route 53",
+    "BGP",
+    "load balancing",
+    "VPC endpoints",
+    "network firewall",
+    "CIDR",
+    "multicuenta",
+    "monitoreo de red"
+  ],
+  "roles": [
+    "Ingeniero de redes en la nube",
+    "Arquitecto de conectividad híbrida",
+    "Ingeniero de infraestructura",
+    "Especialista en seguridad de red"
+  ],
+  "temas": [
+    {
+      "slug": "diseno-de-red-vpc-escalable",
+      "nombre": "Diseño de redes VPC escalables",
+      "dominio": "Network Design",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Planificación de direccionamiento y topología de VPC",
+        "markdown": "## Direccionamiento sin solapamientos\nEl diseño empieza por un plan de **CIDR** coherente: bloques que no se solapen entre VPC, cuentas y redes on-premises, dejando margen para crecer. Reservar rangos por entorno (prod, dev) y por región evita reasignaciones costosas.\n\n## Subredes y zonas de disponibilidad\n- Distribuir subredes en **varias AZ** para alta disponibilidad.\n- Separar subredes **públicas** (con ruta a Internet Gateway) de **privadas** (salida vía NAT Gateway).\n- Dimensionar las subredes según la densidad de IPs prevista; recordar que AWS reserva 5 IPs por subred.\n\n## Escala con prefijos secundarios\nCuando un bloque se agota, se pueden añadir **CIDR secundarios** a la VPC en lugar de recrearla. Esto facilita el crecimiento sin migrar cargas.\n\n## Resolución de agotamiento\nPara redes muy grandes, considerar **IPv6** (rangos amplios) o segmentar en varias VPC conectadas por Transit Gateway.\n\n> **En el examen:** ante agotamiento de IPs, prioriza CIDR secundarios o IPv6 antes de proponer recrear la VPC."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Una VPC con bloque 10.0.0.0/24 se está quedando sin direcciones IP. ¿Cuál es la forma menos disruptiva de ampliar el espacio disponible?",
+          "opciones": [
+            "Recrear la VPC con un bloque /16 y migrar todos los recursos",
+            "Asociar un bloque CIDR secundario a la VPC existente",
+            "Eliminar las IPs reservadas por AWS en cada subred",
+            "Convertir todas las subredes públicas en privadas"
+          ],
+          "correctas": [1],
+          "explicacion": "Asociar un CIDR secundario amplía el espacio de direccionamiento sin recrear la VPC ni migrar recursos, que sería la opción más disruptiva."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Al diseñar el plan de direccionamiento de una organización multicuenta en AWS, ¿qué prácticas reducen el riesgo de conflictos de enrutamiento? (Elige dos.)",
+          "opciones": [
+            "Reutilizar el mismo bloque CIDR en todas las VPC para simplificar",
+            "Asignar rangos CIDR no solapados entre VPC y redes on-premises",
+            "Reservar bloques diferenciados por entorno y región",
+            "Usar siempre subredes /32 para máxima eficiencia",
+            "Permitir que cada equipo elija su propio CIDR sin coordinación"
+          ],
+          "correctas": [1, 2],
+          "explicacion": "Los CIDR no solapados evitan colisiones al interconectar redes, y reservar rangos por entorno/región da orden y margen de crecimiento. Reutilizar el mismo bloque o no coordinar genera conflictos de ruteo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Por qué AWS reserva 5 direcciones IP en cada subred de una VPC?",
+          "opciones": [
+            "Para reservarlas a instancias de gran tamaño",
+            "Las usa para dirección de red, gateway, DNS, uso futuro y broadcast",
+            "Para balancear carga entre zonas de disponibilidad",
+            "Para asignarlas exclusivamente a NAT Gateways"
+          ],
+          "correctas": [1],
+          "explicacion": "AWS reserva la primera dirección (red), el router/gateway, el servidor DNS, una para uso futuro y la última (broadcast), dejando el resto disponible para los recursos."
+        }
+      ]
+    },
+    {
+      "slug": "conectividad-hibrida",
+      "nombre": "Conectividad híbrida con on-premises",
+      "dominio": "Network Implementation",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Direct Connect, VPN y elección de enlace",
+        "markdown": "## Opciones de enlace híbrido\n- **Site-to-Site VPN**: túneles IPsec sobre Internet; rápido de desplegar y económico, pero con latencia y ancho de banda variables.\n- **Direct Connect (DX)**: enlace físico dedicado al proveedor; ofrece **ancho de banda constante** y latencia predecible, ideal para cargas sensibles.\n\n## Alta disponibilidad\nUn solo enlace es un punto único de fallo. Patrón recomendado: **DX como primario y VPN como respaldo**, o dos conexiones DX en ubicaciones distintas. El failover se controla con preferencias **BGP**.\n\n## Virtual interfaces\n- **Private VIF**: acceso a recursos privados de una VPC.\n- **Public VIF**: acceso a servicios públicos de AWS.\n- **Transit VIF**: conecta DX a un Transit Gateway vía Direct Connect Gateway.\n\n## Encriptación\nDX no cifra por sí mismo; para tráfico sensible se combina con **VPN sobre DX** o MACsec donde esté disponible.\n\n> **En el examen:** si piden ancho de banda constante y baja latencia, la respuesta es Direct Connect; añade VPN de respaldo para alta disponibilidad."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una empresa necesita transferir grandes volúmenes de datos hacia AWS con ancho de banda constante y latencia predecible. ¿Qué servicio se ajusta mejor?",
+          "opciones": [
+            "Site-to-Site VPN sobre Internet",
+            "AWS Direct Connect",
+            "Internet Gateway con NAT",
+            "VPC Peering"
+          ],
+          "correctas": [1],
+          "explicacion": "Direct Connect provee un enlace físico dedicado con ancho de banda y latencia predecibles, a diferencia de una VPN que viaja por Internet."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Se requiere conectividad híbrida resiliente y cifrada para cargas sensibles. ¿Qué combinaciones cumplen ambos objetivos? (Elige dos.)",
+          "opciones": [
+            "Una única conexión Direct Connect sin respaldo",
+            "Direct Connect como primario con Site-to-Site VPN como respaldo",
+            "VPN IPsec sobre Direct Connect para añadir cifrado",
+            "Un solo túnel VPN sin redundancia",
+            "Internet Gateway con reglas de seguridad estrictas"
+          ],
+          "correctas": [1, 2],
+          "explicacion": "DX con VPN de respaldo da resiliencia, y ejecutar VPN IPsec sobre DX aporta el cifrado que DX no provee por sí mismo. Las opciones de enlace único no son resilientes."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué tipo de virtual interface (VIF) se usa para conectar Direct Connect a un Transit Gateway mediante un Direct Connect Gateway?",
+          "opciones": [
+            "Public VIF",
+            "Private VIF",
+            "Transit VIF",
+            "Hosted VIF"
+          ],
+          "correctas": [2],
+          "explicacion": "La Transit VIF se asocia a un Direct Connect Gateway para alcanzar uno o varios Transit Gateways, habilitando conectividad a múltiples VPC."
+        }
+      ]
+    },
+    {
+      "slug": "transit-gateway-multicuenta",
+      "nombre": "Interconexión con Transit Gateway",
+      "dominio": "Network Design",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Topología en estrella y enrutamiento entre VPC",
+        "markdown": "## El problema del peering en malla\nEl **VPC Peering** no es transitivo: con muchas VPC se necesita una malla completa que crece de forma cuadrática y es difícil de operar.\n\n## Transit Gateway como hub central\n**Transit Gateway (TGW)** actúa como router regional en estrella: cada VPC, VPN o Direct Connect se conecta una sola vez al TGW y este enruta entre ellos. Simplifica enormemente las topologías multicuenta.\n\n## Tablas de rutas y segmentación\n- Cada attachment se asocia a una **tabla de rutas** del TGW.\n- Usando varias tablas se puede **aislar** dominios (p. ej. que prod no alcance dev) implementando segmentación de red.\n- El TGW se comparte entre cuentas con **Resource Access Manager (RAM)**.\n\n## Escala interregional\nEl **TGW peering** conecta gateways de regiones distintas para una columna vertebral global.\n\n> **En el examen:** muchas VPC que deben comunicarse de forma transitiva y centralizada apuntan a Transit Gateway, no a peering en malla."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Una organización tiene 15 VPC que deben comunicarse entre sí de forma transitiva. ¿Qué solución evita una malla de peering compleja?",
+          "opciones": [
+            "Crear VPC Peering entre cada par de VPC",
+            "Usar un Transit Gateway central",
+            "Configurar un NAT Gateway por VPC",
+            "Habilitar IPv6 en todas las VPC"
+          ],
+          "correctas": [1],
+          "explicacion": "Transit Gateway centraliza el enrutamiento en estrella y soporta tránsito entre VPC, evitando la malla cuadrática del peering, que además no es transitivo."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre Transit Gateway son correctas? (Elige dos.)",
+          "opciones": [
+            "El VPC Peering es transitivo, igual que el TGW",
+            "Múltiples tablas de rutas en el TGW permiten segmentar dominios de red",
+            "Un TGW puede compartirse entre cuentas con Resource Access Manager",
+            "El TGW solo funciona dentro de una única zona de disponibilidad",
+            "El TGW reemplaza la necesidad de cualquier tabla de rutas"
+          ],
+          "correctas": [1, 2],
+          "explicacion": "Las tablas de rutas del TGW permiten aislar dominios y el TGW se comparte vía RAM. El VPC Peering NO es transitivo, y el TGW es regional, no limitado a una AZ."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cómo se logra una columna vertebral de red entre dos regiones de AWS usando Transit Gateway?",
+          "opciones": [
+            "Con VPC Peering directo entre regiones",
+            "Estableciendo TGW peering entre los gateways de cada región",
+            "Configurando un NAT Gateway interregional",
+            "No es posible conectar TGW entre regiones"
+          ],
+          "correctas": [1],
+          "explicacion": "El peering entre Transit Gateways de regiones distintas crea una red global interregional, enrutando el tráfico entre ambas a través de la red troncal de AWS."
+        }
+      ]
+    },
+    {
+      "slug": "dns-route53",
+      "nombre": "Resolución DNS con Route 53",
+      "dominio": "Network Implementation",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Zonas, políticas de enrutamiento y DNS híbrido",
+        "markdown": "## Zonas alojadas\n- **Públicas**: resuelven nombres expuestos a Internet.\n- **Privadas**: asociadas a una o varias VPC para resolución interna.\n\n## Políticas de enrutamiento\nRoute 53 enruta consultas según la política elegida:\n- **Simple** y **Weighted** (reparto por pesos).\n- **Latency** (responde el endpoint más rápido) y **Geolocation**.\n- **Failover** con **health checks** para alta disponibilidad.\n\n## DNS híbrido con Resolver\n**Route 53 Resolver** integra DNS entre AWS y on-premises:\n- **Inbound endpoints**: on-premises consulta nombres de AWS.\n- **Outbound endpoints** con **reglas de reenvío**: las VPC resuelven dominios on-premises.\n\n## Salud y conmutación\nLos **health checks** monitorean endpoints y permiten retirar de la rotación los que fallan, base de las políticas de failover.\n\n> **En el examen:** para que las VPC resuelvan dominios internos on-premises, piensa en outbound endpoints del Resolver con reglas de reenvío."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Las instancias de una VPC deben resolver nombres de un dominio interno alojado en los servidores DNS on-premises. ¿Qué componente de Route 53 lo habilita?",
+          "opciones": [
+            "Una zona alojada pública",
+            "Un Route 53 Resolver outbound endpoint con reglas de reenvío",
+            "Una política de enrutamiento por latencia",
+            "Un health check de tipo HTTPS"
+          ],
+          "correctas": [1],
+          "explicacion": "El outbound endpoint del Resolver, con reglas de reenvío hacia los DNS on-premises, permite que las VPC resuelvan dominios internos de la red corporativa."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué políticas de enrutamiento de Route 53 ayudan a mejorar disponibilidad o rendimiento? (Elige dos.)",
+          "opciones": [
+            "Failover, apoyada en health checks",
+            "Latency-based routing",
+            "Una zona alojada privada",
+            "Un registro CNAME en la raíz del dominio",
+            "Deshabilitar la resolución recursiva"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "Failover con health checks aporta disponibilidad al retirar endpoints caídos, y latency-based routing mejora el rendimiento dirigiendo al endpoint más rápido. Las demás opciones no son políticas de enrutamiento."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué tipo de zona alojada de Route 53 se usa para resolver nombres únicamente dentro de una o varias VPC?",
+          "opciones": [
+            "Zona alojada pública",
+            "Zona alojada privada",
+            "Zona de reenvío condicional",
+            "Zona de delegación"
+          ],
+          "correctas": [1],
+          "explicacion": "Una zona alojada privada se asocia a VPC concretas y resuelve nombres solo dentro de esas redes, sin exponerse a Internet."
+        }
+      ]
+    },
+    {
+      "slug": "balanceo-y-entrega",
+      "nombre": "Balanceo de carga y entrega de tráfico",
+      "dominio": "Network Implementation",
+      "orden": 5,
+      "hoja": {
+        "titulo": "ALB, NLB, GWLB y distribución de tráfico",
+        "markdown": "## Tipos de balanceador\n- **Application Load Balancer (ALB)**: capa 7 (HTTP/HTTPS), enrutamiento por host, ruta o cabeceras; ideal para microservicios y contenedores.\n- **Network Load Balancer (NLB)**: capa 4 (TCP/UDP), altísimo rendimiento y baja latencia; soporta **IPs estáticas** y Elastic IP.\n- **Gateway Load Balancer (GWLB)**: distribuye tráfico hacia appliances de seguridad de terceros de forma transparente.\n\n## Cuándo usar cada uno\n- Routing avanzado HTTP → **ALB**.\n- Latencia mínima, protocolos no HTTP o IP fija → **NLB**.\n- Inspección con firewalls/IPS de terceros → **GWLB**.\n\n## Alcance global\n**AWS Global Accelerator** usa IPs anycast en la red troncal de AWS para mejorar rendimiento y dar failover regional rápido.\n\n## Salud\nLos **health checks** del balanceador retiran instancias no saludables del pool de destino automáticamente.\n\n> **En el examen:** si exigen IP estática a nivel de balanceador o rendimiento extremo en capa 4, la respuesta es NLB, no ALB."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una aplicación necesita un balanceador de capa 4 con direcciones IP estáticas y latencia mínima para tráfico TCP. ¿Cuál eliges?",
+          "opciones": [
+            "Application Load Balancer",
+            "Network Load Balancer",
+            "Gateway Load Balancer",
+            "Classic Load Balancer"
+          ],
+          "correctas": [1],
+          "explicacion": "El NLB opera en capa 4, ofrece muy baja latencia y soporta IPs estáticas/Elastic IP, requisitos que el ALB (capa 7) no cubre de la misma forma."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre balanceadores de carga en AWS son correctas? (Elige dos.)",
+          "opciones": [
+            "El ALB enruta por host, ruta y cabeceras en capa 7",
+            "El Gateway Load Balancer facilita insertar appliances de seguridad de terceros",
+            "El NLB realiza enrutamiento HTTP basado en rutas de URL",
+            "El ALB ofrece direcciones IP estáticas por defecto",
+            "Global Accelerator opera solo dentro de una única zona de disponibilidad"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "El ALB hace routing L7 por host/ruta/cabeceras y el GWLB encadena appliances de seguridad. El NLB es L4 (no enruta por URL), el ALB no da IP estática nativa y Global Accelerator es global."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué servicio mejora el rendimiento global y el failover regional usando direcciones IP anycast sobre la red troncal de AWS?",
+          "opciones": [
+            "AWS Global Accelerator",
+            "Application Load Balancer",
+            "Route 53 Resolver",
+            "NAT Gateway"
+          ],
+          "correctas": [0],
+          "explicacion": "Global Accelerator publica IPs anycast estáticas y dirige el tráfico por la red de AWS al endpoint óptimo, mejorando rendimiento y permitiendo failover entre regiones."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-de-red",
+      "nombre": "Seguridad y aislamiento de red",
+      "dominio": "Network Security, Compliance, and Governance",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Capas de control, endpoints privados e inspección",
+        "markdown": "## Controles por capas\n- **Security Groups**: firewall **con estado** a nivel de instancia; solo reglas de permitir.\n- **Network ACLs**: filtro **sin estado** a nivel de subred; permiten reglas de denegar explícitas.\nUsar ambos en conjunto da defensa en profundidad.\n\n## Acceso privado a servicios\n- **VPC Endpoints (Gateway)**: tráfico privado a S3 y DynamoDB sin salir a Internet.\n- **Interface Endpoints (PrivateLink)**: exponen servicios mediante ENIs privadas, evitando IGW/NAT.\n\n## Inspección centralizada\n**AWS Network Firewall** ofrece filtrado e inspección de tráfico con estado a escala de VPC. El **GWLB** permite insertar appliances de terceros de forma transparente.\n\n## Visibilidad\nLos **VPC Flow Logs** registran metadatos de tráfico para auditoría, detección de anomalías y troubleshooting.\n\n> **En el examen:** si necesitas reglas de denegar explícitas, son las Network ACLs (sin estado); los Security Groups solo permiten y son con estado."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Necesitas bloquear explícitamente un rango de direcciones IP a nivel de subred. ¿Qué control de red usas?",
+          "opciones": [
+            "Un Security Group con regla de denegar",
+            "Una Network ACL con regla de denegar",
+            "Un VPC Endpoint de tipo gateway",
+            "Una zona alojada privada de Route 53"
+          ],
+          "correctas": [1],
+          "explicacion": "Las Network ACLs operan a nivel de subred y admiten reglas de denegar explícitas. Los Security Groups solo permiten (no deniegan) y actúan a nivel de instancia."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre seguridad de red en VPC son correctas? (Elige dos.)",
+          "opciones": [
+            "Los Security Groups son firewalls con estado a nivel de instancia",
+            "Las Network ACLs son sin estado y se aplican a nivel de subred",
+            "Los Security Groups admiten reglas de denegar explícitas",
+            "Los VPC Flow Logs cifran automáticamente el tráfico de la VPC",
+            "Las Network ACLs operan a nivel de instancia individual"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "Los Security Groups son con estado y por instancia; las Network ACLs son sin estado y por subred. Los SG no deniegan, los Flow Logs solo registran metadatos (no cifran) y las NACL no son por instancia."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una aplicación en una subred privada debe acceder a Amazon S3 sin enrutar el tráfico por Internet. ¿Qué solución lo permite?",
+          "opciones": [
+            "Un NAT Gateway con ruta a Internet Gateway",
+            "Un VPC Endpoint de tipo gateway para S3",
+            "Una Network ACL que permita el puerto 443",
+            "Un Application Load Balancer público"
+          ],
+          "correctas": [1],
+          "explicacion": "El Gateway Endpoint para S3 enruta el tráfico de forma privada dentro de la red de AWS, sin pasar por Internet Gateway ni NAT Gateway."
+        }
+      ]
+    }
+  ]
+}

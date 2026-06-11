@@ -1,0 +1,342 @@
+{
+  "slug": "gcp-professional-cloud-database-engineer",
+  "nombre": "Google Cloud Professional Cloud Database Engineer",
+  "proveedor": "Google",
+  "nivel": "professional",
+  "area": "Datos",
+  "descripcion": "Certificación que valida la capacidad de diseñar, migrar y operar bases de datos gestionadas en Google Cloud. Cubre la elección de motores, la alta disponibilidad, la seguridad y la optimización de costos y rendimiento.",
+  "skills": [
+    "cloud sql",
+    "spanner",
+    "alloydb",
+    "bigtable",
+    "firestore",
+    "memorystore",
+    "migracion",
+    "alta disponibilidad",
+    "replicacion",
+    "respaldos",
+    "iam",
+    "observabilidad"
+  ],
+  "roles": [
+    "Ingeniero de bases de datos en la nube",
+    "Arquitecto de datos",
+    "Administrador de bases de datos (DBA)",
+    "Ingeniero de plataformas de datos"
+  ],
+  "temas": [
+    {
+      "slug": "diseno-y-seleccion-de-motor",
+      "nombre": "Diseño y selección del motor de base de datos",
+      "dominio": "Design scalable and highly available cloud database solutions",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Elegir el servicio correcto para cada carga",
+        "markdown": "## Bases relacionales vs no relacionales\n\nGoogle Cloud ofrece motores especializados; la clave es **mapear el patrón de acceso** al servicio:\n\n- **Cloud SQL**: relacional gestionado (MySQL, PostgreSQL, SQL Server) para cargas OLTP de tamaño regional.\n- **AlloyDB**: PostgreSQL de alto rendimiento, ideal para analítica híbrida (HTAP) y consultas pesadas.\n- **Spanner**: relacional con escala horizontal y consistencia fuerte global; útil cuando se necesita disponibilidad de varias regiones.\n- **Bigtable**: NoSQL de baja latencia y alto throughput para series temporales y datos de gran volumen.\n- **Firestore**: documental, orientado a aplicaciones móviles y web con sincronización.\n- **Memorystore**: caché en memoria (Redis/Memcached).\n\n## Criterios de decisión\n\n- Volumen y crecimiento esperado.\n- Necesidad de **consistencia fuerte** o eventual.\n- Latencia objetivo y distribución geográfica.\n\n> **En el examen:** cuando exijan escala global con consistencia fuerte, la respuesta casi siempre es Spanner; para latencia de milisegundos a gran volumen NoSQL, Bigtable."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una aplicación financiera necesita una base relacional con escala horizontal y consistencia fuerte distribuida en varias regiones. ¿Qué servicio se ajusta mejor?",
+          "opciones": [
+            "Cloud SQL para PostgreSQL",
+            "Cloud Spanner",
+            "Cloud Bigtable",
+            "Memorystore para Redis"
+          ],
+          "correctas": [1],
+          "explicacion": "Spanner combina semántica relacional, escalado horizontal y consistencia fuerte con distribución multirregional, algo que Cloud SQL (regional) no ofrece."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué características hacen que Cloud Bigtable sea adecuado para una carga de trabajo? (elige todas las correctas)",
+          "opciones": [
+            "Datos de series temporales con escritura masiva",
+            "Latencia de un solo dígito de milisegundos a gran escala",
+            "Consultas SQL con joins complejos entre tablas",
+            "Throughput alto y sostenido de lecturas y escrituras",
+            "Transacciones distribuidas con consistencia fuerte global"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "Bigtable destaca en series temporales, baja latencia y alto throughput. No soporta joins SQL complejos ni transacciones distribuidas globales como Spanner."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio gestionado conviene para una caché en memoria que reduzca la carga de lecturas sobre la base principal?",
+          "opciones": [
+            "Memorystore",
+            "Firestore",
+            "AlloyDB",
+            "Cloud SQL"
+          ],
+          "correctas": [0],
+          "explicacion": "Memorystore ofrece Redis y Memcached gestionados, pensados como capa de caché en memoria para descargar lecturas frecuentes."
+        }
+      ]
+    },
+    {
+      "slug": "alta-disponibilidad-y-replicacion",
+      "nombre": "Alta disponibilidad y replicación",
+      "dominio": "Manage a solution that can span multiple database solutions",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Resiliencia: HA, réplicas y conmutación",
+        "markdown": "## Configuraciones de disponibilidad\n\nLa alta disponibilidad (HA) reduce el tiempo de inactividad ante fallos:\n\n- **Cloud SQL HA**: instancia en una **zona primaria** con una standby en otra zona de la misma región; la conmutación por error es automática.\n- **Réplicas de lectura**: descargan tráfico de lectura y pueden promoverse, pero por sí solas no garantizan HA automática.\n- **Spanner**: replica datos entre zonas o regiones según la configuración de instancia, sin intervención manual.\n\n## Métricas clave\n\n- **RTO** (Recovery Time Objective): cuánto tiempo se tolera estar caído.\n- **RPO** (Recovery Point Objective): cuántos datos se pueden perder.\n\nUna configuración multirregional reduce el RPO cercano a cero pero **incrementa costo y latencia de escritura**.\n\n> **En el examen:** distingue réplica de lectura (escalado de lecturas) de configuración HA (conmutación automática). Si piden tolerancia a la caída de una zona en Cloud SQL, la respuesta es habilitar HA, no añadir réplicas."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un equipo quiere que su instancia de Cloud SQL siga disponible si falla una zona completa de la región. ¿Qué deben configurar?",
+          "opciones": [
+            "Una réplica de lectura en la misma zona",
+            "La configuración de alta disponibilidad (HA) con standby en otra zona",
+            "Aumentar el tamaño del disco de la instancia",
+            "Activar el escalado automático de almacenamiento"
+          ],
+          "correctas": [1],
+          "explicacion": "La HA de Cloud SQL mantiene una instancia standby en otra zona y realiza conmutación automática ante un fallo zonal. Las réplicas de lectura no garantizan failover automático."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles afirmaciones sobre réplicas de lectura en Cloud SQL son correctas? (elige todas las correctas)",
+          "opciones": [
+            "Ayudan a escalar las cargas de lectura",
+            "Pueden promoverse a instancias independientes",
+            "Proporcionan conmutación por error automática ante fallos zonales",
+            "Pueden ubicarse en otra región para acercar datos a usuarios",
+            "Garantizan un RPO de cero en todos los casos"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "Las réplicas escalan lecturas, pueden promoverse y ubicarse en otras regiones. No ofrecen failover automático (eso es HA) ni garantizan RPO cero por la replicación asíncrona."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué métrica define cuántos datos se pueden perder de forma aceptable tras un incidente?",
+          "opciones": [
+            "RTO (Recovery Time Objective)",
+            "RPO (Recovery Point Objective)",
+            "QPS (Queries Per Second)",
+            "IOPS (Input/Output Per Second)"
+          ],
+          "correctas": [1],
+          "explicacion": "El RPO mide la cantidad tolerable de pérdida de datos en el tiempo; el RTO mide el tiempo de recuperación."
+        }
+      ]
+    },
+    {
+      "slug": "migracion-de-bases-de-datos",
+      "nombre": "Migración de bases de datos",
+      "dominio": "Migrate data solutions",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Migrar con mínima interrupción",
+        "markdown": "## Estrategias de migración\n\nMover una base a Google Cloud puede hacerse de varias formas:\n\n- **Database Migration Service (DMS)**: migración gestionada y de mínima inactividad hacia Cloud SQL y AlloyDB mediante **replicación continua** del origen.\n- **Dump y restore**: exportar e importar; sencillo pero implica ventana de inactividad mayor.\n- **Replicación lógica externa**: para escenarios híbridos o cortes graduales.\n\n## Fases típicas\n\n1. **Evaluación**: tamaño, dependencias y compatibilidad de versiones.\n2. **Carga inicial (full dump)** más **replicación incremental (CDC)**.\n3. **Corte (cutover)**: validar consistencia y redirigir la aplicación.\n\nDMS realiza una carga continua que mantiene el destino sincronizado hasta el corte, reduciendo el downtime a minutos.\n\n> **En el examen:** ante el requisito de migrar a Cloud SQL con mínima inactividad y replicación continua, la respuesta esperada es Database Migration Service, no un export/import manual."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Necesitas migrar una base PostgreSQL on-premises a Cloud SQL con la menor inactividad posible y replicación continua. ¿Qué herramienta usas?",
+          "opciones": [
+            "Exportar a un dump SQL y restaurarlo manualmente",
+            "Database Migration Service (DMS)",
+            "Copiar los archivos de datos a un bucket de Cloud Storage",
+            "Cloud Scheduler con un job de respaldo"
+          ],
+          "correctas": [1],
+          "explicacion": "DMS ofrece migración gestionada con carga inicial y replicación continua (CDC), minimizando la ventana de inactividad hasta el corte."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué actividades forman parte de una migración bien planificada a Cloud SQL? (elige todas las correctas)",
+          "opciones": [
+            "Evaluar compatibilidad de versiones del motor",
+            "Realizar una carga inicial seguida de replicación incremental",
+            "Validar la consistencia de datos antes del corte",
+            "Eliminar la base de origen antes de iniciar la replicación",
+            "Planificar el cutover de la aplicación al destino"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Evaluación, carga inicial con CDC, validación y cutover son pasos correctos. Eliminar el origen antes de replicar provocaría pérdida de datos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué desventaja principal tiene una migración por dump y restore frente a la replicación continua?",
+          "opciones": [
+            "Requiere una ventana de inactividad mayor",
+            "No permite migrar PostgreSQL",
+            "Solo funciona dentro de la misma zona",
+            "Cifra los datos automáticamente sin opción de desactivarlo"
+          ],
+          "correctas": [0],
+          "explicacion": "El dump y restore detiene o congela el origen durante la operación, implicando una ventana de inactividad más larga que una replicación continua."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-y-control-de-acceso",
+      "nombre": "Seguridad y control de acceso",
+      "dominio": "Deploy scalable and highly available databases in Google Cloud",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Proteger datos y accesos",
+        "markdown": "## Capas de seguridad\n\nLa seguridad de bases de datos en Google Cloud se construye en varios niveles:\n\n- **IAM**: control de quién puede administrar o conectarse a la instancia mediante roles y el principio de **mínimo privilegio**.\n- **Cifrado en reposo**: activado por defecto; puede usarse **CMEK** (claves gestionadas por el cliente) vía Cloud KMS.\n- **Cifrado en tránsito**: conexiones SSL/TLS, reforzadas con el **Cloud SQL Auth Proxy**.\n- **Conectividad privada**: usar **IP privada** y VPC en lugar de exponer IP pública.\n\n## Buenas prácticas\n\n- Restringir redes autorizadas y evitar `0.0.0.0/0`.\n- Separar cuentas de servicio por aplicación.\n- Auditar accesos con Cloud Audit Logs.\n\n> **En el examen:** cuando pidan conectar una app de forma segura sin exponer la base a Internet, la respuesta combina IP privada y, frecuentemente, el Cloud SQL Auth Proxy con una cuenta de servicio de mínimo privilegio."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Quieres que una aplicación se conecte a Cloud SQL sin exponer la instancia con una IP pública. ¿Qué enfoque es el adecuado?",
+          "opciones": [
+            "Habilitar IP pública y permitir 0.0.0.0/0",
+            "Configurar IP privada dentro de la VPC",
+            "Deshabilitar el cifrado en tránsito",
+            "Asignar el rol de Owner a la cuenta de servicio"
+          ],
+          "correctas": [1],
+          "explicacion": "La IP privada mantiene el tráfico dentro de la VPC sin exponer la base a Internet. Abrir 0.0.0.0/0 o dar rol Owner amplía la superficie de ataque innecesariamente."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué prácticas refuerzan la seguridad de una instancia de Cloud SQL? (elige todas las correctas)",
+          "opciones": [
+            "Aplicar el principio de mínimo privilegio en IAM",
+            "Usar CMEK con Cloud KMS para el cifrado en reposo",
+            "Conectar mediante el Cloud SQL Auth Proxy con SSL",
+            "Permitir redes autorizadas amplias como 0.0.0.0/0",
+            "Auditar el acceso con Cloud Audit Logs"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Mínimo privilegio, CMEK, Auth Proxy con SSL y auditoría son buenas prácticas. Permitir 0.0.0.0/0 expone la base a toda Internet y debe evitarse."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio permite usar claves de cifrado gestionadas por el cliente (CMEK) para los datos en reposo?",
+          "opciones": [
+            "Cloud KMS",
+            "Cloud DNS",
+            "Cloud CDN",
+            "Cloud Scheduler"
+          ],
+          "correctas": [0],
+          "explicacion": "Cloud KMS gestiona las claves de cifrado, incluyendo CMEK, que se integran con Cloud SQL y otros servicios de datos."
+        }
+      ]
+    },
+    {
+      "slug": "respaldos-y-recuperacion",
+      "nombre": "Respaldos y recuperación ante desastres",
+      "dominio": "Manage and operate cloud databases",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Copias de seguridad y restauración",
+        "markdown": "## Tipos de respaldo\n\nUna estrategia de continuidad combina varios mecanismos:\n\n- **Respaldos automáticos**: programados diariamente; base para la restauración.\n- **Recuperación a un punto en el tiempo (PITR)**: usa registros de transacciones (WAL/binlog) para restaurar a un instante exacto, útil ante un borrado accidental.\n- **Respaldos bajo demanda**: antes de cambios de riesgo o migraciones.\n- **Exportaciones a Cloud Storage**: copias portables independientes del ciclo de vida de la instancia.\n\n## Recuperación ante desastres\n\n- Probar restauraciones periódicamente; un respaldo sin prueba no es confiable.\n- Para DR regional, combinar respaldos con réplicas en otra región.\n\nPITR requiere tener habilitados los **registros de transacciones**, por lo que conviene activarlo antes de necesitarlo.\n\n> **En el examen:** si un usuario borró datos por error hace dos horas y se necesita recuperar justo antes del error, la respuesta es PITR, siempre que estuvieran habilitados los logs de transacciones."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un usuario eliminó registros por error hace 90 minutos. Quieres restaurar la base al estado justo antes del borrado. ¿Qué mecanismo usas?",
+          "opciones": [
+            "Restaurar el último respaldo automático diario",
+            "Recuperación a un punto en el tiempo (PITR)",
+            "Promover una réplica de lectura",
+            "Exportar la base a Cloud Storage"
+          ],
+          "correctas": [1],
+          "explicacion": "PITR permite restaurar a un instante específico usando los registros de transacciones, evitando perder los cambios posteriores al último respaldo diario."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué afirmaciones sobre respaldos en Cloud SQL son correctas? (elige todas las correctas)",
+          "opciones": [
+            "Los respaldos automáticos se programan de forma recurrente",
+            "PITR requiere registros de transacciones habilitados",
+            "Conviene probar las restauraciones periódicamente",
+            "Un respaldo bajo demanda no puede tomarse antes de una migración",
+            "Las exportaciones a Cloud Storage son portables e independientes de la instancia"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Los respaldos automáticos, PITR con logs, las pruebas de restauración y las exportaciones portables son correctos. Sí se puede tomar un respaldo bajo demanda antes de una migración."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Por qué se recomienda probar periódicamente las restauraciones de respaldos?",
+          "opciones": [
+            "Para confirmar que el respaldo es recuperable y válido",
+            "Para reducir el costo de almacenamiento del respaldo",
+            "Para aumentar automáticamente el RPO",
+            "Para deshabilitar el cifrado en reposo"
+          ],
+          "correctas": [0],
+          "explicacion": "Un respaldo solo es confiable si se ha verificado que puede restaurarse; probar las restauraciones evita sorpresas durante un incidente real."
+        }
+      ]
+    },
+    {
+      "slug": "rendimiento-y-monitoreo",
+      "nombre": "Rendimiento, monitoreo y optimización de costos",
+      "dominio": "Monitor and troubleshoot database solutions",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Observar, ajustar y optimizar",
+        "markdown": "## Observabilidad\n\nMantener una base sana exige medir antes de actuar:\n\n- **Cloud Monitoring**: métricas de CPU, memoria, conexiones, IOPS y latencia.\n- **Query Insights**: identifica consultas lentas y planes de ejecución problemáticos en Cloud SQL y AlloyDB.\n- **Cloud Logging / Audit Logs**: rastro de eventos y errores.\n\n## Optimización\n\n- Crear o ajustar **índices** según los patrones de consulta.\n- Dimensionar la instancia (CPU, memoria) frente al **escalado de almacenamiento automático**.\n- Usar **réplicas de lectura** o caché para descargar lecturas intensivas.\n\n## Costos\n\n- Apagar entornos no productivos y revisar instancias sobredimensionadas.\n- Elegir el tipo de almacenamiento adecuado.\n\n> **En el examen:** ante consultas lentas, primero diagnostica con Query Insights y métricas antes de escalar hardware; muchas veces la causa es un índice faltante, no falta de CPU."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Las consultas de una instancia de Cloud SQL están lentas. ¿Cuál es el primer paso recomendado para diagnosticar la causa?",
+          "opciones": [
+            "Duplicar inmediatamente la CPU de la instancia",
+            "Usar Query Insights para identificar consultas lentas y sus planes",
+            "Migrar la base a Bigtable",
+            "Eliminar todos los índices existentes"
+          ],
+          "correctas": [1],
+          "explicacion": "Query Insights ayuda a localizar consultas problemáticas y planes ineficientes; muchas veces la solución es un índice y no escalar hardware a ciegas."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué acciones ayudan a optimizar el rendimiento o el costo de una base gestionada? (elige todas las correctas)",
+          "opciones": [
+            "Crear índices alineados con los patrones de consulta",
+            "Descargar lecturas con réplicas de lectura o caché",
+            "Revisar instancias sobredimensionadas",
+            "Apagar entornos no productivos cuando no se usan",
+            "Permitir IP pública abierta para mejorar la latencia"
+          ],
+          "correctas": [0, 1, 2, 3],
+          "explicacion": "Indexar, descargar lecturas, ajustar el tamaño y apagar entornos ociosos optimizan rendimiento y costo. Abrir la IP pública es un riesgo de seguridad, no una mejora de latencia."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio recopila métricas como CPU, memoria y latencia de una instancia de base de datos en Google Cloud?",
+          "opciones": [
+            "Cloud Monitoring",
+            "Cloud DNS",
+            "Cloud Build",
+            "Cloud Tasks"
+          ],
+          "correctas": [0],
+          "explicacion": "Cloud Monitoring recopila y visualiza métricas operativas como CPU, memoria, conexiones y latencia para diagnosticar el estado de la base."
+        }
+      ]
+    }
+  ]
+}

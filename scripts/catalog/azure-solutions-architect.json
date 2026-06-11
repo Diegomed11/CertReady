@@ -1,0 +1,192 @@
+{
+  "slug": "azure-solutions-architect",
+  "nombre": "Microsoft Certified: Azure Solutions Architect Expert (AZ-305)",
+  "proveedor": "Microsoft",
+  "nivel": "professional",
+  "area": "Nube",
+  "descripcion": "Certificacion experta que valida la capacidad de disenar soluciones completas en Azure cubriendo identidad, gobernanza, datos, continuidad del negocio, infraestructura y redes. Dirigida a arquitectos que traducen requisitos de negocio en arquitecturas seguras, resilientes y optimizadas en costo.",
+  "skills": ["identidad", "gobernanza", "rbac", "almacenamiento", "bases de datos", "continuidad del negocio", "recuperacion ante desastres", "computo", "contenedores", "redes", "balanceo de carga", "monitoreo"],
+  "roles": ["arquitecto de soluciones cloud", "arquitecto de infraestructura", "lider tecnico de plataforma", "ingeniero senior de nube", "consultor de migracion a Azure"],
+  "temas": [
+    {
+      "slug": "identidad-gobernanza-monitoreo",
+      "nombre": "Diseno de identidad, gobernanza y monitoreo",
+      "dominio": "Disenar soluciones de identidad, gobernanza y monitoreo",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Identidad, gobernanza y observabilidad",
+        "markdown": "## Identidad y acceso\nDisena el control de acceso con el principio de **minimo privilegio**. El **RBAC** asigna permisos por rol al alcance correcto (grupo de administracion, suscripcion, grupo de recursos o recurso). Para acceso temporal y elevado, usa **gestion de identidades privilegiadas (PIM)** con activacion just-in-time y aprobaciones.\n\n## Identidades de carga de trabajo\n- **Identidades administradas**: permiten que un recurso acceda a otros sin credenciales en el codigo.\n- **Acceso condicional**: aplica reglas por riesgo, ubicacion o dispositivo.\n\n## Gobernanza a escala\n- **Grupos de administracion**: aplican politicas y permisos a multiples suscripciones.\n- **Politicas (Policy)**: imponen reglas como regiones o etiquetas obligatorias.\n- **Blueprints / plantillas**: estandarizan despliegues conformes.\n\n## Monitoreo\nCentraliza metricas y registros en un **area de trabajo de Log Analytics**; define **alertas** y paneles para detectar problemas antes de que impacten al usuario.\n\n> **En el examen:** asocia RBAC con minimo privilegio, PIM con acceso just-in-time, identidades administradas para eliminar secretos del codigo y Policy para imponer reglas a escala de grupo de administracion."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una aplicacion alojada en una maquina virtual debe leer secretos desde un almacen de claves sin incrustar credenciales en el codigo. Que enfoque recomienda el arquitecto?",
+          "opciones": ["Guardar la contrasena en una variable de entorno", "Usar una identidad administrada asignada a la maquina virtual", "Compartir la clave de la cuenta de administrador", "Codificar el secreto en base64 dentro del repositorio"],
+          "correctas": [1],
+          "explicacion": "Una identidad administrada permite que la maquina virtual se autentique ante otros recursos de Azure sin almacenar credenciales, eliminando secretos del codigo y de la configuracion."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "El equipo de seguridad pide reducir el riesgo de cuentas con permisos administrativos permanentes. Que controles de diseno deberia incluir el arquitecto? Selecciona todas las que apliquen.",
+          "opciones": ["Activacion just-in-time de roles privilegiados (PIM)", "Aprobacion requerida para activar roles criticos", "Asignacion permanente de rol de propietario a todos los desarrolladores", "Acceso condicional basado en riesgo", "Deshabilitar por completo el registro de auditoria"],
+          "correctas": [0, 1, 3],
+          "explicacion": "PIM con activacion just-in-time, aprobaciones para roles criticos y acceso condicional por riesgo reducen la exposicion. Asignar propietario permanente a todos y deshabilitar la auditoria aumentan el riesgo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una organizacion necesita imponer que todos los recursos se desplieguen unicamente en regiones aprobadas en docenas de suscripciones. Que diseno de gobernanza es el mas adecuado?",
+          "opciones": ["Aplicar una politica de Azure en el grupo de administracion superior", "Pedir a cada equipo que revise manualmente la region", "Crear un grupo de recursos por region", "Aplicar una etiqueta informativa en cada recurso"],
+          "correctas": [0],
+          "explicacion": "Asignar una politica de Azure en el grupo de administracion superior la hereda hacia todas las suscripciones contenidas, imponiendo la restriccion de region de forma centralizada."
+        }
+      ]
+    },
+    {
+      "slug": "almacenamiento-datos",
+      "nombre": "Diseno de soluciones de almacenamiento y datos",
+      "dominio": "Disenar soluciones de almacenamiento de datos",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Almacenamiento y datos en Azure",
+        "markdown": "## Elegir el almacen correcto\n- **Datos relacionales** con esquema fijo y transacciones: base de datos SQL gestionada.\n- **Datos semiestructurados** a gran escala y baja latencia global: almacen NoSQL distribuido.\n- **Datos no estructurados** (imagenes, copias, logs): **almacenamiento de blobs** con niveles hot, cool y archive.\n\n## Particion y rendimiento\nDisena claves de particion que distribuyan la carga de forma uniforme para evitar puntos calientes y limites de rendimiento.\n\n## Redundancia y durabilidad\n- **LRS**: replica dentro de un centro de datos.\n- **ZRS**: replica entre zonas de disponibilidad de una region.\n- **GRS / GZRS**: replica a una region secundaria para resistir un desastre regional.\n\n## Seguridad de los datos\n- **Cifrado en reposo** por defecto y **en transito** con TLS.\n- **Puntos de conexion privados** para mantener el trafico fuera de internet publico.\n\n> **En el examen:** elige el almacen por la forma del dato, alinea la redundancia con el objetivo de durabilidad (GRS para desastre regional) y prefiere puntos de conexion privados para aislar el acceso."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Una solucion debe almacenar grandes volumenes de archivos no estructurados como copias de seguridad e imagenes al menor costo posible. Que servicio recomienda el arquitecto?",
+          "opciones": ["Base de datos SQL gestionada", "Almacenamiento de blobs", "Cache en memoria", "Tabla relacional particionada"],
+          "correctas": [1],
+          "explicacion": "El almacenamiento de blobs esta optimizado para datos no estructurados y ofrece niveles de acceso (hot, cool, archive) que permiten reducir costos segun la frecuencia de uso."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un requisito de continuidad exige que los datos sobrevivan a la perdida completa de una region. Que opcion de redundancia satisface ese objetivo?",
+          "opciones": ["Almacenamiento con redundancia local (LRS)", "Almacenamiento con redundancia geografica (GRS)", "Sin redundancia", "Cache de solo lectura"],
+          "correctas": [1],
+          "explicacion": "GRS replica los datos en una region secundaria geograficamente distante, lo que permite sobrevivir a la perdida completa de la region primaria; LRS solo protege contra fallos dentro de un centro de datos."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Al disenar la seguridad del almacenamiento de datos, que medidas debe contemplar el arquitecto? Selecciona todas las que apliquen.",
+          "opciones": ["Cifrado en reposo de los datos", "Cifrado en transito mediante TLS", "Puntos de conexion privados para evitar internet publico", "Exponer la cuenta de almacenamiento con acceso anonimo de escritura", "Compartir la clave de cuenta en texto plano por correo"],
+          "correctas": [0, 1, 2],
+          "explicacion": "El cifrado en reposo y en transito junto con puntos de conexion privados protegen los datos. Exponer escritura anonima y compartir claves en texto plano son antipatrones que debilitan la seguridad."
+        }
+      ]
+    },
+    {
+      "slug": "continuidad-negocio",
+      "nombre": "Continuidad del negocio y recuperacion ante desastres",
+      "dominio": "Disenar soluciones de continuidad del negocio",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Alta disponibilidad y recuperacion ante desastres",
+        "markdown": "## Metricas clave\n- **RPO (Recovery Point Objective)**: cuanta perdida de datos es tolerable, medida en tiempo.\n- **RTO (Recovery Time Objective)**: cuanto puede tardar el servicio en restaurarse.\nEstos objetivos guian cada decision de diseno de resiliencia.\n\n## Alta disponibilidad\n- **Zonas de disponibilidad**: distribuye instancias entre centros de datos fisicamente separados de una misma region.\n- **Conjuntos de disponibilidad**: protegen contra fallos de hardware y mantenimiento dentro de un centro de datos.\n\n## Recuperacion ante desastres\n- **Replicacion entre regiones** para cargas criticas.\n- **Copias de seguridad** con retencion adecuada y restauracion probada.\n- **Replica de maquinas virtuales** hacia una region secundaria para conmutacion por error.\n\n## Diseno por nivel de criticidad\nNo todo necesita la misma resiliencia: reserva la replicacion multi-region para los servicios cuyo RTO/RPO lo justifique y controla el costo en el resto.\n\n> **En el examen:** traduce los requisitos de negocio en RPO y RTO, usa zonas de disponibilidad para alta disponibilidad intra-region y replicacion entre regiones para desastres regionales."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "El negocio indica que tras una interrupcion no puede perderse mas de 15 minutos de datos. Que metrica describe este requisito?",
+          "opciones": ["RTO (Recovery Time Objective)", "RPO (Recovery Point Objective)", "SLA de disponibilidad", "Latencia de red"],
+          "correctas": [1],
+          "explicacion": "El RPO define la cantidad maxima tolerable de perdida de datos expresada en tiempo; 15 minutos es un objetivo de punto de recuperacion, no de tiempo de restauracion."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una aplicacion critica debe seguir disponible aunque falle un centro de datos completo dentro de la misma region. Que diseno recomienda el arquitecto?",
+          "opciones": ["Una sola instancia en un conjunto de disponibilidad", "Distribuir instancias entre zonas de disponibilidad", "Una unica maquina virtual sin redundancia", "Copias de seguridad nocturnas como unica medida"],
+          "correctas": [1],
+          "explicacion": "Distribuir las instancias entre zonas de disponibilidad protege frente a la perdida de un centro de datos completo dentro de la region, ya que cada zona es una ubicacion fisica independiente."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Al disenar un plan de recuperacion ante desastres regional, que elementos debe considerar el arquitecto? Selecciona todas las que apliquen.",
+          "opciones": ["Definir objetivos de RPO y RTO por carga de trabajo", "Replicar datos y servicios criticos a una region secundaria", "Probar periodicamente la restauracion y la conmutacion por error", "Asumir que las copias nunca fallan sin verificarlas", "Concentrar todo en una unica region para simplificar"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Definir RPO/RTO, replicar a una region secundaria y probar la conmutacion son practicas validas. Confiar en copias sin probarlas y concentrar todo en una sola region contradicen la recuperacion ante desastres."
+        }
+      ]
+    },
+    {
+      "slug": "infraestructura-computo",
+      "nombre": "Diseno de infraestructura y computo",
+      "dominio": "Disenar soluciones de infraestructura",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Computo y plataformas de aplicacion",
+        "markdown": "## Elegir la plataforma de computo\n- **Maquinas virtuales (IaaS)**: control total del sistema operativo; ideal para migraciones lift-and-shift.\n- **Plataforma de aplicaciones gestionada (PaaS)**: despliegas codigo sin administrar el sistema operativo.\n- **Contenedores y Kubernetes gestionado**: para microservicios portables y orquestados.\n- **Funciones sin servidor**: para cargas event-driven que escalan a cero.\n\n## Escalado y elasticidad\n- **Escalado horizontal automatico** segun metricas (CPU, cola de mensajes) para absorber picos.\n- **Escalado vertical** cuando una sola instancia necesita mas potencia.\n\n## Mensajeria y desacople\nUsa **colas** y **buses de eventos** para desacoplar componentes, suavizar picos y mejorar la resiliencia frente a fallos parciales.\n\n## Optimizacion de costos\nDimensiona correctamente, usa **instancias reservadas** para cargas estables y apaga entornos no productivos fuera de horario.\n\n> **En el examen:** elige PaaS o serverless para minimizar la administracion, contenedores para microservicios portables, y desacopla con colas para mejorar resiliencia y absorber picos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un equipo quiere desplegar una aplicacion web sin administrar el sistema operativo ni los parches del servidor, conservando control sobre su codigo. Que plataforma recomienda el arquitecto?",
+          "opciones": ["Maquinas virtuales (IaaS)", "Plataforma de aplicaciones gestionada (PaaS)", "Servidor fisico on-premises", "Almacenamiento de blobs"],
+          "correctas": [1],
+          "explicacion": "Una plataforma de aplicaciones gestionada (PaaS) abstrae el sistema operativo y el mantenimiento del servidor, permitiendo al equipo concentrarse solo en su codigo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una solucion procesa picos impredecibles de mensajes y se desea que los componentes no se saturen entre si. Que patron de diseno recomienda el arquitecto?",
+          "opciones": ["Llamadas sincronas directas entre componentes", "Desacoplar mediante una cola de mensajes", "Aumentar manualmente las instancias cada manana", "Eliminar los componentes intermedios"],
+          "correctas": [1],
+          "explicacion": "Introducir una cola de mensajes desacopla productores y consumidores, suaviza los picos de carga y mejora la resiliencia, ya que los mensajes se procesan al ritmo que el consumidor puede sostener."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "El arquitecto debe optimizar el costo de infraestructura sin sacrificar requisitos. Que tecnicas son apropiadas? Selecciona todas las que apliquen.",
+          "opciones": ["Dimensionar correctamente los recursos segun su uso real", "Usar instancias reservadas para cargas estables y predecibles", "Apagar entornos no productivos fuera de horario", "Sobredimensionar todo por si acaso de forma permanente", "Replicar cada servicio a tres regiones aunque no se requiera"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Dimensionar segun el uso, reservar instancias para cargas estables y apagar entornos ociosos reducen costo sin perder capacidad necesaria. Sobredimensionar siempre y replicar sin requisito desperdician gasto."
+        }
+      ]
+    },
+    {
+      "slug": "redes-conectividad",
+      "nombre": "Diseno de redes y conectividad",
+      "dominio": "Disenar soluciones de infraestructura de red",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Redes, conectividad y distribucion de carga",
+        "markdown": "## Segmentacion de la red\n- **Red virtual (VNet)** y **subredes** para aislar capas (web, aplicacion, datos).\n- **Grupos de seguridad de red** para filtrar trafico por reglas de origen, destino y puerto.\n\n## Conectividad hibrida\n- **VPN sitio a sitio**: tunel cifrado sobre internet hacia la red local.\n- **Conexion privada dedicada**: enlace privado de mayor ancho de banda y latencia estable que evita internet publico.\n\n## Distribucion de trafico\n- **Balanceador de carga (capa 4)**: reparte trafico TCP/UDP entre instancias dentro de una region.\n- **Puerta de enlace de aplicaciones (capa 7)**: enrutamiento por URL y firewall de aplicaciones web.\n- **Enrutamiento global**: dirige usuarios a la region mas cercana o sana para baja latencia y conmutacion por error.\n\n## Proteccion del borde\nCombina **firewall de aplicaciones web (WAF)** y **proteccion contra DDoS** para resguardar las aplicaciones expuestas.\n\n> **En el examen:** usa balanceo de capa 4 para distribuir TCP intra-region, capa 7 para enrutar por URL, enrutamiento global para multi-region y conexion privada dedicada cuando se requiera ancho de banda y latencia estables."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una empresa necesita conectar su centro de datos local con Azure mediante un enlace privado dedicado, con alto ancho de banda y latencia estable, evitando internet publico. Que opcion recomienda el arquitecto?",
+          "opciones": ["VPN sitio a sitio sobre internet", "Una conexion privada dedicada", "Acceso solo por VPN de punto a sitio", "Exponer los servicios con IP publica"],
+          "correctas": [1],
+          "explicacion": "Una conexion privada dedicada ofrece un enlace que no pasa por internet publico, con mayor ancho de banda y latencia mas estable y predecible que una VPN sitio a sitio."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una aplicacion web debe enrutar las solicitudes a distintos grupos de servidores segun la ruta de la URL y filtrar ataques web comunes. Que servicio de red es el mas adecuado?",
+          "opciones": ["Balanceador de carga de capa 4", "Puerta de enlace de aplicaciones de capa 7 con WAF", "Grupo de seguridad de red", "Tabla de rutas estatica"],
+          "correctas": [1],
+          "explicacion": "Una puerta de enlace de aplicaciones de capa 7 enruta por URL y, con su firewall de aplicaciones web (WAF), filtra ataques comunes; el balanceador de capa 4 solo distribuye trafico TCP/UDP sin inspeccionar la ruta."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Al disenar la proteccion del borde de una aplicacion expuesta a internet, que controles debe incluir el arquitecto? Selecciona todas las que apliquen.",
+          "opciones": ["Firewall de aplicaciones web (WAF)", "Proteccion contra ataques de denegacion distribuida (DDoS)", "Segmentacion con grupos de seguridad de red", "Permitir todo el trafico entrante sin filtrar", "Publicar la base de datos directamente con IP publica"],
+          "correctas": [0, 1, 2],
+          "explicacion": "WAF, proteccion DDoS y segmentacion con grupos de seguridad fortalecen el borde. Permitir todo el trafico y exponer la base de datos con IP publica son practicas inseguras que amplian la superficie de ataque."
+        }
+      ]
+    }
+  ]
+}

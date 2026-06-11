@@ -1,0 +1,343 @@
+{
+  "slug": "gcp-professional-cloud-network-engineer",
+  "nombre": "Google Cloud Professional Cloud Network Engineer",
+  "proveedor": "Google",
+  "nivel": "professional",
+  "area": "Redes",
+  "descripcion": "Certificación profesional enfocada en el diseño, la implementación y la operación de arquitecturas de red en Google Cloud. Valida la capacidad de construir conectividad híbrida, segmentación y entrega de servicios de forma segura y escalable.",
+  "skills": [
+    "vpc",
+    "subredes",
+    "peering",
+    "cloud interconnect",
+    "cloud vpn",
+    "balanceo de carga",
+    "cloud dns",
+    "firewall",
+    "cloud nat",
+    "cloud armor",
+    "bgp",
+    "shared vpc"
+  ],
+  "roles": [
+    "ingeniero de redes en la nube",
+    "arquitecto de conectividad híbrida",
+    "ingeniero de infraestructura",
+    "especialista en seguridad de red",
+    "ingeniero devops de plataforma"
+  ],
+  "temas": [
+    {
+      "slug": "diseno-implementacion-vpc",
+      "nombre": "Diseño e implementación de VPC",
+      "dominio": "Designing, planning, and prototyping a Google Cloud network",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Fundamentos de VPC y direccionamiento",
+        "markdown": "## Naturaleza de la VPC\n\nUna **VPC en Google Cloud es global**: una sola red abarca todas las regiones sin necesidad de túneles internos. Las **subredes son regionales** y agrupan rangos IP que se reparten entre las zonas de esa región.\n\n## Modos de creación\n\n- **Automático**: genera una subred por región con rangos predefinidos. Cómodo para pruebas, poco recomendable en producción.\n- **Personalizado (custom)**: tú defines cada subred y su rango. Es la opción esperada en diseños serios.\n\n## Direccionamiento\n\n- Planifica rangos **RFC 1918** que no se solapen con on-premises ni con futuras subredes.\n- Cada subred puede tener **rangos secundarios** (alias IP), usados por GKE para pods y servicios.\n- El **enrutamiento intra-VPC es automático**: cualquier instancia alcanza a otra sin rutas manuales, sujeto a firewall.\n\n## Conectar varias VPC\n\n- **VPC Peering** une dos redes sin tránsito transitivo.\n- **Shared VPC** centraliza la red en un proyecto host.\n\n> **En el examen:** recuerda que la VPC es global y la subred regional; evita rangos solapados y descarta el modo automático para producción."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál es el alcance geográfico de una red VPC y de sus subredes en Google Cloud?",
+          "opciones": [
+            "La VPC es global y las subredes son regionales",
+            "La VPC es regional y las subredes son zonales",
+            "Tanto la VPC como las subredes son globales",
+            "La VPC es zonal y las subredes son regionales"
+          ],
+          "correctas": [0],
+          "explicacion": "En Google Cloud la red VPC es un recurso global que abarca todas las regiones, mientras que cada subred pertenece a una región concreta y reparte su rango entre las zonas de esa región."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Vas a diseñar una VPC para producción. ¿Qué decisiones de direccionamiento y diseño son recomendables?",
+          "opciones": [
+            "Usar modo de subred personalizado para controlar cada rango",
+            "Definir rangos RFC 1918 que no se solapen con on-premises",
+            "Activar el modo automático para evitar planificar rangos",
+            "Reservar rangos secundarios para pods y servicios de GKE",
+            "Crear túneles internos manuales entre regiones de la misma VPC"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "El modo personalizado, los rangos no solapados y los rangos secundarios son buenas prácticas. El modo automático no se recomienda en producción y los túneles internos entre regiones son innecesarios porque la VPC global ya enruta de forma nativa."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una instancia en la subred A debe comunicarse con otra en la subred B dentro de la misma VPC. ¿Qué se necesita para el enrutamiento?",
+          "opciones": [
+            "Nada adicional: el enrutamiento intra-VPC es automático, sujeto al firewall",
+            "Crear una ruta estática personalizada entre ambas subredes",
+            "Establecer un peering entre las dos subredes",
+            "Configurar un túnel Cloud VPN entre las subredes"
+          ],
+          "correctas": [0],
+          "explicacion": "Dentro de una misma VPC el enrutamiento entre subredes es automático mediante rutas de subred. Solo hay que asegurarse de que las reglas de firewall permitan el tráfico."
+        }
+      ]
+    },
+    {
+      "slug": "conectividad-hibrida",
+      "nombre": "Conectividad híbrida e interconexión",
+      "dominio": "Implementing a hybrid connectivity",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Interconnect, VPN y Cloud Router",
+        "markdown": "## Opciones de conexión con on-premises\n\n- **Cloud VPN (HA VPN)**: túneles IPsec sobre Internet. Rápido de montar, ancho de banda limitado por túnel. **HA VPN ofrece SLA del 99.99 %** con dos interfaces.\n- **Dedicated Interconnect**: conexión física dedicada (10/100 Gbps) hacia un punto de presencia de Google. Para grandes volúmenes.\n- **Partner Interconnect**: a través de un proveedor de servicios, con anchos de banda flexibles cuando no hay presencia física en el PoP.\n\n## Cloud Router y BGP\n\n- **Cloud Router** intercambia rutas dinámicamente por **BGP**, evitando rutas estáticas frágiles.\n- Anuncia automáticamente subredes nuevas al peer on-premises.\n- Permite **modos de anuncio** por defecto o personalizados para controlar qué prefijos se publican.\n\n## Criterio de elección\n\n- Bajo volumen o respaldo → HA VPN.\n- Alto volumen y baja latencia consistente → Interconnect.\n\n> **En el examen:** asocia HA VPN con SLA 99.99 % y dos interfaces; Cloud Router con BGP dinámico; e Interconnect cuando el requisito sea ancho de banda dedicado."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una empresa necesita 20 Gbps de conectividad dedicada y de baja latencia hacia Google Cloud, con tráfico que no debe pasar por Internet pública. ¿Qué opción es la más adecuada?",
+          "opciones": [
+            "Dedicated Interconnect",
+            "HA VPN sobre Internet",
+            "Cloud NAT",
+            "VPC Peering"
+          ],
+          "correctas": [0],
+          "explicacion": "Dedicated Interconnect proporciona conexión física dedicada de alto ancho de banda (10/100 Gbps) sin pasar por Internet pública, ideal para grandes volúmenes y baja latencia."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué componente permite el intercambio dinámico de rutas mediante BGP entre Google Cloud y una red on-premises?",
+          "opciones": [
+            "Cloud Router",
+            "Cloud NAT",
+            "Cloud Armor",
+            "Cloud DNS"
+          ],
+          "correctas": [0],
+          "explicacion": "Cloud Router gestiona el intercambio dinámico de rutas por BGP, anunciando subredes y aprendiendo prefijos del peer remoto, evitando rutas estáticas."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Estás eligiendo entre HA VPN e Interconnect. ¿Qué afirmaciones son correctas?",
+          "opciones": [
+            "HA VPN puede ofrecer un SLA del 99.99 % con dos interfaces configuradas",
+            "Partner Interconnect es útil cuando no tienes presencia física en el PoP de Google",
+            "Cloud VPN cifra el tráfico mediante IPsec sobre Internet",
+            "Dedicated Interconnect siempre cifra el tráfico de forma nativa con IPsec",
+            "HA VPN ofrece mayor ancho de banda por túnel que Dedicated Interconnect"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "HA VPN bien configurada alcanza SLA 99.99 % y cifra con IPsec; Partner Interconnect cubre la falta de presencia en el PoP. En cambio, Dedicated Interconnect no cifra de forma nativa y ofrece mucho más ancho de banda que un túnel VPN."
+        }
+      ]
+    },
+    {
+      "slug": "balanceo-de-carga",
+      "nombre": "Balanceo de carga y entrega de servicios",
+      "dominio": "Implementing a Google Cloud Virtual Private Cloud (VPC)",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Balanceadores y su elección",
+        "markdown": "## Familias de balanceadores\n\nGoogle Cloud ofrece balanceadores según **alcance**, **capa** y **dirección del tráfico**:\n\n- **Application Load Balancer (capa 7)**: enruta por HTTP(S), host y ruta. Global externo para usuarios de Internet; regional para casos acotados.\n- **Network Load Balancer (capa 4)**: pasa TCP/UDP. El **proxy** termina conexiones; el **passthrough** preserva la IP de origen.\n- **Internal Load Balancer**: tráfico privado entre servicios dentro de la VPC.\n\n## Decisiones clave\n\n- **Capa 7** cuando necesitas enrutamiento por URL, TLS gestionado o **Cloud Armor**.\n- **Passthrough L4** cuando importa conservar la **IP de cliente** o usar protocolos no HTTP.\n- **Global externo** para audiencia mundial con una **IP anycast** única.\n\n## Salud y distribución\n\n- Los **health checks** determinan qué backends reciben tráfico.\n- Los **grupos de instancias** o **NEG** definen los backends.\n\n> **En el examen:** mapea el requisito (capa, interno/externo, global/regional, preservar IP origen) al balanceador correcto antes de mirar las opciones."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Necesitas enrutar tráfico HTTPS de usuarios de todo el mundo según la ruta de la URL y aplicar reglas de Cloud Armor. ¿Qué balanceador eliges?",
+          "opciones": [
+            "Application Load Balancer externo global (capa 7)",
+            "Network Load Balancer passthrough (capa 4)",
+            "Internal Load Balancer regional",
+            "Network Load Balancer proxy regional"
+          ],
+          "correctas": [0],
+          "explicacion": "El enrutamiento por URL, la terminación TLS y la integración con Cloud Armor son propios de un balanceador de aplicación (capa 7). La variante externa global cubre una audiencia mundial con IP anycast."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un servicio interno requiere conservar la dirección IP de origen del cliente y maneja tráfico TCP no HTTP. ¿Qué opción cumple mejor?",
+          "opciones": [
+            "Network Load Balancer passthrough",
+            "Application Load Balancer global",
+            "Cloud CDN",
+            "Application Load Balancer regional"
+          ],
+          "correctas": [0],
+          "explicacion": "Un balanceador de red passthrough de capa 4 preserva la IP de origen del cliente y soporta protocolos TCP/UDP genéricos, a diferencia de los balanceadores de aplicación que terminan la conexión."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre balanceo de carga en Google Cloud son correctas?",
+          "opciones": [
+            "Los health checks deciden qué backends reciben tráfico",
+            "Un balanceador externo global usa una IP anycast única",
+            "Cloud Armor se integra con balanceadores de capa 7",
+            "Un balanceador passthrough termina la conexión TLS del cliente",
+            "Los backends pueden definirse con grupos de instancias o NEG"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Health checks, IP anycast global, integración de Cloud Armor en capa 7 y backends con grupos de instancias o NEG son correctos. El balanceador passthrough no termina TLS: reenvía el tráfico preservando la conexión y la IP de origen."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-firewall",
+      "nombre": "Seguridad de red y firewall",
+      "dominio": "Implementing network security",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Reglas de firewall, etiquetas y Cloud Armor",
+        "markdown": "## Modelo de firewall de VPC\n\n- Las reglas son **stateful**: si se permite la conexión de entrada, la respuesta sale aunque no haya regla de salida explícita.\n- Cada regla tiene **prioridad** (0–65535); **menor número, mayor precedencia**.\n- Existen reglas **implícitas**: denegar todo el ingreso y permitir todo el egreso.\n\n## Segmentación del alcance\n\n- **Etiquetas de red (tags)** y **cuentas de servicio** acotan a qué instancias aplica una regla.\n- Las **service accounts** son más robustas que los tags porque no las puede cambiar cualquier usuario con permiso de red.\n- Las **firewall policies** jerárquicas aplican reglas a nivel de organización o carpeta.\n\n## Protección perimetral\n\n- **Cloud Armor** filtra en el borde: listas de IP, reglas WAF y mitigación de DDoS, asociado a balanceadores de capa 7.\n\n> **En el examen:** recuerda que el firewall es stateful, que menor prioridad gana, y que las service accounts son más seguras que los tags para acotar reglas."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Tienes dos reglas de firewall que coinciden con el mismo tráfico, una con prioridad 100 y otra con prioridad 1000. ¿Cuál se aplica?",
+          "opciones": [
+            "La de prioridad 100, porque menor número significa mayor precedencia",
+            "La de prioridad 1000, porque mayor número significa mayor precedencia",
+            "Ambas se combinan sumando sus efectos",
+            "Ninguna: un conflicto bloquea todo el tráfico"
+          ],
+          "correctas": [0],
+          "explicacion": "En las reglas de firewall de VPC, el valor de prioridad más bajo tiene mayor precedencia. Con 100 frente a 1000, gana la regla de prioridad 100."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuál es el comportamiento por defecto del firewall de VPC respecto al estado de las conexiones?",
+          "opciones": [
+            "Es stateful: la respuesta a una conexión permitida se admite automáticamente",
+            "Es stateless: requiere reglas explícitas para ingreso y egreso de cada flujo",
+            "Bloquea todo el tráfico hasta que se cree una regla de egreso",
+            "Solo es stateful para tráfico UDP"
+          ],
+          "correctas": [0],
+          "explicacion": "El firewall de VPC es stateful: si se permite el inicio de una conexión, el tráfico de retorno se admite automáticamente sin necesidad de una regla inversa."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre la seguridad de red en Google Cloud son correctas?",
+          "opciones": [
+            "Las cuentas de servicio acotan reglas de forma más robusta que las etiquetas de red",
+            "Existe una regla implícita que deniega todo el ingreso",
+            "Cloud Armor se asocia a balanceadores de capa 7 para filtrar en el borde",
+            "Existe una regla implícita que deniega todo el egreso",
+            "Las firewall policies jerárquicas aplican a nivel de organización o carpeta"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Service accounts más robustas que tags, deny implícito de ingreso, Cloud Armor en capa 7 y policies jerárquicas son correctos. El egreso por defecto está permitido de forma implícita, no denegado."
+        }
+      ]
+    },
+    {
+      "slug": "dns-nat-acceso",
+      "nombre": "DNS, NAT y acceso a servicios",
+      "dominio": "Managing, monitoring, and optimizing network operations",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Cloud DNS, Cloud NAT y Private Google Access",
+        "markdown": "## Resolución de nombres con Cloud DNS\n\n- **Zonas públicas** resuelven nombres para Internet; **zonas privadas** resuelven dentro de una o varias VPC.\n- El **DNS peering** y el **forwarding** permiten resolver entre VPC o hacia servidores on-premises.\n\n## Salida a Internet sin IP pública\n\n- **Cloud NAT** da salida a instancias **sin IP externa**. Es un servicio gestionado, **no una pasarela en una VM**, y no permite conexiones entrantes iniciadas desde fuera.\n- Se configura por **región** y asociado a un **Cloud Router**.\n\n## Acceso privado a APIs\n\n- **Private Google Access** permite que instancias sin IP pública alcancen APIs y servicios de Google usando rutas internas.\n- **Private Service Connect** publica servicios de forma privada con un endpoint dentro de tu VPC.\n\n> **En el examen:** Cloud NAT es solo salida y no admite entrantes; Private Google Access habilita APIs de Google sin IP pública; usa zonas privadas de Cloud DNS para nombres internos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Varias VM sin dirección IP externa necesitan descargar paquetes desde Internet, pero no deben aceptar conexiones entrantes. ¿Qué servicio lo permite?",
+          "opciones": [
+            "Cloud NAT",
+            "Cloud Armor",
+            "Una zona pública de Cloud DNS",
+            "VPC Peering"
+          ],
+          "correctas": [0],
+          "explicacion": "Cloud NAT proporciona salida a Internet para instancias sin IP externa y, por diseño, no admite conexiones entrantes iniciadas desde el exterior."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una instancia sin IP pública debe consumir las APIs de Google (por ejemplo, Cloud Storage) sin salir a Internet. ¿Qué debes habilitar?",
+          "opciones": [
+            "Private Google Access en la subred",
+            "Una zona pública de Cloud DNS",
+            "Cloud Armor en el balanceador",
+            "Una regla de firewall de egreso a 0.0.0.0/0"
+          ],
+          "correctas": [0],
+          "explicacion": "Private Google Access permite que instancias sin IP externa alcancen las APIs y servicios de Google a través de rutas internas, sin exponerlas a Internet."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre DNS, NAT y acceso a servicios en Google Cloud son correctas?",
+          "opciones": [
+            "Las zonas privadas de Cloud DNS resuelven nombres dentro de una o varias VPC",
+            "Cloud NAT se configura por región y se asocia a un Cloud Router",
+            "Private Service Connect publica servicios mediante un endpoint privado en la VPC",
+            "Cloud NAT permite que clientes externos inicien conexiones hacia las VM",
+            "El DNS forwarding puede resolver nombres hacia servidores on-premises"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Zonas privadas, Cloud NAT por región con Cloud Router, Private Service Connect y DNS forwarding hacia on-premises son correctos. Cloud NAT solo permite tráfico saliente: no admite conexiones entrantes desde el exterior."
+        }
+      ]
+    },
+    {
+      "slug": "shared-vpc-multiproyecto",
+      "nombre": "Shared VPC y redes multiproyecto",
+      "dominio": "Designing, planning, and prototyping a Google Cloud network",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Shared VPC frente a VPC Peering",
+        "markdown": "## Shared VPC\n\nPermite que varios **proyectos de servicio** compartan la red de un **proyecto host** central. El equipo de red administra subredes y firewall en un solo lugar mientras los equipos de aplicación despliegan recursos en sus propios proyectos.\n\n- Centraliza el **control administrativo** de la red.\n- Roles como **Network User** delegan el uso de subredes concretas.\n\n## VPC Peering\n\nConecta dos VPC para que se comuniquen con **IP privadas**, pero:\n\n- **No es transitivo**: si A↔B y B↔C, A no alcanza a C.\n- Cada VPC mantiene su **administración independiente**.\n- Hay límites de prefijos intercambiados.\n\n## Cuándo usar cada uno\n\n- **Shared VPC**: una organización quiere gobernanza central de la red.\n- **Peering**: dos redes con administración separada que solo necesitan conectividad puntual.\n\n> **En el examen:** distingue gobernanza central (Shared VPC) de conectividad entre redes autónomas (Peering), y recuerda que el peering no es transitivo."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una organización quiere que el equipo de red gestione de forma centralizada subredes y firewall, mientras los equipos de aplicación despliegan en sus propios proyectos. ¿Qué solución encaja?",
+          "opciones": [
+            "Shared VPC con un proyecto host",
+            "VPC Peering entre cada par de proyectos",
+            "Una VPC independiente por equipo sin conexión",
+            "Cloud VPN entre todos los proyectos"
+          ],
+          "correctas": [0],
+          "explicacion": "Shared VPC permite que un proyecto host concentre la administración de la red mientras los proyectos de servicio despliegan recursos, logrando gobernanza centralizada."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Tienes peering entre las VPC A↔B y B↔C. ¿Pueden las instancias de A comunicarse con las de C de forma directa?",
+          "opciones": [
+            "No, porque el VPC Peering no es transitivo",
+            "Sí, el peering propaga rutas de forma transitiva",
+            "Sí, siempre que compartan la misma región",
+            "Solo si se habilita Cloud NAT en B"
+          ],
+          "correctas": [0],
+          "explicacion": "El VPC Peering no es transitivo: A se comunica con B y B con C, pero A no alcanza a C salvo que se cree un peering o conectividad explícita A↔C."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué afirmaciones sobre Shared VPC y VPC Peering son correctas?",
+          "opciones": [
+            "Shared VPC centraliza la administración de red en un proyecto host",
+            "El rol Network User permite delegar el uso de subredes concretas",
+            "El VPC Peering permite comunicación con IP privadas entre dos VPC",
+            "El VPC Peering es transitivo entre cualquier número de VPC encadenadas",
+            "En VPC Peering cada VPC conserva su administración independiente"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Shared VPC centraliza la red, Network User delega subredes, el peering comunica con IP privadas y cada VPC mantiene su administración. La afirmación falsa es la transitividad: el peering nunca es transitivo."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,246 @@
+{
+  "slug": "cisco-ccna",
+  "nombre": "Cisco Certified Network Associate (CCNA)",
+  "proveedor": "Cisco",
+  "nivel": "associate",
+  "area": "Redes",
+  "descripcion": "Certificación base de Cisco que valida la capacidad de instalar, operar y solucionar problemas en redes empresariales pequeñas y medianas. Cubre fundamentos de conmutación, enrutamiento, servicios IP, seguridad y automatización.",
+  "skills": [
+    "tcp/ip",
+    "subnetting",
+    "vlan",
+    "ospf",
+    "enrutamiento",
+    "switching",
+    "acl",
+    "nat",
+    "dhcp",
+    "wireless",
+    "automatizacion",
+    "ipv6"
+  ],
+  "roles": [
+    "Técnico de redes",
+    "Administrador de redes junior",
+    "Ingeniero de soporte de redes",
+    "Especialista de help desk de infraestructura"
+  ],
+  "temas": [
+    {
+      "slug": "fundamentos-de-red",
+      "nombre": "Fundamentos de red",
+      "dominio": "Network Fundamentals",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Componentes, modelos y direccionamiento",
+        "markdown": "## Componentes y topologías\nUna red conecta **routers**, **switches**, puntos de acceso, servidores y endpoints. Los routers separan dominios de difusión y enrutan entre redes; los switches reenvían tramas dentro de la misma red local.\n\n## Modelos de referencia\n- **OSI**: siete capas, desde física hasta aplicación.\n- **TCP/IP**: cuatro capas, base real de Internet.\n- La **encapsulación** añade cabeceras al bajar de capa; la desencapsulación las retira al subir.\n\n## Direccionamiento IPv4\nUna dirección IPv4 tiene 32 bits divididos en porción de **red** y de **host**, definida por la máscara. El **subnetting** divide un bloque en subredes más pequeñas ajustando bits prestados.\n\n- Direcciones privadas: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16.\n- **MTU** por defecto en Ethernet: 1500 bytes.\n\n> **En el examen:** domina el cálculo rápido de subredes, hosts útiles y rango de broadcast a partir de un prefijo CIDR."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuántos bits componen una dirección IPv4?",
+          "opciones": ["16 bits", "32 bits", "64 bits", "128 bits"],
+          "correctas": [1],
+          "explicacion": "IPv4 usa 32 bits, normalmente escritos en cuatro octetos decimales separados por puntos. IPv6 es el que usa 128 bits."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Dada la red 192.168.10.0/26, ¿cuántas direcciones de host utilizables ofrece cada subred?",
+          "opciones": ["30", "62", "64", "126"],
+          "correctas": [1],
+          "explicacion": "Un /26 deja 6 bits de host: 2^6 = 64 direcciones, menos la de red y la de broadcast quedan 62 hosts utilizables."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de los siguientes rangos están reservados como direcciones IPv4 privadas (RFC 1918)?",
+          "opciones": ["10.0.0.0/8", "172.16.0.0/12", "192.0.2.0/24", "192.168.0.0/16", "8.8.8.0/24"],
+          "correctas": [0, 1, 3],
+          "explicacion": "Los tres bloques privados de RFC 1918 son 10.0.0.0/8, 172.16.0.0/12 y 192.168.0.0/16. El 192.0.2.0/24 es de documentación y 8.8.8.0/24 es público."
+        }
+      ]
+    },
+    {
+      "slug": "acceso-a-la-red",
+      "nombre": "Acceso a la red",
+      "dominio": "Network Access",
+      "orden": 2,
+      "hoja": {
+        "titulo": "VLAN, troncales y conmutación",
+        "markdown": "## Conmutación Ethernet\nUn switch aprende direcciones **MAC** examinando la dirección de origen de cada trama y las almacena en la **tabla CAM**. Si el destino es desconocido, inunda la trama por todos los puertos salvo el de entrada.\n\n## VLAN\nUna **VLAN** segmenta lógicamente una red en dominios de difusión separados. Mejora seguridad y reduce tráfico innecesario.\n\n- Puertos de **acceso**: pertenecen a una sola VLAN.\n- Puertos **troncales**: transportan varias VLAN usando etiquetado **802.1Q**.\n- La **VLAN nativa** viaja sin etiqueta por el troncal.\n\n## Redes inalámbricas\nLos puntos de acceso conectan clientes Wi-Fi al medio cableado. Un **WLC** centraliza la gestión de varios AP. El **SSID** identifica la red inalámbrica.\n\n> **En el examen:** recuerda que 802.1Q etiqueta las tramas en troncales y que la VLAN nativa por defecto es la 1, aunque se recomienda cambiarla."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué información usa un switch para construir su tabla de direcciones?",
+          "opciones": ["La dirección IP de destino", "La dirección MAC de origen de las tramas", "El número de puerto TCP", "La máscara de subred"],
+          "correctas": [1],
+          "explicacion": "El switch aprende asociando la dirección MAC de origen de cada trama con el puerto por el que llegó, llenando así su tabla CAM/MAC."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué protocolo se usa para el etiquetado de VLAN en un enlace troncal estándar?",
+          "opciones": ["ISL", "802.1Q", "STP", "CDP"],
+          "correctas": [1],
+          "explicacion": "IEEE 802.1Q es el estándar abierto para etiquetar tramas en troncales. ISL es propietario y obsoleto; STP previene bucles y CDP descubre vecinos."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre puertos de acceso y troncales son correctas?",
+          "opciones": ["Un puerto de acceso pertenece a una sola VLAN", "Un troncal puede transportar múltiples VLAN", "La VLAN nativa viaja etiquetada por defecto", "El etiquetado 802.1Q se aplica en troncales", "Un puerto de acceso siempre etiqueta sus tramas"],
+          "correctas": [0, 1, 3],
+          "explicacion": "Un puerto de acceso lleva una única VLAN y no etiqueta; un troncal lleva varias VLAN con 802.1Q. La VLAN nativa viaja SIN etiqueta, por eso las opciones 3 y 5 son falsas."
+        }
+      ]
+    },
+    {
+      "slug": "conectividad-ip",
+      "nombre": "Conectividad IP",
+      "dominio": "IP Connectivity",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Enrutamiento estático y dinámico",
+        "markdown": "## La tabla de enrutamiento\nEl router elige la mejor ruta hacia un destino según la **coincidencia de prefijo más largo**. Cada ruta tiene una **distancia administrativa** (confiabilidad de la fuente) y una **métrica** (coste dentro del protocolo).\n\n## Rutas estáticas\nSe configuran manualmente y son ideales para topologías pequeñas y estables. La **ruta por defecto** (0.0.0.0/0) envía todo el tráfico sin destino específico hacia el siguiente salto.\n\n## OSPF\n**OSPF** es un protocolo de estado de enlace que calcula rutas con el algoritmo SPF (Dijkstra).\n\n- Forma **adyacencias** entre vecinos.\n- Usa **áreas** para escalar; el área 0 es la troncal.\n- Su métrica es el **coste**, inversamente proporcional al ancho de banda.\n\n> **En el examen:** la distancia administrativa de una ruta estática es 1, la de OSPF es 110 y la de una ruta conectada es 0. A menor distancia, más preferida."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuál es la distancia administrativa por defecto de OSPF en un router Cisco?",
+          "opciones": ["1", "90", "110", "120"],
+          "correctas": [2],
+          "explicacion": "OSPF tiene una distancia administrativa de 110. Una estática es 1, EIGRP interno 90 y RIP 120."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué criterio usa un router para seleccionar entre varias rutas que cubren el mismo destino?",
+          "opciones": ["La ruta más reciente", "La coincidencia de prefijo más largo", "La interfaz con menor número", "La ruta con más saltos"],
+          "correctas": [1],
+          "explicacion": "El router siempre prefiere la entrada con el prefijo más específico (máscara más larga) que coincida con la IP de destino."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué características describen correctamente a OSPF?",
+          "opciones": ["Es un protocolo de estado de enlace", "Usa el área 0 como troncal", "Su métrica es el número de saltos", "Calcula rutas con el algoritmo SPF", "Forma adyacencias con sus vecinos"],
+          "correctas": [0, 1, 3, 4],
+          "explicacion": "OSPF es de estado de enlace, usa áreas con el área 0 como backbone, ejecuta SPF (Dijkstra) y forma adyacencias. Su métrica es el COSTE basado en ancho de banda, no el número de saltos (eso es RIP)."
+        }
+      ]
+    },
+    {
+      "slug": "servicios-ip",
+      "nombre": "Servicios IP",
+      "dominio": "IP Services",
+      "orden": 4,
+      "hoja": {
+        "titulo": "NAT, DHCP, NTP y más",
+        "markdown": "## Traducción de direcciones (NAT)\n**NAT** permite que múltiples hosts privados compartan direcciones públicas. La variante **PAT** (NAT overload) usa puertos para distinguir muchas conexiones tras una sola IP pública, fundamental ante el agotamiento de IPv4.\n\n## Asignación automática (DHCP)\n**DHCP** entrega direcciones IP y parámetros de red mediante el intercambio **DORA**: Discover, Offer, Request, Acknowledge. Un agente de retransmisión reenvía peticiones cuando el servidor está en otra subred.\n\n## Otros servicios\n- **NTP**: sincroniza el reloj de los dispositivos, clave para logs y seguridad.\n- **DNS**: resuelve nombres a direcciones IP.\n- **Syslog**: centraliza mensajes de eventos por niveles de severidad.\n\n> **En el examen:** memoriza el orden DORA de DHCP y entiende que PAT mapea muchas IP privadas a una pública usando números de puerto distintos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuál es el orden correcto del intercambio de mensajes DHCP?",
+          "opciones": ["Offer, Discover, Request, Acknowledge", "Discover, Offer, Request, Acknowledge", "Request, Discover, Offer, Acknowledge", "Discover, Request, Offer, Acknowledge"],
+          "correctas": [1],
+          "explicacion": "El proceso DHCP sigue la secuencia DORA: Discover, Offer, Request y Acknowledge."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio sincroniza la hora de los dispositivos de red?",
+          "opciones": ["DNS", "NTP", "SNMP", "TFTP"],
+          "correctas": [1],
+          "explicacion": "NTP (Network Time Protocol) mantiene los relojes sincronizados, algo esencial para correlacionar logs y validar certificados."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué afirmaciones sobre NAT/PAT son verdaderas?",
+          "opciones": ["PAT permite que muchas IP privadas usen una sola IP pública", "PAT distingue conexiones mediante números de puerto", "NAT estático mapea una IP privada a una pública fija", "NAT incrementa la cantidad de IPv4 disponibles globalmente", "NAT ayuda a conservar direcciones IPv4 públicas"],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "PAT comparte una IP pública usando puertos, el NAT estático crea un mapeo uno a uno fijo y NAT conserva direcciones públicas. NAT no crea nuevas IPv4, solo reutiliza las existentes."
+        }
+      ]
+    },
+    {
+      "slug": "fundamentos-de-seguridad",
+      "nombre": "Fundamentos de seguridad",
+      "dominio": "Security Fundamentals",
+      "orden": 5,
+      "hoja": {
+        "titulo": "ACL, control de acceso y protección de capa 2",
+        "markdown": "## Conceptos básicos\nLa seguridad busca **confidencialidad, integridad y disponibilidad**. Las amenazas incluyen suplantación, ataques de denegación de servicio y accesos no autorizados.\n\n## Listas de control de acceso (ACL)\nUna **ACL** filtra tráfico evaluando reglas en orden, de arriba hacia abajo, hasta la primera coincidencia.\n\n- **Estándar**: filtra solo por IP de origen.\n- **Extendida**: filtra por origen, destino, protocolo y puerto.\n- Al final hay un **deny implícito** que descarta lo no permitido.\n\n## Protección de capa 2\n- **Port Security**: limita las MAC permitidas por puerto.\n- **DHCP Snooping**: bloquea servidores DHCP falsos.\n- **AAA**: autenticación, autorización y registro centralizados.\n\n> **En el examen:** recuerda el deny implícito al final de toda ACL y que las ACL extendidas se colocan cerca del origen, mientras que las estándar cerca del destino."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué ocurre con el tráfico que no coincide con ninguna entrada explícita de una ACL?",
+          "opciones": ["Se permite por defecto", "Se descarta por el deny implícito", "Se reenvía sin registrar", "Se envía al siguiente router"],
+          "correctas": [1],
+          "explicacion": "Toda ACL tiene un 'deny any' implícito al final: si ninguna regla coincide, el tráfico se descarta."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Por qué criterio puede filtrar una ACL estándar?",
+          "opciones": ["Solo por la dirección IP de origen", "Por origen y puerto de destino", "Por dirección MAC", "Por VLAN de origen"],
+          "correctas": [0],
+          "explicacion": "Las ACL estándar filtran únicamente por la dirección IP de origen. Para filtrar por destino, protocolo o puerto se usan ACL extendidas."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué mecanismos ayudan a mitigar ataques en la capa de acceso (capa 2)?",
+          "opciones": ["Port Security", "DHCP Snooping", "Dynamic ARP Inspection", "OSPF", "BPDU Guard"],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Port Security, DHCP Snooping, Dynamic ARP Inspection y BPDU Guard son protecciones de capa 2. OSPF es un protocolo de enrutamiento de capa 3, ajeno a estas mitigaciones."
+        }
+      ]
+    },
+    {
+      "slug": "automatizacion-y-programabilidad",
+      "nombre": "Automatización y programabilidad",
+      "dominio": "Automation and Programmability",
+      "orden": 6,
+      "hoja": {
+        "titulo": "SDN, APIs y gestión de configuración",
+        "markdown": "## Redes definidas por software\nLa **SDN** separa el plano de control del plano de datos, centralizando la inteligencia en un **controlador** que programa los dispositivos mediante APIs.\n\n- **Northbound API**: del controlador hacia las aplicaciones.\n- **Southbound API**: del controlador hacia los dispositivos.\n\n## APIs y formatos de datos\nLas **APIs REST** operan sobre HTTP con verbos como GET, POST, PUT y DELETE. Los datos suelen intercambiarse en **JSON** o XML, formatos legibles y estructurados clave por valor.\n\n## Gestión de configuración\nHerramientas como **Ansible**, **Puppet** y **Chef** automatizan la configuración a escala.\n\n- Ansible es **sin agente** y usa playbooks en YAML.\n- Puppet y Chef suelen requerir un **agente** en el nodo gestionado.\n\n> **En el examen:** distingue Northbound (hacia apps) de Southbound (hacia dispositivos) y recuerda que Ansible es agentless mientras Puppet/Chef usan agente."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En una arquitectura SDN, ¿qué tipo de API conecta el controlador con las aplicaciones de gestión?",
+          "opciones": ["Southbound API", "Northbound API", "Eastbound API", "Westbound API"],
+          "correctas": [1],
+          "explicacion": "La Northbound API expone el controlador hacia las aplicaciones y orquestadores. La Southbound API comunica el controlador con los dispositivos de red."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué formato de datos basado en pares clave-valor es habitual en las APIs REST?",
+          "opciones": ["CSV", "JSON", "PDF", "BINARIO"],
+          "correctas": [1],
+          "explicacion": "JSON es ligero, legible y estructurado en pares clave-valor, por lo que es muy común en APIs REST junto con XML."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué afirmaciones sobre herramientas de automatización son correctas?",
+          "opciones": ["Ansible es sin agente (agentless)", "Ansible usa playbooks en YAML", "Puppet suele requerir un agente en el nodo", "Chef no permite gestión de configuración", "REST usa verbos HTTP como GET y POST"],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Ansible es agentless y usa YAML; Puppet y Chef normalmente usan agente; REST opera con verbos HTTP. Chef sí permite gestión de configuración, por lo que esa opción es falsa."
+        }
+      ]
+    }
+  ]
+}

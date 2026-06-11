@@ -1,0 +1,343 @@
+{
+  "slug": "aws-cloud-practitioner",
+  "nombre": "AWS Certified Cloud Practitioner",
+  "proveedor": "AWS",
+  "nivel": "foundational",
+  "area": "Nube",
+  "descripcion": "Valida el entendimiento general de la nube de AWS: conceptos, servicios principales, seguridad, precios y soporte. Pensada para perfiles no técnicos y técnicos que inician su recorrido en la nube.",
+  "skills": [
+    "cloud",
+    "aws",
+    "modelo de responsabilidad compartida",
+    "ec2",
+    "s3",
+    "iam",
+    "facturación",
+    "costos cloud",
+    "regiones y zonas de disponibilidad",
+    "seguridad en la nube",
+    "escalabilidad",
+    "well-architected"
+  ],
+  "roles": [
+    "Analista de negocio en nube",
+    "Profesional de ventas técnicas",
+    "Gerente de proyecto cloud",
+    "Desarrollador junior",
+    "Especialista de soporte TI"
+  ],
+  "temas": [
+    {
+      "slug": "conceptos-de-la-nube",
+      "nombre": "Conceptos de la nube y propuesta de valor",
+      "dominio": "Conceptos de la nube",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Por qué existe la nube",
+        "markdown": "## La idea central\nLa nube entrega cómputo, almacenamiento y red **bajo demanda** por internet, pagando solo por lo que usas. Evita comprar y mantener servidores propios.\n\n## Ventajas clave\n- **Elasticidad:** crecer o reducir recursos según la carga real.\n- **Agilidad:** lanzar entornos en minutos, no en semanas.\n- **Sin gasto inicial:** se cambia capital (CapEx) por gasto operativo (OpEx).\n- **Alcance global:** desplegar cerca de los usuarios en cualquier región.\n\n## Modelos de servicio\n- **IaaS:** controlas el sistema operativo y la infraestructura virtual.\n- **PaaS:** te enfocas en la aplicación; la plataforma gestiona lo demás.\n- **SaaS:** consumes software ya listo desde el navegador.\n\n> **En el examen:** asocia *elasticidad* con ajustar capacidad automáticamente, y diferénciala de *alta disponibilidad*, que busca evitar interrupciones."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Una empresa quiere dejar de comprar servidores físicos y pagar únicamente por los recursos que consume cada mes. ¿Qué beneficio de la nube describe esto?",
+          "opciones": [
+            "Cambiar gasto de capital por gasto operativo",
+            "Mayor latencia de red",
+            "Acceso físico al centro de datos",
+            "Eliminación total de costos"
+          ],
+          "correctas": [0],
+          "explicacion": "Pagar por uso convierte la inversión inicial en servidores (CapEx) en un gasto operativo variable (OpEx)."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de las siguientes son ventajas reales de adoptar la nube frente a un centro de datos propio? (Elige dos.)",
+          "opciones": [
+            "Capacidad elástica que se ajusta a la demanda",
+            "Despliegue global en pocos minutos",
+            "Garantía de costo cero",
+            "Eliminación de toda configuración de seguridad",
+            "Imposibilidad de sufrir fallos"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "La elasticidad y el alcance global son beneficios centrales. La nube no es gratuita, requiere seguridad y no elimina los fallos posibles."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un equipo solo quiere escribir código sin administrar el sistema operativo ni los servidores subyacentes. ¿Qué modelo de servicio encaja mejor?",
+          "opciones": [
+            "PaaS",
+            "IaaS",
+            "Colocación física",
+            "On-premise tradicional"
+          ],
+          "correctas": [0],
+          "explicacion": "En PaaS el proveedor gestiona la plataforma y el equipo se concentra en la aplicación, sin operar el sistema operativo."
+        }
+      ]
+    },
+    {
+      "slug": "infraestructura-global",
+      "nombre": "Infraestructura global de AWS",
+      "dominio": "Conceptos de la nube",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Regiones, zonas y bordes",
+        "markdown": "## Cómo se organiza AWS\n- **Región:** área geográfica con varios centros de datos. Eliges región por latencia, costo, cumplimiento y servicios disponibles.\n- **Zona de disponibilidad (AZ):** uno o más centros de datos aislados dentro de una región. Distribuir cargas entre varias AZ mejora la **alta disponibilidad**.\n- **Ubicaciones de borde (edge):** puntos cercanos al usuario que sirven contenido en caché para reducir latencia.\n\n## Decisiones típicas\n- Para **resiliencia**, replica en **múltiples AZ**.\n- Para **cumplimiento de datos**, elige la región donde la ley exige que residan.\n- Para **entrega rápida de contenido**, apóyate en ubicaciones de borde.\n\n> **En el examen:** \"sobrevivir a la caída de un centro de datos\" = varias **AZ**; \"reducir latencia global de descargas\" = **edge / CDN**, no otra región."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Una aplicación debe seguir funcionando aunque falle por completo un centro de datos. ¿Qué estrategia es la adecuada?",
+          "opciones": [
+            "Desplegar en varias zonas de disponibilidad",
+            "Usar una sola zona de disponibilidad más grande",
+            "Apagar el sistema durante la noche",
+            "Mover todo a ubicaciones de borde"
+          ],
+          "correctas": [0],
+          "explicacion": "Las zonas de disponibilidad están aisladas físicamente; repartir la carga entre varias permite tolerar la caída de una."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una normativa obliga a que los datos de los clientes permanezcan dentro de un país específico. ¿Qué criterio define dónde alojar los recursos?",
+          "opciones": [
+            "La región de AWS seleccionada",
+            "El tipo de instancia elegido",
+            "La cantidad de zonas de borde",
+            "El navegador del usuario"
+          ],
+          "correctas": [0],
+          "explicacion": "La región determina la ubicación geográfica de los datos, lo que permite cumplir requisitos de residencia y soberanía."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre la infraestructura global de AWS son correctas? (Elige dos.)",
+          "opciones": [
+            "Una región contiene múltiples zonas de disponibilidad",
+            "Las ubicaciones de borde sirven para acercar contenido al usuario",
+            "Una zona de disponibilidad es un único servidor",
+            "Las regiones siempre comparten la misma zona horaria",
+            "Las ubicaciones de borde reemplazan a las regiones"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "Las regiones agrupan varias AZ y las ubicaciones de borde reducen latencia de entrega; una AZ es un conjunto aislado de centros de datos, no un solo servidor."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-y-cumplimiento",
+      "nombre": "Seguridad, IAM y responsabilidad compartida",
+      "dominio": "Seguridad y cumplimiento",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Quién protege qué",
+        "markdown": "## Modelo de responsabilidad compartida\n- **AWS protege la nube:** hardware, red física, energía y las instalaciones.\n- **El cliente protege lo que pone en la nube:** datos, configuración de accesos, cifrado y parches del sistema operativo en servicios donde aplica.\n\n## Gestión de accesos (IAM)\n- **Usuarios y grupos** para personas; **roles** para servicios y accesos temporales.\n- Aplica el **menor privilegio**: solo los permisos necesarios.\n- Activa **MFA** y evita usar la cuenta raíz para tareas diarias.\n\n## Buenas prácticas\n- Cifra datos en reposo y en tránsito.\n- Centraliza el registro de actividad para auditoría.\n\n> **En el examen:** \"seguridad **de** la nube\" la cubre AWS; \"seguridad **en** la nube\" (permisos, datos) es del cliente."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Según el modelo de responsabilidad compartida, ¿de quién es la responsabilidad de configurar correctamente los permisos de acceso a los datos?",
+          "opciones": [
+            "Del cliente",
+            "De AWS exclusivamente",
+            "Del proveedor de internet",
+            "De nadie, es automático"
+          ],
+          "correctas": [0],
+          "explicacion": "La gestión de identidades, accesos y datos es seguridad *en* la nube, que corresponde al cliente."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué prácticas mejoran la seguridad de una cuenta de AWS? (Elige dos.)",
+          "opciones": [
+            "Aplicar el principio de menor privilegio",
+            "Habilitar autenticación multifactor (MFA)",
+            "Compartir las credenciales de la cuenta raíz con todo el equipo",
+            "Otorgar permisos de administrador a todos por defecto",
+            "Desactivar todo registro de actividad"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "El menor privilegio y MFA reducen el riesgo; compartir la cuenta raíz, dar admin a todos o apagar los registros lo aumentan."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una aplicación necesita acceder temporalmente a un servicio de almacenamiento sin incrustar credenciales fijas. ¿Qué recurso de IAM conviene usar?",
+          "opciones": [
+            "Un rol de IAM",
+            "La contraseña de la cuenta raíz",
+            "Una clave compartida en el código",
+            "Un grupo de usuarios humanos"
+          ],
+          "correctas": [0],
+          "explicacion": "Los roles entregan credenciales temporales a servicios o aplicaciones, evitando almacenar claves permanentes."
+        }
+      ]
+    },
+    {
+      "slug": "computo-y-almacenamiento",
+      "nombre": "Cómputo y almacenamiento principales",
+      "dominio": "Tecnología y servicios",
+      "orden": 4,
+      "hoja": {
+        "titulo": "EC2, S3 y amigos",
+        "markdown": "## Cómputo\n- **EC2:** servidores virtuales con control del sistema operativo; ideal cuando necesitas configurar el entorno.\n- **Serverless (funciones):** ejecutas código por eventos sin administrar servidores; pagas por ejecución.\n- **Contenedores:** empaquetan la app y sus dependencias para portabilidad.\n\n## Almacenamiento\n- **Almacenamiento de objetos (S3):** archivos, respaldos y contenido estático, muy escalable y con clases según frecuencia de acceso.\n- **Almacenamiento de bloques:** discos para instancias EC2.\n- **Almacenamiento de archivos compartido:** acceso simultáneo de varias máquinas.\n\n> **En el examen:** \"guardar muchos archivos o respaldos accesibles por internet\" = **objetos (S3)**; \"disco de un servidor\" = **bloques**."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Una empresa quiere almacenar millones de imágenes y respaldos accesibles desde internet, con escalado automático. ¿Qué tipo de almacenamiento es el adecuado?",
+          "opciones": [
+            "Almacenamiento de objetos",
+            "Almacenamiento de bloques para un solo disco",
+            "Memoria RAM de una instancia",
+            "Una base de datos relacional pequeña"
+          ],
+          "correctas": [0],
+          "explicacion": "El almacenamiento de objetos está diseñado para grandes volúmenes de archivos y respaldos con alta escalabilidad."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un equipo necesita ejecutar código solo cuando ocurre un evento, sin administrar servidores ni pagar por tiempo inactivo. ¿Qué enfoque encaja?",
+          "opciones": [
+            "Cómputo serverless basado en funciones",
+            "Una instancia EC2 encendida todo el mes",
+            "Un servidor físico propio",
+            "Almacenamiento de objetos"
+          ],
+          "correctas": [0],
+          "explicacion": "Las funciones serverless se ejecutan por eventos y cobran por uso, sin administrar la infraestructura."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre los servicios de cómputo y almacenamiento son correctas? (Elige dos.)",
+          "opciones": [
+            "EC2 ofrece control sobre el sistema operativo del servidor virtual",
+            "El almacenamiento de bloques suele usarse como disco de una instancia",
+            "El almacenamiento de objetos es ideal para discos de arranque de servidores",
+            "El cómputo serverless requiere administrar el sistema operativo",
+            "Los contenedores impiden mover la aplicación entre entornos"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "EC2 da control del sistema operativo y el almacenamiento de bloques actúa como disco de instancia; los objetos no son discos de arranque, serverless no exige gestionar el SO y los contenedores favorecen la portabilidad."
+        }
+      ]
+    },
+    {
+      "slug": "precios-y-facturacion",
+      "nombre": "Precios, facturación y optimización de costos",
+      "dominio": "Facturación, precios y soporte",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Cómo se paga la nube",
+        "markdown": "## Principios de precio\n- **Pago por uso:** pagas por lo que consumes, sin compromisos forzados.\n- **Descuentos por compromiso:** reservar uso durante 1 o 3 años reduce el precio frente a la tarifa bajo demanda.\n- **Más uso, menor precio unitario:** ciertas categorías bajan de precio a mayor volumen.\n\n## Herramientas de control\n- **Presupuestos y alertas:** avisan antes de superar un gasto definido.\n- **Paneles de costos:** muestran y desglosan el gasto por servicio o etiqueta.\n- **Calculadora de costos:** estima el gasto antes de desplegar.\n\n## Cuentas múltiples\n- Agrupar cuentas permite **facturación consolidada** y descuentos por volumen combinado.\n\n> **En el examen:** \"evitar sorpresas de gasto\" = **presupuestos/alertas**; \"compromiso de 1 o 3 años a menor precio\" = capacidad **reservada**."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un responsable financiero quiere recibir un aviso automático cuando el gasto mensual se acerque a un límite definido. ¿Qué herramienta usar?",
+          "opciones": [
+            "Presupuestos con alertas",
+            "Una instancia EC2 adicional",
+            "Un rol de IAM",
+            "Una zona de disponibilidad extra"
+          ],
+          "correctas": [0],
+          "explicacion": "Los presupuestos con alertas notifican cuando el gasto se aproxima o supera un umbral configurado."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué estrategias ayudan a optimizar costos en la nube? (Elige dos.)",
+          "opciones": [
+            "Reservar capacidad con compromiso de 1 o 3 años",
+            "Apagar recursos que no se usan",
+            "Dejar instancias encendidas sin supervisión",
+            "Ignorar los paneles de costos",
+            "Sobredimensionar siempre por precaución"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "Reservar capacidad y apagar lo que no se usa reducen el gasto; dejar recursos ociosos, ignorar el monitoreo o sobredimensionar lo aumentan."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una organización con varias cuentas quiere recibir una sola factura y aprovechar descuentos por volumen combinado. ¿Qué le conviene?",
+          "opciones": [
+            "Facturación consolidada de las cuentas",
+            "Crear una cuenta nueva por cada empleado",
+            "Pagar cada servicio por separado en efectivo",
+            "Desactivar las alertas de presupuesto"
+          ],
+          "correctas": [0],
+          "explicacion": "La facturación consolidada reúne el gasto de varias cuentas en una factura y permite descuentos por uso agregado."
+        }
+      ]
+    },
+    {
+      "slug": "soporte-y-buena-arquitectura",
+      "nombre": "Soporte, documentación y buena arquitectura",
+      "dominio": "Facturación, precios y soporte",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Dónde apoyarse",
+        "markdown": "## Planes de soporte\n- Existen niveles que van desde el **básico** (documentación y foros) hasta planes con **respuesta más rápida** y un contacto técnico dedicado para cargas críticas.\n- A mayor criticidad del negocio, conviene un plan con tiempos de respuesta más estrictos.\n\n## Recursos de ayuda\n- **Documentación y centros de conocimiento** para autoservicio.\n- **Recomendaciones automáticas** que revisan seguridad, costos y límites de servicio.\n\n## Marco de buena arquitectura\n- Guía para diseñar sistemas evaluando pilares como **seguridad, fiabilidad, eficiencia, optimización de costos y excelencia operativa**.\n- Sirve para detectar riesgos y mejoras antes de que causen problemas.\n\n> **En el examen:** \"necesito respuesta urgente garantizada\" = plan de soporte superior; \"revisar mi diseño por pilares\" = **marco de buena arquitectura**."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Una carga crítica de negocio requiere tiempos de respuesta de soporte rápidos y un contacto técnico dedicado. ¿Qué corresponde?",
+          "opciones": [
+            "Contratar un plan de soporte de nivel superior",
+            "Usar solo el plan básico gratuito",
+            "Abrir más zonas de disponibilidad",
+            "Crear más usuarios de IAM"
+          ],
+          "correctas": [0],
+          "explicacion": "Los planes de soporte superiores ofrecen menores tiempos de respuesta y acompañamiento técnico para cargas críticas."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un arquitecto quiere evaluar su diseño frente a criterios como seguridad, fiabilidad y optimización de costos. ¿Qué recurso usar?",
+          "opciones": [
+            "El marco de buena arquitectura",
+            "Un plan de facturación consolidada",
+            "Una ubicación de borde adicional",
+            "Una clave de acceso permanente"
+          ],
+          "correctas": [0],
+          "explicacion": "El marco de buena arquitectura organiza buenas prácticas en pilares para revisar y mejorar un diseño."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre el soporte y la buena arquitectura en AWS son correctas? (Elige dos.)",
+          "opciones": [
+            "Existen distintos planes de soporte según la criticidad del negocio",
+            "Las recomendaciones automáticas pueden señalar riesgos de seguridad y costo",
+            "El plan básico garantiza respuesta inmediata de un ingeniero dedicado",
+            "El marco de buena arquitectura solo evalúa el costo",
+            "La documentación oficial no sirve para resolver dudas comunes"
+          ],
+          "correctas": [0, 1],
+          "explicacion": "Hay varios planes según criticidad y existen recomendaciones automáticas sobre seguridad y costos; el plan básico no incluye contacto dedicado inmediato, el marco cubre varios pilares y la documentación sí ayuda al autoservicio."
+        }
+      ]
+    }
+  ]
+}

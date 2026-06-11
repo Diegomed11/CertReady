@@ -1,0 +1,228 @@
+{
+  "slug": "aws-devops-professional",
+  "nombre": "AWS Certified DevOps Engineer – Professional",
+  "proveedor": "AWS",
+  "nivel": "professional",
+  "area": "DevOps",
+  "descripcion": "Valida la capacidad de automatizar entregas, gobernar infraestructura como código y operar sistemas resilientes y observables en AWS. Está orientada a perfiles que ya dominan operaciones y desarrollo en la nube y buscan demostrar práctica avanzada de DevOps.",
+  "skills": ["CI/CD", "CodePipeline", "infraestructura como código", "CloudFormation", "observabilidad", "CloudWatch", "automatización operativa", "despliegues blue/green", "alta disponibilidad", "respuesta a incidentes", "gobernanza multicuenta", "automatización de seguridad"],
+  "roles": ["Ingeniero DevOps", "Ingeniero de plataforma", "SRE (Site Reliability Engineer)", "Ingeniero de automatización en la nube"],
+  "temas": [
+    {
+      "slug": "automatizacion-sdlc",
+      "nombre": "Automatización del ciclo de vida de software",
+      "dominio": "SDLC Automation",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Pipelines de entrega continua en AWS",
+        "markdown": "## Idea central\nAutomatizar el camino desde un commit hasta producción reduce errores manuales y acelera la retroalimentación. AWS ofrece piezas componibles para construir ese flujo.\n\n## Servicios clave\n- **CodePipeline**: orquesta etapas (source, build, test, deploy) y conecta las demás herramientas.\n- **CodeBuild**: compila, ejecuta pruebas y produce artefactos en entornos efímeros.\n- **CodeDeploy**: despliega a EC2, ECS o Lambda con estrategias controladas.\n\n## Estrategias de despliegue\n- **Blue/green**: levanta un entorno paralelo y conmuta tráfico al validar.\n- **Canary**: enruta un porcentaje pequeño antes del despliegue total.\n- **Rolling**: reemplaza instancias por lotes.\n\n## Buenas prácticas\n- Validar artefactos con **pruebas automatizadas** como gate de cada etapa.\n- Configurar **rollback automático** ante fallos de salud.\n- Aprobar manualmente solo donde el riesgo lo justifique.\n\n> **En el examen:** cuando pidan minimizar el impacto de un despliegue fallido, piensa en canary o blue/green con rollback automático ligado a alarmas."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio orquesta las etapas de un flujo de entrega continua conectando origen, compilación y despliegue?",
+          "opciones": ["AWS CodePipeline", "AWS CodeCommit", "Amazon S3", "AWS Config"],
+          "correctas": [0],
+          "explicacion": "CodePipeline modela y orquesta las etapas del pipeline; los demás cumplen funciones de repositorio, almacenamiento o cumplimiento, no de orquestación."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Un equipo quiere reducir el riesgo de un despliegue fallido en producción. ¿Qué prácticas ayudan directamente a ese objetivo? (elige dos)",
+          "opciones": ["Despliegue canary que enruta tráfico gradualmente", "Rollback automático activado por una alarma de salud", "Compilar en una sola instancia compartida y persistente", "Saltar las pruebas para acelerar la entrega", "Aprobar manualmente sin criterios definidos"],
+          "correctas": [0, 1],
+          "explicacion": "El canary limita el alcance del fallo y el rollback automático revierte rápido ante problemas. Las otras opciones aumentan el riesgo o no lo reducen."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué servicio ejecuta la compilación y las pruebas en entornos efímeros generando los artefactos del pipeline?",
+          "opciones": ["AWS CodeBuild", "AWS CodeDeploy", "Amazon EventBridge", "AWS Step Functions"],
+          "correctas": [0],
+          "explicacion": "CodeBuild provee entornos de build temporales para compilar y probar; CodeDeploy se ocupa del despliegue, no de la compilación."
+        }
+      ]
+    },
+    {
+      "slug": "iac-gestion-config",
+      "nombre": "Infraestructura como código y gestión de configuración",
+      "dominio": "Configuration Management and Infrastructure as Code",
+      "orden": 2,
+      "hoja": {
+        "titulo": "IaC y configuración reproducible",
+        "markdown": "## Por qué IaC\nDescribir la infraestructura en código la vuelve **versionada**, revisable y repetible. Evita la deriva de configuración y permite recrear entornos idénticos.\n\n## Herramientas\n- **CloudFormation**: plantillas declarativas con stacks, change sets y detección de drift.\n- **StackSets**: despliegue de stacks a múltiples cuentas y regiones.\n- **Systems Manager**: parámetros, documentos de automatización y gestión de flota.\n\n## Patrones útiles\n- **Change sets**: previsualizar el impacto antes de aplicar cambios.\n- **Detección de drift**: identificar recursos modificados fuera del código.\n- **Parámetros y exports**: parametrizar y compartir valores entre stacks.\n\n## Configuración de instancias\n- Usar **AMIs doradas** o automatización de SSM para mantener estado consistente.\n- Centralizar secretos en **Secrets Manager**, nunca en las plantillas.\n\n> **En el examen:** ante deriva o cambios fuera de banda, la respuesta suele combinar detección de drift y reaplicar la plantilla como fuente de verdad."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Necesitas desplegar la misma plantilla de forma consistente en varias cuentas y regiones de una organización. ¿Qué función de CloudFormation usas?",
+          "opciones": ["StackSets", "Change sets", "Nested stacks dentro de una sola cuenta", "Drift detection"],
+          "correctas": [0],
+          "explicacion": "StackSets gestiona despliegues de un mismo stack a múltiples cuentas y regiones. Las demás resuelven previsualización, anidamiento o detección de cambios, no la distribución multicuenta."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué prácticas ayudan a evitar y detectar la deriva de configuración en infraestructura gestionada con CloudFormation? (elige dos)",
+          "opciones": ["Habilitar la detección de drift en los stacks", "Aplicar todos los cambios mediante actualización de plantilla", "Editar recursos manualmente en la consola para ir rápido", "Guardar credenciales dentro de la plantilla", "Desactivar el control de versiones del repositorio de IaC"],
+          "correctas": [0, 1],
+          "explicacion": "La detección de drift expone cambios fuera de banda y aplicar todo vía plantilla mantiene la plantilla como fuente de verdad. Las otras opciones provocan deriva o riesgos de seguridad."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué función de CloudFormation permite previsualizar el impacto de una modificación antes de aplicarla?",
+          "opciones": ["Change sets", "StackSets", "Drift detection", "Parámetros"],
+          "correctas": [0],
+          "explicacion": "Un change set muestra qué recursos se crearán, modificarán o eliminarán antes de ejecutar el cambio."
+        }
+      ]
+    },
+    {
+      "slug": "soluciones-resilientes",
+      "nombre": "Soluciones resilientes en la nube",
+      "dominio": "Resilient Cloud Solutions",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Alta disponibilidad y recuperación",
+        "markdown": "## Resiliencia\nUn sistema resiliente sigue operando ante fallos de componentes, zonas o picos de carga. Se diseña distribuyendo y automatizando la recuperación.\n\n## Pilares\n- **Multi-AZ**: distribuir recursos entre zonas de disponibilidad.\n- **Auto Scaling**: ajustar capacidad según demanda y reemplazar instancias enfermas.\n- **Balanceo de carga**: repartir tráfico con health checks.\n\n## Recuperación ante desastres\n- **RTO** (tiempo objetivo de recuperación) y **RPO** (pérdida de datos tolerable) guían la estrategia.\n- Estrategias: backup/restore, pilot light, warm standby y multi-site activo.\n- **Route 53** habilita failover por DNS entre regiones.\n\n## Datos\n- Réplicas de lectura y copias multirregión para durabilidad.\n- Probar la recuperación con **simulacros**, no solo documentarla.\n\n> **En el examen:** si exigen RTO/RPO muy bajos, inclínate por warm standby o multi-site; si el costo manda, backup/restore o pilot light."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un negocio exige un RTO y RPO casi nulos para una aplicación crítica. ¿Qué estrategia de recuperación ante desastres encaja mejor?",
+          "opciones": ["Multi-site activo/activo", "Backup y restauración", "Pilot light", "Copias manuales semanales"],
+          "correctas": [0],
+          "explicacion": "Multi-site activo/activo mantiene capacidad lista en otra región, logrando el menor RTO/RPO. Las demás implican tiempos de recuperación mayores."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué mecanismos aumentan la resiliencia de una aplicación web en AWS? (elige dos)",
+          "opciones": ["Desplegar en varias zonas de disponibilidad", "Auto Scaling con reemplazo de instancias no saludables", "Alojar todo en una única instancia grande", "Eliminar los health checks del balanceador", "Concentrar los datos en una sola AZ sin réplicas"],
+          "correctas": [0, 1],
+          "explicacion": "Multi-AZ tolera fallos zonales y Auto Scaling reemplaza instancias enfermas y absorbe demanda. Las otras crean puntos únicos de fallo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio habilita un failover entre regiones a nivel de DNS?",
+          "opciones": ["Amazon Route 53", "Amazon CloudFront", "AWS Direct Connect", "Amazon VPC"],
+          "correctas": [0],
+          "explicacion": "Route 53 ofrece políticas de enrutamiento con failover basado en health checks para redirigir a una región sana."
+        }
+      ]
+    },
+    {
+      "slug": "monitoreo-logging",
+      "nombre": "Monitoreo y registro",
+      "dominio": "Monitoring and Logging",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Observabilidad operativa",
+        "markdown": "## Tres señales\nLa observabilidad se apoya en **métricas**, **logs** y **trazas**. Juntas permiten detectar, diagnosticar y anticipar problemas.\n\n## Servicios\n- **CloudWatch Metrics y Alarms**: medir y disparar acciones ante umbrales.\n- **CloudWatch Logs**: centralizar registros, con filtros de métricas y consultas.\n- **AWS X-Ray**: trazas distribuidas para hallar cuellos de botella.\n- **CloudTrail**: registro de auditoría de llamadas a la API.\n\n## Patrones\n- Convertir patrones de log en métricas con **metric filters**.\n- Métricas **personalizadas** para indicadores de negocio.\n- **Dashboards** para visión consolidada en tiempo real.\n\n## Acciones automáticas\n- Las alarmas pueden notificar por **SNS** o activar Auto Scaling y remediaciones.\n\n> **En el examen:** para auditar quién hizo una llamada a la API, piensa en CloudTrail; para reaccionar a un umbral, en alarmas de CloudWatch."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio registra las llamadas a la API de AWS para fines de auditoría?",
+          "opciones": ["AWS CloudTrail", "Amazon CloudWatch Metrics", "AWS X-Ray", "Amazon SNS"],
+          "correctas": [0],
+          "explicacion": "CloudTrail audita quién hizo qué llamada a la API y cuándo; CloudWatch mide rendimiento y X-Ray traza solicitudes."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Quieres detectar un patrón de error en los logs y reaccionar automáticamente. ¿Qué combinación de capacidades de CloudWatch usas? (elige dos)",
+          "opciones": ["Metric filter sobre los grupos de logs", "Alarma que notifica vía SNS al superar el umbral", "Deshabilitar la retención de logs", "Borrar las trazas de X-Ray", "Exportar los logs y revisarlos solo de forma manual"],
+          "correctas": [0, 1],
+          "explicacion": "Un metric filter transforma el patrón de log en métrica y la alarma sobre esa métrica dispara una notificación SNS automática. Las otras opciones impiden la reacción automática."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Necesitas identificar en qué microservicio se origina la latencia de una solicitud que atraviesa varios servicios. ¿Qué herramienta usas?",
+          "opciones": ["AWS X-Ray", "AWS CloudTrail", "Amazon S3", "AWS Config"],
+          "correctas": [0],
+          "explicacion": "X-Ray ofrece trazas distribuidas que muestran el recorrido y la latencia por segmento, ideal para localizar el cuello de botella."
+        }
+      ]
+    },
+    {
+      "slug": "respuesta-incidentes",
+      "nombre": "Respuesta a incidentes y eventos",
+      "dominio": "Incident and Event Response",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Automatizar la reacción a eventos",
+        "markdown": "## Enfoque\nReaccionar rápido a eventos operativos reduce el impacto. La meta es **detectar, enrutar y remediar** sin intervención manual cuando sea posible.\n\n## Piezas clave\n- **EventBridge**: enruta eventos por reglas hacia destinos como Lambda o SNS.\n- **Lambda**: ejecuta lógica de remediación automática.\n- **Systems Manager Automation**: runbooks para acciones operativas repetibles.\n- **SNS**: notifica a equipos y dispara flujos.\n\n## Patrones de remediación\n- Detectar un cambio no conforme y **corregirlo** con una función o runbook.\n- Reaccionar a cambios de estado de recursos (por ejemplo, instancia fallida).\n- Encadenar pasos complejos con **Step Functions**.\n\n## Buenas prácticas\n- Idempotencia en las acciones automáticas.\n- Registrar cada remediación para auditoría.\n\n> **En el examen:** \"reaccionar a un evento y remediar automáticamente\" casi siempre apunta a EventBridge disparando Lambda o un runbook de SSM Automation."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Quieres ejecutar una función de remediación cada vez que ocurre un cambio de estado específico en un recurso. ¿Qué servicio enruta ese evento hacia la función?",
+          "opciones": ["Amazon EventBridge", "Amazon CloudFront", "AWS CodeDeploy", "Amazon RDS"],
+          "correctas": [0],
+          "explicacion": "EventBridge evalúa reglas sobre eventos y los enruta a destinos como Lambda, habilitando remediación automática."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué elementos componen un flujo de remediación automática bien diseñado ante un evento operativo? (elige dos)",
+          "opciones": ["Regla de EventBridge que dispara la acción", "Runbook de SSM Automation o función Lambda idempotente", "Resolver siempre el incidente de forma manual por ticket", "Acciones sin registro ni trazabilidad", "Reintentos infinitos sin control de idempotencia"],
+          "correctas": [0, 1],
+          "explicacion": "La regla de EventBridge detecta y enruta, y un runbook o Lambda idempotente ejecuta la corrección de forma segura. Las demás opciones rompen la automatización o introducen riesgo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Necesitas coordinar varios pasos de remediación con condiciones y reintentos controlados. ¿Qué servicio orquesta ese flujo?",
+          "opciones": ["AWS Step Functions", "Amazon SNS", "Amazon CloudWatch Logs", "AWS Secrets Manager"],
+          "correctas": [0],
+          "explicacion": "Step Functions modela flujos de trabajo con estados, condiciones y reintentos, ideal para remediaciones de múltiples pasos."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-cumplimiento",
+      "nombre": "Seguridad y cumplimiento",
+      "dominio": "Security and Compliance",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Automatizar seguridad y gobernanza",
+        "markdown": "## Seguridad como código\nLa seguridad debe ser **continua y automatizada**, integrada al pipeline y a la operación, no un control puntual al final.\n\n## Servicios\n- **AWS Config**: evalúa el cumplimiento de recursos con reglas y puede remediar.\n- **IAM**: permisos de mínimo privilegio y roles en lugar de credenciales fijas.\n- **Secrets Manager**: almacena y rota secretos de forma segura.\n- **GuardDuty / Security Hub**: detección de amenazas y vista agregada de hallazgos.\n\n## Patrones\n- **Reglas de Config con remediación** automática para recursos no conformes.\n- Escaneo de imágenes y dependencias dentro del pipeline.\n- **Rotación** automática de secretos y claves.\n\n## Gobernanza multicuenta\n- **SCPs** en AWS Organizations imponen límites; CloudTrail centraliza auditoría.\n\n> **En el examen:** para forzar el cumplimiento continuo y corregir recursos desviados, la respuesta combina reglas de AWS Config con remediación automática."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Quieres evaluar de forma continua si tus recursos cumplen una política y corregirlos automáticamente cuando se desvíen. ¿Qué servicio usas?",
+          "opciones": ["AWS Config con reglas y remediación", "AWS CodeBuild", "Amazon CloudFront", "Amazon SQS"],
+          "correctas": [0],
+          "explicacion": "AWS Config evalúa el cumplimiento de recursos frente a reglas y puede asociar acciones de remediación automática."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué prácticas refuerzan la seguridad de las credenciales en una plataforma DevOps en AWS? (elige dos)",
+          "opciones": ["Usar roles de IAM en lugar de credenciales estáticas", "Rotar secretos automáticamente con Secrets Manager", "Incrustar claves de acceso en el código fuente", "Compartir una sola clave de administrador entre el equipo", "Guardar contraseñas en texto plano en variables de entorno del repositorio"],
+          "correctas": [0, 1],
+          "explicacion": "Los roles de IAM evitan credenciales de larga vida y Secrets Manager gestiona y rota secretos de forma segura. Las demás opciones exponen credenciales."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "dificil",
+          "enunciado": "En un entorno multicuenta con AWS Organizations, ¿qué mecanismo impone límites de permisos que ninguna cuenta miembro puede exceder?",
+          "opciones": ["Service Control Policies (SCP)", "Políticas de IAM locales por usuario", "Grupos de seguridad", "Listas de control de acceso de S3"],
+          "correctas": [0],
+          "explicacion": "Las SCP definen el máximo de permisos disponibles para las cuentas de la organización, sin importar las políticas de IAM locales."
+        }
+      ]
+    }
+  ]
+}

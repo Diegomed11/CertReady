@@ -1,0 +1,270 @@
+{
+  "slug": "lpic-1",
+  "nombre": "LPIC-1: Linux Administrator",
+  "proveedor": "LPI",
+  "nivel": "associate",
+  "area": "Sistemas",
+  "descripcion": "Certificación que valida la capacidad de administrar sistemas Linux desde la línea de comandos, gestionando paquetes, archivos, procesos, redes y usuarios. Demuestra autonomía operativa en cualquier distribución mayoritaria.",
+  "skills": [
+    "linux",
+    "bash",
+    "shell",
+    "systemd",
+    "permisos",
+    "particiones",
+    "redes",
+    "usuarios",
+    "paquetes",
+    "procesos",
+    "logs",
+    "scripting"
+  ],
+  "roles": [
+    "Administrador de sistemas Linux",
+    "Ingeniero de soporte de infraestructura",
+    "Operador de centro de datos",
+    "Técnico DevOps junior"
+  ],
+  "temas": [
+    {
+      "slug": "arquitectura-y-arranque",
+      "nombre": "Arquitectura del sistema y arranque",
+      "dominio": "Topic 101: System Architecture",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Hardware, niveles de ejecución y secuencia de arranque",
+        "markdown": "## Reconocer el hardware\nLinux expone los dispositivos a través de pseudo-sistemas de archivos. En **`/proc`** y **`/sys`** se encuentran datos vivos del kernel; comandos como **`lspci`**, **`lsusb`** y **`lsmod`** ayudan a inventariar componentes y módulos cargados.\n\n## Secuencia de arranque\nEl flujo típico es: firmware (BIOS o UEFI) → gestor de arranque → kernel → proceso `init`. El kernel descomprime un **initramfs** temporal para montar la raíz real. Los mensajes tempranos se inspeccionan con **`dmesg`** o **`journalctl -k`**.\n\n## Objetivos del sistema\nLos sistemas modernos con **systemd** sustituyen los antiguos *runlevels* por **targets**:\n- `multi-user.target` equivale al modo multiusuario sin entorno gráfico.\n- `graphical.target` añade la capa gráfica.\n\nCambiar de estado se hace con `systemctl isolate` y el objetivo por defecto con `systemctl set-default`.\n\n> **En el examen:** distingue entre SysVinit (`/etc/inittab`, `telinit`) y systemd (`targets`, `systemctl`); ambos pueden aparecer."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué comando muestra los mensajes del anillo del kernel registrados durante el arranque?",
+          "opciones": ["dmesg", "lsblk", "uptime", "free"],
+          "correctas": [0],
+          "explicacion": "dmesg vuelca el buffer de mensajes del kernel, incluidos los emitidos durante el arranque temprano."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de los siguientes son objetivos (targets) válidos de systemd?",
+          "opciones": [
+            "multi-user.target",
+            "graphical.target",
+            "runlevel5.service",
+            "rescue.target",
+            "shutdown.exe"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "multi-user, graphical y rescue son targets reales de systemd. runlevel5.service y shutdown.exe no existen como tales."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuál es el componente temporal que el kernel monta en RAM para poder acceder a la raíz real del sistema?",
+          "opciones": ["initramfs", "swap", "tmpfs de /run", "GRUB stage 2"],
+          "correctas": [0],
+          "explicacion": "El initramfs (initial RAM filesystem) contiene los módulos y herramientas necesarios para montar el sistema de archivos raíz definitivo."
+        }
+      ]
+    },
+    {
+      "slug": "instalacion-y-paquetes",
+      "nombre": "Instalación y gestión de paquetes",
+      "dominio": "Topic 102: Linux Installation and Package Management",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Particionado, gestores de paquetes y bibliotecas compartidas",
+        "markdown": "## Diseño del disco\nUn esquema saludable separa puntos de montaje críticos. Conviene aislar **`/home`**, **`/var`** y **`/tmp`** para que un llenado accidental no comprometa la raíz. La memoria de intercambio (**swap**) absorbe presión cuando la RAM se agota.\n\n## Familias de paquetes\nExisten dos grandes ecosistemas:\n- **Debian/Ubuntu**: paquetes `.deb` gestionados con **`dpkg`** (bajo nivel) y **`apt`** (resolución de dependencias).\n- **Red Hat/Fedora**: paquetes `.rpm` con **`rpm`** y **`dnf`/`yum`** para dependencias.\n\n## Bibliotecas compartidas\nLos binarios dependen de librerías dinámicas. **`ldd`** lista las dependencias de un ejecutable y **`ldconfig`** reconstruye la caché tras añadir rutas en `/etc/ld.so.conf`.\n\n> **En el examen:** asocia cada verbo correcto a su gestor (`apt install`, `dnf install`, `dpkg -i`, `rpm -ivh`) y recuerda que `dpkg` y `rpm` no resuelven dependencias por sí solos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué comando instala un archivo .deb local directamente, sin resolver dependencias automáticamente?",
+          "opciones": ["dpkg -i paquete.deb", "apt search paquete", "rpm -q paquete", "dnf info paquete"],
+          "correctas": [0],
+          "explicacion": "dpkg -i instala un paquete .deb local; la resolución de dependencias corresponde a apt."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué herramientas pertenecen al ecosistema de paquetes basado en RPM?",
+          "opciones": ["dnf", "yum", "apt-get", "rpm", "dpkg"],
+          "correctas": [0, 1, 3],
+          "explicacion": "dnf, yum y rpm operan sobre paquetes RPM; apt-get y dpkg pertenecen al mundo Debian."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué comando muestra las bibliotecas compartidas de las que depende un ejecutable?",
+          "opciones": ["ldd", "ldconfig", "lsof", "nm"],
+          "correctas": [0],
+          "explicacion": "ldd lista las dependencias dinámicas de un binario; ldconfig actualiza la caché del enlazador."
+        }
+      ]
+    },
+    {
+      "slug": "comandos-gnu-y-unix",
+      "nombre": "Comandos GNU y Unix",
+      "dominio": "Topic 103: GNU and Unix Commands",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Tuberías, filtros de texto y control de procesos",
+        "markdown": "## Trabajar en la shell\nLa potencia de Linux nace de **encadenar herramientas pequeñas**. El operador de tubería `|` conecta la salida de un comando con la entrada del siguiente, mientras que `>` y `>>` redirigen a archivos.\n\n## Procesar texto\nFiltros habituales:\n- **`grep`** busca patrones.\n- **`cut`** extrae columnas.\n- **`sort`** y **`uniq`** ordenan y deduplican.\n- **`sed`** y **`awk`** transforman flujos completos.\n\n## Gestionar procesos\nUn proceso en primer plano se suspende con `Ctrl+Z` y se reanuda en segundo plano con **`bg`**. Las señales se envían con **`kill`** (por PID) o **`pkill`** (por nombre). La señal `TERM` (15) pide terminación ordenada; `KILL` (9) es forzosa.\n\n> **En el examen:** domina la diferencia entre `>` (sobrescribe) y `>>` (anexa), y recuerda que `nice`/`renice` ajustan la prioridad de planificación."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué operador anexa la salida de un comando al final de un archivo existente sin borrarlo?",
+          "opciones": [">>", ">", "|", "2>"],
+          "correctas": [0],
+          "explicacion": ">> anexa al archivo; > lo sobrescribe desde cero."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles de estas afirmaciones sobre señales y procesos son correctas?",
+          "opciones": [
+            "kill -9 envía SIGKILL y no puede ser ignorada por el proceso",
+            "kill -15 envía SIGTERM, una solicitud de terminación ordenada",
+            "renice puede cambiar la prioridad de un proceso en ejecución",
+            "bg detiene por completo un proceso",
+            "pkill nunca acepta el nombre del proceso"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "SIGKILL es forzosa, SIGTERM es ordenada y renice ajusta prioridades en caliente. bg reanuda en segundo plano y pkill sí acepta nombres."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué comando extrae la primera columna de un archivo delimitado por dos puntos?",
+          "opciones": ["cut -d: -f1 archivo", "sort -k1 archivo", "grep -c : archivo", "uniq -1 archivo"],
+          "correctas": [0],
+          "explicacion": "cut -d: -f1 usa ':' como delimitador y selecciona el primer campo."
+        }
+      ]
+    },
+    {
+      "slug": "filesystem-y-fhs",
+      "nombre": "Dispositivos, sistemas de archivos y FHS",
+      "dominio": "Topic 104: Devices, Linux Filesystems, Filesystem Hierarchy Standard",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Montaje, integridad y jerarquía estándar",
+        "markdown": "## Crear y montar sistemas de archivos\nTras particionar con `fdisk` o `parted`, se crea el sistema de archivos con **`mkfs`** (por ejemplo `mkfs.ext4`). El montaje manual usa **`mount`** y el permanente se declara en **`/etc/fstab`**.\n\n## Integridad y espacio\n- **`fsck`** verifica y repara sistemas de archivos desmontados.\n- **`df`** muestra espacio libre por punto de montaje.\n- **`du`** mide el consumo de directorios concretos.\n\n## Jerarquía estándar (FHS)\nEl **FHS** define dónde vive cada cosa: binarios esenciales en `/bin` y `/sbin`, configuración en `/etc`, datos variables en `/var` y archivos temporales en `/tmp`. Conocerlo permite ubicar recursos sin adivinar.\n\n> **En el examen:** recuerda que `fsck` solo debe ejecutarse sobre particiones desmontadas y que las cuotas (`quota`) limitan el uso por usuario."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué archivo define los sistemas de archivos que se montan automáticamente al arrancar?",
+          "opciones": ["/etc/fstab", "/etc/mtab", "/proc/mounts", "/etc/filesystems"],
+          "correctas": [0],
+          "explicacion": "/etc/fstab declara los montajes persistentes; /etc/mtab y /proc/mounts reflejan el estado actual."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Según el FHS, ¿qué directorios suelen contener archivos de configuración o datos variables del sistema?",
+          "opciones": ["/etc", "/var", "/proc", "/srv", "/dev"],
+          "correctas": [0, 1, 3],
+          "explicacion": "/etc guarda configuración, /var datos variables y /srv datos servidos. /proc y /dev son sistemas virtuales del kernel."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué comando mide el espacio consumido por un directorio específico y sus subdirectorios?",
+          "opciones": ["du", "df", "lsblk", "stat"],
+          "correctas": [0],
+          "explicacion": "du recorre directorios sumando su uso; df reporta el espacio por sistema de archivos montado."
+        }
+      ]
+    },
+    {
+      "slug": "shells-y-scripting",
+      "nombre": "Shells y scripting",
+      "dominio": "Topic 105: Shells and Shell Scripting",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Variables de entorno y automatización con Bash",
+        "markdown": "## Entorno de la shell\nLas **variables de entorno** configuran el comportamiento de los programas. Se exportan con **`export VAR=valor`** y se inspeccionan con `env` o `set`. La variable **`PATH`** determina dónde busca la shell los ejecutables.\n\n## Estructura de un script\nUn script empieza con la línea **shebang** (`#!/bin/bash`) que indica el intérprete. Recibe argumentos posicionales como `$1`, `$2` y el conjunto completo en `$@`. El **código de salida** del último comando está en `$?`.\n\n## Lógica básica\nLos scripts usan condicionales `if`/`then`/`fi` y bucles `for` y `while`. La prueba `test` (o `[ ]`) evalúa expresiones:\n- `-f` comprueba si existe un archivo regular.\n- `-d` comprueba si existe un directorio.\n\n> **En el examen:** asegúrate de saber qué representa `$?` (estado de salida) frente a `$$` (PID de la shell) y `$0` (nombre del script)."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué variable contiene el código de salida del último comando ejecutado?",
+          "opciones": ["$?", "$0", "$#", "$!"],
+          "correctas": [0],
+          "explicacion": "$? almacena el estado de salida del comando anterior; 0 indica éxito."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre variables especiales y scripting de Bash son correctas?",
+          "opciones": [
+            "$1 es el primer argumento posicional del script",
+            "$@ expande todos los argumentos posicionales",
+            "La línea shebang indica el intérprete a usar",
+            "export hace que una variable sea visible para procesos hijos",
+            "$0 siempre vale 0 si el script tuvo éxito"
+          ],
+          "correctas": [0, 1, 2, 3],
+          "explicacion": "$1 y $@ manejan argumentos, el shebang fija el intérprete y export propaga variables. $0 contiene el nombre del script, no un estado de éxito."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En una prueba de test, ¿qué operador comprueba si una ruta es un directorio existente?",
+          "opciones": ["-d", "-f", "-e", "-x"],
+          "correctas": [0],
+          "explicacion": "-d verifica que la ruta exista y sea un directorio; -f es para archivos regulares."
+        }
+      ]
+    },
+    {
+      "slug": "redes-y-seguridad",
+      "nombre": "Fundamentos de redes y seguridad",
+      "dominio": "Topic 109/110: Networking Fundamentals and Security",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Configuración de red, diagnóstico y endurecimiento básico",
+        "markdown": "## Configurar la red\nUna interfaz necesita dirección IP, máscara y puerta de enlace. Las herramientas modernas del paquete **iproute2** usan **`ip addr`** e **`ip route`**, reemplazando a las clásicas `ifconfig` y `route`. La resolución de nombres se define en **`/etc/resolv.conf`**.\n\n## Diagnosticar problemas\n- **`ping`** comprueba conectividad básica.\n- **`ss`** lista sockets y puertos en escucha.\n- **`dig`** y **`host`** consultan el DNS.\n\n## Seguridad básica\nEl control de acceso pasa por gestionar usuarios y permisos. **`sudo`** delega privilegios puntuales registrados en `/etc/sudoers`. Para accesos remotos, **SSH** con autenticación por clave evita exponer contraseñas. Conviene auditar archivos con SUID y mantener al día las contraseñas con **`chage`**.\n\n> **En el examen:** prioriza la sintaxis de iproute2 (`ip addr show`) sobre las herramientas heredadas, y recuerda que `ss -tlnp` revela los puertos TCP en escucha."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué comando del paquete iproute2 muestra las direcciones IP asignadas a las interfaces?",
+          "opciones": ["ip addr show", "ping localhost", "dig @8.8.8.8", "ss -s"],
+          "correctas": [0],
+          "explicacion": "ip addr show lista las interfaces y sus direcciones; es el reemplazo moderno de ifconfig."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué prácticas mejoran la seguridad de un sistema Linux?",
+          "opciones": [
+            "Usar autenticación por clave SSH en lugar de contraseña",
+            "Delegar privilegios puntuales con sudo en vez de compartir root",
+            "Auditar binarios con bit SUID innecesario",
+            "Deshabilitar por completo el archivo /etc/passwd",
+            "Dejar el puerto SSH abierto sin ninguna restricción"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Claves SSH, sudo y auditar SUID endurecen el sistema. Borrar /etc/passwd lo inutiliza y dejar SSH sin restricción es inseguro."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué comando consulta los servidores DNS para resolver un nombre de dominio?",
+          "opciones": ["dig", "ss", "ip route", "ping -c1"],
+          "correctas": [0],
+          "explicacion": "dig realiza consultas DNS detalladas; ss inspecciona sockets e ip route gestiona rutas."
+        }
+      ]
+    }
+  ]
+}

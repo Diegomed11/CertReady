@@ -1,0 +1,228 @@
+{
+  "slug": "psm-i",
+  "nombre": "Professional Scrum Master I (PSM I)",
+  "proveedor": "Scrum.org",
+  "nivel": "associate",
+  "area": "Gestion de proyectos",
+  "descripcion": "Certificacion que valida el dominio del marco Scrum, sus roles, eventos y artefactos, asi como la mentalidad agil basada en el empirismo. Esta orientada a quienes facilitan equipos que entregan valor de forma incremental.",
+  "skills": ["scrum", "empirismo", "agilidad", "scrum master", "facilitacion", "product backlog", "sprint", "auto gestion", "definicion de hecho", "mejora continua", "valor", "transparencia"],
+  "roles": ["scrum master", "agile coach", "lider de equipo", "facilitador de equipos", "gerente de proyectos agil"],
+  "temas": [
+    {
+      "slug": "empirismo-valores",
+      "nombre": "Empirismo y valores de Scrum",
+      "dominio": "Teoria de Scrum: empirismo, pensamiento Lean y hechos",
+      "orden": 1,
+      "hoja": {
+        "titulo": "El control empirico de procesos",
+        "markdown": "## Por que empirismo\nScrum se apoya en el **empirismo**: el conocimiento surge de la experiencia y las decisiones se toman con base en lo observado, no en suposiciones. Esto reduce el riesgo en entornos complejos donde no se puede planear todo por adelantado.\n\n## Los tres pilares\n- **Transparencia**: el trabajo y el proceso deben ser visibles para quienes los gestionan y reciben.\n- **Inspeccion**: se revisan con frecuencia los artefactos y el avance hacia las metas.\n- **Adaptacion**: si algo se desvia, se ajusta cuanto antes para minimizar la desviacion.\n\n## Pensamiento Lean\nScrum incorpora el **pensamiento Lean**, que reduce el desperdicio y concentra la atencion en lo esencial.\n\n## Los cinco valores\n**Compromiso**, **enfoque**, **apertura**, **respeto** y **coraje** sostienen la confianza del equipo y dan sentido a los eventos y artefactos.\n\n> **En el examen:** vincula cada pilar con un evento que lo habilita y recuerda que la inspeccion sin transparencia conduce a decisiones erroneas."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Cuales son los tres pilares del control empirico de procesos en Scrum?",
+          "opciones": ["Planificacion, ejecucion y cierre", "Transparencia, inspeccion y adaptacion", "Roles, eventos y artefactos", "Compromiso, enfoque y coraje"],
+          "correctas": [1],
+          "explicacion": "El empirismo se sostiene en transparencia, inspeccion y adaptacion; los demas conjuntos pertenecen a otras categorias del marco."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de los siguientes son valores de Scrum? Selecciona todas las que apliquen.",
+          "opciones": ["Compromiso", "Enfoque", "Documentacion exhaustiva", "Coraje", "Jerarquia"],
+          "correctas": [0, 1, 3],
+          "explicacion": "Los cinco valores son compromiso, enfoque, apertura, respeto y coraje. La documentacion exhaustiva y la jerarquia no son valores de Scrum."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Si la inspeccion de los artefactos se realiza sobre informacion poco fiable, que pilar esta comprometido y que consecuencia tiene?",
+          "opciones": ["La adaptacion; el equipo trabajara mas rapido", "La transparencia; las decisiones de adaptacion seran defectuosas", "La inspeccion; el Sprint se alargara automaticamente", "Ninguno; la inspeccion siempre es valida"],
+          "correctas": [1],
+          "explicacion": "Sin transparencia, la informacion inspeccionada es engañosa y las decisiones de adaptacion resultan defectuosas o riesgosas."
+        }
+      ]
+    },
+    {
+      "slug": "equipo-scrum",
+      "nombre": "El Scrum Team y sus responsabilidades",
+      "dominio": "El equipo Scrum: roles y responsabilidades",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Roles del Scrum Team",
+        "markdown": "## Un equipo, sin subequipos\nEl **Scrum Team** es una unidad cohesionada, **auto gestionada** y **multifuncional**, sin subequipos ni jerarquias internas. Suele ser de **diez personas o menos** para mantener agilidad.\n\n## Responsabilidades clave\n- **Product Owner**: maximiza el valor del producto y es responsable de la gestion del **Product Backlog**.\n- **Scrum Master**: responsable de la efectividad del equipo; es un lider que sirve y promueve la adopcion de Scrum.\n- **Developers**: crean el Incremento en cada Sprint y se comprometen con la calidad mediante la Definicion de Hecho.\n\n## Lider que sirve\nEl Scrum Master ayuda a la organizacion y al equipo removiendo impedimentos, facilitando eventos y entrenando en auto gestion, sin mandar ni asignar tareas.\n\n> **En el examen:** recuerda que el equipo completo es responsable de entregar valor; el Scrum Master no es un jefe ni gestiona personas."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Quien es responsable de la gestion del Product Backlog?",
+          "opciones": ["El Scrum Master", "Los Developers", "El Product Owner", "Los interesados (stakeholders)"],
+          "correctas": [2],
+          "explicacion": "El Product Owner es responsable de la gestion del Product Backlog, aunque puede delegar tareas manteniendo la responsabilidad."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Como describe Scrum la forma en que el Scrum Master ejerce su liderazgo?",
+          "opciones": ["Como un gerente que asigna tareas diarias", "Como un lider que sirve al equipo y a la organizacion", "Como el responsable de aprobar el codigo final", "Como el unico autorizado a hablar con los clientes"],
+          "correctas": [1],
+          "explicacion": "El Scrum Master es un lider que sirve: facilita, entrena y remueve impedimentos, sin asignar tareas ni gestionar personas."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Cuales de las siguientes afirmaciones sobre el Scrum Team son correctas? Selecciona todas las que apliquen.",
+          "opciones": ["Es auto gestionado", "Es multifuncional", "Se divide en subequipos por especialidad", "Suele tener diez personas o menos", "Tiene un jefe que aprueba cada tarea"],
+          "correctas": [0, 1, 3],
+          "explicacion": "El Scrum Team es auto gestionado, multifuncional y pequeño (diez o menos). No tiene subequipos ni jerarquias internas."
+        }
+      ]
+    },
+    {
+      "slug": "eventos-scrum",
+      "nombre": "Los eventos de Scrum",
+      "dominio": "Eventos de Scrum: Sprint y ceremonias",
+      "orden": 3,
+      "hoja": {
+        "titulo": "El Sprint y sus eventos",
+        "markdown": "## El Sprint como contenedor\nEl **Sprint** es el latido del marco: un periodo fijo de **un mes o menos** dentro del cual ocurren los demas eventos. Un Sprint inicia inmediatamente despues de terminar el anterior.\n\n## Eventos dentro del Sprint\n- **Sprint Planning**: define la meta del Sprint y que trabajo se abordara.\n- **Daily Scrum**: evento diario de **15 minutos** para que los Developers inspeccionen el avance hacia la meta y ajusten su plan.\n- **Sprint Review**: se inspecciona el Incremento con los interesados y se adapta el Product Backlog.\n- **Sprint Retrospective**: el equipo inspecciona como trabajo y planifica mejoras.\n\n## Cancelacion\nSolo el **Product Owner** puede cancelar un Sprint, cuando la meta queda obsoleta.\n\n> **En el examen:** el Daily Scrum es para los Developers y dura 15 minutos; no se extiende la duracion del Sprint para terminar el trabajo pendiente."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Cual es la duracion maxima recomendada de un Sprint?",
+          "opciones": ["Una semana exacta", "Un mes o menos", "Tres meses", "No tiene limite definido"],
+          "correctas": [1],
+          "explicacion": "Un Sprint dura un mes o menos; periodos mas cortos aumentan la frecuencia de inspeccion y adaptacion."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "El trabajo planificado no se termino al cerrar el Sprint. Que debe hacer el equipo?",
+          "opciones": ["Extender el Sprint hasta completar todo el trabajo", "Cerrar el Sprint a tiempo y revisar el trabajo pendiente en el Product Backlog", "Cancelar el Sprint automaticamente", "Iniciar un Sprint sin meta"],
+          "correctas": [1],
+          "explicacion": "Los Sprints tienen duracion fija; no se extienden. El trabajo no terminado regresa al Product Backlog para repriorizarse."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de las siguientes afirmaciones sobre el Daily Scrum son correctas? Selecciona todas las que apliquen.",
+          "opciones": ["Tiene una caja de tiempo de 15 minutos", "Es para que los Developers inspeccionen el avance hacia la meta del Sprint", "Es un reporte de estado dirigido al Scrum Master", "Ayuda a ajustar el plan de trabajo del dia", "Solo puede realizarlo el Product Owner"],
+          "correctas": [0, 1, 3],
+          "explicacion": "El Daily Scrum dura 15 minutos, es de los Developers para inspeccionar el avance y ajustar el plan. No es un reporte de estado ni lo dirige el Product Owner."
+        }
+      ]
+    },
+    {
+      "slug": "artefactos-compromisos",
+      "nombre": "Artefactos y sus compromisos",
+      "dominio": "Artefactos de Scrum: Product Backlog, Sprint Backlog e Incremento",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Artefactos y compromisos asociados",
+        "markdown": "## Los tres artefactos\n- **Product Backlog**: lista ordenada y emergente de todo lo que el producto necesita. Su compromiso es la **Meta del Producto**.\n- **Sprint Backlog**: la Meta del Sprint, los elementos seleccionados y el plan para entregarlos; es de los Developers. Su compromiso es la **Meta del Sprint**.\n- **Incremento**: paso concreto hacia la Meta del Producto; debe ser utilizable. Su compromiso es la **Definicion de Hecho**.\n\n## Para que sirven los compromisos\nCada compromiso aporta **transparencia** y un foco contra el cual medir el progreso. Refuerzan el empirismo al dar un objetivo claro que inspeccionar.\n\n## Transparencia de los artefactos\nUn artefacto poco transparente lleva a decisiones que aumentan el riesgo y reducen el valor entregado.\n\n> **En el examen:** asocia cada artefacto con su compromiso (Producto, Sprint, Definicion de Hecho) y recuerda que un Incremento debe cumplir la Definicion de Hecho para considerarse listo."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Cual es el compromiso asociado al Sprint Backlog?",
+          "opciones": ["La Meta del Producto", "La Definicion de Hecho", "La Meta del Sprint", "El Product Backlog refinado"],
+          "correctas": [2],
+          "explicacion": "El compromiso del Sprint Backlog es la Meta del Sprint, que da foco y direccion al trabajo del Sprint."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Relaciona artefactos con compromisos. Cuales pares son correctos? Selecciona todas las que apliquen.",
+          "opciones": ["Product Backlog y Meta del Producto", "Sprint Backlog y Meta del Sprint", "Incremento y Definicion de Hecho", "Product Backlog y Definicion de Hecho", "Incremento y Meta del Sprint"],
+          "correctas": [0, 1, 2],
+          "explicacion": "Los pares correctos son Product Backlog-Meta del Producto, Sprint Backlog-Meta del Sprint e Incremento-Definicion de Hecho."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Que debe cumplir un elemento de trabajo para considerarse parte de un Incremento utilizable?",
+          "opciones": ["Estar estimado en horas", "Cumplir la Definicion de Hecho", "Haber sido aprobado por un gerente externo", "Estar documentado en un manual"],
+          "correctas": [1],
+          "explicacion": "Un trabajo solo se considera parte del Incremento cuando cumple la Definicion de Hecho, garantizando su calidad y usabilidad."
+        }
+      ]
+    },
+    {
+      "slug": "product-backlog-valor",
+      "nombre": "Gestion del Product Backlog y el valor",
+      "dominio": "Gestion del producto y entrega de valor",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Refinamiento y entrega de valor",
+        "markdown": "## El Product Owner y el valor\nEl **Product Owner** maximiza el valor ordenando el **Product Backlog** segun objetivos, dependencias y retorno esperado. Es una sola persona, no un comite, lo que evita decisiones difusas.\n\n## Refinamiento\nEl **refinamiento** es una actividad continua: se aclaran, dividen y ordenan los elementos para que esten listos para futuros Sprints. No es un evento formal con caja de tiempo fija.\n\n## Transparencia con los interesados\nLa **Sprint Review** es el punto natural para inspeccionar el Incremento con los interesados y adaptar el backlog segun su retroalimentacion, sin convertirse en una mera demostracion.\n\n## Entrega temprana\nEntregar Incrementos utilizables de forma frecuente permite validar suposiciones pronto y ajustar el rumbo segun valor real, no estimado.\n\n> **En el examen:** el Product Owner decide el orden del backlog; aunque puede recibir aportes, la responsabilidad final no se diluye en el equipo ni en los interesados."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Varias personas presionan al equipo con prioridades distintas para el Product Backlog. Quien decide finalmente el orden?",
+          "opciones": ["Los Developers por votacion", "El Scrum Master como arbitro", "El Product Owner", "El interesado de mayor jerarquia"],
+          "correctas": [2],
+          "explicacion": "El Product Owner es responsable del orden del Product Backlog; puede escuchar aportes, pero la decision final es suya."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Como describe Scrum la actividad de refinamiento del Product Backlog?",
+          "opciones": ["Un evento formal con caja de tiempo fija", "Una actividad continua de aclarar, dividir y ordenar elementos", "Una reunion exclusiva del Scrum Master", "Un documento que se firma una vez por proyecto"],
+          "correctas": [1],
+          "explicacion": "El refinamiento es una actividad continua y no un evento formal de Scrum; mantiene los elementos listos para futuros Sprints."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de las siguientes practicas favorecen la entrega temprana de valor? Selecciona todas las que apliquen.",
+          "opciones": ["Entregar Incrementos utilizables con frecuencia", "Validar suposiciones con retroalimentacion real", "Acumular todo el valor para una unica entrega final", "Ordenar el backlog segun valor y dependencias", "Evitar mostrar el Incremento a los interesados"],
+          "correctas": [0, 1, 3],
+          "explicacion": "Entregar a menudo, validar con retroalimentacion y ordenar por valor favorecen la entrega temprana. Acumular el valor y ocultar el Incremento la perjudican."
+        }
+      ]
+    },
+    {
+      "slug": "scrum-master-organizacion",
+      "nombre": "El Scrum Master y la organizacion",
+      "dominio": "Servicio del Scrum Master al equipo y a la organizacion",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Facilitacion, impedimentos y cambio organizacional",
+        "markdown": "## A quien sirve el Scrum Master\nEl Scrum Master sirve a tres frentes: el **Scrum Team**, el **Product Owner** y la **organizacion** completa. Su meta es que Scrum sea efectivo, no controlar el trabajo.\n\n## Servicio al equipo\n- Entrena en **auto gestion** y multifuncionalidad.\n- Ayuda a centrarse en Incrementos que cumplan la Definicion de Hecho.\n- Remueve **impedimentos** al progreso.\n\n## Servicio a la organizacion\n- Lidera y entrena la adopcion de Scrum.\n- Ayuda a interesados y empleados a entender el enfoque empirico.\n- Derriba barreras entre interesados y equipos.\n\n## Facilitar, no imponer\nEl Scrum Master facilita los eventos cuando se requiere, pero busca que el equipo gane autonomia, evitando volverse un cuello de botella o un mando.\n\n> **En el examen:** ante un impedimento organizacional, el Scrum Master ayuda a resolverlo o escala, en lugar de ignorarlo o asignar la tarea como un jefe."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un impedimento externo bloquea al equipo y excede su alcance. Cual es la respuesta mas alineada con el rol del Scrum Master?",
+          "opciones": ["Ignorarlo porque no es del equipo", "Ayudar a removerlo o escalarlo a quien pueda resolverlo", "Asignar la tarea a un Developer como un jefe", "Cancelar el Sprint de inmediato"],
+          "correctas": [1],
+          "explicacion": "El Scrum Master remueve impedimentos al progreso; cuando exceden al equipo, los escala a quien tenga la capacidad de resolverlos."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "A quienes sirve el Scrum Master segun Scrum? Selecciona todas las que apliquen.",
+          "opciones": ["Al Scrum Team", "Al Product Owner", "A la organizacion", "Solo a los gerentes", "Unicamente a los clientes externos"],
+          "correctas": [0, 1, 2],
+          "explicacion": "El Scrum Master sirve al Scrum Team, al Product Owner y a la organizacion. No se limita a gerentes ni a clientes externos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Cual de las siguientes es una forma en que el Scrum Master sirve a la organizacion?",
+          "opciones": ["Aprobar el codigo antes de cada entrega", "Liderar y entrenar la adopcion de Scrum", "Definir el orden del Product Backlog", "Estimar el trabajo de los Developers"],
+          "correctas": [1],
+          "explicacion": "El Scrum Master ayuda a la organizacion liderando y entrenando la adopcion de Scrum y el enfoque empirico, no aprobando codigo ni estimando trabajo ajeno."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,343 @@
+{
+  "slug": "cissp",
+  "nombre": "Certified Information Systems Security Professional (CISSP)",
+  "proveedor": "ISC2",
+  "nivel": "professional",
+  "area": "Seguridad",
+  "descripcion": "Certificación avanzada que valida la capacidad de diseñar, implementar y dirigir un programa integral de seguridad de la información. Cubre ocho dominios que abarcan gobierno, ingeniería, operaciones y desarrollo seguro.",
+  "skills": [
+    "gestion de riesgos",
+    "criptografia",
+    "control de acceso",
+    "seguridad de redes",
+    "arquitectura segura",
+    "respuesta a incidentes",
+    "continuidad del negocio",
+    "gobierno de seguridad",
+    "modelado de amenazas",
+    "cumplimiento normativo",
+    "seguridad en software",
+    "identidad digital"
+  ],
+  "roles": [
+    "Arquitecto de seguridad",
+    "Gerente de seguridad de la informacion",
+    "Consultor de ciberseguridad",
+    "Oficial de seguridad (CISO)",
+    "Analista de riesgos"
+  ],
+  "temas": [
+    {
+      "slug": "gestion-de-riesgos-y-seguridad",
+      "nombre": "Gestion de riesgos y seguridad",
+      "dominio": "Security and Risk Management",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Fundamentos de gobierno y riesgo",
+        "markdown": "## La triada y mas alla\nLa seguridad de la informacion protege tres propiedades centrales: **confidencialidad**, **integridad** y **disponibilidad** (CIA). Conceptos complementarios como autenticidad y no repudio sostienen la confianza en las transacciones.\n\n## Proceso de gestion de riesgos\n- **Identificar** activos y valorarlos.\n- **Analizar** amenazas y vulnerabilidades.\n- **Evaluar** el riesgo combinando probabilidad e impacto.\n- **Tratar** el riesgo: mitigar, transferir, aceptar o evitar.\n\nEl **riesgo residual** es lo que queda despues de aplicar controles; la direccion debe aceptarlo formalmente.\n\n## Gobierno y cumplimiento\nLas politicas expresan la intencion de la alta direccion; los estandares, procedimientos y guias la operacionalizan. La **debida diligencia** investiga, la **debida atencion** actua. La etica profesional exige proteger a la sociedad y actuar con honor.\n\n> **En el examen:** cuando dudes, elige la opcion que prioriza la vida humana y la seguridad de las personas por encima de cualquier otro interes."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Despues de aplicar controles de mitigacion, el riesgo que permanece y debe ser aceptado formalmente por la direccion se denomina:",
+          "opciones": [
+            "Riesgo inherente",
+            "Riesgo residual",
+            "Riesgo total",
+            "Riesgo cualitativo"
+          ],
+          "correctas": [1],
+          "explicacion": "El riesgo residual es el que subsiste tras implementar los controles; la organizacion debe decidir si lo acepta. El riesgo inherente es el que existe antes de cualquier control."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de las siguientes son estrategias validas de tratamiento del riesgo segun CISSP? (Seleccione todas las que apliquen)",
+          "opciones": [
+            "Mitigar el riesgo aplicando controles",
+            "Transferir el riesgo mediante un seguro",
+            "Aceptar el riesgo de forma documentada",
+            "Ignorar el riesgo sin registrarlo",
+            "Evitar el riesgo eliminando la actividad"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Las cuatro estrategias reconocidas son mitigar, transferir, aceptar y evitar. Ignorar un riesgo sin documentarlo no es una estrategia valida, ya que deja a la organizacion sin trazabilidad ni decision consciente."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Un ejecutivo investiga a fondo a un proveedor antes de firmar un contrato de servicios criticos. Que concepto describe mejor esta accion?",
+          "opciones": [
+            "Debida atencion (due care)",
+            "Debida diligencia (due diligence)",
+            "Separacion de funciones",
+            "Aceptacion del riesgo"
+          ],
+          "correctas": [1],
+          "explicacion": "La debida diligencia es el acto de investigar e informarse antes de actuar. La debida atencion es la accion continua y prudente que se ejerce una vez tomada la decision."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-de-activos",
+      "nombre": "Seguridad de activos",
+      "dominio": "Asset Security",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Clasificacion y ciclo de vida del dato",
+        "markdown": "## Por que clasificar\nNo todos los datos valen lo mismo. La **clasificacion** asigna niveles de sensibilidad (por ejemplo publico, interno, confidencial, restringido) para aplicar controles proporcionales a su valor.\n\n## Roles sobre los datos\n- **Propietario del dato (data owner):** define la clasificacion y aprueba accesos.\n- **Custodio (custodian):** implementa y mantiene los controles tecnicos.\n- **Usuario:** opera segun las politicas.\n\n## Estados y proteccion\nLa informacion existe en tres estados: **en reposo**, **en transito** y **en uso**. Cada estado exige tecnicas propias, como cifrado de disco, TLS o enclaves seguros.\n\n## Retencion y destruccion\nLa **retencion** equilibra obligaciones legales y minimizacion. Al final del ciclo, la **destruccion segura** (borrado criptografico, desmagnetizacion o destruccion fisica) evita la recuperacion.\n\n> **En el examen:** recuerda que el propietario del dato, no el area de TI, es quien decide el nivel de clasificacion."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Quien tiene la responsabilidad de definir el nivel de clasificacion de un conjunto de datos?",
+          "opciones": [
+            "El custodio del dato",
+            "El propietario del dato",
+            "El administrador de sistemas",
+            "El usuario final"
+          ],
+          "correctas": [1],
+          "explicacion": "El propietario del dato (data owner) decide la clasificacion y aprueba quien accede. El custodio solo implementa y mantiene los controles definidos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Cual de los siguientes describe correctamente un estado del dato que requiere proteccion especifica?",
+          "opciones": [
+            "Datos en reposo",
+            "Datos comprimidos",
+            "Datos indexados",
+            "Datos normalizados"
+          ],
+          "correctas": [0],
+          "explicacion": "Los tres estados reconocidos del dato son en reposo, en transito y en uso. Compresion, indexacion y normalizacion son tecnicas de manejo, no estados que definan estrategias de proteccion."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Que metodos garantizan la destruccion segura de datos sensibles? (Seleccione todas las que apliquen)",
+          "opciones": [
+            "Borrado criptografico de las claves",
+            "Desmagnetizacion (degaussing) de medios magneticos",
+            "Mover el archivo a la papelera de reciclaje",
+            "Destruccion fisica triturando el medio",
+            "Renombrar el archivo con extension oculta"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "El borrado criptografico, la desmagnetizacion y la destruccion fisica impiden la recuperacion. Mover a la papelera o renombrar no elimina los datos del soporte y son triviales de revertir."
+        }
+      ]
+    },
+    {
+      "slug": "arquitectura-e-ingenieria-de-seguridad",
+      "nombre": "Arquitectura e ingenieria de seguridad",
+      "dominio": "Security Architecture and Engineering",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Diseno seguro y criptografia",
+        "markdown": "## Principios de diseno\nUn sistema robusto aplica **defensa en profundidad** (capas), **menor privilegio**, **fallo seguro** y **economia de mecanismo** (simplicidad). Los modelos formales como Bell-LaPadula protegen la confidencialidad y Biba la integridad.\n\n## Criptografia esencial\n- **Simetrica:** una sola clave compartida, rapida (AES). Reto: distribucion de claves.\n- **Asimetrica:** par publica/privada, resuelve el intercambio y habilita firmas (RSA, ECC).\n- **Hash:** huella de tamano fijo para integridad (SHA-256).\n\nLas **firmas digitales** combinan hash y clave privada para lograr integridad, autenticidad y no repudio.\n\n## Confianza en sistemas\nEl **TCB** (base de computo confiable) agrupa los componentes que hacen cumplir la politica. Un **monitor de referencia** debe ser inviolable, siempre invocado y verificable.\n\n> **En el examen:** asocia 'no escribir hacia abajo' con Bell-LaPadula (confidencialidad) y 'no escribir hacia arriba' con Biba (integridad)."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Que ventaja principal aporta la criptografia asimetrica frente a la simetrica?",
+          "opciones": [
+            "Mayor velocidad de cifrado de grandes volumenes",
+            "Resuelve el problema de distribucion de claves y habilita firmas digitales",
+            "Usa claves mas cortas con la misma seguridad",
+            "Elimina la necesidad de generar numeros aleatorios"
+          ],
+          "correctas": [1],
+          "explicacion": "La criptografia asimetrica usa un par de claves publica y privada, lo que permite intercambiar claves de forma segura y firmar digitalmente. La simetrica es mas rapida pero exige compartir la clave por un canal seguro."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "dificil",
+          "enunciado": "El modelo Bell-LaPadula se centra principalmente en preservar:",
+          "opciones": [
+            "La integridad de los datos",
+            "La disponibilidad del sistema",
+            "La confidencialidad de la informacion",
+            "El no repudio de las transacciones"
+          ],
+          "correctas": [2],
+          "explicacion": "Bell-LaPadula es un modelo de confidencialidad: 'no leer hacia arriba, no escribir hacia abajo'. La integridad la abordan modelos como Biba o Clark-Wilson."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Que propiedades de seguridad proporciona una firma digital? (Seleccione todas las que apliquen)",
+          "opciones": [
+            "Integridad del mensaje",
+            "Autenticidad del firmante",
+            "No repudio del origen",
+            "Confidencialidad total del contenido",
+            "Disponibilidad del servicio"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "La firma digital combina un hash con la clave privada del emisor, garantizando integridad, autenticidad y no repudio. No cifra el contenido por si misma, por lo que no aporta confidencialidad ni disponibilidad."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-de-comunicaciones-y-redes",
+      "nombre": "Seguridad de comunicaciones y redes",
+      "dominio": "Communication and Network Security",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Proteccion de redes y protocolos",
+        "markdown": "## Modelo por capas\nEl modelo **OSI** organiza la comunicacion en siete capas. Comprenderlas ayuda a ubicar controles: un firewall de estado opera en capas 3-4, mientras que un WAF inspecciona la capa 7.\n\n## Segmentacion y perimetro\n- **VLAN y subredes** aislan dominios de broadcast y limitan el movimiento lateral.\n- Una **DMZ** expone servicios publicos sin dar acceso directo a la red interna.\n- El **filtrado por listas** controla trafico entrante y saliente.\n\n## Canales protegidos\nLas **VPN** crean tuneles cifrados; **IPsec** asegura la capa de red con AH (integridad) y ESP (cifrado). **TLS** protege sesiones de aplicacion como HTTPS.\n\n## Amenazas comunes\nEl envenenamiento ARP, el secuestro de sesion y los ataques de denegacion (DoS/DDoS) explotan debilidades de protocolo y disponibilidad.\n\n> **En el examen:** ESP de IPsec ofrece cifrado e integridad; AH solo ofrece integridad y autenticacion, sin cifrar la carga."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Cual es el proposito principal de una zona DMZ en una arquitectura de red?",
+          "opciones": [
+            "Cifrar todo el trafico interno de la empresa",
+            "Exponer servicios publicos aislandolos de la red interna",
+            "Acelerar las consultas a la base de datos",
+            "Reemplazar la necesidad de firewalls"
+          ],
+          "correctas": [1],
+          "explicacion": "La DMZ aloja servicios accesibles desde internet (como web o correo) en un segmento intermedio, evitando que un atacante que los comprometa alcance directamente la red interna."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Cuales de los siguientes son servicios que IPsec puede proporcionar? (Seleccione todas las que apliquen)",
+          "opciones": [
+            "Confidencialidad mediante ESP",
+            "Integridad y autenticacion del origen",
+            "Proteccion contra repeticion (anti-replay)",
+            "Balanceo de carga entre servidores",
+            "Compresion sin perdida de imagenes"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "IPsec ofrece confidencialidad (ESP), integridad y autenticacion (AH/ESP) y proteccion anti-replay mediante numeros de secuencia. El balanceo de carga y la compresion de imagenes no son funciones de IPsec."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En que capa del modelo OSI opera principalmente un firewall de inspeccion de estado tradicional?",
+          "opciones": [
+            "Capa de aplicacion (7)",
+            "Capas de red y transporte (3 y 4)",
+            "Capa fisica (1)",
+            "Capa de presentacion (6)"
+          ],
+          "correctas": [1],
+          "explicacion": "Un firewall de estado evalua direcciones IP (capa 3) y puertos/estado de conexion (capa 4). Un WAF, en cambio, inspecciona el contenido de la capa de aplicacion."
+        }
+      ]
+    },
+    {
+      "slug": "gestion-de-identidad-y-acceso",
+      "nombre": "Gestion de identidad y acceso",
+      "dominio": "Identity and Access Management",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Identidad, autenticacion y autorizacion",
+        "markdown": "## Las tres A\nLa gestion de acceso se apoya en **autenticacion** (probar quien eres), **autorizacion** (que puedes hacer) y **auditoria/accountability** (registrar lo que hiciste).\n\n## Factores de autenticacion\n- **Algo que sabes:** contrasena o PIN.\n- **Algo que tienes:** token o tarjeta.\n- **Algo que eres:** biometria.\n\nCombinar dos o mas factores distintos constituye **autenticacion multifactor (MFA)**.\n\n## Modelos de control de acceso\n- **DAC:** el propietario concede permisos.\n- **MAC:** etiquetas y autorizaciones obligatorias definidas por la organizacion.\n- **RBAC:** permisos segun el rol del usuario.\n- **ABAC:** decisiones basadas en atributos y contexto.\n\nEl **inicio de sesion unico (SSO)** mejora la experiencia, y federaciones como SAML u OIDC extienden la identidad entre dominios.\n\n> **En el examen:** dos contrasenas no son MFA; deben ser factores de categorias diferentes."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un sistema solicita una contrasena y luego un codigo enviado a un token fisico. Que tipo de autenticacion es?",
+          "opciones": [
+            "Autenticacion de factor unico",
+            "Autenticacion multifactor",
+            "Autorizacion basada en roles",
+            "Federacion de identidad"
+          ],
+          "correctas": [1],
+          "explicacion": "Combina 'algo que sabes' (contrasena) con 'algo que tienes' (token), dos factores de categorias distintas, lo que constituye autenticacion multifactor."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "En el modelo de control de acceso basado en roles (RBAC), los permisos se asignan a:",
+          "opciones": [
+            "Cada usuario de forma individual",
+            "Roles que luego se asocian a los usuarios",
+            "Etiquetas de clasificacion obligatorias",
+            "Direcciones IP de origen"
+          ],
+          "correctas": [1],
+          "explicacion": "En RBAC los permisos se vinculan a roles (por ejemplo 'contador') y los usuarios heredan esos permisos al recibir el rol, simplificando la administracion."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Cuales de los siguientes son ejemplos del factor de autenticacion 'algo que eres'? (Seleccione todas las que apliquen)",
+          "opciones": [
+            "Huella dactilar",
+            "Reconocimiento facial",
+            "Patron de iris",
+            "Contrasena de un solo uso por SMS",
+            "Tarjeta inteligente con chip"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Huella, rostro e iris son rasgos biometricos ('algo que eres'). El codigo por SMS y la tarjeta inteligente pertenecen a 'algo que tienes'."
+        }
+      ]
+    },
+    {
+      "slug": "operaciones-de-seguridad",
+      "nombre": "Operaciones de seguridad",
+      "dominio": "Security Operations",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Operacion, incidentes y continuidad",
+        "markdown": "## Disciplinas operativas\nLa operacion segura aplica **separacion de funciones** para evitar que una sola persona controle un proceso critico, **rotacion de puestos** para detectar fraudes y **menor privilegio** en cada cuenta.\n\n## Respuesta a incidentes\nUn proceso ordenado sigue fases: **deteccion**, **respuesta**, **mitigacion**, **reporte**, **recuperacion**, **remediacion** y **lecciones aprendidas**. La meta es contener el dano y restaurar el servicio sin destruir evidencia.\n\n## Continuidad y recuperacion\n- El **BIA** (analisis de impacto al negocio) identifica procesos criticos.\n- El **RTO** define cuanto tiempo puede estar caido un servicio.\n- El **RPO** define cuanta perdida de datos es tolerable.\n\nLas estrategias de respaldo y los sitios alternos (frio, tibio, caliente) sostienen la recuperacion ante desastres.\n\n> **En el examen:** RTO mide tiempo de recuperacion; RPO mide perdida de datos aceptable. No los confundas."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Que metrica de continuidad indica la cantidad maxima de datos que una organizacion puede permitirse perder, medida en tiempo?",
+          "opciones": [
+            "RTO (Recovery Time Objective)",
+            "RPO (Recovery Point Objective)",
+            "MTBF (tiempo medio entre fallos)",
+            "SLA (acuerdo de nivel de servicio)"
+          ],
+          "correctas": [1],
+          "explicacion": "El RPO define el punto en el tiempo hasta el que se deben recuperar los datos, es decir, cuanta perdida es tolerable. El RTO mide el tiempo permitido para restaurar el servicio."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "Cuales de los siguientes son controles operativos que ayudan a prevenir el fraude interno? (Seleccione todas las que apliquen)",
+          "opciones": [
+            "Separacion de funciones",
+            "Rotacion de puestos",
+            "Vacaciones obligatorias",
+            "Compartir una unica cuenta de administrador",
+            "Principio de menor privilegio"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "Separacion de funciones, rotacion de puestos, vacaciones obligatorias y menor privilegio dificultan que una persona oculte actividad fraudulenta. Compartir una cuenta de administrador elimina la trazabilidad y agrava el riesgo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Durante la respuesta a un incidente, cual es el objetivo principal de la fase de contencion (mitigacion)?",
+          "opciones": [
+            "Identificar al responsable legal del ataque",
+            "Limitar la propagacion y el dano sin destruir la evidencia",
+            "Redactar de inmediato el informe ejecutivo final",
+            "Restaurar todos los sistemas a su estado original al instante"
+          ],
+          "correctas": [1],
+          "explicacion": "La contencion busca frenar la propagacion del incidente y reducir el impacto, preservando la evidencia para el analisis forense. La recuperacion completa y el informe llegan en fases posteriores."
+        }
+      ]
+    }
+  ]
+}

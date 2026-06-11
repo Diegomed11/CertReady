@@ -1,0 +1,342 @@
+{
+  "slug": "gcp-professional-cloud-developer",
+  "nombre": "Google Cloud Professional Cloud Developer",
+  "proveedor": "Google",
+  "nivel": "professional",
+  "area": "Desarrollo",
+  "descripcion": "Valida la capacidad de diseñar, construir, probar y desplegar aplicaciones nativas de la nube escalables y altamente disponibles sobre Google Cloud. Hace énfasis en servicios gestionados, observabilidad y prácticas modernas de entrega continua.",
+  "skills": [
+    "cloud run",
+    "gke",
+    "cloud functions",
+    "pub/sub",
+    "firestore",
+    "cloud sql",
+    "iam",
+    "secret manager",
+    "cloud build",
+    "cloud logging",
+    "cloud trace",
+    "apis"
+  ],
+  "roles": [
+    "Desarrollador de aplicaciones cloud",
+    "Ingeniero backend",
+    "Ingeniero DevOps",
+    "Arquitecto de soluciones junior"
+  ],
+  "temas": [
+    {
+      "slug": "diseno-aplicaciones-cloud",
+      "nombre": "Diseño de aplicaciones nativas de la nube",
+      "dominio": "Designing highly scalable, available, and reliable cloud-native applications",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Patrones para aplicaciones escalables y resilientes",
+        "markdown": "## Principios de diseño\nLas aplicaciones nativas de la nube se construyen para **fallar con gracia** y **escalar horizontalmente**. En lugar de un único proceso monolítico, se favorecen servicios pequeños y desacoplados que se comunican por APIs o mensajería.\n\n## Desacoplamiento y mensajería\n- Usa **Pub/Sub** para comunicación asíncrona entre componentes.\n- Aplica **idempotencia** en los consumidores: un mensaje puede entregarse más de una vez.\n- Diseña para **reintentos** con retroceso exponencial y *dead-letter topics*.\n\n## Estado y datos\n- Mantén los servicios **sin estado** cuando sea posible; delega el estado a Firestore, Cloud SQL o Memorystore.\n- Elige la base según el patrón de acceso: relacional, documental o clave-valor.\n\n## Resiliencia\n- Define *health checks*, *timeouts* y *circuit breakers*.\n- Distribuye en varias zonas para alta disponibilidad.\n\n> **En el examen:** ante picos de tráfico impredecibles, prefiere servicios gestionados con autoescalado (Cloud Run, GKE) y comunicación asíncrona sobre acoplamiento síncrono directo."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un equipo necesita desacoplar un servicio de ingesta de un servicio de procesamiento que a veces se satura. ¿Qué servicio gestionado es más adecuado para amortiguar la carga?",
+          "opciones": [
+            "Cloud Pub/Sub",
+            "Cloud SQL",
+            "Cloud CDN",
+            "Cloud DNS"
+          ],
+          "correctas": [0],
+          "explicacion": "Pub/Sub actúa como buffer asíncrono entre productores y consumidores, permitiendo que el procesamiento absorba picos sin perder mensajes."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué prácticas mejoran la resiliencia de un consumidor de mensajes que puede recibir entregas duplicadas?",
+          "opciones": [
+            "Hacer el procesamiento idempotente",
+            "Configurar un dead-letter topic",
+            "Almacenar el estado de sesión en memoria local del contenedor",
+            "Aplicar reintentos con retroceso exponencial",
+            "Desactivar los acknowledgements de los mensajes"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "La idempotencia evita efectos duplicados, el dead-letter topic aísla mensajes problemáticos y el retroceso exponencial controla los reintentos. Guardar estado local rompe el escalado y desactivar los acks provoca reentregas infinitas."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuál es la principal ventaja de diseñar servicios sin estado en la nube?",
+          "opciones": [
+            "Permiten escalar horizontalmente añadiendo y quitando instancias sin pérdida de contexto",
+            "Eliminan por completo la necesidad de bases de datos",
+            "Garantizan latencia cero entre regiones",
+            "Hacen innecesaria la autenticación de usuarios"
+          ],
+          "correctas": [0],
+          "explicacion": "Al no guardar estado en la instancia, cualquier réplica puede atender cualquier petición, lo que facilita el autoescalado y la recuperación ante fallos."
+        }
+      ]
+    },
+    {
+      "slug": "construir-y-probar",
+      "nombre": "Construcción y prueba de aplicaciones",
+      "dominio": "Building and testing applications",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Desarrollo local, pruebas y portabilidad",
+        "markdown": "## Desarrollo iterativo\nUn buen ciclo de desarrollo en la nube combina **emuladores locales** con pruebas automatizadas antes de desplegar. Google Cloud ofrece emuladores para Firestore, Pub/Sub y Spanner que permiten probar sin costo ni red.\n\n## Tipos de prueba\n- **Unitarias:** rápidas, aíslan la lógica de negocio con *mocks*.\n- **Integración:** validan la interacción con servicios reales o emulados.\n- **End-to-end:** ejercitan el flujo completo en un entorno de *staging*.\n\n## Contenedores y portabilidad\n- Empaqueta con **Docker** para entornos reproducibles.\n- Usa imágenes base mínimas y *multi-stage builds* para reducir superficie.\n- Define el comportamiento por **variables de entorno**, no en el código.\n\n## Manejo de fallos\n- Prueba escenarios de error: latencia, timeouts y respuestas 5xx.\n- Verifica reintentos y degradación controlada.\n\n> **En el examen:** prefiere emuladores locales para pruebas rápidas y baratas, y reserva los servicios reales para pruebas de integración en entornos aislados."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un desarrollador quiere probar la lógica de su aplicación contra Firestore sin incurrir en costos ni depender de la red. ¿Qué debería usar?",
+          "opciones": [
+            "El emulador local de Firestore",
+            "Una instancia de producción de Firestore",
+            "Cloud Spanner en modo demo",
+            "BigQuery con datos de muestra"
+          ],
+          "correctas": [0],
+          "explicacion": "El emulador de Firestore reproduce el comportamiento del servicio localmente, ideal para pruebas rápidas y aisladas sin costo."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué prácticas favorecen la portabilidad y reproducibilidad de una aplicación contenerizada?",
+          "opciones": [
+            "Usar multi-stage builds para imágenes ligeras",
+            "Configurar la app mediante variables de entorno",
+            "Incrustar credenciales fijas en la imagen",
+            "Partir de imágenes base mínimas",
+            "Compilar binarios distintos en cada despliegue manualmente"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "Los multi-stage builds y las imágenes mínimas reducen tamaño y vulnerabilidades, y la configuración por entorno hace la imagen portable. Incrustar credenciales y compilar manualmente rompen la reproducibilidad y la seguridad."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuál es el propósito principal de una prueba de integración frente a una prueba unitaria?",
+          "opciones": [
+            "Validar cómo interactúan los componentes con dependencias reales o emuladas",
+            "Medir la cobertura de líneas de una sola función",
+            "Reemplazar la necesidad de pruebas end-to-end",
+            "Comprobar únicamente el formato del código fuente"
+          ],
+          "correctas": [0],
+          "explicacion": "La prueba de integración verifica la colaboración entre módulos y servicios externos, algo que la unitaria, centrada en lógica aislada con mocks, no cubre."
+        }
+      ]
+    },
+    {
+      "slug": "despliegue-aplicaciones",
+      "nombre": "Despliegue de aplicaciones",
+      "dominio": "Deploying applications",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Estrategias de despliegue y entrega continua",
+        "markdown": "## Plataformas de cómputo\nLa elección depende del control y la operación deseados:\n- **Cloud Run:** contenedores sin servidor, escala a cero, ideal para cargas HTTP.\n- **GKE:** orquestación completa para microservicios complejos.\n- **Cloud Functions:** funciones dirigidas por eventos.\n\n## Pipelines de CI/CD\n- Automatiza con **Cloud Build**: compila, prueba y despliega.\n- Almacena imágenes en **Artifact Registry**.\n- Gestiona promociones entre entornos con aprobaciones.\n\n## Estrategias de release\n- **Canary:** envía un pequeño porcentaje de tráfico a la nueva versión.\n- **Blue/Green:** dos entornos paralelos con conmutación instantánea.\n- **Rolling:** reemplazo gradual de instancias.\n\n## Reversión\n- Cloud Run conserva **revisiones**; puedes dividir tráfico o revertir al instante.\n\n> **En el examen:** para liberar gradualmente reduciendo riesgo, usa despliegues canary con división de tráfico entre revisiones de Cloud Run."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Un equipo quiere liberar una nueva versión enviando inicialmente solo el 5% del tráfico para validar su estabilidad. ¿Qué estrategia describe esto?",
+          "opciones": [
+            "Despliegue canary",
+            "Despliegue big-bang",
+            "Despliegue recreate total",
+            "Despliegue en frío"
+          ],
+          "correctas": [0],
+          "explicacion": "El despliegue canary dirige un porcentaje pequeño de tráfico a la nueva versión para detectar problemas antes de una liberación completa."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio gestiona pipelines de compilación, prueba y despliegue automatizados en Google Cloud?",
+          "opciones": [
+            "Cloud Build",
+            "Cloud Trace",
+            "Cloud Armor",
+            "Cloud Scheduler"
+          ],
+          "correctas": [0],
+          "explicacion": "Cloud Build ejecuta pasos de CI/CD definidos en una configuración para compilar imágenes, correr pruebas y desplegar."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué afirmaciones sobre las revisiones de Cloud Run son correctas?",
+          "opciones": [
+            "Permiten dividir tráfico entre versiones por porcentaje",
+            "Facilitan revertir a una versión anterior sin reconstruir la imagen",
+            "Cada despliegue genera una nueva revisión inmutable",
+            "Eliminan automáticamente todas las revisiones anteriores en cada release",
+            "Impiden cualquier estrategia de despliegue gradual"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Cloud Run crea revisiones inmutables por despliegue, permite repartir tráfico entre ellas y revertir al instante. No borra automáticamente el historial ni impide releases graduales."
+        }
+      ]
+    },
+    {
+      "slug": "integracion-servicios-gcp",
+      "nombre": "Integración con servicios de Google Cloud",
+      "dominio": "Integrating applications with Google Cloud services",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Datos, APIs y mensajería gestionada",
+        "markdown": "## Elegir el almacén adecuado\n- **Cloud SQL:** relacional gestionado (PostgreSQL, MySQL) para transacciones.\n- **Firestore:** documental, escalable, ideal para apps web y móviles.\n- **Cloud Spanner:** relacional global con consistencia fuerte.\n- **Memorystore:** caché en memoria (Redis) para baja latencia.\n\n## Conexión segura\n- Usa el **conector de Cloud SQL** o conexiones privadas en lugar de IPs públicas.\n- Aplica **VPC** y *Private Service Connect* para tráfico interno.\n\n## APIs y mensajería\n- Expón y protege APIs con **API Gateway** o Apigee.\n- Integra eventos con **Pub/Sub** y **Eventarc**.\n\n## Buenas prácticas\n- Reutiliza conexiones (*connection pooling*) en entornos serverless.\n- Maneja límites de cuota y reintentos con la biblioteca cliente.\n\n> **En el examen:** para datos relacionales con alcance global y consistencia fuerte, elige Cloud Spanner; para documentos flexibles que escalan automáticamente, elige Firestore."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una aplicación necesita una base de datos relacional con consistencia fuerte y distribución global. ¿Cuál es la opción más adecuada?",
+          "opciones": [
+            "Cloud Spanner",
+            "Memorystore",
+            "Cloud Storage",
+            "BigtableLocal"
+          ],
+          "correctas": [0],
+          "explicacion": "Cloud Spanner ofrece semántica relacional con consistencia fuerte y escalabilidad horizontal a nivel global, algo que las otras opciones no proveen."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué prácticas son recomendables al conectar una aplicación a Cloud SQL desde un entorno serverless?",
+          "opciones": [
+            "Usar el conector de Cloud SQL en lugar de IP pública",
+            "Aplicar pooling de conexiones reutilizables",
+            "Abrir una conexión nueva por cada petición y dejarla abierta",
+            "Restringir el acceso mediante IAM y redes privadas",
+            "Codificar la contraseña directamente en el binario"
+          ],
+          "correctas": [0, 1, 3],
+          "explicacion": "El conector y las redes privadas aseguran la conexión, y el pooling evita agotar conexiones. Abrir conexiones sin cerrarlas y codificar contraseñas son antipatrones de rendimiento y seguridad."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio de Google Cloud es más apropiado para una caché en memoria de baja latencia?",
+          "opciones": [
+            "Memorystore",
+            "Cloud SQL",
+            "Cloud Storage",
+            "Cloud Build"
+          ],
+          "correctas": [0],
+          "explicacion": "Memorystore ofrece Redis y Memcached gestionados, pensados para almacenamiento en memoria de muy baja latencia."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-y-acceso",
+      "nombre": "Seguridad e identidad de aplicaciones",
+      "dominio": "Managing application identity, security, and access",
+      "orden": 5,
+      "hoja": {
+        "titulo": "IAM, secretos y principio de mínimo privilegio",
+        "markdown": "## Identidad y permisos\nEl control de acceso en Google Cloud se basa en **IAM**: a un *principal* (usuario, grupo o cuenta de servicio) se le concede un **rol** sobre un recurso.\n\n- Prefiere **roles predefinidos** sobre roles primitivos (owner/editor).\n- Aplica el **principio de mínimo privilegio**.\n\n## Cuentas de servicio\n- Las aplicaciones se autentican con **service accounts**, no con claves de usuario.\n- Usa **identidades vinculadas a la carga de trabajo** (Workload Identity) en GKE para evitar claves estáticas.\n\n## Gestión de secretos\n- Almacena credenciales y tokens en **Secret Manager**, no en código ni variables planas.\n- Versiona y rota los secretos; concede acceso por IAM.\n\n## Datos en tránsito y reposo\n- TLS para tránsito; cifrado gestionado por Google o **CMEK** en reposo.\n\n> **En el examen:** para que una app en GKE acceda a APIs sin gestionar claves estáticas, usa Workload Identity, y guarda cualquier secreto en Secret Manager."
+      },
+      "preguntas": [
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué prácticas aplican correctamente el principio de mínimo privilegio en Google Cloud?",
+          "opciones": [
+            "Conceder roles predefinidos específicos en lugar del rol Editor",
+            "Asignar el rol Owner a todas las cuentas de servicio por comodidad",
+            "Usar cuentas de servicio dedicadas por carga de trabajo",
+            "Otorgar permisos solo sobre los recursos necesarios",
+            "Compartir una sola clave de service account entre todos los equipos"
+          ],
+          "correctas": [0, 2, 3],
+          "explicacion": "Roles específicos, cuentas dedicadas y permisos acotados reducen la superficie de riesgo. Asignar Owner masivamente y compartir claves viola el mínimo privilegio."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Dónde deben almacenarse las credenciales y tokens sensibles de una aplicación en Google Cloud?",
+          "opciones": [
+            "Secret Manager",
+            "Una variable de entorno en texto plano dentro del repositorio",
+            "Un comentario en el código fuente",
+            "Un bucket público de Cloud Storage"
+          ],
+          "correctas": [0],
+          "explicacion": "Secret Manager almacena, versiona y controla el acceso a secretos mediante IAM, evitando exponerlos en código o variables planas."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Una aplicación que corre en GKE necesita acceder a APIs de Google Cloud sin gestionar claves estáticas de cuenta de servicio. ¿Qué mecanismo es el recomendado?",
+          "opciones": [
+            "Workload Identity",
+            "Descargar una clave JSON y montarla como secreto manual",
+            "Usar credenciales de usuario humano embebidas",
+            "Abrir el acceso con una API key pública"
+          ],
+          "correctas": [0],
+          "explicacion": "Workload Identity vincula cuentas de servicio de Kubernetes con cuentas de Google Cloud, eliminando la necesidad de claves estáticas y su rotación manual."
+        }
+      ]
+    },
+    {
+      "slug": "observabilidad-y-operacion",
+      "nombre": "Observabilidad y operación de aplicaciones",
+      "dominio": "Managing deployed applications (Cloud Operations / observability)",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Logging, métricas y trazas distribuidas",
+        "markdown": "## Los tres pilares\nLa observabilidad se apoya en **logs**, **métricas** y **trazas**, integrados en Google Cloud Operations.\n\n- **Cloud Logging:** centraliza registros estructurados; filtra y crea métricas basadas en logs.\n- **Cloud Monitoring:** métricas, paneles, *alerting* y SLOs.\n- **Cloud Trace:** latencia y trazas distribuidas entre servicios.\n- **Cloud Profiler / Error Reporting:** rendimiento y agregación de errores.\n\n## Buenas prácticas\n- Emite **logs estructurados** (JSON) con niveles de severidad.\n- Propaga **IDs de traza** entre servicios para correlación end-to-end.\n- Define **SLIs y SLOs** y configura alertas sobre *error budgets*.\n\n## Depuración\n- Correlaciona una traza lenta con sus logs y métricas asociadas.\n- Usa Error Reporting para detectar regresiones tras un despliegue.\n\n> **En el examen:** para diagnosticar dónde se pierde tiempo en una petición que cruza varios microservicios, usa Cloud Trace con propagación de IDs de traza."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una petición atraviesa varios microservicios y se quiere saber en qué servicio se concentra la latencia. ¿Qué herramienta es la más adecuada?",
+          "opciones": [
+            "Cloud Trace",
+            "Cloud Storage",
+            "Secret Manager",
+            "Artifact Registry"
+          ],
+          "correctas": [0],
+          "explicacion": "Cloud Trace recopila trazas distribuidas y muestra el tiempo consumido en cada tramo de una petición que cruza múltiples servicios."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué prácticas mejoran la observabilidad de una aplicación en producción?",
+          "opciones": [
+            "Emitir logs estructurados en JSON con niveles de severidad",
+            "Propagar IDs de traza entre servicios",
+            "Definir SLOs y alertas sobre el error budget",
+            "Imprimir todo en texto libre sin estructura ni severidad",
+            "Desactivar el monitoreo para ahorrar recursos"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Logs estructurados, propagación de trazas y SLOs con alertas permiten diagnosticar y prevenir incidentes. El texto libre y desactivar el monitoreo degradan la observabilidad."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio de Cloud Operations agrega y notifica automáticamente los errores recurrentes de una aplicación?",
+          "opciones": [
+            "Error Reporting",
+            "Cloud DNS",
+            "Cloud NAT",
+            "Cloud Scheduler"
+          ],
+          "correctas": [0],
+          "explicacion": "Error Reporting agrupa y cuantifica los errores de la aplicación, ayudando a detectar regresiones tras los despliegues."
+        }
+      ]
+    }
+  ]
+}

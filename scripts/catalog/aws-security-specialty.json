@@ -1,0 +1,390 @@
+{
+  "slug": "aws-security-specialty",
+  "nombre": "AWS Certified Security – Specialty",
+  "proveedor": "AWS",
+  "nivel": "specialty",
+  "area": "Seguridad",
+  "descripcion": "Valida la capacidad de diseñar y operar controles de seguridad en cargas de trabajo de AWS. Cubre detección de amenazas, registro y monitoreo, protección de red, identidades, cifrado de datos y gobernanza.",
+  "skills": [
+    "IAM",
+    "KMS",
+    "GuardDuty",
+    "CloudTrail",
+    "respuesta a incidentes",
+    "cifrado",
+    "VPC security",
+    "WAF",
+    "Security Hub",
+    "Secrets Manager",
+    "least privilege",
+    "gobernanza multi-cuenta"
+  ],
+  "roles": [
+    "Ingeniero de seguridad en la nube",
+    "Arquitecto de seguridad",
+    "Especialista en respuesta a incidentes",
+    "Ingeniero DevSecOps"
+  ],
+  "temas": [
+    {
+      "slug": "deteccion-amenazas-respuesta-incidentes",
+      "nombre": "Detección de amenazas y respuesta a incidentes",
+      "dominio": "Threat Detection and Incident Response",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Detectar y contener incidentes en AWS",
+        "markdown": "## Detección continua\n\n**Amazon GuardDuty** analiza logs de VPC Flow, DNS y CloudTrail para detectar actividad anómala (minería de cripto, llamadas desde IP maliciosas, credenciales expuestas) sin necesidad de agentes.\n\n**Amazon Detective** ayuda a investigar el alcance de un hallazgo correlacionando eventos a lo largo del tiempo.\n\n## Contención\n\nPasos típicos al comprometer una credencial o instancia:\n\n- **Aislar** la instancia con un Security Group restrictivo (sin reglas de salida).\n- **Revocar** sesiones: rotar la clave y aplicar una política que niegue acciones con tokens emitidos antes de cierta hora (`aws:TokenIssueTime`).\n- **Preservar evidencia**: snapshot del volumen EBS antes de terminar.\n\n## Automatización\n\n**EventBridge** dispara funciones Lambda o runbooks de **Systems Manager** ante hallazgos, habilitando respuesta sin intervención manual.\n\n> **En el examen:** si una credencial IAM fue filtrada, rota la clave y usa una política con `aws:TokenIssueTime` para invalidar sesiones activas; no basta con desactivar la clave."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio detecta actividad anómala analizando logs de CloudTrail, VPC Flow y DNS sin desplegar agentes?",
+          "opciones": [
+            "Amazon Inspector",
+            "Amazon GuardDuty",
+            "AWS Config",
+            "Amazon Macie"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "GuardDuty es un detector de amenazas administrado que consume esos orígenes de log sin requerir agentes en las instancias."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Se filtró una clave de acceso IAM. ¿Qué acciones forman parte de una contención correcta? (elige todas las que apliquen)",
+          "opciones": [
+            "Rotar y desactivar la clave de acceso comprometida",
+            "Adjuntar una política que niegue acciones con tokens emitidos antes del momento del incidente usando aws:TokenIssueTime",
+            "Eliminar la cuenta de AWS por completo",
+            "Revisar CloudTrail para identificar acciones realizadas con la clave",
+            "Compartir la nueva clave por correo con el equipo"
+          ],
+          "correctas": [
+            0,
+            1,
+            3
+          ],
+          "explicacion": "Hay que rotar la clave, invalidar sesiones activas con aws:TokenIssueTime y auditar CloudTrail. Eliminar la cuenta es desproporcionado y enviar claves por correo es inseguro."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Antes de terminar una instancia EC2 comprometida para análisis forense, ¿qué se debe hacer primero?",
+          "opciones": [
+            "Reiniciar la instancia para limpiar memoria",
+            "Tomar un snapshot del volumen EBS para preservar evidencia",
+            "Eliminar los logs de CloudTrail asociados",
+            "Cambiar el tipo de instancia"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "Preservar evidencia con un snapshot del EBS es esencial antes de cualquier acción destructiva como terminar la instancia."
+        }
+      ]
+    },
+    {
+      "slug": "registro-monitoreo-seguridad",
+      "nombre": "Registro y monitoreo de seguridad",
+      "dominio": "Security Logging and Monitoring",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Trazabilidad y alertas en AWS",
+        "markdown": "## Fuentes de log\n\n- **CloudTrail**: registra llamadas a la API (quién, qué, cuándo). Un *trail* multi-región con validación de integridad y entrega a S3 es la base de auditoría.\n- **VPC Flow Logs**: tráfico de red aceptado/rechazado.\n- **CloudWatch Logs**: logs de aplicación y métricas.\n\n## Protección de la evidencia\n\nLos logs deben ser **inmutables**: usar **S3 Object Lock** (modo compliance) y una cuenta de logs separada con acceso restringido. Habilitar **log file validation** para detectar manipulaciones.\n\n## Centralización y alerta\n\n**Security Hub** agrega hallazgos de GuardDuty, Inspector y Config en un panel único con puntuaciones frente a estándares (CIS, AWS FSBP).\n\n**CloudWatch Alarms** + **EventBridge** notifican vía SNS ante eventos críticos (p. ej. borrado de un trail).\n\n> **En el examen:** para garantizar que nadie altere los logs, combina una cuenta de logging dedicada, S3 Object Lock y validación de integridad de CloudTrail."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio registra todas las llamadas a la API de AWS para auditoría?",
+          "opciones": [
+            "AWS CloudTrail",
+            "Amazon CloudWatch Metrics",
+            "AWS X-Ray",
+            "VPC Flow Logs"
+          ],
+          "correctas": [
+            0
+          ],
+          "explicacion": "CloudTrail captura las llamadas a la API (identidad, acción, recurso y momento), siendo la base de la auditoría."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué medidas ayudan a garantizar la integridad e inmutabilidad de los logs de CloudTrail? (elige todas las que apliquen)",
+          "opciones": [
+            "Habilitar la validación de integridad de archivos de log (log file validation)",
+            "Almacenar los trails en una cuenta de logging dedicada con acceso restringido",
+            "Aplicar S3 Object Lock en modo compliance al bucket de destino",
+            "Dar permisos de escritura del bucket a todos los desarrolladores",
+            "Desactivar el cifrado del bucket para acelerar la escritura"
+          ],
+          "correctas": [
+            0,
+            1,
+            2
+          ],
+          "explicacion": "Validación de integridad, cuenta dedicada y Object Lock protegen los logs. Dar escritura amplia o quitar cifrado los debilita."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué servicio centraliza hallazgos de seguridad de GuardDuty, Inspector y Config y los evalúa contra estándares como CIS?",
+          "opciones": [
+            "AWS Trusted Advisor",
+            "AWS Security Hub",
+            "AWS Systems Manager",
+            "Amazon Macie"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "Security Hub agrega hallazgos de múltiples servicios y aplica controles de estándares de cumplimiento en un panel único."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-infraestructura",
+      "nombre": "Seguridad de la infraestructura",
+      "dominio": "Infrastructure Security",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Proteger red y perímetro",
+        "markdown": "## Defensa en capas de red\n\n- **Security Groups**: stateful, asociados a ENIs; solo reglas de permitir.\n- **Network ACLs**: stateless, a nivel de subred; permiten reglas de denegar explícito.\n- **Subredes privadas** + **NAT Gateway** para salida sin exposición entrante.\n\n## Bordes y aplicación\n\n- **AWS WAF** filtra tráfico HTTP(S) (inyección SQL, XSS, rate limiting) en CloudFront, ALB o API Gateway.\n- **AWS Shield** mitiga DDoS; **Shield Advanced** añade protección L7 y soporte.\n- **AWS Network Firewall** ofrece inspección stateful a nivel de VPC.\n\n## Acceso privado\n\n**VPC Endpoints** (Gateway para S3/DynamoDB, Interface vía PrivateLink) mantienen el tráfico dentro de la red de AWS sin pasar por Internet.\n\n> **En el examen:** para acceder a S3 desde una subred privada sin NAT ni Internet, usa un **Gateway VPC Endpoint**; reduce costo y superficie de exposición."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una instancia en una subred privada necesita acceder a S3 sin pasar por Internet ni usar un NAT Gateway. ¿Qué solución es la adecuada?",
+          "opciones": [
+            "Asignar una IP elástica a la instancia",
+            "Crear un Gateway VPC Endpoint para S3",
+            "Abrir el puerto 443 en la Network ACL",
+            "Configurar un Internet Gateway"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "Un Gateway VPC Endpoint enruta el tráfico a S3 dentro de la red de AWS sin requerir Internet ni NAT."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál es una diferencia clave entre Security Groups y Network ACLs?",
+          "opciones": [
+            "Los Security Groups son stateless y las NACL stateful",
+            "Los Security Groups son stateful y permiten solo reglas de permitir; las NACL son stateless y admiten denegar explícito",
+            "Ambos operan a nivel de subred",
+            "Las NACL solo aplican a tráfico saliente"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "Los Security Groups son stateful y solo permiten; las NACL son stateless, operan por subred y admiten reglas de denegar."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué servicios ayudan a proteger una aplicación web pública frente a ataques? (elige todas las que apliquen)",
+          "opciones": [
+            "AWS WAF para filtrar inyección SQL y XSS",
+            "AWS Shield para mitigar DDoS",
+            "Amazon Macie para clasificar datos",
+            "AWS Network Firewall para inspección stateful en la VPC",
+            "AWS Cost Explorer para analizar el gasto"
+          ],
+          "correctas": [
+            0,
+            1,
+            3
+          ],
+          "explicacion": "WAF, Shield y Network Firewall protegen frente a ataques. Macie clasifica datos sensibles y Cost Explorer es de costos."
+        }
+      ]
+    },
+    {
+      "slug": "gestion-identidades-accesos",
+      "nombre": "Gestión de identidades y accesos",
+      "dominio": "Identity and Access Management",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Controlar quién puede hacer qué",
+        "markdown": "## Tipos de política\n\n- **Identity-based**: adjuntas a usuarios, grupos o roles.\n- **Resource-based**: adjuntas a recursos (bucket policy, KMS key policy) y admiten principal cruzado entre cuentas.\n- **SCPs** (Organizations): definen el límite máximo de permisos por cuenta; nunca otorgan, solo restringen.\n\n## Evaluación\n\nUna acción se permite solo si **ningún** elemento la deniega y **algún** elemento la permite. Un `Deny` explícito siempre gana.\n\n## Buenas prácticas\n\n- **Roles** sobre claves de larga vida; preferir credenciales temporales de STS.\n- **Least privilege**: empezar restrictivo y ampliar; usar **IAM Access Analyzer** para detectar accesos externos no deseados.\n- **MFA** para acciones sensibles y para el usuario root.\n\n> **En el examen:** para acceso entre cuentas, asume un **rol** vía `sts:AssumeRole`; un `Deny` explícito en una SCP o política prevalece sobre cualquier `Allow`."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En la evaluación de políticas de IAM, ¿qué ocurre si una política permite una acción pero una SCP la deniega explícitamente?",
+          "opciones": [
+            "La acción se permite porque IAM tiene prioridad",
+            "La acción se deniega: un Deny explícito siempre prevalece",
+            "Se solicita confirmación al usuario root",
+            "Depende del orden alfabético de las políticas"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "En la lógica de evaluación, cualquier Deny explícito (incluida una SCP) prevalece sobre todos los Allow."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué prácticas siguen el principio de privilegio mínimo y buena gestión de credenciales? (elige todas las que apliquen)",
+          "opciones": [
+            "Usar roles IAM con credenciales temporales de STS en lugar de claves de larga vida",
+            "Habilitar MFA para el usuario root y acciones sensibles",
+            "Usar IAM Access Analyzer para detectar accesos externos no deseados",
+            "Compartir un único usuario IAM entre todo el equipo",
+            "Adjuntar la política AdministratorAccess a todos los usuarios por comodidad"
+          ],
+          "correctas": [
+            0,
+            1,
+            2
+          ],
+          "explicacion": "Roles temporales, MFA y Access Analyzer refuerzan el privilegio mínimo. Compartir usuarios o dar admin a todos lo viola."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué mecanismo permite a una aplicación en la cuenta A acceder a un recurso en la cuenta B de forma segura?",
+          "opciones": [
+            "Compartir las claves de acceso del usuario root de la cuenta B",
+            "Asumir un rol IAM en la cuenta B mediante sts:AssumeRole",
+            "Hacer público el recurso de la cuenta B",
+            "Crear un usuario IAM duplicado en ambas cuentas"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "El acceso entre cuentas se realiza asumiendo un rol con sts:AssumeRole, obteniendo credenciales temporales sin compartir claves."
+        }
+      ]
+    },
+    {
+      "slug": "proteccion-datos",
+      "nombre": "Protección de datos",
+      "dominio": "Data Protection",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Cifrado en reposo y en tránsito",
+        "markdown": "## Cifrado en reposo con KMS\n\n**AWS KMS** gestiona claves (CMK). Tipos:\n\n- **Administradas por AWS**: rotación automática, sin control de política.\n- **Administradas por el cliente (CMK)**: control total de política, rotación y auditoría vía CloudTrail.\n\nServicios como S3 (SSE-KMS), EBS y RDS integran KMS de forma transparente. La **envelope encryption** cifra los datos con una clave de datos, que a su vez se cifra con la CMK.\n\n## En tránsito\n\nForzar **TLS** y rechazar HTTP con condiciones de política (`aws:SecureTransport`). **ACM** emite y rota certificados.\n\n## Datos sensibles y secretos\n\n- **Amazon Macie** descubre y clasifica PII en S3.\n- **Secrets Manager** almacena y **rota** credenciales; preferible a guardarlas en variables o código.\n\n> **En el examen:** si necesitas control total de la rotación, auditoría y política de la clave, usa una **CMK administrada por el cliente**, no una administrada por AWS."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una organización necesita controlar la política, la rotación y auditar el uso de la clave de cifrado. ¿Qué opción de KMS es la adecuada?",
+          "opciones": [
+            "Una clave administrada por AWS",
+            "Una clave administrada por el cliente (CMK)",
+            "Cifrado del lado del cliente sin KMS",
+            "No usar cifrado"
+          ],
+          "correctas": [
+            1
+          ],
+          "explicacion": "Solo una CMK administrada por el cliente ofrece control de política, rotación configurable y auditoría detallada vía CloudTrail."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio almacena y rota automáticamente credenciales de base de datos?",
+          "opciones": [
+            "AWS Secrets Manager",
+            "Amazon S3",
+            "AWS CloudTrail",
+            "Amazon CloudFront"
+          ],
+          "correctas": [
+            0
+          ],
+          "explicacion": "Secrets Manager guarda secretos cifrados y soporta rotación automática, evitando credenciales en código o variables."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué controles aplican protección de datos correctamente? (elige todas las que apliquen)",
+          "opciones": [
+            "Forzar TLS rechazando solicitudes con aws:SecureTransport igual a false",
+            "Usar Amazon Macie para descubrir PII en buckets de S3",
+            "Cifrar volúmenes EBS con SSE-KMS",
+            "Guardar contraseñas en texto plano en variables de entorno",
+            "Deshabilitar el cifrado en reposo para mejorar el rendimiento"
+          ],
+          "correctas": [
+            0,
+            1,
+            2
+          ],
+          "explicacion": "Forzar TLS, clasificar con Macie y cifrar EBS con KMS protegen los datos. Texto plano y deshabilitar cifrado son antipatrones."
+        }
+      ]
+    },
+    {
+      "slug": "gestion-gobernanza-seguridad",
+      "nombre": "Gestión y gobernanza de la seguridad",
+      "dominio": "Management and Security Governance",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Gobernar la seguridad a escala",
+        "markdown": "## Multi-cuenta con Organizations\n\n**AWS Organizations** agrupa cuentas en OUs y aplica **SCPs** como barandillas (guardrails). **AWS Control Tower** automatiza una *landing zone* segura con cuentas de logging y auditoría preconfiguradas.\n\n## Cumplimiento y postura\n\n- **AWS Config** evalúa recursos contra reglas (p. ej. \"todo bucket S3 debe estar cifrado\") y permite remediación automática.\n- **Security Hub** mide la postura frente a estándares.\n- **AWS Audit Manager** recopila evidencia para auditorías (PCI, HIPAA).\n\n## Gestión de configuración y parches\n\n**Systems Manager** (Patch Manager, State Manager) mantiene flotas conformes sin SSH directo, registrando todo.\n\n> **En el examen:** para imponer reglas que ninguna cuenta miembro pueda eludir, usa **SCPs** en Organizations; para detectar y remediar desviaciones de configuración, usa **AWS Config rules**."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué servicio evalúa continuamente si los recursos cumplen reglas (como exigir cifrado en S3) y puede remediarlos automáticamente?",
+          "opciones": [
+            "AWS Config",
+            "Amazon GuardDuty",
+            "AWS CloudTrail",
+            "AWS Shield"
+          ],
+          "correctas": [
+            0
+          ],
+          "explicacion": "AWS Config evalúa recursos contra reglas de cumplimiento y admite remediación automática ante desviaciones."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué se usa en AWS Organizations para limitar los permisos máximos de las cuentas miembro?",
+          "opciones": [
+            "Políticas de control de servicios (SCPs)",
+            "Políticas de bucket de S3",
+            "Roles de instancia EC2",
+            "Grupos de seguridad"
+          ],
+          "correctas": [
+            0
+          ],
+          "explicacion": "Las SCPs definen el límite máximo de permisos de las cuentas dentro de una OU; restringen pero no otorgan."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué herramientas apoyan la gobernanza de seguridad a escala en un entorno multi-cuenta? (elige todas las que apliquen)",
+          "opciones": [
+            "AWS Control Tower para crear una landing zone segura",
+            "SCPs en AWS Organizations como barandillas",
+            "AWS Config para cumplimiento continuo",
+            "Crear manualmente cada cuenta sin estándares",
+            "Compartir las credenciales root entre cuentas"
+          ],
+          "correctas": [
+            0,
+            1,
+            2
+          ],
+          "explicacion": "Control Tower, SCPs y Config habilitan gobernanza a escala. Crear cuentas sin estándares o compartir root son malas prácticas."
+        }
+      ]
+    }
+  ]
+}

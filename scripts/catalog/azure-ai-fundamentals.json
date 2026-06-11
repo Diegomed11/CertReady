@@ -1,0 +1,343 @@
+{
+  "slug": "azure-ai-fundamentals",
+  "nombre": "Microsoft Certified: Azure AI Fundamentals (AI-900)",
+  "proveedor": "Microsoft",
+  "nivel": "foundational",
+  "area": "IA",
+  "descripcion": "Certificación introductoria que valida el entendimiento de conceptos de inteligencia artificial y machine learning, y de cómo los servicios de Azure AI los hacen realidad. Ideal para perfiles técnicos y de negocio que inician su camino en IA.",
+  "skills": [
+    "machine learning",
+    "computer vision",
+    "procesamiento de lenguaje natural",
+    "IA generativa",
+    "IA responsable",
+    "Azure Machine Learning",
+    "Azure AI Vision",
+    "Azure AI Language",
+    "Azure OpenAI",
+    "clasificacion",
+    "regresion",
+    "clustering"
+  ],
+  "roles": [
+    "Analista de negocio",
+    "Estudiante de IA",
+    "Desarrollador junior",
+    "Gestor de producto",
+    "Consultor técnico"
+  ],
+  "temas": [
+    {
+      "slug": "fundamentos-ia",
+      "nombre": "Fundamentos de la IA y cargas de trabajo",
+      "dominio": "Describir cargas de trabajo y consideraciones de IA",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Tipos de cargas de trabajo de IA",
+        "markdown": "## Qué es una carga de trabajo de IA\nUna **carga de trabajo de IA** es un tipo de problema que un sistema inteligente resuelve a partir de datos. Reconocerlas ayuda a elegir el servicio correcto en Azure.\n\n## Categorías principales\n- **Machine Learning**: predice valores o categorías a partir de datos históricos.\n- **Visión por computadora**: interpreta imágenes y video (detectar objetos, leer texto).\n- **Procesamiento de lenguaje natural (PLN)**: entiende y genera lenguaje humano.\n- **IA generativa**: crea contenido nuevo como texto, código o imágenes.\n- **Minería de conocimiento**: extrae información estructurada de grandes volúmenes de documentos.\n\n## Cómo distinguirlas\nLa clave está en la **entrada** y la **salida**: una foto que produce etiquetas es visión; un correo que se clasifica como spam es PLN o ML; un resumen redactado es IA generativa.\n\n> **En el examen:** asocia cada escenario descrito (imagen, texto, número, contenido nuevo) con su carga de trabajo antes de pensar en el servicio concreto."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un sistema recibe la foto de una factura y devuelve las etiquetas de los objetos presentes. ¿Qué carga de trabajo de IA es?",
+          "opciones": [
+            "Procesamiento de lenguaje natural",
+            "Visión por computadora",
+            "IA generativa",
+            "Minería de conocimiento"
+          ],
+          "correctas": [1],
+          "explicacion": "La entrada es una imagen y la salida son etiquetas de su contenido, lo que define una carga de visión por computadora."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de los siguientes son ejemplos de cargas de trabajo de IA generativa?",
+          "opciones": [
+            "Redactar el borrador de un correo a partir de instrucciones",
+            "Predecir el precio de una vivienda con datos históricos",
+            "Generar una imagen a partir de una descripción de texto",
+            "Detectar caras en una fotografía",
+            "Crear código fuente a partir de un comentario"
+          ],
+          "correctas": [0, 2, 4],
+          "explicacion": "La IA generativa produce contenido nuevo: texto, imágenes o código. Predecir un precio es ML y detectar caras es visión."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una empresa quiere extraer datos estructurados de miles de contratos en PDF para poder buscarlos. ¿Qué carga de trabajo describe mejor esta necesidad?",
+          "opciones": [
+            "Minería de conocimiento",
+            "Regresión",
+            "Clustering",
+            "IA generativa"
+          ],
+          "correctas": [0],
+          "explicacion": "Extraer e indexar información de grandes volúmenes de documentos para hacerla consultable es minería de conocimiento."
+        }
+      ]
+    },
+    {
+      "slug": "ia-responsable",
+      "nombre": "Principios de IA responsable",
+      "dominio": "Describir cargas de trabajo y consideraciones de IA",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Los seis principios de IA responsable",
+        "markdown": "## Por qué importa\nLa IA toma decisiones que afectan a personas. Microsoft define **seis principios** que guían el diseño de sistemas responsables.\n\n## Los principios\n- **Imparcialidad**: el sistema trata a todos de forma equitativa, sin sesgos injustos.\n- **Confiabilidad y seguridad**: funciona de forma fiable incluso ante condiciones inesperadas.\n- **Privacidad y seguridad**: protege los datos y respeta su confidencialidad.\n- **Inclusión**: ofrece valor a personas con distintas capacidades y contextos.\n- **Transparencia**: las personas entienden cómo y por qué decide el sistema.\n- **Responsabilidad (accountability)**: hay personas que rinden cuentas por el comportamiento del sistema.\n\n## Cómo aplicarlos\nLa imparcialidad mitiga sesgos en los datos; la transparencia se logra explicando las predicciones; la responsabilidad exige gobernanza y supervisión humana.\n\n> **En el examen:** memoriza los seis principios y vincula cada escenario (un modelo que discrimina, una decisión inexplicable, una fuga de datos) con el principio que se viola."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un modelo de aprobación de créditos rechaza sistemáticamente a un grupo demográfico sin justificación. ¿Qué principio de IA responsable se incumple?",
+          "opciones": [
+            "Transparencia",
+            "Imparcialidad",
+            "Inclusión",
+            "Confiabilidad y seguridad"
+          ],
+          "correctas": [1],
+          "explicacion": "Tratar de forma desigual e injusta a un grupo viola el principio de imparcialidad, que busca decisiones equitativas."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Los usuarios no comprenden por qué un sistema de IA tomó cierta decisión. ¿Qué principio busca resolver esta situación?",
+          "opciones": [
+            "Privacidad y seguridad",
+            "Responsabilidad",
+            "Transparencia",
+            "Imparcialidad"
+          ],
+          "correctas": [2],
+          "explicacion": "La transparencia busca que las personas entiendan cómo y por qué funciona y decide un sistema de IA."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles de los siguientes forman parte de los seis principios de IA responsable de Microsoft?",
+          "opciones": [
+            "Inclusión",
+            "Escalabilidad",
+            "Responsabilidad",
+            "Confiabilidad y seguridad",
+            "Rentabilidad"
+          ],
+          "correctas": [0, 2, 3],
+          "explicacion": "Inclusión, responsabilidad y confiabilidad y seguridad son principios. Escalabilidad y rentabilidad son atributos técnicos o de negocio, no principios éticos del marco."
+        }
+      ]
+    },
+    {
+      "slug": "machine-learning",
+      "nombre": "Fundamentos de Machine Learning en Azure",
+      "dominio": "Describir cargas de trabajo de Machine Learning en Azure",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Tipos de aprendizaje automático",
+        "markdown": "## Aprendizaje a partir de datos\nEl **machine learning** entrena modelos con datos históricos para hacer predicciones sobre datos nuevos.\n\n## Tipos de problemas supervisados\n- **Regresión**: predice un valor numérico continuo (precio, temperatura).\n- **Clasificación**: predice una categoría o etiqueta (spam / no spam).\n\n## Aprendizaje no supervisado\n- **Clustering**: agrupa elementos similares sin etiquetas previas (segmentar clientes).\n\n## Conceptos de entrenamiento\n- Los datos se dividen en conjunto de **entrenamiento** y de **validación/prueba**.\n- Las **características (features)** son las entradas; la **etiqueta (label)** es lo que se predice.\n- Métricas como la **exactitud** o el **error cuadrático medio** evalúan el modelo.\n\n## Azure Machine Learning\nOfrece el **diseñador** (flujo visual sin código), **ML automatizado** para probar modelos automáticamente y registro de modelos para su despliegue.\n\n> **En el examen:** si la salida es un número es regresión; si es una categoría conocida es clasificación; si no hay etiquetas y se agrupa, es clustering."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un modelo debe predecir cuántos litros de agua consumirá una ciudad mañana. ¿Qué tipo de machine learning es?",
+          "opciones": [
+            "Clasificación",
+            "Clustering",
+            "Regresión",
+            "Detección de anomalías"
+          ],
+          "correctas": [2],
+          "explicacion": "Predecir un valor numérico continuo como un volumen de consumo es un problema de regresión."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En un dataset, ¿qué representa la 'etiqueta' (label) durante el entrenamiento supervisado?",
+          "opciones": [
+            "El valor que el modelo aprende a predecir",
+            "Las columnas de entrada usadas para predecir",
+            "El número de filas del conjunto de datos",
+            "El algoritmo elegido para entrenar"
+          ],
+          "correctas": [0],
+          "explicacion": "La etiqueta es el valor objetivo que se quiere predecir; las características (features) son las entradas que lo determinan."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de las siguientes son capacidades de Azure Machine Learning?",
+          "opciones": [
+            "ML automatizado para probar varios modelos",
+            "Un diseñador visual de flujos sin código",
+            "Registro y despliegue de modelos",
+            "Renderizado de gráficos 3D en tiempo real",
+            "Edición de video profesional"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Azure ML ofrece ML automatizado, diseñador visual y gestión de modelos. El renderizado 3D y la edición de video no forman parte del servicio."
+        }
+      ]
+    },
+    {
+      "slug": "vision-por-computadora",
+      "nombre": "Visión por computadora en Azure",
+      "dominio": "Describir características de cargas de trabajo de visión por computadora en Azure",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Servicios de visión en Azure AI",
+        "markdown": "## Qué resuelve la visión\nLa **visión por computadora** permite que las aplicaciones interpreten el contenido de imágenes y video.\n\n## Tareas comunes\n- **Clasificación de imágenes**: asigna una etiqueta a la imagen completa.\n- **Detección de objetos**: localiza objetos y devuelve su posición con cuadros delimitadores.\n- **OCR (reconocimiento óptico de caracteres)**: extrae texto de imágenes y documentos.\n- **Análisis facial**: detecta caras y atributos.\n\n## Servicios de Azure\n- **Azure AI Vision**: análisis general de imágenes, OCR y descripción de escenas.\n- **Custom Vision**: entrena modelos propios de clasificación y detección con tus imágenes.\n- **Face**: capacidades especializadas de detección y reconocimiento facial.\n\n> **En el examen:** distingue clasificación (una etiqueta global) de detección de objetos (etiqueta más ubicación), y recuerda que el OCR extrae texto, no objetos."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Necesitas extraer el texto impreso de fotografías de recibos. ¿Qué capacidad de visión usarías?",
+          "opciones": [
+            "Detección de objetos",
+            "OCR (reconocimiento óptico de caracteres)",
+            "Clasificación de imágenes",
+            "Clustering"
+          ],
+          "correctas": [1],
+          "explicacion": "El OCR está diseñado específicamente para detectar y extraer texto de imágenes y documentos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuál es la diferencia clave entre clasificación de imágenes y detección de objetos?",
+          "opciones": [
+            "La clasificación solo funciona con video",
+            "La detección de objetos devuelve la ubicación de cada elemento, la clasificación solo una etiqueta global",
+            "La clasificación requiere OCR obligatoriamente",
+            "No existe diferencia real entre ambas"
+          ],
+          "correctas": [1],
+          "explicacion": "La detección de objetos identifica y localiza elementos con cuadros delimitadores; la clasificación asigna una sola etiqueta a toda la imagen."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles de los siguientes son servicios o capacidades de visión en Azure AI?",
+          "opciones": [
+            "Custom Vision para entrenar modelos propios",
+            "Azure AI Vision para análisis general de imágenes",
+            "Face para detección y reconocimiento facial",
+            "Azure AI Language para análisis de sentimiento",
+            "Azure OpenAI para generación de imágenes con DALL-E"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Custom Vision, Azure AI Vision y Face son servicios de visión. Azure AI Language es de PLN y, aunque Azure OpenAI genera imágenes, no se clasifica como servicio de análisis de visión por computadora en este dominio."
+        }
+      ]
+    },
+    {
+      "slug": "procesamiento-lenguaje-natural",
+      "nombre": "Procesamiento de lenguaje natural en Azure",
+      "dominio": "Describir características de cargas de trabajo de procesamiento de lenguaje natural en Azure",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Capacidades de Azure AI Language y Speech",
+        "markdown": "## Qué es el PLN\nEl **procesamiento de lenguaje natural** permite que las aplicaciones entiendan, interpreten y respondan al lenguaje humano escrito o hablado.\n\n## Capacidades de texto (Azure AI Language)\n- **Análisis de sentimiento**: determina si un texto es positivo, neutro o negativo.\n- **Extracción de frases clave**: identifica los conceptos principales.\n- **Reconocimiento de entidades (NER)**: detecta personas, lugares, fechas u organizaciones.\n- **Detección de idioma**: identifica el idioma del texto.\n\n## Voz y traducción\n- **Azure AI Speech**: convierte voz a texto y texto a voz.\n- **Azure AI Translator**: traduce texto entre idiomas.\n\n## Comprensión de intenciones\nLa **comprensión del lenguaje conversacional** identifica la **intención** del usuario y las **entidades** de su frase, base de chatbots y asistentes.\n\n> **En el examen:** asocia cada tarea (sentimiento, entidades, voz a texto, traducción) con su servicio, y recuerda que intención + entidades es la base del lenguaje conversacional."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Quieres saber si las reseñas de un producto son positivas o negativas. ¿Qué capacidad de PLN usarías?",
+          "opciones": [
+            "Análisis de sentimiento",
+            "Detección de idioma",
+            "Reconocimiento óptico de caracteres",
+            "Traducción de texto"
+          ],
+          "correctas": [0],
+          "explicacion": "El análisis de sentimiento clasifica un texto como positivo, neutro o negativo, ideal para evaluar reseñas."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En la comprensión del lenguaje conversacional, ¿qué representa la 'intención'?",
+          "opciones": [
+            "El idioma en que está escrita la frase",
+            "El objetivo o acción que el usuario quiere realizar",
+            "El nivel de confianza del modelo",
+            "El nombre del servicio de Azure usado"
+          ],
+          "correctas": [1],
+          "explicacion": "La intención es el propósito o acción que el usuario desea (por ejemplo, 'reservar vuelo'); las entidades son los detalles que la acompañan."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de las siguientes son capacidades del procesamiento de lenguaje natural en Azure?",
+          "opciones": [
+            "Reconocimiento de entidades nombradas",
+            "Conversión de voz a texto",
+            "Traducción entre idiomas",
+            "Detección de objetos en imágenes",
+            "Extracción de frases clave"
+          ],
+          "correctas": [0, 1, 2, 4],
+          "explicacion": "El NER, la voz a texto, la traducción y la extracción de frases clave son tareas de PLN. La detección de objetos pertenece a visión por computadora."
+        }
+      ]
+    },
+    {
+      "slug": "ia-generativa",
+      "nombre": "Fundamentos de IA generativa y Azure OpenAI",
+      "dominio": "Describir características de cargas de trabajo de IA generativa en Azure",
+      "orden": 6,
+      "hoja": {
+        "titulo": "IA generativa y servicio Azure OpenAI",
+        "markdown": "## Qué es la IA generativa\nLa **IA generativa** crea contenido original (texto, código, imágenes) a partir de patrones aprendidos. Se apoya en **grandes modelos de lenguaje (LLM)**.\n\n## Conceptos clave\n- **Prompt**: la instrucción o consulta que se envía al modelo.\n- **Completion**: la respuesta generada por el modelo.\n- **Token**: unidad de texto que el modelo procesa.\n- **Grounding**: conectar el modelo con datos propios para respuestas más precisas.\n\n## Azure OpenAI Service\nDa acceso a modelos como **GPT** (texto y código), **embeddings** (representación numérica de texto) y **DALL-E** (generación de imágenes), con la seguridad y gobernanza de Azure.\n\n## Buenas prácticas\nUn buen **prompt** es claro y con contexto. Los filtros de contenido y la IA responsable siguen siendo esenciales para evitar resultados dañinos.\n\n> **En el examen:** recuerda que prompt es la entrada y completion la salida, que Azure OpenAI da acceso a GPT, embeddings y DALL-E, y que los principios de IA responsable aplican también aquí."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "En el contexto de un modelo de lenguaje generativo, ¿qué es un 'prompt'?",
+          "opciones": [
+            "La respuesta que devuelve el modelo",
+            "La instrucción o consulta que se envía al modelo",
+            "El número de tokens disponibles",
+            "El nombre del modelo desplegado"
+          ],
+          "correctas": [1],
+          "explicacion": "El prompt es la entrada o instrucción que el usuario envía; la respuesta generada se llama completion."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Necesitas generar imágenes a partir de descripciones de texto usando Azure OpenAI. ¿Qué modelo emplearías?",
+          "opciones": [
+            "GPT",
+            "Embeddings",
+            "DALL-E",
+            "Whisper de visión"
+          ],
+          "correctas": [2],
+          "explicacion": "DALL-E es el modelo de Azure OpenAI especializado en generar imágenes a partir de descripciones de texto."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles de las siguientes afirmaciones sobre Azure OpenAI Service e IA generativa son correctas?",
+          "opciones": [
+            "Los modelos GPT pueden generar y completar texto y código",
+            "Los embeddings representan texto como vectores numéricos",
+            "Los principios de IA responsable no aplican a la IA generativa",
+            "El grounding conecta el modelo con datos propios para mejorar las respuestas",
+            "Un completion es la respuesta generada por el modelo"
+          ],
+          "correctas": [0, 1, 3, 4],
+          "explicacion": "GPT genera texto y código, los embeddings son vectores, el grounding usa datos propios y el completion es la salida. Los principios de IA responsable sí aplican plenamente a la IA generativa."
+        }
+      ]
+    }
+  ]
+}

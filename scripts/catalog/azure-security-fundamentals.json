@@ -1,0 +1,343 @@
+{
+  "slug": "azure-security-fundamentals",
+  "nombre": "Microsoft Certified: Security, Compliance, and Identity Fundamentals (SC-900)",
+  "proveedor": "Microsoft",
+  "nivel": "foundational",
+  "area": "Seguridad",
+  "descripcion": "Certificación introductoria que valida la comprensión de los conceptos de seguridad, cumplimiento e identidad en entornos Microsoft y Azure. Pensada para perfiles que inician en la nube y necesitan una base sólida sobre identidad, protección y gobernanza.",
+  "skills": [
+    "identidad",
+    "azure ad",
+    "zero trust",
+    "cumplimiento",
+    "rbac",
+    "cifrado",
+    "defender",
+    "sentinel",
+    "gobernanza",
+    "autenticacion",
+    "purview",
+    "proteccion"
+  ],
+  "roles": [
+    "analista de seguridad junior",
+    "administrador de identidad",
+    "consultor de cumplimiento",
+    "estudiante de ciberseguridad",
+    "especialista en soporte cloud"
+  ],
+  "temas": [
+    {
+      "slug": "conceptos-seguridad-cumplimiento-identidad",
+      "nombre": "Conceptos de seguridad, cumplimiento e identidad",
+      "dominio": "Describe los conceptos de seguridad, cumplimiento e identidad",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Fundamentos transversales: confianza, riesgo y responsabilidad",
+        "markdown": "## El modelo Zero Trust\n\nZero Trust parte de una premisa simple: **nunca confíes, verifica siempre**. No se asume que algo sea seguro por estar dentro de la red corporativa. Cada solicitud se valida según identidad, dispositivo y contexto.\n\nSus tres principios guía son:\n\n- **Verificar explícitamente**: autenticar con todos los datos disponibles.\n- **Acceso con privilegio mínimo**: dar solo lo necesario, justo a tiempo.\n- **Asumir la brecha**: diseñar como si el atacante ya estuviera dentro.\n\n## Responsabilidad compartida\n\nEn la nube, la seguridad se reparte entre el proveedor y el cliente. El reparto **cambia según el modelo de servicio** (IaaS, PaaS, SaaS): cuanto más gestionado, menos carga para el cliente. Los datos y las identidades, sin embargo, **siempre son responsabilidad del cliente**.\n\n## Defensa en profundidad\n\nSe organiza en capas (datos, aplicación, red, perímetro, identidad) para que el fallo de una no comprometa todo. La **tríada CIA** —confidencialidad, integridad y disponibilidad— es el objetivo de estas capas.\n\n> **En el examen:** asocia cada principio de Zero Trust con su frase clave y recuerda que identidad y datos nunca dejan de ser responsabilidad del cliente."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Cuál es la premisa central del modelo Zero Trust?",
+          "opciones": [
+            "Confiar en todo el tráfico dentro de la red interna",
+            "Nunca confiar y verificar siempre cada solicitud",
+            "Cifrar únicamente el tráfico que sale a Internet",
+            "Eliminar las contraseñas de todos los usuarios"
+          ],
+          "correctas": [1],
+          "explicacion": "Zero Trust se basa en no asumir confianza por ubicación de red y validar explícitamente cada acceso según identidad, dispositivo y contexto."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles son principios fundamentales del modelo Zero Trust? (Elige todas las que apliquen)",
+          "opciones": [
+            "Verificar explícitamente",
+            "Confiar en la red perimetral",
+            "Acceso con privilegio mínimo",
+            "Asumir la brecha",
+            "Compartir credenciales entre equipos"
+          ],
+          "correctas": [0, 2, 3],
+          "explicacion": "Los tres pilares de Zero Trust son verificar explícitamente, aplicar privilegio mínimo y asumir que la brecha ya ocurrió. Confiar en el perímetro y compartir credenciales contradicen el modelo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "En el modelo de responsabilidad compartida, ¿qué elemento sigue siendo siempre responsabilidad del cliente?",
+          "opciones": [
+            "El hardware del centro de datos",
+            "Los datos y las identidades",
+            "La capa de virtualización física",
+            "El mantenimiento eléctrico del proveedor"
+          ],
+          "correctas": [1],
+          "explicacion": "Independientemente del modelo de servicio, los datos y las identidades nunca dejan de ser responsabilidad del cliente; el resto varía entre IaaS, PaaS y SaaS."
+        }
+      ]
+    },
+    {
+      "slug": "servicios-identidad-azure-ad",
+      "nombre": "Servicios y tipos de identidad de Microsoft Entra",
+      "dominio": "Describe las capacidades de Microsoft Entra (Azure AD)",
+      "orden": 2,
+      "hoja": {
+        "titulo": "La identidad como nuevo perímetro",
+        "markdown": "## Identidad como perímetro\n\nCuando los recursos viven fuera de la red corporativa, **la identidad pasa a ser el perímetro principal**. Microsoft Entra ID (antes Azure AD) es el servicio de directorio en la nube que gestiona usuarios, grupos y aplicaciones.\n\n## Tipos de identidad\n\n- **Usuarios**: personas con credenciales propias.\n- **Identidades de carga de trabajo**: aplicaciones, service principals y **identidades administradas** que evitan guardar secretos en el código.\n- **Dispositivos**: equipos registrados o unidos al directorio.\n\n## Modelos híbridos y externos\n\nLa **identidad híbrida** sincroniza el directorio local con la nube mediante Entra Connect, permitiendo un único conjunto de credenciales. Para colaboración externa existen:\n\n- **B2B**: invitar a socios y proveedores como usuarios invitados.\n- **B2C**: gestionar identidades de clientes finales de aplicaciones.\n\nLos **proveedores de identidad federados** permiten iniciar sesión con cuentas externas usando estándares como SAML u OIDC.\n\n> **En el examen:** distingue una identidad administrada (sin secretos en código) de un service principal, y recuerda que B2B es para socios y B2C para clientes."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio de Microsoft actúa como directorio de identidad basado en la nube?",
+          "opciones": [
+            "Microsoft Entra ID",
+            "Azure Blob Storage",
+            "Microsoft Defender",
+            "Azure Monitor"
+          ],
+          "correctas": [0],
+          "explicacion": "Microsoft Entra ID (antes Azure AD) es el servicio de directorio y gestión de identidades en la nube de Microsoft."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué capacidad de Entra permite invitar a socios externos a colaborar como usuarios invitados?",
+          "opciones": [
+            "B2C",
+            "B2B",
+            "Identidad administrada",
+            "Entra Connect"
+          ],
+          "correctas": [1],
+          "explicacion": "B2B (business-to-business) permite invitar a socios y proveedores como invitados. B2C está orientado a identidades de clientes finales."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Cuáles de los siguientes son tipos de identidad gestionables en Microsoft Entra? (Elige todas las que apliquen)",
+          "opciones": [
+            "Usuarios",
+            "Identidades de carga de trabajo",
+            "Dispositivos",
+            "Reglas de firewall",
+            "Cuentas de almacenamiento como sujetos de inicio de sesión"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Entra gestiona usuarios, identidades de carga de trabajo (apps, service principals, identidades administradas) y dispositivos. Las reglas de firewall y las cuentas de almacenamiento no son identidades de inicio de sesión."
+        }
+      ]
+    },
+    {
+      "slug": "autenticacion-acceso-condicional",
+      "nombre": "Autenticación y acceso condicional",
+      "dominio": "Describe las capacidades de gestión de acceso de Microsoft Entra",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Probar quién eres y bajo qué condiciones entras",
+        "markdown": "## Autenticación frente a autorización\n\n**Autenticación** responde a \"¿quién eres?\"; **autorización** responde a \"¿qué puedes hacer?\". Son fases distintas y consecutivas del control de acceso.\n\n## Autenticación multifactor (MFA)\n\nMFA exige al menos dos factores de categorías diferentes:\n\n- **Algo que sabes** (contraseña, PIN).\n- **Algo que tienes** (teléfono, token).\n- **Algo que eres** (huella, rostro).\n\nReduce drásticamente el riesgo aunque la contraseña se vea comprometida. Las opciones **sin contraseña** (Windows Hello, llaves FIDO2, Microsoft Authenticator) mejoran seguridad y experiencia.\n\n## Acceso condicional\n\nEs el **motor de decisiones** de Entra: evalúa señales (usuario, ubicación, dispositivo, riesgo) y aplica controles. Funciona con lógica **si... entonces...**: por ejemplo, *si* el acceso viene de una red no confiable, *entonces* exigir MFA o bloquear.\n\n## SSPR\n\nEl **autoservicio de restablecimiento de contraseña** permite al usuario recuperar su acceso sin mesa de ayuda, previa verificación.\n\n> **En el examen:** asocia el acceso condicional con su lógica \"si-entonces\" basada en señales, y no confundas autenticación con autorización."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "La autenticación multifactor requiere factores de al menos cuántas categorías diferentes?",
+          "opciones": [
+            "Dos categorías diferentes",
+            "Una sola categoría repetida",
+            "Cuatro categorías obligatorias",
+            "Ninguna, basta la contraseña"
+          ],
+          "correctas": [0],
+          "explicacion": "MFA exige combinar factores de al menos dos categorías distintas: algo que sabes, algo que tienes o algo que eres."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué característica de Entra evalúa señales como ubicación o riesgo para decidir si conceder, exigir MFA o bloquear el acceso?",
+          "opciones": [
+            "Acceso condicional",
+            "Autoservicio de restablecimiento de contraseña",
+            "Etiquetas de confidencialidad",
+            "Cifrado de disco"
+          ],
+          "correctas": [0],
+          "explicacion": "El acceso condicional es el motor que evalúa señales contextuales y aplica controles con lógica si-entonces."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuáles de los siguientes son métodos de autenticación sin contraseña? (Elige todas las que apliquen)",
+          "opciones": [
+            "Windows Hello",
+            "Llaves de seguridad FIDO2",
+            "Microsoft Authenticator sin contraseña",
+            "Contraseña compartida en un documento",
+            "PIN de cuatro dígitos enviado por correo en texto plano"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Windows Hello, las llaves FIDO2 y el inicio sin contraseña de Microsoft Authenticator son métodos sin contraseña. Las otras dos opciones son prácticas inseguras basadas en secretos compartidos."
+        }
+      ]
+    },
+    {
+      "slug": "soluciones-seguridad-azure",
+      "nombre": "Soluciones de seguridad de Azure",
+      "dominio": "Describe las capacidades de las soluciones de seguridad de Microsoft",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Proteger la infraestructura y la red en la nube",
+        "markdown": "## Seguridad de red en Azure\n\nVarias capas protegen el tráfico:\n\n- **Grupos de seguridad de red (NSG)**: filtran tráfico por reglas de entrada y salida.\n- **Azure Firewall**: servicio gestionado con estado para controlar el tráfico a nivel de red y aplicación.\n- **Azure DDoS Protection**: mitiga ataques de denegación de servicio distribuidos.\n\n## Microsoft Defender for Cloud\n\nFortalece la postura de seguridad y protege cargas de trabajo. Aporta:\n\n- **Puntuación de seguridad (Secure Score)**: mide y guía la mejora de la postura.\n- **Recomendaciones** accionables para reducir riesgos.\n- **Protección frente a amenazas** para máquinas, contenedores y bases de datos.\n\n## SIEM y SOAR con Microsoft Sentinel\n\n**Sentinel** es la solución nativa de nube que combina **SIEM** (recolección y correlación de eventos) y **SOAR** (respuesta automatizada). Recoge señales a escala, detecta amenazas con analítica y orquesta respuestas mediante playbooks.\n\n> **En el examen:** vincula Secure Score con Defender for Cloud y recuerda que Sentinel cubre tanto SIEM como SOAR."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio de Azure filtra el tráfico de red mediante reglas de entrada y salida a nivel de subred o interfaz?",
+          "opciones": [
+            "Grupo de seguridad de red (NSG)",
+            "Azure Blob Storage",
+            "Microsoft Sentinel",
+            "Etiqueta de confidencialidad"
+          ],
+          "correctas": [0],
+          "explicacion": "Los NSG permiten o deniegan tráfico mediante reglas de entrada y salida aplicadas a subredes o interfaces de red."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué herramienta de Defender for Cloud cuantifica la postura de seguridad y orienta su mejora?",
+          "opciones": [
+            "Secure Score",
+            "Playbook de SOAR",
+            "Azure DDoS Protection",
+            "Caja de seguridad de claves"
+          ],
+          "correctas": [0],
+          "explicacion": "Secure Score mide la postura de seguridad de Defender for Cloud y ofrece recomendaciones priorizadas para mejorarla."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué capacidades aporta Microsoft Sentinel? (Elige todas las que apliquen)",
+          "opciones": [
+            "Recolección y correlación de eventos (SIEM)",
+            "Respuesta automatizada mediante playbooks (SOAR)",
+            "Detección de amenazas con analítica",
+            "Provisión de máquinas virtuales de desarrollo",
+            "Emisión de certificados SSL públicos"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Sentinel combina SIEM, SOAR y analítica de detección. No aprovisiona máquinas virtuales ni emite certificados SSL públicos."
+        }
+      ]
+    },
+    {
+      "slug": "proteccion-informacion-purview",
+      "nombre": "Protección de la información y gobernanza de datos",
+      "dominio": "Describe las capacidades de las soluciones de cumplimiento de Microsoft",
+      "orden": 5,
+      "hoja": {
+        "titulo": "Clasificar, proteger y gobernar los datos",
+        "markdown": "## Clasificación y etiquetado\n\nLa protección de la información empieza por **conocer los datos**. Las **etiquetas de confidencialidad** (Sensitivity Labels) clasifican el contenido (por ejemplo, *Confidencial* o *Público*) y aplican protección persistente: cifrado, marcas de agua o restricciones de uso que viajan con el archivo.\n\n## Prevención de pérdida de datos (DLP)\n\nLas políticas **DLP** detectan y evitan la fuga de información sensible —tarjetas, identificadores, datos de salud— en correo, documentos y chats, mediante acciones como bloquear o advertir.\n\n## Gobernanza con Microsoft Purview\n\nPurview unifica la gobernanza:\n\n- **Gestión del ciclo de vida**: retención y eliminación de datos según políticas.\n- **Gestión de registros**: conservar información por obligaciones legales.\n- **Catálogo de datos**: descubrir y mapear dónde residen los datos.\n\n## Cumplimiento\n\nEl **Administrador de cumplimiento (Compliance Manager)** evalúa riesgos frente a normativas y ofrece una puntuación de cumplimiento con acciones de mejora.\n\n> **En el examen:** asocia las etiquetas de confidencialidad con la protección que viaja con el dato y DLP con evitar la fuga de información sensible."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué mecanismo clasifica el contenido y aplica protección persistente como cifrado o marcas de agua que viajan con el archivo?",
+          "opciones": [
+            "Etiquetas de confidencialidad",
+            "Grupos de seguridad de red",
+            "Service principals",
+            "Azure Firewall"
+          ],
+          "correctas": [0],
+          "explicacion": "Las etiquetas de confidencialidad clasifican el contenido y aplican protección que permanece con el documento independientemente de dónde se mueva."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué tipo de política está diseñada para evitar que información sensible salga de la organización por correo o documentos?",
+          "opciones": [
+            "Prevención de pérdida de datos (DLP)",
+            "Acceso condicional",
+            "Identidad administrada",
+            "Secure Score"
+          ],
+          "correctas": [0],
+          "explicacion": "Las políticas DLP detectan y bloquean o advierten sobre la transmisión de datos sensibles, evitando su fuga."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué capacidades de gobernanza de datos ofrece Microsoft Purview? (Elige todas las que apliquen)",
+          "opciones": [
+            "Gestión del ciclo de vida de los datos",
+            "Gestión de registros",
+            "Catálogo de datos",
+            "Mitigación de ataques DDoS",
+            "Balanceo de carga de red"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Purview cubre ciclo de vida, gestión de registros y catálogo de datos. La mitigación DDoS y el balanceo de carga pertenecen a la capa de red, no a la gobernanza de datos."
+        }
+      ]
+    },
+    {
+      "slug": "gobernanza-riesgo-cumplimiento",
+      "nombre": "Gobernanza, gestión de identidades privilegiadas y riesgo",
+      "dominio": "Describe las capacidades de gobernanza de identidad y protección de Microsoft Entra",
+      "orden": 6,
+      "hoja": {
+        "titulo": "Gobernar el acceso y reducir el riesgo de identidad",
+        "markdown": "## Control de acceso basado en roles (RBAC)\n\n**RBAC** concede permisos asignando roles a usuarios, grupos o identidades sobre un ámbito (suscripción, grupo de recursos, recurso). Aplica el **privilegio mínimo** evitando permisos amplios y permanentes.\n\n## Privileged Identity Management (PIM)\n\n**PIM** gestiona el acceso privilegiado **justo a tiempo**: en lugar de asignaciones permanentes, los roles administrativos se activan temporalmente, con aprobación y justificación. Reduce la superficie de ataque de las cuentas con más poder.\n\n## Gobernanza de identidad\n\nIncluye herramientas para mantener el acceso correcto en el tiempo:\n\n- **Revisiones de acceso**: validar periódicamente quién tiene qué.\n- **Gestión de derechos (Entitlement Management)**: paquetes de acceso con flujos de solicitud y caducidad.\n\n## Identity Protection\n\nDetecta **riesgos de identidad** (inicios de sesión sospechosos, credenciales filtradas) y puede automatizar respuestas como exigir MFA o bloquear cuentas.\n\n> **En el examen:** vincula PIM con el acceso privilegiado justo a tiempo y RBAC con la asignación de roles por ámbito siguiendo el privilegio mínimo."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué mecanismo concede permisos asignando roles a usuarios o grupos sobre un ámbito determinado?",
+          "opciones": [
+            "Control de acceso basado en roles (RBAC)",
+            "Prevención de pérdida de datos",
+            "Azure DDoS Protection",
+            "Etiqueta de confidencialidad"
+          ],
+          "correctas": [0],
+          "explicacion": "RBAC asigna roles con permisos a identidades sobre ámbitos como suscripciones o recursos, aplicando el privilegio mínimo."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué servicio permite activar roles administrativos solo de forma temporal, con aprobación y justificación?",
+          "opciones": [
+            "Privileged Identity Management (PIM)",
+            "Self-Service Password Reset",
+            "Microsoft Sentinel",
+            "Compliance Manager"
+          ],
+          "correctas": [0],
+          "explicacion": "PIM ofrece acceso privilegiado justo a tiempo, evitando asignaciones permanentes y reduciendo la superficie de ataque de las cuentas administrativas."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Qué capacidades forman parte de la gobernanza de identidad de Entra? (Elige todas las que apliquen)",
+          "opciones": [
+            "Revisiones de acceso",
+            "Gestión de derechos con paquetes de acceso",
+            "Privileged Identity Management",
+            "Cifrado de discos de máquinas virtuales",
+            "Reglas de balanceo de carga"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Revisiones de acceso, gestión de derechos y PIM son pilares de la gobernanza de identidad. El cifrado de discos y el balanceo de carga no pertenecen a esa categoría."
+        }
+      ]
+    }
+  ]
+}

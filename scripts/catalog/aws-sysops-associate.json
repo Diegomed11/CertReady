@@ -1,0 +1,342 @@
+{
+  "slug": "aws-sysops-associate",
+  "nombre": "AWS Certified SysOps Administrator – Associate",
+  "proveedor": "AWS",
+  "nivel": "associate",
+  "area": "Sistemas",
+  "descripcion": "Valida la capacidad de desplegar, operar y mantener cargas de trabajo en AWS con foco en disponibilidad, automatización y respuesta a incidentes. Está orientada a perfiles que administran sistemas en producción día a día.",
+  "skills": [
+    "CloudWatch",
+    "CloudTrail",
+    "Auto Scaling",
+    "EC2",
+    "Systems Manager",
+    "IAM",
+    "VPC",
+    "S3",
+    "CloudFormation",
+    "Backup",
+    "EBS",
+    "ELB"
+  ],
+  "roles": [
+    "Administrador de sistemas en la nube",
+    "Ingeniero de operaciones (CloudOps)",
+    "Ingeniero de soporte de infraestructura",
+    "Site Reliability Engineer junior"
+  ],
+  "temas": [
+    {
+      "slug": "monitoreo-observabilidad",
+      "nombre": "Monitoreo, registro y observabilidad",
+      "dominio": "Monitoring, Logging, and Remediation",
+      "orden": 1,
+      "hoja": {
+        "titulo": "Visibilidad operativa con CloudWatch y CloudTrail",
+        "markdown": "## Métricas y alarmas\nCloudWatch recopila **métricas** de los servicios. Las del hipervisor (CPU, red) llegan sin esfuerzo; la **memoria** y el **espacio en disco** del sistema operativo requieren instalar el **agente de CloudWatch**.\n\n- Las **alarmas** evalúan una métrica contra un umbral durante varios periodos.\n- Un estado `ALARM` puede notificar por **SNS** o disparar una acción de **Auto Scaling**.\n- Usa **alarmas compuestas** para combinar condiciones y reducir ruido.\n\n## Registros y auditoría\n- **CloudWatch Logs** centraliza logs de aplicaciones e instancias; con **métricas de filtro** generas métricas a partir de patrones de texto.\n- **CloudTrail** registra las **llamadas a la API** (quién hizo qué y cuándo), clave para auditoría y diagnóstico.\n\n## Remediación\n- **EventBridge** reacciona a eventos y lanza automatización (Lambda, runbooks de **Systems Manager**).\n\n> **En el examen:** si piden métricas de memoria o disco, la respuesta casi siempre incluye **instalar el agente de CloudWatch**; CloudTrail es para *quién llamó a la API*, no para métricas de rendimiento."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Un equipo necesita alertar cuando el uso de memoria de una instancia EC2 supere el 85%. ¿Qué se requiere para obtener esa métrica?",
+          "opciones": [
+            "Activar las métricas detalladas en la consola de EC2",
+            "Instalar el agente de CloudWatch en la instancia",
+            "Habilitar CloudTrail en la región",
+            "Crear una métrica de filtro sobre los logs del balanceador"
+          ],
+          "correctas": [1],
+          "explicacion": "La memoria es una métrica del sistema operativo que el hipervisor no ve; el agente de CloudWatch debe instalarse en la instancia para publicarla."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Tras un cambio no autorizado en un grupo de seguridad, necesitas saber qué identidad realizó la llamada a la API. ¿Qué servicio consultas?",
+          "opciones": [
+            "CloudWatch Logs Insights",
+            "AWS Config",
+            "AWS CloudTrail",
+            "VPC Flow Logs"
+          ],
+          "correctas": [2],
+          "explicacion": "CloudTrail registra las llamadas a la API junto con la identidad, hora y origen, ideal para responder 'quién hizo qué'."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué acciones puede ejecutar directamente una alarma de CloudWatch al pasar al estado ALARM? (elige todas las correctas)",
+          "opciones": [
+            "Publicar una notificación en un tema de SNS",
+            "Ejecutar una acción de escalado de Auto Scaling",
+            "Detener, terminar o reiniciar una instancia EC2",
+            "Reescribir automáticamente una plantilla de CloudFormation",
+            "Modificar las reglas de un grupo de seguridad"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Las alarmas pueden notificar por SNS, disparar acciones de Auto Scaling y aplicar acciones de EC2 (detener/terminar/reiniciar/recuperar). No editan plantillas ni grupos de seguridad por sí mismas."
+        }
+      ]
+    },
+    {
+      "slug": "alta-disponibilidad-escalado",
+      "nombre": "Alta disponibilidad y escalado",
+      "dominio": "Reliability and Business Continuity",
+      "orden": 2,
+      "hoja": {
+        "titulo": "Resiliencia con Auto Scaling y balanceo",
+        "markdown": "## Distribuir la carga\nUn **Elastic Load Balancer** reparte tráfico entre instancias sanas en **varias zonas de disponibilidad (AZ)**. El **ALB** opera en capa 7 (HTTP/HTTPS) y el **NLB** en capa 4 (TCP/UDP, alto rendimiento).\n\n- Las **comprobaciones de salud** retiran instancias no sanas del enrutamiento.\n\n## Escalar automáticamente\nUn **Auto Scaling Group (ASG)** mantiene un número deseado de instancias y las reemplaza si fallan.\n\n- **Escalado dinámico** reacciona a métricas (p. ej. CPU al 60%).\n- **Escalado predictivo** anticipa la demanda por patrones históricos.\n- Distribuir el ASG en **múltiples AZ** evita un punto único de fallo.\n\n## Continuidad\n- **RTO** (tiempo de recuperación) y **RPO** (pérdida de datos tolerable) guían la estrategia de respaldo y multi-AZ.\n\n> **En el examen:** alta disponibilidad casi siempre significa **múltiples AZ**; si además piden tolerar la caída de una región completa, se necesita una arquitectura **multi-región**."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué configuración de un Auto Scaling Group mejora la disponibilidad ante la caída de una zona de disponibilidad?",
+          "opciones": [
+            "Usar un solo tipo de instancia más grande",
+            "Distribuir el grupo en varias zonas de disponibilidad",
+            "Desactivar las comprobaciones de salud del balanceador",
+            "Fijar la capacidad mínima y máxima al mismo valor"
+          ],
+          "correctas": [1],
+          "explicacion": "Repartir las instancias entre varias AZ permite que el grupo siga sirviendo tráfico aunque una zona falle."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Una aplicación TCP de baja latencia y altísimo rendimiento necesita balanceo. ¿Qué balanceador es el más adecuado?",
+          "opciones": [
+            "Application Load Balancer",
+            "Network Load Balancer",
+            "Gateway Load Balancer",
+            "Classic Load Balancer"
+          ],
+          "correctas": [1],
+          "explicacion": "El Network Load Balancer opera en capa 4 (TCP/UDP) y está optimizado para latencia muy baja y millones de conexiones por segundo."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué mecanismos contribuyen a la alta disponibilidad de una capa web detrás de un ALB? (elige todas las correctas)",
+          "opciones": [
+            "Comprobaciones de salud que retiran instancias no sanas",
+            "Despliegue del ASG en múltiples zonas de disponibilidad",
+            "Políticas de escalado dinámico basadas en métricas",
+            "Asignar una IP elástica fija a cada instancia",
+            "Almacenar el estado de sesión solo en disco local de cada instancia"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Health checks, multi-AZ y escalado dinámico aumentan la disponibilidad. Las IP elásticas fijas y el estado en disco local crean dependencias rígidas que la reducen."
+        }
+      ]
+    },
+    {
+      "slug": "despliegue-aprovisionamiento",
+      "nombre": "Despliegue y aprovisionamiento",
+      "dominio": "Deployment, Provisioning, and Automation",
+      "orden": 3,
+      "hoja": {
+        "titulo": "Infraestructura como código y automatización",
+        "markdown": "## Plantillas declarativas\n**CloudFormation** describe la infraestructura en plantillas (YAML/JSON) y la despliega como un **stack** reproducible.\n\n- Los **change sets** muestran qué cambiará antes de aplicar.\n- Los **drift detection** detectan cambios manuales fuera de la plantilla.\n- **StackSets** despliega el mismo stack en varias cuentas y regiones.\n\n## Operación a escala\n**Systems Manager** automatiza tareas en flotas de instancias.\n\n- **Run Command** ejecuta comandos sin SSH.\n- **Patch Manager** aplica parches según ventanas de mantenimiento.\n- **Parameter Store** guarda configuración y secretos.\n\n## Imágenes consistentes\n- Crear **AMIs** doradas reduce el tiempo de arranque y estandariza el software base.\n\n> **En el examen:** para administrar instancias sin abrir SSH ni gestionar claves, la respuesta es **Systems Manager (Session Manager / Run Command)**; para reproducir infraestructura completa, **CloudFormation**."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué servicio permite ejecutar comandos en una flota de instancias EC2 sin abrir el puerto SSH ni gestionar claves?",
+          "opciones": [
+            "AWS Config",
+            "AWS Systems Manager Run Command",
+            "Amazon Inspector",
+            "AWS CloudFormation"
+          ],
+          "correctas": [1],
+          "explicacion": "Run Command de Systems Manager ejecuta comandos a través del agente SSM, sin necesidad de SSH ni puertos abiertos."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Antes de aplicar una actualización a un stack de CloudFormation, quieres ver exactamente qué recursos se modificarán. ¿Qué usas?",
+          "opciones": [
+            "Drift detection",
+            "Un change set",
+            "Un StackSet",
+            "Un rollback trigger"
+          ],
+          "correctas": [1],
+          "explicacion": "El change set previsualiza las diferencias entre el stack actual y la plantilla propuesta antes de ejecutarlas."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué capacidades ofrece AWS Systems Manager para operar instancias a escala? (elige todas las correctas)",
+          "opciones": [
+            "Aplicar parches mediante ventanas de mantenimiento",
+            "Guardar configuración y secretos en Parameter Store",
+            "Iniciar sesiones de shell sin SSH con Session Manager",
+            "Definir tablas de enrutamiento de la VPC",
+            "Emitir certificados TLS públicos de confianza"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Patch Manager, Parameter Store y Session Manager son funciones de Systems Manager. El enrutamiento de VPC y la emisión de certificados públicos corresponden a VPC y ACM respectivamente."
+        }
+      ]
+    },
+    {
+      "slug": "seguridad-cumplimiento",
+      "nombre": "Seguridad y cumplimiento operativo",
+      "dominio": "Security and Compliance",
+      "orden": 4,
+      "hoja": {
+        "titulo": "Identidad, cifrado y protección de datos",
+        "markdown": "## Acceso con menor privilegio\n**IAM** controla quién puede hacer qué. Aplica el principio de **menor privilegio**.\n\n- Las **políticas** se adjuntan a usuarios, grupos o **roles**.\n- Usa **roles** para que las instancias EC2 obtengan credenciales temporales en vez de incrustar llaves.\n- Activa **MFA** para identidades sensibles.\n\n## Cifrado\n- **KMS** gestiona claves de cifrado; muchos servicios cifran en reposo con un par de clics.\n- Habilita **cifrado en tránsito** con TLS y **en reposo** en EBS, S3 y RDS.\n\n## Visibilidad y postura\n- **AWS Config** evalúa la conformidad de los recursos frente a reglas.\n- **GuardDuty** detecta actividad sospechosa de forma continua.\n\n> **En el examen:** nunca incrustes llaves de acceso en una instancia; usa un **rol de IAM**. Si preguntan por evaluar la *conformidad* de recursos a lo largo del tiempo, piensa en **AWS Config**."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Una aplicación en EC2 necesita leer objetos de un bucket S3 de forma segura. ¿Cuál es la práctica recomendada?",
+          "opciones": [
+            "Guardar las llaves de acceso en un archivo de la instancia",
+            "Adjuntar un rol de IAM con permisos a la instancia",
+            "Pasar las credenciales como variables de entorno en el arranque",
+            "Hacer el bucket público de solo lectura"
+          ],
+          "correctas": [1],
+          "explicacion": "Un rol de IAM entrega credenciales temporales y rotadas automáticamente, evitando incrustar llaves de larga duración."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "El equipo de cumplimiento quiere saber si algún volumen EBS quedó sin cifrar y mantener un historial de conformidad. ¿Qué servicio usas?",
+          "opciones": [
+            "Amazon GuardDuty",
+            "AWS CloudTrail",
+            "AWS Config",
+            "Amazon Macie"
+          ],
+          "correctas": [2],
+          "explicacion": "AWS Config evalúa recursos contra reglas (p. ej. 'EBS cifrado') y conserva el historial de conformidad en el tiempo."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué medidas refuerzan la postura de seguridad de una cuenta AWS según buenas prácticas operativas? (elige todas las correctas)",
+          "opciones": [
+            "Exigir MFA para usuarios con permisos privilegiados",
+            "Cifrar datos en reposo con claves administradas por KMS",
+            "Aplicar el principio de menor privilegio en las políticas de IAM",
+            "Compartir la llave raíz de la cuenta entre el equipo",
+            "Deshabilitar CloudTrail para reducir costos de almacenamiento"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "MFA, cifrado con KMS y menor privilegio son prácticas recomendadas. Compartir la cuenta raíz y deshabilitar CloudTrail debilitan gravemente la seguridad y la auditoría."
+        }
+      ]
+    },
+    {
+      "slug": "redes-content-delivery",
+      "nombre": "Redes y entrega de contenido",
+      "dominio": "Networking and Content Delivery",
+      "orden": 5,
+      "hoja": {
+        "titulo": "VPC, DNS y diagnóstico de conectividad",
+        "markdown": "## Estructura de la red\nUna **VPC** es tu red privada. Se divide en **subredes** públicas (con ruta a un **Internet Gateway**) y privadas.\n\n- Una **subred privada** alcanza Internet de salida vía **NAT Gateway**.\n- Los **grupos de seguridad** filtran a nivel de instancia (con estado); las **NACL** filtran a nivel de subred (sin estado).\n\n## DNS y distribución\n- **Route 53** ofrece DNS y enrutamiento por latencia, geolocalización o failover.\n- **CloudFront** cachea contenido cerca del usuario para reducir latencia.\n\n## Diagnóstico\n- **VPC Flow Logs** registran el tráfico IP aceptado/rechazado, útil para depurar conectividad.\n- **Reachability Analyzer** prueba rutas de red de forma lógica.\n\n> **En el examen:** si una instancia en subred privada no sale a Internet, sospecha del **NAT Gateway** o de la **tabla de rutas**. Recuerda: grupos de seguridad = **con estado**; NACL = **sin estado**."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "Una instancia en una subred privada necesita descargar actualizaciones de Internet sin ser accesible desde fuera. ¿Qué componente lo permite?",
+          "opciones": [
+            "Un Internet Gateway adjuntado a la subred",
+            "Un NAT Gateway en una subred pública",
+            "Una IP elástica asignada a la instancia",
+            "Una regla de NACL que permita todo el tráfico"
+          ],
+          "correctas": [1],
+          "explicacion": "El NAT Gateway, ubicado en una subred pública, permite tráfico de salida iniciado desde subredes privadas sin exponerlas a conexiones entrantes."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "¿Cuál es una diferencia clave entre un grupo de seguridad y una NACL?",
+          "opciones": [
+            "El grupo de seguridad es sin estado y la NACL con estado",
+            "El grupo de seguridad actúa por instancia y con estado; la NACL por subred y sin estado",
+            "Ambos actúan a nivel de subred y son con estado",
+            "La NACL solo permite reglas de salida"
+          ],
+          "correctas": [1],
+          "explicacion": "Los grupos de seguridad operan a nivel de instancia y son con estado (la respuesta se permite automáticamente); las NACL operan a nivel de subred y son sin estado."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "Una instancia EC2 no responde a HTTP desde Internet. ¿Qué elementos de red deberías revisar? (elige todas las correctas)",
+          "opciones": [
+            "La regla de entrada del grupo de seguridad en el puerto 80",
+            "La tabla de rutas de la subred y su Internet Gateway",
+            "Las reglas de la NACL asociada a la subred",
+            "El tamaño del volumen EBS de la instancia",
+            "La política de ciclo de vida del bucket S3"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Grupo de seguridad, tabla de rutas/IGW y NACL son las capas de red que pueden bloquear el tráfico. El volumen EBS y las políticas de S3 no afectan la conectividad de red entrante."
+        }
+      ]
+    },
+    {
+      "slug": "almacenamiento-respaldo",
+      "nombre": "Almacenamiento y respaldo de datos",
+      "dominio": "Reliability and Business Continuity",
+      "orden": 6,
+      "hoja": {
+        "titulo": "EBS, S3 y estrategias de respaldo",
+        "markdown": "## Tipos de almacenamiento\n- **EBS**: volúmenes de bloque para una instancia; elige **gp3** (propósito general) o **io2** (alto IOPS).\n- **S3**: almacenamiento de objetos altamente durable, con **clases** (Standard, Infrequent Access, Glacier) y **lifecycle** para mover datos a clases más baratas.\n- **EFS**: sistema de archivos compartido entre varias instancias.\n\n## Respaldo y recuperación\n- Los **snapshots** de EBS se guardan en S3 de forma incremental y permiten restaurar volúmenes o crear AMIs.\n- **AWS Backup** centraliza y programa respaldos con políticas y retención.\n- Habilita **versionado** en S3 para recuperar objetos sobrescritos o borrados.\n\n## Durabilidad\n- S3 replica datos entre varias AZ automáticamente.\n\n> **En el examen:** para mover datos antiguos a menor costo, usa **lifecycle** hacia Glacier; para programar y centralizar copias en varios servicios, la respuesta es **AWS Backup**."
+      },
+      "preguntas": [
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "facil",
+          "enunciado": "¿Qué mecanismo permite restaurar un volumen EBS al estado de un momento anterior?",
+          "opciones": [
+            "Una política de lifecycle de S3",
+            "Un snapshot de EBS",
+            "Una réplica de lectura",
+            "Una NACL de respaldo"
+          ],
+          "correctas": [1],
+          "explicacion": "Los snapshots de EBS capturan el estado del volumen de forma incremental y permiten restaurarlo o crear nuevos volúmenes."
+        },
+        {
+          "tipo": "opcion_multiple",
+          "dificultad": "media",
+          "enunciado": "Quieres que los objetos de S3 con más de 90 días pasen automáticamente a una clase de menor costo de acceso poco frecuente. ¿Qué configuras?",
+          "opciones": [
+            "Una regla de ciclo de vida (lifecycle)",
+            "El versionado del bucket",
+            "Una política de bucket pública",
+            "Una réplica entre regiones"
+          ],
+          "correctas": [0],
+          "explicacion": "Las reglas de lifecycle hacen transiciones automáticas de objetos entre clases de almacenamiento según su antigüedad."
+        },
+        {
+          "tipo": "respuesta_multiple",
+          "dificultad": "dificil",
+          "enunciado": "¿Qué prácticas mejoran la continuidad del negocio respecto al almacenamiento de datos? (elige todas las correctas)",
+          "opciones": [
+            "Programar snapshots periódicos de EBS con AWS Backup",
+            "Habilitar el versionado en buckets S3 críticos",
+            "Definir políticas de retención acordes al RPO",
+            "Almacenar el único respaldo en la misma instancia origen",
+            "Deshabilitar el cifrado de los snapshots para acelerar la copia"
+          ],
+          "correctas": [0, 1, 2],
+          "explicacion": "Backups programados, versionado y retención alineada al RPO refuerzan la continuidad. Guardar el único respaldo junto al origen o renunciar al cifrado introduce riesgos serios."
+        }
+      ]
+    }
+  ]
+}

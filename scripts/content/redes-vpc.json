@@ -17,43 +17,83 @@
   "questions": [
     {
       "tipo": "opcion_multiple",
-      "dificultad": "media",
-      "enunciado": "Una instancia EC2 en una subred recibe correctamente las peticiones entrantes en el puerto 443, pero las respuestas nunca llegan al cliente. La NACL de la subred tiene una regla que permite la entrada TCP al 443, y el Security Group de la instancia permite 443 de entrada. ¿Cuál es la causa más probable?",
+      "dificultad": "facil",
+      "enunciado": "Un arquitecto necesita impedir de forma explícita que una dirección IP concreta, que está atacando, alcance cualquier recurso de una subred completa. ¿Qué control de red es el adecuado para esta tarea?",
       "opciones": [
-        "El Security Group necesita una regla de salida explícita para el tráfico de respuesta",
-        "La NACL, al ser sin estado, no permite la salida por el rango de puertos efímeros que usa la respuesta",
-        "El Internet Gateway está bloqueando el tráfico de retorno en la capa 7",
-        "El Security Group debe referenciar la NACL para que la conexión sea con estado"
+        "Una Network ACL con una regla de denegación para esa IP en la subred",
+        "Un Security Group con una regla que deniegue esa IP",
+        "Un NAT Gateway configurado para descartar esa IP",
+        "Un VPC endpoint de tipo Gateway que excluya esa IP"
+      ],
+      "correctas": [0],
+      "explicacion": "Un Security Group solo admite reglas de permitir: no puede denegar una IP de forma explícita, solo dejarla fuera por omisión, lo que no sirve si otras reglas la cubren. La NACL es sin estado, se aplica a toda la subred y admite reglas de denegar, por lo que es la pieza correcta para bloquear un CIDR/IP concreto a nivel de subred. El NAT Gateway da salida a internet y el Gateway endpoint es para S3/DynamoDB; ninguno filtra IPs así."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "media",
+      "enunciado": "Una instancia EC2 en una subred privada debe descargar parches del sistema operativo desde internet, pero la política de seguridad prohíbe que reciba conexiones entrantes desde internet. ¿Qué componente cumple ambos requisitos?",
+      "opciones": [
+        "Un Internet Gateway asociado directamente a la subred privada",
+        "Un NAT Gateway en una subred pública, con la subred privada enrutada hacia él",
+        "Una IP elástica asignada a la instancia para que salga a internet",
+        "Un VPC peering hacia una VPC con acceso a internet"
       ],
       "correctas": [1],
-      "explicacion": "El Security Group es con estado, así que la respuesta saliente se permite sola: no es el problema. La NACL es sin estado y evalúa cada sentido por separado; la respuesta sale usando un puerto efímero (rango alto). Si la NACL no tiene una regla de salida que permita ese rango de puertos efímeros, el tráfico de retorno se descarta. Es el error clásico de las NACL."
+      "explicacion": "El NAT Gateway vive en una subred pública y solo permite conexiones iniciadas desde dentro: da salida a internet (para los parches) pero no admite entrada, cumpliendo la política. Un IGW haría pública la subred y permitiría entrada. Una IP elástica requiere ruta al IGW y expondría la instancia. El peering no es transitivo ni provee acceso a internet por sí mismo."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "media",
+      "enunciado": "Una aplicación en una subred privada hace muchas llamadas a un almacenamiento de objetos (S3) y a una base NoSQL gestionada (DynamoDB). El equipo quiere acceso privado, sin pasar por internet y minimizando costos. ¿Qué opción es la más adecuada?",
+      "opciones": [
+        "Interface endpoints (PrivateLink) para S3 y DynamoDB",
+        "Gateway endpoints para S3 y DynamoDB",
+        "Un NAT Gateway por AZ enrutando todo el tráfico a internet",
+        "Un Transit Gateway que conecte la VPC con los servicios"
+      ],
+      "correctas": [1],
+      "explicacion": "Los Gateway endpoints soportan exactamente S3 y DynamoDB, añaden una ruta en la tabla de rutas y no tienen costo por hora ni por datos, así que son la opción de menor costo para acceso privado a esos dos servicios. Un Interface endpoint funcionaría pero cobra por hora y por GB. El NAT Gateway saldría a internet y cobraría tráfico. El Transit Gateway conecta redes, no es un endpoint a esos servicios."
     },
     {
       "tipo": "opcion_multiple",
       "dificultad": "dificil",
-      "enunciado": "Una empresa tiene 20 VPCs en una misma Región y una conexión a su centro de datos on-premises. Necesita que todas las VPCs y el on-premises se comuniquen entre sí con enrutamiento centralizado y mínima sobrecarga operativa, evitando crear y mantener decenas de enlaces uno a uno. ¿Qué solución encaja mejor?",
+      "enunciado": "Un proveedor SaaS quiere ofrecer su API a las VPCs de varias cuentas de clientes sin establecer peering, sin exponer su servicio a internet y sin revelar sus rangos de IP internos completos. ¿Qué tecnología encaja mejor?",
       "opciones": [
-        "Crear una malla completa de VPC peering entre las 20 VPCs",
-        "Usar un Transit Gateway como hub central al que se conectan todas las VPCs y el on-premises",
-        "Configurar un NAT Gateway por VPC para enrutar el tráfico entre ellas",
-        "Exponer cada VPC mediante un Gateway endpoint hacia las demás"
+        "VPC Peering entre la VPC del proveedor y cada cuenta cliente",
+        "Un Gateway endpoint publicado hacia las cuentas cliente",
+        "PrivateLink, publicando un endpoint service consumido por Interface endpoints en las cuentas cliente",
+        "Un Transit Gateway compartido entre el proveedor y todos los clientes"
       ],
-      "correctas": [1],
-      "explicacion": "Una malla de peering entre 20 VPCs requiere 190 emparejamientos y, además, el peering no es transitivo: no escala. El NAT Gateway da salida a internet, no conecta VPCs entre sí. Los Gateway endpoints son solo para S3/DynamoDB. El Transit Gateway funciona como hub: cada VPC y el on-premises se conectan una sola vez y el enrutamiento se centraliza, escalando a cientos de redes con baja sobrecarga."
+      "correctas": [2],
+      "explicacion": "PrivateLink permite publicar un endpoint service que las VPCs/cuentas consumen mediante un Interface endpoint (ENI privada), alcanzando solo ese servicio concreto, sin peering, sin internet y sin exponer la red completa del proveedor. El peering revela rangos y no escala; el Gateway endpoint solo sirve para S3/DynamoDB; el Transit Gateway conectaría redes enteras y expondría más superficie de la deseada."
     },
     {
       "tipo": "respuesta_multiple",
       "dificultad": "dificil",
-      "enunciado": "Una aplicación web pública sufre dos problemas simultáneos: intentos de inyección SQL en el formulario de búsqueda y picos de inundación volumétrica de capa 3/4 que buscan dejarla fuera de servicio. El equipo de seguridad además quiere poder revisar después qué conexiones a las interfaces de red fueron aceptadas o rechazadas. ¿Qué combinación de controles aborda correctamente estos requisitos? (elige 3)",
+      "enunciado": "Tras un cambio de red, una instancia EC2 en una subred deja de responder a las peticiones HTTPS entrantes que antes funcionaban. El equipo quiere diagnosticar la causa de forma sistemática. ¿Qué afirmaciones son correctas para este escenario? (elige 3)",
       "opciones": [
-        "Un firewall de aplicación web (WAF) delante del balanceador o la CDN para bloquear la inyección SQL",
-        "Protección DDoS para absorber la inundación volumétrica de capa 3/4",
-        "VPC Flow Logs para registrar qué tráfico se aceptó o rechazó en las interfaces de red",
-        "Un NAT Gateway adicional para filtrar las peticiones HTTP maliciosas",
-        "Cambiar todos los Security Groups a modo sin estado para inspeccionar el contenido de los paquetes"
+        "VPC Flow Logs puede mostrar si el tráfico fue ACCEPT o REJECT en la interfaz de red, ayudando a localizar el bloqueo",
+        "Si la NACL permite la entrada al 443 pero no la salida por los puertos efímeros, la respuesta se descarta",
+        "El Security Group, al ser con estado, no requiere una regla de salida explícita para la respuesta del 443 entrante",
+        "VPC Flow Logs captura el contenido (payload) de los paquetes, por lo que muestra el cuerpo de la petición HTTPS",
+        "Un Security Group con una regla de denegación para el 443 sería la causa más probable del bloqueo"
       ],
       "correctas": [0, 1, 2],
-      "explicacion": "El WAF opera en capa 7 y filtra el contenido de la petición, mitigando la inyección SQL. La protección DDoS aborda los ataques volumétricos de capa 3/4. VPC Flow Logs registra los metadatos del tráfico (incluido ACCEPT/REJECT) para auditarlo después. El NAT Gateway solo da salida a internet, no inspecciona HTTP. Los Security Groups no tienen un modo sin estado ni inspeccionan payloads; esa opción es incorrecta."
+      "explicacion": "VPC Flow Logs registra metadatos con el veredicto ACCEPT/REJECT por interfaz, ideal para localizar dónde se corta el tráfico. La NACL es sin estado: si abre la entrada al 443 pero no la salida por los puertos efímeros, la respuesta se pierde. El Security Group es con estado, así que la respuesta saliente al tráfico entrante se permite sola. Es falso que Flow Logs capture el payload (solo metadatos) y que un SG tenga reglas de denegación (solo permite)."
+    },
+    {
+      "tipo": "respuesta_multiple",
+      "dificultad": "media",
+      "enunciado": "Se diseña la defensa en capas de una aplicación web pública crítica. ¿Cuáles de las siguientes asignaciones de control a amenaza son correctas? (elige 3)",
+      "opciones": [
+        "Un WAF (capa 7) delante de la CDN o el balanceador para bloquear inyección SQL y XSS",
+        "Una regla rate-based en el WAF para limitar peticiones por IP ante fuerza bruta o scraping",
+        "Protección DDoS para absorber inundaciones volumétricas de capa 3/4 como SYN flood",
+        "Un WAF para absorber por sí solo las inundaciones volumétricas de capa 3/4",
+        "Security Groups configurados en modo sin estado para inspeccionar el payload HTTP"
+      ],
+      "correctas": [0, 1, 2],
+      "explicacion": "El WAF opera en capa 7 e inspecciona el contenido de la petición, mitigando inyección SQL y XSS; sus reglas rate-based limitan peticiones por IP frente a fuerza bruta o scraping. La protección DDoS aborda las inundaciones volumétricas de capa 3/4. Es falso que el WAF absorba por sí solo el volumen de capa 3/4 (esa es tarea de la protección DDoS) y que los Security Groups tengan modo sin estado o inspeccionen payloads."
     }
   ]
 }

@@ -17,34 +17,60 @@
   "questions": [
     {
       "tipo": "opcion_multiple",
-      "dificultad": "media",
-      "enunciado": "Una identidad tiene una política de identidad con un Allow para leer objetos de un bucket. La política de control de servicio (SCP) de la organización no incluye esa acción, y además el bucket tiene una política de recurso con un Deny explícito para esa identidad. ¿Qué ocurre cuando intenta leer un objeto?",
+      "dificultad": "facil",
+      "enunciado": "Quieres compartir una cola de mensajes con otra cuenta para que esa cuenta envíe mensajes, pero sin que nadie en ella tenga que asumir un rol previo. ¿Qué tipo de documento de política usas y qué campo lo hace posible?",
       "opciones": [
-        "Se permite, porque la política de identidad tiene un Allow explícito.",
-        "Se deniega, porque un Deny explícito siempre prevalece sobre cualquier Allow.",
-        "Se permite solo si la identidad tiene MFA activa en la sesión.",
-        "Depende del orden en que se evaluaron las políticas."
+        "Una política basada en identidad adjunta a la cola, sin campo Principal.",
+        "Una política basada en recurso adjunta a la cola, que incluye un campo Principal nombrando a la otra cuenta.",
+        "Una política basada en identidad adjunta al usuario de la otra cuenta, con campo Resource apuntando a la cola.",
+        "Una política de control de servicio (SCP) que conceda el acceso a la otra cuenta."
       ],
       "correctas": [1],
-      "explicacion": "El motor de autorización rechaza la petición en cuanto encuentra un Deny explícito aplicable, sin importar cuántos Allow existan: el deny explícito gana siempre. Aquí basta el Deny de la política de recurso. Como dato adicional, aunque no hubiera ese Deny, la SCP que no permite la acción también bloquearía el acceso, porque el permiso efectivo es la intersección de todas las capas."
+      "explicacion": "Las políticas basadas en recurso se adjuntan al recurso mismo (aquí la cola) y, a diferencia de las basadas en identidad, incluyen un campo Principal que nombra a quién se concede acceso. Ese Principal puede ser otra cuenta, lo que permite acceso entre cuentas sin asumir un rol. Una SCP solo fija un techo de permisos, no concede acceso por sí sola."
     },
     {
       "tipo": "opcion_multiple",
       "dificultad": "media",
-      "enunciado": "Una aplicación corre en una instancia EC2 y necesita leer y escribir objetos en un bucket. El equipo quiere evitar por completo gestionar o rotar credenciales en el servidor. ¿Cuál es el enfoque correcto?",
+      "enunciado": "Una identidad tiene una política de identidad con Allow para escribir en una tabla, pero la SCP de la organización no incluye esa acción. No existe ningún Deny explícito en ninguna política. ¿Qué ocurre al intentar escribir?",
       "opciones": [
-        "Generar una clave de acceso para un usuario IAM y guardarla en un archivo de configuración en la instancia.",
-        "Adjuntar un perfil de instancia con un rol que tenga los permisos sobre el bucket, dejando que el SDK use las credenciales temporales auto-renovadas.",
-        "Incrustar la clave de acceso como variable de entorno en el arranque de la instancia.",
-        "Hacer el bucket público para que la instancia no necesite credenciales."
+        "Se permite, porque hay un Allow explícito y ningún Deny explícito.",
+        "Se deniega, porque el permiso efectivo es la intersección de las capas y la SCP no concede la acción.",
+        "Se permite, porque la SCP solo afecta a la cuenta raíz.",
+        "Se permite si la tabla tiene una política de recurso con Allow."
       ],
       "correctas": [1],
-      "explicacion": "Un perfil de instancia entrega un rol a la EC2; el servicio de metadatos local expone credenciales temporales que se renuevan solas y el SDK las recoge automáticamente. No hay claves de larga duración que filtrar ni rotar. Las opciones con clave de acceso estática reintroducen ese riesgo, y hacer el bucket público es una falla de seguridad grave, no una solución de credenciales."
+      "explicacion": "El permiso efectivo es la intersección de todas las capas que aplican. La SCP fija un techo: aunque la identidad tenga Allow, si la SCP no permite la acción, esta no pasa. No hace falta un Deny explícito para bloquear; basta con que una capa no conceda el permiso, ya que por defecto todo está denegado."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "media",
+      "enunciado": "Un proveedor SaaS externo necesita asumir un rol en tu cuenta para procesar datos en tu nombre. Quieres evitar el problema del 'confused deputy', en que un tercero sea engañado para usar su acceso contra tu cuenta. ¿Qué elemento añades a la condición de la política de confianza?",
+      "opciones": [
+        "Un rango de IP de origen que abarque todo internet.",
+        "Un ExternalId acordado con el proveedor, que debe presentarse al asumir el rol.",
+        "La clave de acceso de larga duración de tu cuenta raíz.",
+        "Un campo Resource que apunte a todos los servicios."
+      ],
+      "correctas": [1],
+      "explicacion": "Para terceros externos que asumen un rol, se refuerza la condición de confianza con un ExternalId: un valor secreto acordado entre tú y el proveedor que debe presentarse al asumir el rol. Así, aunque alguien conozca el nombre del rol, no puede asumirlo sin ese identificador, lo que evita el escenario del confused deputy."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "media",
+      "enunciado": "Una empresa quiere que sus empleados, que ya tienen cuenta en el directorio corporativo, accedan a la nube sin que se les creen nuevas credenciales y de modo que al darlos de baja en el directorio pierdan el acceso automáticamente. ¿Cuál es el enfoque correcto?",
+      "opciones": [
+        "Crear un usuario IAM con clave de acceso por cada empleado y rotarla cada mes.",
+        "Usar federación con un IdP: el directorio corporativo autentica y la nube confía en esa autenticación para entregar un rol.",
+        "Compartir una sola clave de acceso entre todo el equipo.",
+        "Habilitar acceso público a los recursos para que no hagan falta credenciales."
+      ],
+      "correctas": [1],
+      "explicacion": "La federación reutiliza el directorio que ya existe: el IdP corporativo autentica al usuario y la nube confía en esa autenticación para entregarle un rol con credenciales temporales. No se crean credenciales nuevas en la nube y la baja en el directorio corta el acceso de inmediato. Crear o compartir usuarios IAM reintroduce credenciales de larga duración que se filtran y nadie rota."
     },
     {
       "tipo": "respuesta_multiple",
       "dificultad": "dificil",
-      "enunciado": "Estás diseñando el acceso para dos públicos distintos: (1) los empleados internos, que deben entrar con su cuenta corporativa a varias cuentas de la organización mediante un único inicio de sesión, y (2) los clientes finales de la aplicación móvil, que tras autenticarse deben subir archivos a un bucket directamente. ¿Qué dos decisiones encajan mejor con cada caso?",
+      "enunciado": "Diseñas el acceso para dos públicos: (1) empleados internos que deben entrar con su login corporativo a varias cuentas de la organización mediante un único inicio de sesión, y (2) los clientes finales de tu app móvil, que tras autenticarse deben subir archivos a un bucket directamente. ¿Qué dos decisiones encajan mejor?",
       "opciones": [
         "Para los empleados, usar el centro de identidad de inicio de sesión único conectado al directorio corporativo, con conjuntos de permisos por cuenta.",
         "Para los empleados, crear un usuario IAM individual con clave de acceso por cada persona.",
@@ -54,6 +80,20 @@
       ],
       "correctas": [0, 2],
       "explicacion": "Los empleados que necesitan SSO a varias cuentas se resuelven con el centro de identidad federado al directorio corporativo y conjuntos de permisos; crear usuarios IAM por persona o repartir la clave raíz son antipatrones. Para los usuarios finales de la app, Cognito separa autenticación (user pool: quién eres) de acceso a recursos (identity pool: credenciales temporales para tocar el bucket); crear un usuario IAM por cliente no escala y reintroduce credenciales de larga duración."
+    },
+    {
+      "tipo": "respuesta_multiple",
+      "dificultad": "dificil",
+      "enunciado": "Tu equipo de seguridad pide endurecer una política para acciones sensibles aplicando el menor privilegio, sin multiplicar el número de políticas. Quieren que ciertas operaciones solo se permitan si la sesión tiene MFA y si la petición proviene de la red de oficina. ¿Qué afirmaciones son correctas?",
+      "opciones": [
+        "Un bloque Condition puede exigir que la sesión tenga MFA presente para permitir la operación.",
+        "Un bloque Condition puede limitar el acceso a un rango de IP de origen.",
+        "El bloque Condition restringe cuándo aplica un Allow o Deny sin enumerar cada caso por separado.",
+        "Para exigir MFA es obligatorio crear una política distinta por cada usuario afectado.",
+        "Restringir por IP de origen solo es posible con políticas basadas en recurso, nunca con un Condition."
+      ],
+      "correctas": [0, 1, 2],
+      "explicacion": "El bloque Condition restringe cuándo aplica un Allow o Deny sin tener que enumerar cada caso, y es la herramienta para acercarse al menor privilegio sin multiplicar políticas. Entre sus patrones típicos están exigir MFA presente en la sesión y limitar por rango de IP de origen. No hace falta una política por usuario para exigir MFA, y la restricción por IP se logra precisamente con Condition, no solo con políticas de recurso."
     }
   ]
 }

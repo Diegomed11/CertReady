@@ -8,6 +8,7 @@
 import { env } from '@/lib/env'
 import { ApiError, fetchJSON } from './client'
 import type {
+  Analitica,
   Certificacion,
   Corrida,
   Cuenta,
@@ -18,6 +19,7 @@ import type {
   PreguntaQA,
   Progreso,
   Readiness,
+  Recomendaciones,
   RespuestaCorrida,
   ResultadoExamen,
   RevisionSesion,
@@ -470,6 +472,54 @@ export async function getReadiness(
       if (e.status === 404) return null
       throw e
     }
+    return null
+  }
+}
+
+/**
+ * getRecommendations envía el CV (archivo) al DSS y devuelve perfil + caminos.
+ *
+ * Es multipart (no JSON), así que usa `fetch` directo en vez de `fetchJSON`. El
+ * archivo se reenvía tal cual; el DSS lo procesa en memoria y no lo persiste.
+ */
+export async function getRecommendations(file: File): Promise<Recomendaciones> {
+  const fd = new FormData()
+  fd.append('file', file, file.name)
+  const res = await fetch(requireUrl('DSS_BASE_URL', env().DSS_BASE_URL) + '/v1/recommendations', {
+    method: 'POST',
+    body: fd,
+    cache: 'no-store',
+  })
+  if (!res.ok) {
+    let body: unknown = null
+    try {
+      body = await res.json()
+    } catch {
+      body = null
+    }
+    throw new ApiError(res.status, body)
+  }
+  return (await res.json()) as Recomendaciones
+}
+
+/**
+ * getAnalytics devuelve el desempeño del usuario (acierto por tema + tendencia)
+ * para los dashboards, o `null` si el DSS/ClickHouse no está disponible. Igual que
+ * `getReadiness`, degrada en silencio para no romper la página.
+ */
+export async function getAnalytics(
+  usuarioId: string,
+  certificacion: string,
+): Promise<Analitica | null> {
+  const suffix = querystring({ certificacion })
+  try {
+    return await fetchJSON<Analitica>({
+      baseURL: requireUrl('DSS_BASE_URL', env().DSS_BASE_URL),
+      path: `/v1/analytics/${encodeURIComponent(usuarioId)}${suffix}`,
+      timeoutMs: 8000,
+    })
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) return null
     return null
   }
 }

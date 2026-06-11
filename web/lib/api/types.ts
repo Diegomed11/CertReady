@@ -299,3 +299,65 @@ export interface Progreso {
   lecciones: LeccionCompletada[]
   temas: TemaProgreso[]
 }
+
+// --- dss: recomendador por CV + analítica ----------------------------------
+
+/** Un paso (certificación recomendada) dentro de un camino. */
+export interface PasoCamino {
+  slug: string
+  nombre: string
+  proveedor: string
+  area: string
+  nivel: string
+  match_pct: number
+  por_que: string
+  tiene_contenido: boolean
+  slug_estudio: string | null
+}
+
+/** Un camino de certificación sugerido (secuencia de pasos). */
+export interface Camino {
+  nombre: string
+  motivo: string
+  pasos: PasoCamino[]
+}
+
+/** Perfil detectado a partir del CV. */
+export interface PerfilCV {
+  skills: string[]
+  areas: string[]
+  nivel: string
+  resumen: string
+}
+
+/** Respuesta del recomendador: perfil + caminos + recomendaciones planas. */
+export interface Recomendaciones {
+  perfil: PerfilCV
+  caminos: Camino[]
+  recomendaciones: PasoCamino[]
+}
+
+/** Acierto del usuario en un tema (para los dashboards). */
+export interface TemaAcierto {
+  tema: string
+  aciertos: number
+  total: number
+  pct: number
+}
+
+/** Punto de la tendencia diaria de acierto. */
+export interface PuntoTendencia {
+  fecha: string
+  pct: number
+  intentos: number
+}
+
+/** Analítica de desempeño del usuario en una certificación. */
+export interface Analitica {
+  certificacion: string
+  total: number
+  aciertos: number
+  pct: number
+  por_tema: TemaAcierto[]
+  tendencia: PuntoTendencia[]
+}

@@ -211,6 +211,14 @@ Formato corto por decisión: **contexto → opciones → decisión → justifica
 - **Modelo:** celda = `(certificación, tema, dificultad)` (el grano de `fact_intento`). Dificultad `b = -logit(p_global)` de la población; habilidad `theta` por **MAP** (Newton 1D) con prior `N(0,σ²)` que estabiliza el arranque en frío. **readiness** = media ponderada de `sigmoid(theta - b)`; **probabilidad de aprobar** = aproximación normal del puntaje de un examen de N ítems vs umbral; **siguiente acción** = celda de menor dominio. Todo en funciones puras testeables.
 - **Trade-offs honestos:** la readiness es una **estimación** (análisis eventual), no una garantía. El grano por celda (no por pregunta individual) sacrifica resolución a cambio de robustez ante la dispersión y el arranque en frío. Sin `pregunta_ref` en el hecho, la calibración item-level queda como mejora futura (instrumentar el hecho).
 
+### ADR-14 — Recomendador de certificaciones por CV: embeddings locales (ONNX) en la capa de datos (refinamiento de la §10.2)
+- **Contexto:** dar más peso al DSS con un recomendador: el usuario sube su CV (PDF/DOCX) y se le proponen los mejores caminos/certificaciones según su perfil. Requisitos del proyecto: **$0**, **privacidad** (el CV es dato personal) y **Python solo en la capa de datos**.
+- **Opciones:** (a) **embeddings locales** (transformer ONNX vía `fastembed`, sin torch); (b) NLP léxico + TF-IDF; (c) LLM externo (API).
+- **Decisión (2026-06-10):** **(a)** — modelo multilingüe `paraphrase-multilingual-MiniLM-L12-v2` (ONNX, ~120 MB, se descarga una vez y se cachea), combinado con **solape de habilidades** sobre un **dataset curado y original** de ~30 certificaciones. Se descarta (c) por costo y por enviar datos personales a un tercero. Es una **excepción justificada** a la regla "dependencias mínimas" de la capa de datos: la añade exclusivamente el recomendador y no introduce servicios externos.
+- **Privacidad:** el CV se procesa **en memoria** y **no se persiste**; no sale de la máquina (sin terceros).
+- **Forma:** endpoints en el DSS — `POST /v1/recommendations` (multipart; **no** depende de ClickHouse) y `GET /v1/analytics/{usuario_id}` (dashboards de acierto por dominio; ClickHouse **best-effort**). La lógica de ranking es **pura** (testeable inyectando `embed_fn`, sin descargar el modelo); el embedder se carga perezosamente.
+- **Trade-offs honestos:** el emparejamiento semántico es **aproximado**; el dataset de certs es para **recomendar** y solo las que tienen contenido propio (hoy `aws-saa`) enlazan a Estudiar. El modelo añade peso de instalación, asumido por ser local y $0.
+
 Lo transaccional y con integridad relacional fuerte. Grano: una fila por entidad de negocio.
 
 ```mermaid

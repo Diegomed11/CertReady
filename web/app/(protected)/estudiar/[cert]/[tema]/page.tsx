@@ -86,7 +86,7 @@ export default async function TemaPage({
         cert={cert.slug}
         temas={[tema.slug]}
         progressTema={tema.slug}
-        num={4}
+        num={6}
         titulo="Pon a prueba lo aprendido"
         yaAprobado={yaAprobado}
         nextHref={siguiente ? `/estudiar/${cert.slug}/${siguiente}` : null}

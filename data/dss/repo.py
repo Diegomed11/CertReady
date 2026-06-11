@@ -37,3 +37,25 @@ class Repo:
             parameters={"c": certificacion, "u": usuario_id},
         )
         return [(t, d, int(e)) for t, d, e in res.result_rows]
+
+    def acierto_por_tema(self, usuario_id: str, certificacion: str) -> list[tuple[str, int, int]]:
+        """Acierto del usuario por tema: ``(tema, aciertos, total)`` (para dashboards)."""
+        res = self.client.query(
+            f"select tema, sum(es_correcto), count() "  # noqa: S608 (db es interno)
+            f"from {self.db}.fact_intento "
+            f"where certificacion = {{c:String}} and usuario_id = {{u:String}} "
+            f"group by tema order by tema",
+            parameters={"c": certificacion, "u": usuario_id},
+        )
+        return [(t, int(a), int(n)) for t, a, n in res.result_rows]
+
+    def serie_por_fecha(self, usuario_id: str, certificacion: str) -> list[tuple[str, int, int]]:
+        """Tendencia diaria del usuario: ``(fecha, aciertos, total)`` ordenada por fecha."""
+        res = self.client.query(
+            f"select toString(fecha), sum(es_correcto), count() "  # noqa: S608 (db es interno)
+            f"from {self.db}.fact_intento "
+            f"where certificacion = {{c:String}} and usuario_id = {{u:String}} "
+            f"group by fecha order by fecha",
+            parameters={"c": certificacion, "u": usuario_id},
+        )
+        return [(f, int(a), int(n)) for f, a, n in res.result_rows]

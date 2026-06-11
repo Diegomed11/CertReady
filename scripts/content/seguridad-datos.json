@@ -17,43 +17,83 @@
   "questions": [
     {
       "tipo": "opcion_multiple",
-      "dificultad": "media",
-      "enunciado": "Una empresa cifra objetos en un bucket de S3 y necesita una bitácora de exactamente quién descifró cada objeto, además de poder revocar el permiso de descifrado a un equipo concreto sin tocar las políticas de IAM de los demás. ¿Qué opción de cifrado en reposo cumple mejor?",
+      "dificultad": "facil",
+      "enunciado": "Un equipo quiere cifrar varios terabytes en EBS sin que el material criptográfico maestro abandone nunca el módulo de claves y sin penalizar el rendimiento llamando al servicio por cada bloque. ¿Qué mecanismo describe ese comportamiento?",
       "opciones": [
-        "Cifrado con clave gestionada por el almacenamiento (SSE-S3)",
-        "Cifrado con una clave del cliente en el servicio de claves (SSE-KMS con CMK)",
-        "Cifrado del lado del cliente sin registrar nada",
-        "Sin cifrado, controlando todo con la política del bucket"
+        "Cifrado de sobre: el servicio entrega una clave de datos, una en claro para cifrar localmente y otra cifrada bajo la clave maestra",
+        "Enviar todos los datos al servicio de claves para que los cifre byte a byte",
+        "Importar el material de la clave y cifrar manualmente cada bloque con él",
+        "Usar una clave administrada por AWS que copia el dato fuera del módulo para procesarlo"
       ],
-      "correctas": [1],
-      "explicacion": "Una clave del cliente (CMK) en el servicio de claves registra cada uso (auditoría de quién descifra) y permite controlar el acceso a la clave con su propia política, de modo que revocar a un equipo es cambiar la política de la clave. La clave gestionada por el almacenamiento no ofrece esa auditoría ni control fino, y el cifrado no sustituye al control de acceso."
-    },
-    {
-      "tipo": "respuesta_multiple",
-      "dificultad": "dificil",
-      "enunciado": "Un equipo debe asegurar que un bucket de S3 con datos personales nunca quede expuesto públicamente por error y que todo el tráfico hacia él vaya cifrado, además de inventariar qué objetos contienen PII. ¿Qué tres medidas aplican? (elige 3)",
-      "opciones": [
-        "Activar el bloqueo de acceso público (Block Public Access) en la cuenta y el bucket",
-        "Añadir a la política del bucket una condición que niegue las peticiones sin TLS",
-        "Ejecutar un servicio de descubrimiento de datos sensibles para clasificar la PII",
-        "Hacer el bucket público para que el escáner pueda leerlo más rápido",
-        "Confiar únicamente en cifrar los objetos para evitar el acceso no autorizado"
-      ],
-      "correctas": [0, 1, 2],
-      "explicacion": "El bloqueo de acceso público anula cualquier intento de exponer el bucket; una condición que niega tráfico sin TLS fuerza el cifrado en tránsito; y el servicio de descubrimiento clasifica la PII. Hacer el bucket público contradice el objetivo, y cifrar en reposo no controla el acceso: son temas distintos."
+      "correctas": [0],
+      "explicacion": "El cifrado de sobre genera una clave de datos en dos versiones: una en claro para cifrar localmente y otra cifrada bajo la clave maestra que se guarda junto al dato. Así la clave maestra nunca sale del módulo y solo se procesan claves de datos diminutas, permitiendo cifrar terabytes sin penalización."
     },
     {
       "tipo": "opcion_multiple",
       "dificultad": "media",
-      "enunciado": "Una aplicación se conecta a una base de datos relacional y el requisito de cumplimiento exige que la contraseña se rote automáticamente cada 30 días sin downtime ni scripts a medida. ¿Qué servicio encaja mejor?",
+      "enunciado": "Un administrador concede a un rol de IAM el permiso para usar una clave del cliente (CMK), pero las llamadas de descifrado siguen fallando con error de autorización. ¿Cuál es la causa más probable?",
       "opciones": [
-        "El almacén de parámetros en nivel estándar guardando la contraseña como cadena cifrada",
-        "El gestor de secretos con rotación automática integrada con la base de datos",
-        "Una variable de entorno cifrada en la definición del contenedor",
-        "Un archivo de configuración cifrado con una clave del cliente en S3"
+        "La rotación automática anual borró las versiones anteriores de la clave",
+        "La política de la propia clave no autoriza a ese rol: el uso de una CMK requiere los dos candados (IAM y política de la clave)",
+        "Las claves del cliente no permiten operaciones de descifrado, solo de cifrado",
+        "Falta activar el cifrado de sobre, sin el cual la CMK no descifra"
       ],
       "correctas": [1],
-      "explicacion": "El gestor de secretos ofrece rotación automática gestionada e integrada con bases de datos, ideal para cumplir la rotación periódica sin intervención. El almacén de parámetros no rota credenciales de forma nativa, y las otras opciones tampoco aportan rotación automática."
+      "explicacion": "Usar una clave del cliente exige dos candados: el permiso de IAM y la política de la propia clave. Conceder solo el permiso de IAM no basta; si la política de la clave no autoriza al rol, el descifrado falla. La rotación no borra versiones anteriores (mantiene las viejas para descifrar) y las CMK sí descifran."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "media",
+      "enunciado": "Una base de datos RDS ya está en producción sin cifrado en reposo y cumplimiento exige cifrarla. ¿Cuál es el procedimiento correcto?",
+      "opciones": [
+        "Activar un interruptor de cifrado en la instancia existente sin reiniciarla",
+        "Tomar un snapshot, crear una copia cifrada de ese snapshot y restaurar una instancia nueva a partir de ella",
+        "Adjuntar una clave del cliente a la instancia para que cifre los datos ya escritos",
+        "Habilitar el bloqueo de acceso público para que el almacenamiento se cifre solo"
+      ],
+      "correctas": [1],
+      "explicacion": "En RDS (igual que en EBS) el cifrado en reposo es una decisión de creación, no un interruptor posterior. Para cifrar una base existente hay que tomar un snapshot, copiarlo cifrado y restaurar una instancia nueva. No existe un interruptor que cifre datos ya escritos, y el bloqueo de acceso público es de S3 y nada tiene que ver con cifrar."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "facil",
+      "enunciado": "Una aplicación guarda flags de configuración, URLs e identificadores no sensibles y se busca minimizar costos; ninguno de esos valores necesita rotación automática. ¿Qué servicio es el más adecuado?",
+      "opciones": [
+        "El gestor de secretos, por su rotación automática integrada",
+        "El almacén de parámetros en nivel estándar, sin costo y suficiente para configuración",
+        "Una clave del cliente en el servicio de claves para almacenar los valores",
+        "El servicio de descubrimiento de datos sensibles"
+      ],
+      "correctas": [1],
+      "explicacion": "El almacén de parámetros en nivel estándar es sin costo y está pensado para configuración general (URLs, flags, IDs). Usar el gestor de secretos para parámetros triviales hace pagar de más, ya que su valor está en la rotación nativa de credenciales, aquí innecesaria. El servicio de descubrimiento solo encuentra y clasifica datos."
+    },
+    {
+      "tipo": "respuesta_multiple",
+      "dificultad": "dificil",
+      "enunciado": "Tu equipo necesita servir contenido por HTTPS con certificados que se renueven solos y sin costo, terminando TLS en el balanceador o la red de distribución. ¿Qué afirmaciones sobre los certificados públicos gestionados son correctas? (elige 2)",
+      "opciones": [
+        "Se renuevan automáticamente y se asocian a un listener HTTPS del balanceador o al distribuidor de contenido",
+        "Los certificados públicos gestionados no se pueden exportar para instalarlos en un servidor cualquiera",
+        "Permiten cifrar también los datos en reposo del bucket de S3 sin configuración extra",
+        "Deben renovarse manualmente cada año subiendo un nuevo archivo",
+        "Sirven para reemplazar al bloqueo de acceso público de S3"
+      ],
+      "correctas": [0, 1],
+      "explicacion": "El gestor de certificados emite y renueva automáticamente certificados públicos sin costo y los asocia a un listener HTTPS del balanceador o al distribuidor de contenido para terminar TLS ahí. Esos certificados públicos no se pueden exportar a un servidor propio. El cifrado en tránsito (TLS) no cifra el dato en reposo ni reemplaza el bloqueo de acceso público."
+    },
+    {
+      "tipo": "respuesta_multiple",
+      "dificultad": "media",
+      "enunciado": "Sobre las defensas contra exposición accidental de un bucket de S3, ¿qué afirmaciones son correctas? (elige 3)",
+      "opciones": [
+        "El bloqueo de acceso público anula cualquier ACL o política que intente hacer público el contenido y tiene prioridad sobre políticas permisivas",
+        "Deshabilitar las ACL y dejar que solo la política mande simplifica el modelo y reduce errores",
+        "Cifrar los objetos en reposo evita por sí solo que el bucket sea público",
+        "El servicio de descubrimiento de datos sensibles clasifica e inventaría la PII, pero no cifra ni controla acceso",
+        "Si el bloqueo de acceso público está activo, una política permisiva igualmente publica el contenido"
+      ],
+      "correctas": [0, 1, 3],
+      "explicacion": "El bloqueo de acceso público gana sobre cualquier ACL o política permisiva y es la red de seguridad contra exposición accidental. Deshabilitar las ACL para que solo mande la política reduce errores. El servicio de descubrimiento solo encuentra y clasifica PII. Cifrar no controla el acceso (un objeto cifrado puede seguir siendo público), y si el bloqueo está activo, nada se publica aunque la política sea permisiva."
     }
   ]
 }

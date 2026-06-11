@@ -17,43 +17,83 @@
   "questions": [
     {
       "tipo": "opcion_multiple",
-      "dificultad": "media",
-      "enunciado": "Una empresa recibe eventos de clics de su sitio web y solo necesita almacenarlos en su lago de datos sobre almacenamiento de objetos, convertidos a formato columnar, con la mínima operación posible. Una latencia de entrega de pocos minutos es totalmente aceptable y el equipo no quiere programar ni administrar consumidores. ¿Qué servicio de ingesta encaja mejor?",
+      "dificultad": "facil",
+      "enunciado": "Una empresa quiere volcar de forma continua los eventos de su aplicación a un bucket de almacenamiento de objetos para alimentar su lago de datos, sin programar consumidores ni administrar capacidad, y acepta que la entrega ocurra con unos segundos de retraso por agrupación en buffer. ¿Qué motor de ingesta es el más adecuado?",
       "opciones": [
-        "El servicio de streams nativo con shards y consumidores propios",
-        "El servicio de entrega (delivery) totalmente gestionado hacia el almacenamiento de objetos",
-        "El servicio de Kafka gestionado con consumer groups personalizados",
-        "Un clúster de big data leyendo los eventos en tiempo real"
+        "El servicio de streams nativo basado en shards",
+        "El servicio de Kafka gestionado",
+        "El servicio de entrega (delivery) totalmente gestionado",
+        "Un clúster de big data del ecosistema Spark/Hadoop"
       ],
-      "correctas": [1],
-      "explicacion": "El requisito es \"llevar los eventos a almacenamiento, convertir formato y operar lo mínimo\", con latencia de minutos aceptable. Ese es exactamente el papel del servicio de entrega gestionado: escala solo, agrupa en buffers (segundos a minutos), transforma/convierte formato y vuelca al almacenamiento de objetos sin que escribas consumidores. El servicio de streams nativo exigiría gestionar shards y programar consumidores; Kafka gestionado añade carga operativa y solo se justifica con compatibilidad de protocolo; un clúster de big data es para procesamiento masivo, no para una simple carga a S3."
+      "correctas": [2],
+      "explicacion": "El servicio de entrega gestionado es justo para \"que estos eventos terminen en almacenamiento sin operar nada\": escala solo, no usa shards ni exige gestionar capacidad, y entrega agrupando en buffers (segundos a minutos). El servicio de streams nativo obligaría a gestionar shards y escribir consumidores; el de Kafka gestionado solo se justifica con un requisito de compatibilidad de protocolo; y un clúster de big data es para procesamiento masivo, no para una simple carga a un bucket."
     },
     {
       "tipo": "opcion_multiple",
-      "dificultad": "dificil",
-      "enunciado": "Un sistema antifraude debe analizar cada transacción en milisegundos en cuanto ocurre, y además se requiere que varias aplicaciones independientes (scoring, alertas y un panel en vivo) consuman el mismo flujo de eventos a su propio ritmo, con posibilidad de reprocesar. ¿Qué opción cumple mejor estos requisitos?",
+      "dificultad": "media",
+      "enunciado": "Una organización ya tiene varias aplicaciones internas escritas contra el protocolo de Apache Kafka (topics, particiones y consumer groups) y quiere migrar a un servicio administrado en la nube sin reescribir esas aplicaciones, aceptando más responsabilidad operativa que con un servicio nativo. ¿Qué opción encaja mejor?",
       "opciones": [
-        "El servicio de entrega gestionado hacia el almacén analítico, porque carga datos sin código",
-        "Un proceso por lotes programado cada pocos minutos sobre el almacenamiento de objetos",
-        "El servicio de streams nativo, con varios consumidores leyendo el mismo flujo retenido",
-        "El motor de consulta SQL serverless ejecutando consultas continuas sobre S3"
+        "El servicio de entrega gestionado hacia el almacenamiento de objetos",
+        "El servicio de Kafka gestionado",
+        "El servicio de streams nativo basado en shards",
+        "El motor de consulta SQL serverless sobre S3"
       ],
-      "correctas": [2],
-      "explicacion": "El escenario pide latencia de milisegundos, lógica de procesamiento propia y varios consumidores independientes sobre el mismo flujo con reprocesamiento: ese es el perfil del servicio de streams nativo, cuyos datos retenidos permiten que múltiples aplicaciones lean en paralelo y reprocesen. El servicio de entrega agrupa en buffers (segundos a minutos), no da milisegundos; un proceso por lotes es demasiado lento para fraude en vivo; y el motor de consulta SQL serverless es para consultas ad-hoc sobre objetos, no para ingesta de streaming de baja latencia."
+      "correctas": [1],
+      "explicacion": "El criterio decisivo es la compatibilidad con el protocolo de Apache Kafka: cuando ya existen aplicaciones que hablan Kafka y no se quieren reescribir, la respuesta es el servicio de Kafka gestionado, que conserva el modelo mental de Kafka (topics, particiones, consumer groups) a cambio de mayor esfuerzo operativo. El servicio de entrega solo vuelca a destinos sin código; el de streams nativo usa su propio modelo de shards, no el protocolo Kafka; y el motor de consulta SQL no es un sistema de ingesta de streaming."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "media",
+      "enunciado": "El enunciado de una pregunta pide alimentar un panel de BI a partir de eventos que llegan en streaming, entregándolos a un almacén analítico (data warehouse) sin que el equipo construya el pipeline de carga. ¿Cuál es el patrón correcto de entrega hacia el warehouse?",
+      "opciones": [
+        "El servicio de entrega inserta cada evento fila a fila directamente en el warehouse en tiempo real",
+        "El servicio de entrega vuelca primero al almacenamiento de objetos y desde ahí carga al warehouse",
+        "El warehouse consulta directamente el flujo de streaming sin pasar por ningún almacenamiento",
+        "El motor de consulta SQL serverless escribe los eventos dentro del warehouse"
+      ],
+      "correctas": [1],
+      "explicacion": "Hacia el almacén analítico, el servicio de entrega gestionado primero deja los datos en el almacenamiento de objetos y desde ahí los carga al warehouse; no es una inserción directa fila a fila en tiempo real. Por eso las otras opciones, que asumen inserción directa o que el warehouse lee el flujo por sí mismo, describen mal el patrón. El motor de consulta SQL serverless consulta objetos en S3, no carga eventos en el warehouse."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "facil",
+      "enunciado": "Un requisito de negocio dice: \"generar un informe consolidado cada noche a partir de los datos del día\". Un compañero propone montar un pipeline de streaming en tiempo real con latencia de milisegundos. ¿Cuál es la objeción correcta de cara al examen?",
+      "opciones": [
+        "El requisito es claramente por lotes (nocturno); el streaming de baja latencia es innecesario y más caro/complejo",
+        "El streaming es siempre preferible porque procesa los datos más rápido",
+        "Solo el servicio de Kafka gestionado puede generar informes nocturnos",
+        "Un informe nocturno exige milisegundos de latencia para ser válido"
+      ],
+      "correctas": [0],
+      "explicacion": "Palabras como \"nocturno\", \"diario\" o \"consolidado\" señalan un paradigma por lotes: se acumulan datos y se procesan en bloques programados, lo que suele ser más simple y barato. La regla práctica es no pagar por tiempo real cuando el requisito no lo pide; proponer streaming de milisegundos para un informe nocturno es una trampa típica del examen. Las demás opciones invierten ese criterio o atan el caso a un servicio que no corresponde."
     },
     {
       "tipo": "respuesta_multiple",
       "dificultad": "dificil",
-      "enunciado": "Un equipo tiene datos crudos aterrizados en el almacenamiento de objetos y necesita: (a) consultarlos con SQL de forma ocasional sin levantar ni mantener infraestructura, y (b) reducir el costo de esas consultas. ¿Qué dos decisiones son las más adecuadas? (elige 2)",
+      "enunciado": "Un equipo necesita ejecutar transformaciones masivas y complejas con Spark sobre volúmenes enormes, reutilizando código Spark/Hadoop existente y con control fino de versiones y librerías; además, quiere abaratar el procesamiento por lotes que tolera interrupciones. ¿Qué afirmaciones describen correctamente la decisión? (elige 2)",
       "opciones": [
-        "Usar el motor de consulta SQL serverless que lee directamente los objetos en S3",
-        "Provisionar un clúster de big data permanente para responder cada consulta ocasional",
-        "Almacenar los datos en formato columnar y particionarlos para escanear menos",
-        "Cargar todos los datos en una base de datos relacional antes de cada consulta",
-        "Servir las consultas desde una red de distribución de contenido (CDN)"
+        "El clúster de big data gestionado (tipo EMR) es la opción adecuada para reutilizar código Spark/Hadoop y tener control fino del entorno",
+        "Se puede abaratar usando capacidad interrumpible (Spot) en los nodos de trabajo, porque el procesamiento por lotes tolera interrupciones",
+        "El motor de consulta SQL serverless es la mejor opción para estas transformaciones masivas con código Spark existente",
+        "El servicio de entrega gestionado realiza por sí mismo estas transformaciones complejas con joins y dependencias",
+        "Para una simple consulta SQL ocasional convendría este mismo clúster permanente"
       ],
-      "correctas": [0, 2],
-      "explicacion": "Para consultas SQL ocasionales sobre datos ya en el almacenamiento de objetos, sin administrar infraestructura, la opción correcta es el motor de consulta SQL serverless. Como ese motor cobra por datos escaneados, guardar en formato columnar y particionar reduce drásticamente lo escaneado y, por tanto, el costo. Un clúster de big data permanente es sobredimensionado y caro para consultas ocasionales; cargar todo a una base relacional antes de cada consulta contradice el requisito de no montar/mantener nada; y una CDN sirve contenido cacheado, no consultas analíticas."
+      "correctas": [0, 1],
+      "explicacion": "Para transformaciones masivas y complejas con Spark/Hadoop, reutilizar código existente y controlar versiones y librerías, la respuesta es el clúster de big data gestionado, donde tú dimensionas el clúster. Como el procesamiento por lotes tolera interrupciones, los nodos de trabajo pueden usar capacidad interrumpible (Spot) para abaratar mucho. El motor de consulta SQL serverless es para consultas ad-hoc, no para ETL pesado; el servicio de entrega solo transforma ligeramente (no hace ETL complejo con joins); y levantar un clúster permanente para una consulta SQL ocasional está sobredimensionado."
+    },
+    {
+      "tipo": "respuesta_multiple",
+      "dificultad": "media",
+      "enunciado": "Sobre el catálogo de datos del servicio de ETL serverless (tipo Glue) y su relación con el motor de consulta SQL serverless (tipo Athena), ¿qué afirmaciones son correctas? (elige 2)",
+      "opciones": [
+        "El catálogo es un metastore central de esquemas y particiones que puede alimentarse con rastreadores (crawlers) que infieren el esquema de los archivos",
+        "El catálogo es compartido: tanto el ETL serverless como el motor de consulta SQL lo usan, definiendo el esquema una sola vez",
+        "El ETL serverless y el motor de consulta SQL son intercambiables: cualquiera transforma y consulta indistintamente",
+        "El motor de consulta SQL serverless requiere cargar antes los datos en una base de datos relacional",
+        "Cada herramienta necesita su propio catálogo separado y un esquema redefinido por separado"
+      ],
+      "correctas": [0, 1],
+      "explicacion": "El catálogo de datos es un metastore central de esquemas y particiones, alimentado por rastreadores (crawlers) que infieren el esquema de los archivos del almacenamiento de objetos. Es compartido: el ETL serverless y el motor de consulta SQL lo usan, de modo que el esquema se define una sola vez. No son intercambiables (uno transforma, el otro consulta) aunque compartan catálogo; el motor de consulta SQL lee directamente los objetos sin cargarlos en una base relacional; y no hace falta un catálogo separado por herramienta."
     }
   ]
 }

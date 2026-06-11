@@ -17,43 +17,83 @@
   "questions": [
     {
       "tipo": "opcion_multiple",
-      "dificultad": "media",
-      "enunciado": "Un servicio de pagos procesa mensajes de una cola SQS estándar. Cada tarea de procesamiento tarda en promedio 90 segundos, pero el visibility timeout está en 30 segundos. El equipo observa que algunos cobros se aplican dos veces, aunque el código de cobro no tiene errores. ¿Cuál es la causa más probable y la corrección más directa?",
+      "dificultad": "facil",
+      "enunciado": "Un sitio web envía a un servicio de procesamiento un pico repentino de solicitudes en segundo plano durante una promoción. Sin amortiguación, el backend se satura y se pierden tareas. ¿Qué componente intermedio absorbe la ráfaga y permite que el procesamiento se haga de forma sostenida?",
       "opciones": [
-        "La cola estándar perdió mensajes; migrar a FIFO para no perder ninguno.",
-        "El visibility timeout (30 s) es menor que el tiempo de procesamiento (90 s), por lo que el mensaje reaparece y otro consumidor lo reprocesa; subir el visibility timeout por encima del tiempo de procesamiento.",
-        "Falta activar long polling; al activarlo se eliminan los duplicados.",
-        "La cola necesita una DLQ; con una DLQ los mensajes dejan de duplicarse."
+        "Una cola de mensajes entre el productor y el consumidor, que acumula los mensajes durante el pico.",
+        "Una segunda copia del backend que reciba las mismas solicitudes en paralelo.",
+        "Un balanceador de carga que reparta las solicitudes entre los servidores web del frontend.",
+        "Un caché de solo lectura delante del backend para servir respuestas repetidas."
       ],
-      "correctas": [1],
-      "explicacion": "Si el trabajo tarda 90 s pero el mensaje vuelve a ser visible a los 30 s, otro consumidor lo toma y reprocesa antes de que el primero pueda borrarlo, causando el doble cobro. La corrección directa es alinear el visibility timeout con la duración real (o extenderlo durante el procesamiento). FIFO ayudaría con duplicados, pero el problema aquí es de configuración del timeout; long polling solo afecta a las lecturas vacías, y la DLQ atrapa fallos repetidos, no evita el reprocesamiento por timeout corto. Conviene además hacer el consumidor idempotente."
-    },
-    {
-      "tipo": "respuesta_multiple",
-      "dificultad": "dificil",
-      "enunciado": "Una orden de compra debe disparar tres procesos independientes que ya existen: facturación, envío de correo y actualización de inventario. Cada uno debe recibir TODOS los eventos de orden, procesarlos a su propio ritmo y seguir funcionando aunque otro de ellos esté caído o lento. ¿Qué decisiones de diseño cumplen estos requisitos? (elige 2)",
-      "opciones": [
-        "Publicar cada orden una sola vez en un tópico de notificaciones y suscribir una cola SQS por cada uno de los tres procesos (fan-out).",
-        "Enviar la orden directamente a una única cola SQS compartida por los tres procesos para que compitan por los mensajes.",
-        "Que cada proceso consuma de su propia cola, con su propio visibility timeout y su propia DLQ, de forma independiente.",
-        "Invocar los tres procesos con llamadas HTTP síncronas en cadena desde el servicio de órdenes.",
-        "Guardar las órdenes en un único archivo en almacenamiento de objetos y que cada proceso lo lea en bucle (polling del archivo)."
-      ],
-      "correctas": [0, 2],
-      "explicacion": "El patrón fan-out (tópico que replica a una cola por consumidor) entrega el mismo evento a los tres procesos y los desacopla por completo. Que cada proceso tenga su propia cola con timeout y DLQ propios garantiza aislamiento de fallos: si uno cae, su cola se llena pero no afecta a los demás. Una única cola compartida (opción 2) reparte cada mensaje a UN solo consumidor, así que no todos reciben todos los eventos. Las llamadas síncronas en cadena (opción 4) propagan fallos y latencia. Leer un archivo en bucle (opción 5) no es un mecanismo de mensajería resiliente ni escalable."
+      "correctas": [0],
+      "explicacion": "Una cola se interpone entre quien produce el trabajo y quien lo consume: durante un pico los mensajes se acumulan en la cola en vez de tumbar al consumidor (load leveling), y el procesamiento se realiza al ritmo sostenible del consumidor. Duplicar el backend o balancear el frontend no amortigua la ráfaga de trabajo de fondo, y un caché solo ayuda con lecturas repetidas, no con tareas de procesamiento encoladas."
     },
     {
       "tipo": "opcion_multiple",
       "dificultad": "media",
-      "enunciado": "Un backend recibe ráfagas impredecibles de solicitudes que generan trabajo pesado en segundo plano. Durante los picos, los workers se saturan y se pierden tareas. Se decide poner una cola SQS entre la API y los workers. ¿Qué métrica debe usar el autoescalado de los workers para responder correctamente a los picos?",
+      "enunciado": "Un servicio de cobros procesa transacciones desde una cola estándar y debe garantizar que los cargos de un mismo cliente se apliquen en el orden exacto en que se generaron y sin duplicados. ¿Qué cambio resuelve el requisito con el mínimo de lógica adicional?",
       "opciones": [
-        "El uso de CPU promedio de los workers.",
-        "El número de conexiones de red entrantes a la API.",
-        "La profundidad de la cola (mensajes en espera) o la antigüedad del mensaje más viejo.",
-        "El porcentaje de memoria libre en las instancias de los workers."
+        "Subir el visibility timeout de la cola estándar para que no se reprocesen mensajes.",
+        "Activar long polling en la cola estándar para ordenar las lecturas.",
+        "Migrar a una cola FIFO y agrupar por cliente con MessageGroupId, aprovechando su deduplicación.",
+        "Añadir una DLQ a la cola estándar para descartar los cargos duplicados."
       ],
       "correctas": [2],
-      "explicacion": "Al desacoplar con una cola, la señal correcta de carga pendiente es cuántos mensajes esperan (profundidad de la cola) o cuánto lleva esperando el más antiguo. Escalar por esa métrica añade workers cuando el backlog crece y los reduce cuando se vacía, absorbiendo los picos sin perder tareas. La CPU o la memoria pueden no reflejar el trabajo encolado (un worker puede tener CPU baja mientras miles de mensajes esperan), y las conexiones a la API miden la entrada, no el trabajo aún por procesar."
+      "explicacion": "El orden estricto por cliente y la entrega sin duplicados son exactamente lo que ofrece una cola FIFO: el MessageGroupId mantiene el orden dentro de cada grupo (cliente) y la deduplicación descarta repetidos en la ventana. La cola estándar es best-effort y entrega al menos una vez. Subir el visibility timeout reduce reprocesos por timeout pero no garantiza orden ni unicidad; long polling solo afecta a lecturas vacías; y la DLQ atrapa fallos repetidos, no evita duplicados de entrega."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "media",
+      "enunciado": "Un equipo nota que su servicio de lectura de cola hace miles de peticiones que vuelven vacías, lo que dispara el coste de la API y añade ruido sin trabajo real. El orden de los mensajes no es crítico. ¿Cuál es la corrección directa?",
+      "opciones": [
+        "Activar long polling subiendo el tiempo de espera de recepción por encima de cero.",
+        "Migrar la cola a FIFO para reducir las llamadas vacías.",
+        "Reducir el visibility timeout para que los mensajes aparezcan antes.",
+        "Crear una DLQ para desviar las peticiones vacías."
+      ],
+      "correctas": [0],
+      "explicacion": "Las quejas de \"muchas llamadas vacías\" y \"coste alto de sondeo\" apuntan a short polling. Activar long polling (subir el wait time de recepción, hasta ~20 s) hace que la petición espere a que llegue un mensaje en lugar de devolver vacía de inmediato, reduciendo llamadas, coste y latencia percibida. FIFO atañe a orden/duplicados, no a llamadas vacías; el visibility timeout controla la reaparición de mensajes; y la DLQ recoge fallos, no peticiones vacías."
+    },
+    {
+      "tipo": "respuesta_multiple",
+      "dificultad": "media",
+      "enunciado": "Un arquitecto compara un tópico de notificaciones (SNS) con un bus de eventos (EventBridge) para distintos escenarios. ¿Qué afirmaciones son correctas? (elige 2)",
+      "opciones": [
+        "Para fan-out simple y de baja latencia a varias colas o endpoints, el tópico de notificaciones encaja bien.",
+        "Para enrutar eventos según el contenido del cuerpo con reglas ricas e integrar orígenes de terceros/SaaS, conviene el bus de eventos.",
+        "El tópico de notificaciones ofrece un catálogo de esquemas de eventos del que carece el bus de eventos.",
+        "El bus de eventos siempre tiene menor latencia que el tópico de notificaciones para fan-out masivo.",
+        "El tópico de notificaciones no puede entregar el mismo evento a varios suscriptores a la vez."
+      ],
+      "correctas": [0, 1],
+      "explicacion": "El tópico es la opción natural para fan-out simple de baja latencia a colas/endpoints, mientras que el bus de eventos aporta reglas avanzadas sobre el contenido, integración de orígenes externos (SaaS/terceros) y registro de esquemas. La opción 3 invierte los roles: el catálogo de esquemas lo aporta el bus, no el tópico. La opción 4 es falsa: el tópico suele tener menor latencia en fan-out. La opción 5 es falsa: el tópico replica el mismo evento a todos sus suscriptores (esa es la base del fan-out)."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "dificil",
+      "enunciado": "Un proceso de aprobación de préstamos encadena varios pasos con ramas condicionales, reintentos con backoff y compensación de errores, y puede tardar varios días con auditoría completa. Hoy esa lógica de control vive incrustada en el código de las funciones, lo que dificulta seguir el estado global. ¿Qué enfoque recomienda la guía de desacople?",
+      "opciones": [
+        "Mantener la lógica embebida pero añadir más logs en cada función para reconstruir el estado.",
+        "Usar una máquina de estados estándar (Step Functions) que modele pasos, ramas, reintentos y catch de forma declarativa, dando visibilidad del flujo largo y auditable.",
+        "Usar una máquina de estados exprés por su altísimo volumen de ejecuciones cortas.",
+        "Sustituir todo por coreografía pura basada en eventos para máximo desacoplamiento."
+      ],
+      "correctas": [1],
+      "explicacion": "El escenario pide coordinar varios pasos con ramas, reintentos/backoff, manejo de errores y visibilidad de un proceso largo y auditable: ese es el caso de orquestación con una máquina de estados de tipo estándar, que soporta ejecuciones largas (hasta ~1 año) con historial duradero. El tipo exprés es para volúmenes altísimos de ejecuciones cortas, no para procesos de días con auditoría. La coreografía pura maximiza el desacople pero dispersa el estado global, justo lo que aquí se quiere evitar; y añadir logs no sustituye un orquestador."
+    },
+    {
+      "tipo": "respuesta_multiple",
+      "dificultad": "dificil",
+      "enunciado": "Tras insertar una cola entre la API y un grupo de workers que entrega al menos una vez, el equipo observa cobros duplicados en reintentos y necesita además que los workers respondan bien a los picos. ¿Qué decisiones garantizan corrección y escalado adecuado? (elige 3)",
+      "opciones": [
+        "Hacer el consumidor idempotente con una clave de deduplicación registrada en una tabla mediante escritura condicional.",
+        "Modelar la operación como naturalmente idempotente, por ejemplo \"establecer estado = pagado\" en vez de \"sumar 1 al saldo\".",
+        "Autoescalar los workers según la profundidad de la cola o la antigüedad del mensaje más viejo.",
+        "Confiar únicamente en ajustar el visibility timeout para eliminar por completo los duplicados.",
+        "Autoescalar los workers en función del uso de CPU promedio de las instancias."
+      ],
+      "correctas": [0, 1, 2],
+      "explicacion": "Con entrega al menos una vez, la corrección la garantiza la idempotencia: una clave de deduplicación con escritura condicional descarta repetidos, y modelar la operación de forma naturalmente idempotente evita efectos acumulativos en reintentos. Para el escalado ante picos, la señal correcta es la profundidad/antigüedad de la cola, que refleja el trabajo pendiente. Ajustar el visibility timeout reduce duplicados pero no los elimina (opción 4), y escalar por CPU no refleja el backlog encolado: un worker puede tener CPU baja mientras miles de mensajes esperan (opción 5)."
     }
   ]
 }

@@ -10,12 +10,15 @@ from __future__ import annotations
 from functools import lru_cache
 
 import clickhouse_connect
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile
 from pydantic import BaseModel
 
-from dss import modelo
+from dss import modelo, recomendador
 from dss.config import Config
 from dss.repo import Repo
+
+# Tamaño máximo del CV aceptado (defensa de entrada).
+MAX_CV_BYTES = 5 * 1024 * 1024
 
 app = FastAPI(title="CertReady DSS", version="dev")
 
@@ -121,4 +124,106 @@ def readiness(usuario_id: str, certificacion: str) -> ReadinessResponse:
             if accion is not None
             else None
         ),
+    )
+
+
+# --- Recomendador de certificaciones por CV (no requiere ClickHouse) ----------
+class PasoCamino(BaseModel):
+    slug: str
+    nombre: str
+    proveedor: str
+    area: str
+    nivel: str
+    match_pct: int
+    por_que: str
+    tiene_contenido: bool
+    slug_estudio: str | None
+
+
+class Camino(BaseModel):
+    nombre: str
+    motivo: str
+    pasos: list[PasoCamino]
+
+
+class PerfilOut(BaseModel):
+    skills: list[str]
+    areas: list[str]
+    nivel: str
+    resumen: str
+
+
+class RecomendacionesResponse(BaseModel):
+    perfil: PerfilOut
+    caminos: list[Camino]
+    recomendaciones: list[PasoCamino]
+
+
+@app.post("/v1/recommendations", response_model=RecomendacionesResponse)
+async def recommendations(file: UploadFile) -> RecomendacionesResponse:
+    """Lee el CV subido (PDF/DOCX/texto) y devuelve perfil + caminos recomendados.
+
+    El archivo se procesa en memoria y **no se persiste**. No depende de ClickHouse.
+    """
+    datos = await file.read()
+    if not datos:
+        raise HTTPException(status_code=400, detail="archivo vacío")
+    if len(datos) > MAX_CV_BYTES:
+        raise HTTPException(status_code=413, detail="archivo demasiado grande (máx 5 MB)")
+    texto = recomendador.extraer_texto(file.filename or "", datos)
+    if len(texto.strip()) < 30:
+        raise HTTPException(
+            status_code=422, detail="no se pudo leer texto del CV; sube un PDF/DOCX con texto"
+        )
+    return RecomendacionesResponse(**recomendador.recomendar(texto))
+
+
+# --- Analítica por usuario (dashboards; requiere ClickHouse) -------------------
+class TemaAcierto(BaseModel):
+    tema: str
+    aciertos: int
+    total: int
+    pct: float
+
+
+class PuntoTendencia(BaseModel):
+    fecha: str
+    pct: float
+    intentos: int
+
+
+class AnaliticaResponse(BaseModel):
+    certificacion: str
+    total: int
+    aciertos: int
+    pct: float
+    por_tema: list[TemaAcierto]
+    tendencia: list[PuntoTendencia]
+
+
+@app.get("/v1/analytics/{usuario_id}", response_model=AnaliticaResponse)
+def analytics(usuario_id: str, certificacion: str) -> AnaliticaResponse:
+    """Acierto por tema y tendencia diaria del usuario (para los dashboards).
+
+    Si no hay intentos, devuelve listas vacías (200), no 404: el front muestra
+    "sin datos" sin romperse.
+    """
+    repo, _ = _contexto()
+    por_tema = repo.acierto_por_tema(usuario_id, certificacion)
+    serie = repo.serie_por_fecha(usuario_id, certificacion)
+    total = sum(n for _, _, n in por_tema)
+    aciertos = sum(a for _, a, _ in por_tema)
+    return AnaliticaResponse(
+        certificacion=certificacion,
+        total=total,
+        aciertos=aciertos,
+        pct=round(100.0 * aciertos / total, 1) if total else 0.0,
+        por_tema=[
+            TemaAcierto(tema=t, aciertos=a, total=n, pct=round(100.0 * a / n, 1) if n else 0.0)
+            for t, a, n in por_tema
+        ],
+        tendencia=[
+            PuntoTendencia(fecha=f, pct=round(100.0 * a / n, 1) if n else 0.0, intentos=n)
+            for f, a, n in serie
+        ],
     )

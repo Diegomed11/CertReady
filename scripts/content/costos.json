@@ -17,43 +17,83 @@
   "questions": [
     {
       "tipo": "opcion_multiple",
-      "dificultad": "media",
-      "enunciado": "Una empresa corre una API con una base de cómputo estable las 24 horas durante todo el año, más picos de tráfico variables e impredecibles durante el día. Quieren minimizar costos manteniendo disponibilidad. ¿Qué estrategia de compra es la más adecuada?",
+      "dificultad": "facil",
+      "enunciado": "Un equipo procesa lotes de renderizado de video que pueden reiniciarse desde cero sin perder datos y no tienen un plazo estricto de finalización. Buscan el menor costo de cómputo posible. ¿Qué modelo de compra de instancias deberían usar?",
       "opciones": [
-        "Comprar Spot para toda la carga, incluida la base estable",
-        "Cubrir la base con Savings Plans o Reserved y absorber los picos con On-Demand",
-        "Usar On-Demand para todo para máxima flexibilidad",
-        "Cubrir toda la capacidad pico con Reserved de 3 años"
+        "Instancias On-Demand para garantizar que nunca se interrumpan",
+        "Instancias Spot, aprovechando capacidad sobrante con gran descuento",
+        "Reserved Instances Standard de 3 años",
+        "Savings Plans tipo EC2 Instance de 1 año"
       ],
       "correctas": [1],
-      "explicacion": "El criterio es separar base de pico: la base estable se cubre con compromiso (Savings Plans/Reserved) para el mayor descuento, y los picos variables con On-Demand, que se paga solo cuando se usa. Spot no sirve para una base con estado porque puede ser interrumpida; comprometer toda la capacidad pico con Reserved pagaría por capacidad ociosa la mayor parte del tiempo."
-    },
-    {
-      "tipo": "respuesta_multiple",
-      "dificultad": "dificil",
-      "enunciado": "Instancias en subredes privadas generan un gasto elevado de transferencia de datos porque todo su tráfico hacia servicios de AWS sale por un NAT Gateway. El equipo quiere reducir ese costo. ¿Qué acciones lo logran? (elige 2)",
-      "opciones": [
-        "Agregar un Gateway endpoint para el almacenamiento de objetos y enrutarlo por la tabla de rutas",
-        "Aumentar el número de NAT Gateways, uno por cada zona de disponibilidad",
-        "Usar un Interface endpoint para acceder de forma privada a los servicios de AWS soportados",
-        "Mover las instancias a subredes públicas con IP pública directa a Internet",
-        "Activar versionado en el almacenamiento de objetos"
-      ],
-      "correctas": [0, 2],
-      "explicacion": "El Gateway endpoint no tiene costo por hora ni por GB y saca el tráfico al almacenamiento de objetos del camino del NAT. El Interface endpoint da acceso privado a otros servicios de AWS, evitando el egreso por NAT y a menudo resultando más barato y seguro. Sumar NAT Gateways aumenta el costo; exponer las instancias a Internet rompe la seguridad; el versionado no afecta la transferencia y puede incluso aumentar el almacenamiento."
+      "explicacion": "El renderizado por lotes es tolerante a interrupción y sin estado, justo el perfil para Spot, que ofrece los mayores descuentos a cambio de poder ser reclamado con 2 minutos de aviso. On-Demand es el más caro por unidad; comprometerse con Reserved o Savings Plans tiene sentido para una base estable 24/7, no para lotes esporádicos e interrumpibles."
     },
     {
       "tipo": "opcion_multiple",
       "dificultad": "media",
-      "enunciado": "Una aplicación guarda objetos cuyo patrón de acceso es totalmente impredecible: algunos se leen mucho un mes y casi nada al siguiente. El equipo no quiere administrar reglas manuales de transición. ¿Qué opción de almacenamiento minimiza el costo con el mínimo esfuerzo operativo?",
+      "enunciado": "Una instancia de gran tamaño ejecuta una carga estable las 24 horas, pero las métricas muestran que usa apenas un 9% de CPU y memoria. El responsable propone comprar un Savings Plan de 3 años sobre ella para ahorrar. ¿Cuál es la observación correcta antes de comprometerse?",
       "opciones": [
-        "Estándar - Acceso poco frecuente (IA) para todos los objetos",
-        "Intelligent-Tiering, que mueve los objetos entre niveles según su acceso",
-        "Nivel de archivo profundo para todos los objetos",
-        "One Zone - IA para todos los objetos"
+        "Comprar el Savings Plan ya es la mejor decisión; el descuento corrige el sobredimensionamiento",
+        "Primero hacer right-sizing al tamaño adecuado y luego comprometerse sobre el tamaño correcto",
+        "Mover la carga a instancias Spot para evitar cualquier compromiso",
+        "Migrar la carga a On-Demand porque el compromiso nunca conviene para cargas estables"
       ],
       "correctas": [1],
-      "explicacion": "Cuando el patrón de acceso es desconocido o cambiante y no quieres gestionar reglas, Intelligent-Tiering mueve automáticamente los objetos entre niveles de acceso por una pequeña cuota de monitoreo y sin cargo de recuperación entre niveles. IA cobraría recuperación cuando un objeto vuelve a estar activo; el archivo profundo demora horas en recuperar; One Zone - IA solo conviene para datos recreables y sigue requiriendo conocer el patrón."
+      "explicacion": "Un Savings Plan aplica el descuento al gasto, pero no reduce el desperdicio de una instancia sobredimensionada: estarías comprometiendo gasto sobre capacidad ociosa. El criterio es primero right-sizing (ajustar familia/tamaño a las métricas reales) y después comprometer descuento sobre el tamaño correcto. Spot no aplica a una carga estable con estado, y On-Demand sí permite ahorro vía compromiso cuando la carga es predecible."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "media",
+      "enunciado": "Una aplicación guarda registros de auditoría que se consultan con frecuencia durante los primeros 30 días, casi no se tocan entre el día 31 y el día 90, y deben conservarse 7 años por cumplimiento sin necesidad de lectura inmediata. ¿Qué enfoque minimiza el costo de almacenamiento?",
+      "opciones": [
+        "Mantener todo en la clase Estándar durante los 7 años",
+        "Una regla de ciclo de vida: Estándar, luego Acceso poco frecuente, luego archivo profundo",
+        "Colocar todo en One Zone - IA desde el primer día",
+        "Usar Intelligent-Tiering para todo el ciclo de vida de los registros"
+      ],
+      "correctas": [1],
+      "explicacion": "El patrón de enfriamiento es conocido por edad (caliente 30 días, tibio hasta 90, frío de archivo después), así que una regla de ciclo de vida con transiciones encaja perfecto: Estándar para acceso frecuente, IA para el tramo de poco acceso y archivo profundo para la retención legal de años que casi no se lee. Mantener Estándar 7 años desperdicia GB; One Zone - IA es para datos recreables, no para auditoría; Intelligent-Tiering brilla cuando el patrón es desconocido, no cuando ya se conoce por edad."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "facil",
+      "enunciado": "Un equipo de finanzas quiere recibir un aviso automático cuando el gasto mensual de la cuenta supere los 5.000 USD, para reaccionar antes de pasarse del presupuesto. ¿Qué herramienta es la indicada?",
+      "opciones": [
+        "Cost Explorer, para visualizar el gasto histórico",
+        "Budgets, para alertar al superar un umbral de gasto o uso",
+        "Compute Optimizer, para recomendar right-sizing",
+        "Cost and Usage Report, para el detalle crudo de facturación"
+      ],
+      "correctas": [1],
+      "explicacion": "Budgets es la herramienta que alerta cuando el gasto o el uso supera un umbral definido, justo lo que se pide. Cost Explorer analiza y visualiza el gasto pero no alerta por sí mismo; Compute Optimizer recomienda qué instancia o volumen ajustar; el Cost and Usage Report entrega el detalle crudo para análisis a fondo, no avisos proactivos."
+    },
+    {
+      "tipo": "respuesta_multiple",
+      "dificultad": "dificil",
+      "enunciado": "Una arquitectura tiene instancias en subredes privadas con un gasto alto de transferencia de datos: todo su tráfico hacia servicios de AWS sale por un NAT Gateway. El equipo quiere reducir ese costo sin romper la seguridad. ¿Qué acciones contribuyen a lograrlo? (elige 2)",
+      "opciones": [
+        "Agregar un Gateway endpoint para el almacenamiento de objetos y enrutarlo desde la tabla de rutas",
+        "Usar un Interface endpoint para acceder de forma privada a otros servicios de AWS soportados",
+        "Desplegar un NAT Gateway adicional en cada zona de disponibilidad",
+        "Mover las instancias a subredes públicas con IP pública directa a Internet",
+        "Activar el versionado de objetos en el almacenamiento"
+      ],
+      "correctas": [0, 1],
+      "explicacion": "El Gateway endpoint no cobra por hora ni por GB y saca del camino del NAT el tráfico hacia el almacenamiento de objetos. El Interface endpoint da acceso privado a otros servicios de AWS, evitando el egreso por NAT y resultando a menudo más barato y más seguro. Sumar NAT Gateways aumenta el costo; exponer las instancias a Internet sacrifica la seguridad; el versionado no afecta la transferencia y puede incluso aumentar el almacenamiento."
+    },
+    {
+      "tipo": "respuesta_multiple",
+      "dificultad": "media",
+      "enunciado": "Un arquitecto revisa decisiones de costo de red y almacenamiento de bloque. ¿Cuáles de las siguientes afirmaciones son correctas según los criterios de optimización? (elige 3)",
+      "opciones": [
+        "Una CDN delante del origen reduce el egreso a Internet y mejora la latencia para usuarios globales",
+        "El tráfico entre zonas de disponibilidad de la misma región se cobra, a diferencia del tráfico dentro de la misma AZ por IP privada",
+        "Para throughput secuencial de logs y big data, los volúmenes HDD suelen ser más baratos que los SSD",
+        "El tráfico de salida a Internet es generalmente la opción de transferencia más barata",
+        "Los volúmenes SSD son siempre la opción más económica para cualquier carga de bloque"
+      ],
+      "correctas": [0, 1, 2],
+      "explicacion": "Una CDN cachea contenido cerca del usuario, reduciendo el egreso desde el origen y la latencia. El tráfico entre AZ de una misma región se cobra, mientras que dentro de la misma AZ por IP privada suele ser gratis. Para throughput secuencial (logs, big data), los discos HDD son más baratos y se reservan los SSD para E/S aleatoria y baja latencia. En cambio, la salida a Internet es la transferencia más cara, no la más barata, y los SSD no son siempre lo más económico: dependen del patrón de E/S."
     }
   ]
 }

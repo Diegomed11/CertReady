@@ -7,6 +7,7 @@ import { Gauge } from '@/components/ui/gauge'
 import { PageHeader } from '@/components/ui/page-header'
 import { SectionLabel } from '@/components/ui/section-label'
 import {
+  getAnalytics,
   getMyProgress,
   getReadiness,
   listCertifications,
@@ -119,11 +120,12 @@ async function ProgresoCert({
   accessToken: string
   subject: string
 }) {
-  const [progreso, temas, historial, readiness] = await Promise.all([
+  const [progreso, temas, historial, readiness, analitica] = await Promise.all([
     getMyProgress(accessToken, activa.slug),
     listTopics(activa.id, accessToken),
     listMyExams(accessToken, { limit: 100 }),
     getReadiness(subject, activa.slug), // opcional: null si el DSS no está disponible
+    getAnalytics(subject, activa.slug), // opcional: null si el DSS/ClickHouse no está
   ])
 
   const aprobadosSet = new Set(progreso.temas.filter((t) => t.quiz_aprobado).map((t) => t.tema))
@@ -147,6 +149,28 @@ async function ProgresoCert({
   )
   const ultimo = finalizados[0]?.puntaje ?? null
   const mejor = finalizados.length > 0 ? Math.max(...finalizados.map((s) => s.puntaje ?? 0)) : null
+
+  // Acierto por dominio en simulacros (de la analítica del DSS): mapea cada tema a
+  // su dominio y agrega aciertos/total, en el orden del temario.
+  const temaDominio = new Map(temas.map((t) => [t.slug, t.dominio ?? 'General']))
+  const acumDominio = new Map<string, { aciertos: number; total: number }>()
+  for (const pt of analitica?.por_tema ?? []) {
+    const dom = temaDominio.get(pt.tema) ?? 'General'
+    const cur = acumDominio.get(dom) ?? { aciertos: 0, total: 0 }
+    cur.aciertos += pt.aciertos
+    cur.total += pt.total
+    acumDominio.set(dom, cur)
+  }
+  const aciertoDominio = dominios
+    .map((d) => {
+      const v = acumDominio.get(d.nombre) ?? { aciertos: 0, total: 0 }
+      return {
+        nombre: d.nombre,
+        total: v.total,
+        pct: v.total > 0 ? Math.round((v.aciertos / v.total) * 100) : 0,
+      }
+    })
+    .filter((d) => d.total > 0)
 
   return (
     <>
@@ -272,6 +296,34 @@ async function ProgresoCert({
           })}
         </div>
       </Card>
+
+      {/* Acierto por dominio en simulacros (dashboard de analítica del DSS) */}
+      {aciertoDominio.length > 0 && (
+        <Card className="p-6">
+          <h2 className="font-display text-lg font-semibold">Acierto por dominio</h2>
+          <p className="mt-1 text-sm text-muted">
+            Porcentaje de respuestas correctas en tus simulacros, por dominio del examen.
+          </p>
+          <div className="mt-5 space-y-4">
+            {aciertoDominio.map((d) => (
+              <div key={d.nombre}>
+                <div className="flex items-center justify-between gap-3 text-sm">
+                  <span className="font-semibold text-ink">{d.nombre}</span>
+                  <span className="font-mono text-xs text-muted">
+                    {d.pct}% · {d.total} resp.
+                  </span>
+                </div>
+                <div className="mt-1.5 h-2.5 w-full overflow-hidden rounded-full bg-sunken">
+                  <div
+                    className={`h-full rounded-full ${nivelColor(d.pct)}`}
+                    style={{ width: `${Math.max(3, d.pct)}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       {/* Estimación IRT (opcional, solo si el DSS está disponible) */}
       {readiness && (

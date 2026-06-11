@@ -18,15 +18,55 @@
     {
       "tipo": "opcion_multiple",
       "dificultad": "media",
-      "enunciado": "Una arquitecta reparte la misma aplicación en tres Zonas de Disponibilidad para que siga funcionando aunque un centro de datos quede fuera de servicio. ¿Qué pilar del marco de buena arquitectura aborda principalmente esta decisión?",
+      "enunciado": "Dos diseños cumplen exactamente el mismo requisito técnico de una aplicación y ofrecen el mismo nivel de seguridad, pero el enunciado pide lograrlo 'de la forma más económica posible'. ¿Qué pilar del marco de buena arquitectura decide la elección y cómo suele aparecer en el escenario?",
       "opciones": [
-        "Eficiencia del rendimiento",
-        "Fiabilidad",
-        "Optimización de costos",
-        "Excelencia operativa"
+        "Sostenibilidad, porque siempre que se menciona dinero se mide la huella ambiental",
+        "Optimización de costos, que normalmente actúa como segundo objetivo: si ambas opciones cumplen lo técnico, gana la barata",
+        "Fiabilidad, porque la opción más barata siempre es la que mejor tolera fallos",
+        "Excelencia operativa, porque automatizar es lo único que reduce el gasto"
       ],
       "correctas": [1],
-      "explicacion": "Sobrevivir a la caída de un componente o zona es el objetivo del pilar de fiabilidad. No es rendimiento (eso sería ir más rápido o escalar bajo carga); replicar en varias AZ busca tolerancia a fallos, no velocidad."
+      "explicacion": "La optimización de costos casi siempre entra como segundo objetivo del escenario ('...de la forma más económica'). Cuando dos opciones satisfacen igual el requisito técnico, la regla práctica es que la más barata gana. La sostenibilidad mide desperdicio de capacidad y huella ambiental, no el precio directo; fiabilidad y excelencia operativa responden a otras preguntas de diseño."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "facil",
+      "enunciado": "Un servicio almacena objetos en un bucket (tipo S3) que quedó accesible públicamente por error y se filtraron datos. Según el modelo de responsabilidad compartida, ¿de quién es la responsabilidad de haber controlado ese acceso?",
+      "opciones": [
+        "Del proveedor, porque opera la infraestructura del almacenamiento",
+        "Compartida al 50% entre proveedor y cliente",
+        "Del cliente, porque las políticas de acceso y el bloqueo de acceso público son configuración suya",
+        "De nadie: la durabilidad del servicio impide que esto ocurra"
+      ],
+      "correctas": [2],
+      "explicacion": "En el almacenamiento de objetos, el proveedor opera el servicio y garantiza la durabilidad, pero quién accede (políticas, bloqueo de acceso público, cifrado, versionado) es responsabilidad del cliente. El bucket expuesto es el error clásico de examen atribuido siempre al cliente: identidad, datos y configuración de acceso son suyos sin importar el servicio."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "media",
+      "enunciado": "Un juego multijugador interactivo necesita servir cómputo a pocos milisegundos de latencia para usuarios concentrados en una sola gran ciudad, más cerca de lo que permite la Zona de Disponibilidad regional más próxima, sin dejar de estar en la nube. ¿Qué nivel de la infraestructura global es el adecuado?",
+      "opciones": [
+        "Una Ubicación de borde / CDN, para ejecutar ahí la lógica del juego",
+        "Una segunda Región, para acercar el cómputo a esa ciudad",
+        "Una Zona Local, que extiende la Región a esa área metropolitana para cómputo de baja latencia",
+        "Más Zonas de Disponibilidad en la misma Región, para reducir la latencia urbana"
+      ],
+      "correctas": [2],
+      "explicacion": "La Zona Local extiende una Región a un área metropolitana concreta para servir cómputo y almacenamiento a pocos milisegundos del usuario, justo para apps interactivas como juegos o edición en tiempo real. El borde/CDN entrega y cachea contenido, no corre tu lógica; añadir AZ mejora la fiabilidad, no la latencia urbana; y una nueva Región no garantiza esa proximidad de ciudad."
+    },
+    {
+      "tipo": "respuesta_multiple",
+      "dificultad": "media",
+      "enunciado": "Una organización con varias cuentas adopta facturación consolidada bajo la cuenta de administración. ¿Qué afirmaciones sobre la facturación consolidada y el etiquetado son correctas? (elige 2)",
+      "opciones": [
+        "Todas las cuentas miembro pagan con una sola factura a través de la cuenta de administración",
+        "El uso agregado de todas las cuentas suma para alcanzar tramos por volumen y compromisos de ahorro",
+        "La facturación consolidada impide automáticamente el uso de Regiones no aprobadas",
+        "Las etiquetas conceden permisos de acceso a las identidades de cada cuenta",
+        "Las etiquetas eliminan la necesidad de una convención de etiquetado para atribuir costos por proyecto"
+      ],
+      "correctas": [0, 1],
+      "explicacion": "La facturación consolidada unifica el pago en una sola factura y agrega el uso de todas las cuentas para alcanzar descuentos por volumen y compromisos de ahorro. No impone límites de permisos: eso son las SCP. Las etiquetas no conceden acceso por sí mismas y, lejos de eliminar la necesidad de una convención, dependen de una convención de etiquetado consistente y obligatoria; sin ella, los informes de costo por proyecto quedan ciegos."
     },
     {
       "tipo": "respuesta_multiple",
@@ -40,20 +80,20 @@
         "Configurar las reglas de red que exponen el servicio"
       ],
       "correctas": [1, 2],
-      "explicacion": "Al pasar a servicios gestionados, AWS absorbe el parcheo del SO/motor (RDS) y el runtime y escalado (Lambda). El control de identidad y acceso, la decisión de cifrado y la configuración de red siguen siendo del cliente en todos los casos: la frontera que se mueve es la operativa (SO, parches, escalado), no la de seguridad de acceso."
+      "explicacion": "Al pasar a servicios gestionados, el proveedor absorbe el parcheo del SO/motor (RDS) y el runtime y escalado (Lambda). El control de identidad y acceso, la decisión de cifrado y la configuración de red siguen siendo del cliente en todos los casos: la frontera que se mueve es la operativa (SO, parches, escalado), no la de seguridad de acceso."
     },
     {
       "tipo": "opcion_multiple",
       "dificultad": "dificil",
-      "enunciado": "Una empresa con muchas cuentas bajo una organización quiere impedir que cualquier identidad de las cuentas de la OU 'Pruebas' use Regiones fuera de las aprobadas, sin tener que editar políticas IAM cuenta por cuenta. ¿Cuál es el mecanismo correcto y qué debe entenderse de él?",
+      "enunciado": "En una organización, una cuenta tiene una política de identidad (IAM) que permite a un rol crear recursos en cierto servicio, pero una SCP aplicada a su OU no incluye ese servicio entre los permitidos. ¿Puede el rol crear esos recursos y por qué?",
       "opciones": [
-        "Una política IAM aplicada a la OU, que concede el acceso permitido a cada cuenta",
-        "Una SCP en la OU 'Pruebas', entendiendo que fija un máximo permitido pero no concede acceso por sí sola",
-        "La facturación consolidada, que bloquea el uso de Regiones no aprobadas",
-        "Una etiqueta de Región obligatoria, que impide técnicamente crear recursos fuera de la política"
+        "Sí, porque la política de identidad concede el permiso y prevalece sobre la SCP",
+        "No, porque el permiso efectivo es la intersección: lo que IAM permite Y lo que la SCP no bloquea",
+        "Sí, porque las SCP solo aplican a la cuenta de administración",
+        "No, porque la SCP por sí sola concede el permiso al rol en lugar de IAM"
       ],
       "correctas": [1],
-      "explicacion": "Las SCP aplicadas a una OU establecen el techo de lo permitido de forma transversal y heredable; no conceden permisos (eso lo hace IAM dentro de cada cuenta) y el acceso efectivo es la intersección de ambos. La facturación consolidada solo unifica la factura, y las etiquetas atribuyen costos o automatizan, pero no imponen un límite de permisos por sí mismas."
+      "explicacion": "El permiso efectivo es la intersección entre lo que IAM permite y lo que la SCP no bloquea: si la SCP no deja pasar el servicio, da igual que IAM lo permita. La SCP fija un techo y no concede permisos; tampoco aplica a la cuenta de administración (por eso esa cuenta no debe alojar cargas), pero sí restringe a las cuentas miembro de la OU."
     }
   ]
 }

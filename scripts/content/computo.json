@@ -17,43 +17,83 @@
   "questions": [
     {
       "tipo": "opcion_multiple",
-      "dificultad": "media",
-      "enunciado": "Un equipo ejecuta cada noche un procesamiento de imágenes por lotes que puede reanudarse desde el punto donde se interrumpió. Quieren minimizar el costo del cómputo y no les preocupa que algunas tareas se reinicien. ¿Qué combinación de cómputo es la más adecuada?",
+      "dificultad": "facil",
+      "enunciado": "Un servicio de transcodificación de video mantiene el procesador al máximo de forma sostenida durante horas, mientras consume poca memoria. Sin enfatizar ningún otro recurso, ¿qué familia de instancia es la más adecuada?",
       "opciones": [
-        "Instancias bajo demanda en un grupo de escalado fijo, sin capacidad sobrante",
-        "Instancias Spot en un grupo de escalado, diversificando entre varios tipos de instancia",
-        "Una sola instancia memoria-optimizada reservada por tres años",
-        "Funciones sin servidor con un tiempo de ejecución de varias horas por imagen"
+        "Propósito general con créditos de CPU (ráfaga)",
+        "Optimizada para memoria",
+        "Optimizada para cómputo",
+        "Optimizada para almacenamiento"
+      ],
+      "correctas": [2],
+      "explicacion": "El cuello de botella es CPU pura y sostenida con poca demanda de RAM; ese es el perfil de la familia optimizada para cómputo, que ofrece mucha vCPU por unidad de memoria. Las variantes con créditos de ráfaga sirven para CPU baja con picos cortos, no para carga sostenida (se agotarían los créditos). La optimizada para memoria sobra RAM que aquí no se usa, y la optimizada para almacenamiento ataca un cuello de E/S de disco local que no aplica."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "media",
+      "enunciado": "Una tienda en línea sabe que cada día, a las 8:00, llega una oleada de tráfico previsible por la apertura de promociones, y el resto del día la carga es estable. Quieren que la capacidad ya esté lista justo antes de esa hora conocida. ¿Qué política de escalado encaja mejor?",
+      "opciones": [
+        "Escalado programado, que ajusta la capacidad según un horario conocido",
+        "Seguimiento de objetivo sobre el uso de CPU promedio",
+        "Escalado por pasos con alarmas por rangos de métrica",
+        "Escalado simple con un periodo de enfriamiento prolongado"
+      ],
+      "correctas": [0],
+      "explicacion": "El patrón es predecible por hora del día, así que el escalado programado provisiona la capacidad antes del pico conocido. El seguimiento de objetivo y el escalado por pasos son reactivos: actúan después de que la métrica cambia, llegando tarde a una oleada brusca a hora fija. El escalado simple es heredado y reaccionar tarde con más enfriamiento agrava el retraso."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "media",
+      "enunciado": "Un equipo necesita exponer varios microservicios HTTP detrás de un único punto de entrada, enrutando las peticiones según la ruta de la URL (por ejemplo, /pagos al servicio de pagos y /usuarios al de usuarios) y terminando TLS en el balanceador. ¿Qué balanceador cumple estos requisitos?",
+      "opciones": [
+        "Balanceador de red (capa 4), por su latencia mínima",
+        "Balanceador de aplicación (capa 7)",
+        "Balanceador de puerta de enlace, para insertar inspección de tráfico",
+        "Balanceador de red con IP estática y preservación de la IP de origen"
       ],
       "correctas": [1],
-      "explicacion": "La carga es por lotes y reanudable, es decir, tolerante a interrupciones, justo el perfil ideal para capacidad sobrante con gran descuento (Spot). Diversificar entre varios tipos de instancia reduce el riesgo de que toda la capacidad se recupere a la vez. Bajo demanda es más caro sin aportar ventaja aquí; una reserva de tres años no encaja con un trabajo nocturno puntual; y un proceso de varias horas por imagen excede el tiempo máximo de ejecución de las funciones sin servidor."
+      "explicacion": "Enrutar por ruta de URL y terminar TLS requiere entender el contenido HTTP, algo propio de la capa 7: el balanceador de aplicación. El balanceador de red opera en capa 4 y no ve la ruta HTTP, por buena que sea su latencia. El de puerta de enlace existe para insertar dispositivos de inspección/seguridad de terceros, no para enrutar por URL."
     },
     {
       "tipo": "opcion_multiple",
       "dificultad": "dificil",
-      "enunciado": "Una aplicación web detrás de un grupo de escalado sufre degradación durante picos repentinos: las instancias nuevas tardan varios minutos en instalar dependencias y calentar cachés antes de servir tráfico, así que el escalado reactivo siempre llega tarde. ¿Qué medida ataca directamente la causa?",
+      "enunciado": "Un grupo de escalado reemplaza correctamente instancias cuando el hardware subyacente falla, pero cuando la aplicación se cuelga y devuelve errores 500 mientras el sistema operativo sigue vivo, el grupo no la sustituye y sigue enviándole tráfico. ¿Cuál es la causa y la corrección?",
       "opciones": [
-        "Cambiar la política a escalado simple con un periodo de enfriamiento más largo",
-        "Configurar un grupo en caliente (warm pool) con instancias preinicializadas listas para entrar en servicio",
-        "Sustituir el balanceador de aplicación por uno de red para reducir la latencia",
-        "Reducir la capacidad mínima del grupo para ahorrar costos entre picos"
+        "Falta aumentar la capacidad mínima del grupo para que haya instancias de repuesto",
+        "Solo están activas las comprobaciones de instancia; hay que habilitar las del balanceador",
+        "El periodo de calentamiento de instancia es demasiado corto y debe alargarse",
+        "Debe cambiarse la política a escalado predictivo para anticipar los fallos"
       ],
       "correctas": [1],
-      "explicacion": "El problema es el arranque lento: la instancia no está lista cuando se la necesita. Un grupo en caliente mantiene instancias ya inicializadas que entran en servicio en segundos, eliminando la espera del bootstrap durante los picos. El escalado simple con más enfriamiento empeora la latencia de reacción; cambiar de balanceador no acelera el arranque de la instancia; y bajar la capacidad mínima agrava el problema en el pico."
+      "explicacion": "La comprobación a nivel de instancia solo detecta fallos de la infraestructura subyacente; una app colgada que responde errores deja la instancia 'viva' a sus ojos. Para que el grupo la marque como no saludable y la reemplace, hay que habilitar las comprobaciones de salud del balanceador, que prueban la respuesta de la aplicación. La capacidad mínima, el calentamiento y el escalado predictivo no abordan la detección del fallo aplicativo."
     },
     {
       "tipo": "respuesta_multiple",
       "dificultad": "dificil",
-      "enunciado": "Una API HTTP interactiva implementada con funciones sin servidor debe ofrecer latencia predecible (sin penalización por arranque en frío) y, además, el equipo necesita repartir el tráfico entre microservicios según la ruta de la URL. ¿Qué dos decisiones cumplen ambos requisitos? (elige 2)",
+      "enunciado": "Un equipo va a desplegar contenedores y plantea dos decisiones independientes. Requisito A: el equipo no quiere administrar ni parchear servidores y prefiere pagar por los recursos de cada tarea. Requisito B: ciertas cargas necesitan GPU y control fino del tipo de host y del sistema operativo. ¿Qué dos afirmaciones son correctas? (elige 2)",
       "opciones": [
-        "Habilitar concurrencia provisionada en la función para mantener entornos ya inicializados",
-        "Colocar las instancias en un grupo de colocación agrupado (cluster) para bajar la latencia",
-        "Usar un balanceador de aplicación (capa 7) que enrute por ruta hacia cada microservicio",
-        "Usar un balanceador de red (capa 4) y enrutar por ruta de URL en capa 4",
-        "Apoyarse solo en la concurrencia reservada para eliminar el arranque en frío"
+        "Para el requisito A conviene un modelo sin servidores (Fargate)",
+        "Para el requisito B conviene ejecutar los contenedores sobre instancias EC2 gestionadas por el equipo",
+        "El requisito B obliga necesariamente a usar Kubernetes gestionado (EKS) en lugar de ECS",
+        "Para el requisito A hace falta gestionar un grupo de instancias con capacidad reservada",
+        "El requisito A solo se cumple si se adopta concurrencia provisionada"
       ],
-      "correctas": [0, 2],
-      "explicacion": "La concurrencia provisionada mantiene entornos calientes y elimina el arranque en frío, dando latencia predecible. El enrutamiento por ruta de URL ocurre en capa 7, así que corresponde al balanceador de aplicación. Un grupo de colocación aplica a instancias, no a funciones sin servidor, y no atañe a esta API. El balanceador de red opera en capa 4 y no ve la ruta HTTP. La concurrencia reservada garantiza cupo, pero por sí sola no precalienta entornos, por lo que no elimina el arranque en frío."
+      "correctas": [0, 1],
+      "explicacion": "No querer administrar servidores y pagar por recursos de cada tarea describe el modelo sin servidores (Fargate). Necesitar GPU y control del host y del SO es justo lo que justifica ejecutar contenedores sobre instancias EC2 propias. La elección del orquestador (ECS vs EKS) es independiente del modelo de cómputo, así que la GPU no obliga a EKS. Gestionar un grupo de instancias contradice el requisito A, y la concurrencia provisionada es un concepto de funciones sin servidor, no de contenedores."
+    },
+    {
+      "tipo": "respuesta_multiple",
+      "dificultad": "media",
+      "enunciado": "Una empresa amplía un grupo de cómputo para una carga stateless detrás de un balanceador. Quiere minimizar el costo sin perder disponibilidad ante recuperaciones de capacidad sobrante. ¿Qué dos prácticas reflejan el patrón recomendado? (elige 2)",
+      "opciones": [
+        "Mantener una base On-Demand que garantice una capacidad mínima estable",
+        "Absorber el crecimiento con capacidad Spot diversificando entre varios tipos de instancia",
+        "Colocar toda la carga, incluida la base, en una única instancia Spot del tipo más barato",
+        "Usar instancias Spot para una base de datos transaccional con estado para abaratarla",
+        "Renunciar por completo a On-Demand para que el 100% del grupo sea capacidad sobrante"
+      ],
+      "correctas": [0, 1],
+      "explicacion": "El patrón típico combina una base On-Demand que asegura capacidad mínima garantizada con una capa Spot que absorbe el crecimiento barato; diversificar entre varios tipos de instancia reduce el riesgo de que toda la capacidad Spot se recupere a la vez. Concentrar todo en una sola instancia Spot o renunciar por completo a On-Demand deja la disponibilidad a merced de las recuperaciones. Poner una base de datos transaccional con estado en Spot arriesga pérdida o corrupción si se interrumpe."
     }
   ]
 }

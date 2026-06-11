@@ -17,43 +17,83 @@
   "questions": [
     {
       "tipo": "opcion_multiple",
-      "dificultad": "media",
-      "enunciado": "Una aplicación financiera usa una base de datos relacional gestionada. El requisito es que, si falla el centro de datos donde corre la base, el sistema conmute solo y de forma automática a una copia al día, sin perder transacciones confirmadas. ¿Qué configuración cumple ese requisito?",
+      "dificultad": "facil",
+      "enunciado": "Una aplicación corre en una sola Zona de Disponibilidad y el negocio solo necesita seguir operativo si se cae un único centro de datos dentro de la misma Región. No hay requisito de cumplimiento ni de latencia global. ¿Cuál es el nivel de resiliencia adecuado y más razonable?",
       "opciones": [
-        "Una réplica de lectura en otra AZ, promovida manualmente cuando falle la primaria",
-        "Despliegue Multi-AZ con réplica síncrona y failover automático",
-        "Backups automáticos diarios restaurados tras el incidente",
-        "Una réplica de lectura en otra Región con replicación asíncrona"
+        "Desplegar en varias AZ de la misma Región (multi-AZ)",
+        "Replicar la aplicación en varias Regiones (multi-Región) desde el inicio",
+        "Dejar todo en una sola AZ pero con backups muy frecuentes",
+        "Usar replicación asíncrona entre Regiones para máxima protección"
       ],
-      "correctas": [1],
-      "explicacion": "El requisito combina conmutación **automática** y **cero pérdida** de transacciones confirmadas. Eso lo da **Multi-AZ**, cuya réplica es **síncrona** (datos al día) y cuyo failover es **automático**. Las réplicas de lectura escalan lecturas pero su promoción es **manual** y su replicación **asíncrona** (puede ir retrasada), por lo que no garantizan cero pérdida. Los backups diarios implican perder hasta un día de datos."
-    },
-    {
-      "tipo": "respuesta_multiple",
-      "dificultad": "dificil",
-      "enunciado": "Un equipo necesita una estrategia de recuperación ante desastres en otra Región con un RTO de pocos minutos pero el menor costo posible, evitando mantener un entorno completo encendido. Selecciona las dos afirmaciones correctas sobre cómo lograrlo.",
-      "opciones": [
-        "La estrategia pilot light mantiene los datos ya replicados en la otra Región y arranca/escala el cómputo cuando ocurre el desastre",
-        "Multi-site activo/activo es la opción más barata para este caso porque no requiere réplica de datos",
-        "Para que el plan funcione ante un desastre regional, los snapshots/backups deben estar copiados a la otra Región",
-        "Una réplica de lectura promovida manualmente garantiza un RTO de cero sin intervención",
-        "El RTO real solo se valida ensayando de verdad la restauración"
-      ],
-      "correctas": [0, 2, 4],
-      "explicacion": "**Pilot light** encaja: mantiene encendido solo lo crítico (datos replicados) con el cómputo apagado y lo escala al fallar, dando RTO de minutos a bajo costo. Para DR **regional**, los backups deben residir **también en la otra Región** o no sirven. Y el RTO solo se conoce **probando** la restauración. Es falso que activo/activo sea lo más barato (es lo más caro y sí necesita replicación), y una réplica promovida **manualmente** no da RTO cero ni es automática."
+      "correctas": [0],
+      "explicacion": "El requisito real es tolerar la caída de un centro de datos dentro de una Región: eso lo cubre exactamente multi-AZ, con réplica síncrona y sin penalización notable de latencia. Saltar a multi-Región añade costo y complejidad sin que el requisito lo pida; quedarse en una sola AZ no protege ante la pérdida de ese centro de datos. La regla es no escalar a multi-Región cuando multi-AZ ya resuelve la disponibilidad pedida."
     },
     {
       "tipo": "opcion_multiple",
       "dificultad": "media",
-      "enunciado": "Una empresa sirve la misma aplicación desde tres Regiones. Quiere que cada usuario sea dirigido automáticamente a la Región que le ofrezca la mejor velocidad de respuesta, sin que el reparto dependa de un porcentaje fijo ni del país. ¿Qué política de enrutamiento de DNS debe usar?",
+      "enunciado": "Un grupo de Auto Scaling repone instancias cuando el sistema operativo deja de responder, pero los usuarios siguen recibiendo errores de instancias cuyo proceso de aplicación quedó colgado aunque la máquina sigue encendida. ¿Qué cambio corrige este comportamiento?",
       "opciones": [
-        "Enrutamiento ponderado (weighted)",
-        "Enrutamiento por geolocalización (geolocation)",
+        "Reducir la capacidad deseada del grupo para descartar instancias más rápido",
+        "Asociar el grupo de Auto Scaling con los health checks del balanceador (ELB)",
+        "Cambiar la política a step scaling para reaccionar por rangos",
+        "Aumentar el TTL del registro DNS de la aplicación"
+      ],
+      "correctas": [1],
+      "explicacion": "El chequeo básico de la instancia solo ve si la máquina está encendida, no si la app responde de verdad. Al asociar el grupo con los health checks del ELB, una instancia con el proceso colgado falla el chequeo de la aplicación y es reemplazada. Bajar la capacidad no detecta el problema, step scaling es una política de escalado (no de salud) y el TTL del DNS no tiene relación con la salud de instancias."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "media",
+      "enunciado": "Una base de datos relacional gestionada sufre saturación porque varios paneles de reportes lanzan muchísimas consultas de solo lectura, mientras que las escrituras son moderadas. El equipo quiere aliviar la carga de lectura sin cambiar la disponibilidad actual. ¿Qué opción encaja mejor?",
+      "opciones": [
+        "Activar Multi-AZ para que la copia en espera atienda las lecturas",
+        "Añadir una o más réplicas de lectura y dirigir los reportes hacia ellas",
+        "Restaurar un backup en otra instancia y consultar ahí los reportes",
+        "Promover manualmente la base a una instancia de mayor tamaño cada mañana"
+      ],
+      "correctas": [1],
+      "explicacion": "El problema es de rendimiento de lectura, no de disponibilidad: las réplicas de lectura existen precisamente para escalar lecturas, y se apuntan a ellas las consultas de reportes. Multi-AZ no sirve aquí porque su copia en espera es pasiva y no atiende consultas. Restaurar un backup da datos estancados y no es una solución continua, y promover/redimensionar a mano no escala la lectura de forma sostenible."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "media",
+      "enunciado": "Una empresa quiere lanzar una nueva versión de su sitio enviando primero solo un 10% del tráfico a la versión nueva y el 90% a la actual, para vigilar errores antes de aumentar el porcentaje. ¿Qué política de enrutamiento de DNS se ajusta a esta necesidad?",
+      "opciones": [
         "Enrutamiento basado en latencia (latency-based)",
+        "Enrutamiento por geolocalización (geolocation)",
+        "Enrutamiento ponderado (weighted)",
         "Enrutamiento por failover"
       ],
       "correctas": [2],
-      "explicacion": "El objetivo es **rendimiento** (mejor velocidad), así que la política correcta es **basada en latencia**, que envía a cada usuario a la Región de menor latencia para él. **Weighted** reparte por porcentajes fijos (útil para canary), **geolocation** decide por país aunque no sea la más rápida, y **failover** es para esquemas principal/respaldo de disponibilidad, no para optimizar velocidad."
+      "explicacion": "Repartir un porcentaje controlado del tráfico entre dos endpoints (despliegue canary o A-B) es justo lo que hace la política ponderada. La basada en latencia optimiza velocidad por usuario, geolocation decide por país, y failover es para esquemas principal/respaldo de disponibilidad; ninguna permite fijar un reparto por porcentaje como se pide."
+    },
+    {
+      "tipo": "respuesta_multiple",
+      "dificultad": "dificil",
+      "enunciado": "Un equipo diseña la recuperación ante desastres regional de una base relacional y debe escoger entre estrategias y verificar su plan de backups. Selecciona TODAS las afirmaciones correctas.",
+      "opciones": [
+        "Pilot light mantiene los datos ya replicados en la Región de DR con el cómputo apagado, listo para arrancar y escalar cuando ocurra el desastre",
+        "Warm standby se diferencia de pilot light en que ya tiene cómputo sirviendo, aunque a escala reducida, y solo hay que escalarlo",
+        "Un backup que vive únicamente en la Región afectada es suficiente para recuperarse de un desastre regional",
+        "El RTO real de un plan solo se conoce ensayando de verdad la restauración",
+        "Multi-site activo/activo es la estrategia más barata porque no necesita un entorno completo encendido"
+      ],
+      "correctas": [0, 1, 3],
+      "explicacion": "Pilot light mantiene encendido solo lo crítico (datos replicados) con el cómputo apagado y lo arranca al fallar. Warm standby ya tiene un entorno funcionando a escala reducida y solo se escala, esa es su diferencia clave con pilot light. Y el RTO solo se valida probando la restauración. Es falso que un backup en la propia Región caída sirva para DR regional (debe estar copiado a otra Región) y falso que activo/activo sea lo más barato: es el más caro porque mantiene el entorno completo en paralelo."
+    },
+    {
+      "tipo": "respuesta_multiple",
+      "dificultad": "media",
+      "enunciado": "Sobre la diferencia entre RDS Multi-AZ y las réplicas de lectura, y por qué una réplica de lectura NO es por sí sola una solución de alta disponibilidad, selecciona las afirmaciones correctas.",
+      "opciones": [
+        "Multi-AZ usa replicación síncrona y conmuta de forma automática al fallar la primaria",
+        "Una réplica de lectura replica de forma asíncrona y puede ir retrasada respecto a la primaria",
+        "Promover una réplica de lectura a primaria es un proceso manual, no automático",
+        "La copia en espera de Multi-AZ atiende consultas de lectura para repartir la carga",
+        "Multi-AZ y réplicas de lectura no se pueden usar al mismo tiempo"
+      ],
+      "correctas": [0, 1, 2],
+      "explicacion": "Multi-AZ es síncrono y su failover es automático, por eso da alta disponibilidad. Las réplicas de lectura son asíncronas (pueden ir retrasadas) y su promoción a primaria es manual, por lo que no sustituyen al failover automático de Multi-AZ. Es falso que la copia en espera de Multi-AZ sirva lecturas (es un standby pasivo) y falso que sean excluyentes: pueden combinarse, Multi-AZ para HA y réplicas para escalar lecturas."
     }
   ]
 }

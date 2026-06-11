@@ -1055,3 +1055,84 @@ guía oficial SAA-C03 (referencia de cobertura, **no se copia** — regla de mar
 contra Mongo: 12 temas × 4 hojas con ids ordenados, preguntas por tema ampliadas
 (p.ej. iam 10). El render en vivo de Estudiar queda para cuando el stack backend
 esté levantado (con la web ya en modo producción).
+
+**Seguimiento — quiz alineado al material:** las hojas mejoraron pero los quiz no
+las evaluaban. Se regeneraron las preguntas del contenido (12 agentes en paralelo,
+una por tema) para que **prueben las 3 hojas** de cada tema: ahora **6 preguntas
+por tema** (4 opción múltiple + 2 respuesta múltiple), originales, con explicación
+atada a la hoja. El mini-quiz de tema pasó de **4 a 6** preguntas para cubrir mejor.
+Re-sembrado: **172 preguntas** (12–24 por tema, 39 de respuesta múltiple). 12/12
+validados (estructura, tipos e índices correctos).
+
+---
+
+## 2026-06-10 · Hito: MVP web completo + pase de documentación
+
+**Hito.** Con el backend de las Fases 1–5 ya verificado, el **frontend (MVP web)
+queda en forma sólida** y cubre toda la experiencia del estudiante: landing 3D,
+login OIDC, catálogo, **panel tipo app (sidebar)**, **Estudiar** (ruta de
+aprendizaje + lector de hojas paginado + mini-quiz alineado), **Exámenes**
+(simulacro con formato real), **Entrevistas** (editor de código + juez + Q&A) y
+**Progreso**. Decisión del responsable: el front se da por **sólido**; el pulido
+fino queda como trabajo continuo.
+
+**Rutas web** (App Router): `/` (landing), `/auth/error`, y bajo el shell
+autenticado: `/panel`, `/certifications`, `/estudiar[/[cert][/[tema]]]`,
+`/examenes[/[id]]`, `/entrevistas/{problemas,preguntas}[/[id]]`, `/progreso`.
+Rutas BFF: `auth/*`, `me`, `enrollments*`, `examenes*`, `progress/*`, `judge`.
+
+**Documentación sincronizada:** `docs/estado-roadmap.md` actualizado para reflejar
+el MVP web completo (antes marcaba el frontend de Fases 2–3 como pendiente y
+listaba Fases 2–5 como "planeado"). Las decisiones y el detalle por sesión viven en
+las entradas anteriores de esta bitácora.
+
+**Dónde vamos / qué sigue.** Backend 0–5 ✔, MVP web ✔, despliegue AWS **diferido**
+(costo cero). Pendientes mayores, a elegir: (1) **dashboards de analítica** en la
+web (Cube/DSS, diferido desde Fases 4–5); (2) **Fase 6 — móvil Flutter**;
+(3) **Fase 7 — endurecimiento/pentesting + despliegue a producción**; y, transversal,
+el **pulido de UI/UX**.
+
+---
+
+## 2026-06-10 · Recomendador de certificaciones por CV (embeddings) + dashboards (ADR-14)
+
+**Contexto:** dar más peso al DSS. El usuario sube su CV y se le proponen los
+mejores caminos de certificación según su perfil; además se surfacearon dashboards
+de analítica. Decisiones (plan aprobado): **embeddings locales ONNX**, **dataset
+curado en la capa de datos**, **subida de PDF/DOCX**, alcance **recomendador +
+dashboards**. Formalizado en **ADR-14**.
+
+**Hecho — capa de datos (`data/dss/`):**
+- **`certificaciones.json`** (nuevo): ~30 certs **originales** (AWS/Azure/GCP/
+  CompTIA/Cisco/CNCF/HashiCorp/ISC2/PMI/Red Hat/Databricks…) con área, nivel,
+  skills, roles y `slug_estudio` (enlaza a `aws-saa`).
+- **`recomendador.py`** (nuevo): extracción de texto (PDF/DOCX/txt), perfil por
+  léxico de skills, **embeddings multilingües ONNX** (`fastembed`,
+  `paraphrase-multilingual-MiniLM-L12-v2`, perezoso) + **solape de skills** →
+  ranking y construcción de **caminos**. Lógica pura testeable con `embed_fn`
+  inyectable; el CV **no se persiste**.
+- **`api.py`**: `POST /v1/recommendations` (multipart, sin ClickHouse) y
+  `GET /v1/analytics/{uid}` (acierto por tema/tendencia, ClickHouse best-effort);
+  `repo.py`: `acierto_por_tema` + `serie_por_fecha`. Deps nuevas en
+  `pyproject.toml` (`fastembed`, `pypdf`, `python-docx`, `python-multipart`).
+
+**Hecho — web:**
+- **`/recomendaciones` ("Mi camino")**: sube el CV, muestra **perfil detectado**
+  (skills/área/nivel) y **caminos** (pasos con match %, "por qué" y botón Estudiar
+  si hay contenido). BFF `app/api/recommendations/route.ts` reenvía el archivo al
+  DSS. Ítem nuevo en el **sidebar**.
+- **Dashboards** en `/progreso`: **acierto por dominio** (mapeando tema→dominio)
+  vía `getAnalytics`; readiness IRT ya existente. Degrada a "sin datos" sin DSS.
+- `services.ts`/`types.ts`: `getRecommendations` (multipart), `getAnalytics`,
+  tipos `Recomendaciones/Camino/PasoCamino/Analitica`. `DSS_BASE_URL` ya estaba.
+
+**Hecho — wiring:** `dev-up.ps1` arranca el **DSS en :18098** (siempre; el
+recomendador no necesita ClickHouse) y, best-effort, **ClickHouse + ETL** para la
+analítica. `dev-down.ps1` ya cubría el :18098.
+
+**Verificación:** capa de datos `ruff`+`black`+`pytest` **verdes** (15 passed, 6
+integración skipped) — incluye test del recomendador con `embed_fn` falso. **Smoke
+real** (TestClient, modelo descargado): CV de perfil AWS → `aws-saa` #1 (73 %) y
+caminos coherentes (Nube/DevOps/Desarrollo). Web `npm run check` + `npm run build`
+verdes (24 rutas; `/recomendaciones`, `/api/recommendations`). E2E en vivo del
+upload queda para cuando el stack esté levantado (`dev-up` arranca el DSS).

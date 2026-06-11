@@ -18,42 +18,82 @@
     {
       "tipo": "opcion_multiple",
       "dificultad": "media",
-      "enunciado": "Un estudio publica un juego multijugador en tiempo real que se comunica por UDP. Los jugadores están repartidos en varios continentes y se quejan de retraso e inestabilidad. Necesitan menor latencia global y una IP de entrada estable para configurar listas blancas en firewalls corporativos. ¿Qué servicio encaja mejor?",
+      "enunciado": "Un equipo nota que su CDN tiene una tasa de aciertos baja: muchas peticiones llegan al origen aunque el contenido es el mismo para todos. Al revisar, ven que la política de caché incluye en la clave una cookie de sesión y varios encabezados que no cambian la respuesta. ¿Qué ajuste subiría la tasa de aciertos?",
       "opciones": [
-        "Una red de distribución de contenido (CDN) que cachee el tráfico del juego en el borde",
-        "Un acelerador global con IPs ancla que enrute por la red troncal privada",
-        "Aceleración de transferencia del almacenamiento de objetos",
-        "Una política de DNS por geolocalización delante de los servidores"
+        "Reducir la clave de caché para que no incluya cookies ni encabezados innecesarios",
+        "Añadir más encabezados y cookies a la clave de caché para identificar mejor cada objeto",
+        "Crear una invalidación periódica de todo el contenido del borde",
+        "Cambiar el TTL mínimo a cero para revalidar siempre con el origen"
       ],
-      "correctas": [1],
-      "explicacion": "El tráfico es **UDP** en tiempo real y no cacheable, así que la CDN no aplica (sirve HTTP cacheable). El **acelerador global** acelera TCP/UDP por la red troncal privada y ofrece **IPs ancla estables**, perfectas para listas blancas de firewall. La aceleración de transferencia es solo para subir/bajar objetos, y una política de DNS no da IP fija ni mejora la ruta de red."
+      "correctas": [0],
+      "explicacion": "La **clave de caché** define qué se considera \"el mismo objeto\". Si incluye una cookie de sesión o encabezados que no alteran la respuesta, cada usuario genera una variante distinta y el caché se fragmenta, bajando los aciertos. Reducir la clave a lo esencial unifica las variantes y sube la tasa de *hit*. Añadir más elementos empeora la fragmentación; invalidar o forzar TTL cero solo aumenta los viajes al origen."
     },
     {
       "tipo": "opcion_multiple",
-      "dificultad": "dificil",
-      "enunciado": "Un sitio sirve imágenes y vídeo desde un bucket de almacenamiento de objetos a través de una CDN. Seguridad exige que los objetos NO sean accesibles por la URL directa del bucket: solo la distribución de la CDN debe poder leerlos. ¿Cuál es la forma recomendada de lograrlo hoy?",
+      "dificultad": "facil",
+      "enunciado": "Tras un despliegue, un archivo JavaScript servido por la CDN quedó con un error y los usuarios siguen recibiendo la versión cacheada en el borde. El equipo quiere evitar pagar invalidaciones cada vez que publica una corrección. ¿Cuál es la mejor práctica para futuras publicaciones?",
       "opciones": [
-        "Hacer el bucket público y confiar en que nadie adivine las URLs",
-        "Configurar Control de Acceso al Origen (OAC) y una política de bucket que solo confíe en esa distribución",
-        "Poner una VPN entre la CDN y el bucket",
-        "Activar una política de DNS por latencia hacia el bucket"
+        "Bajar el TTL por defecto a un segundo para que el borde nunca cachee",
+        "Versionar el nombre del archivo (por ejemplo, app.v2.js) en cada publicación",
+        "Hacer el bucket de origen público para saltarse el caché",
+        "Desactivar la política de caché en la distribución"
       ],
       "correctas": [1],
-      "explicacion": "El **OAC** hace que la CDN firme las peticiones al bucket y la **política del bucket** solo confía en esa distribución, de modo que la URL directa queda bloqueada. Es el mecanismo actual, sucesor del método heredado (OAI). Un bucket público es justo lo contrario de lo pedido; una VPN no aplica a este flujo, y una política de DNS no controla el acceso al objeto."
+      "explicacion": "**Versionar el nombre** convierte cada publicación en un objeto nuevo, así el borde sirve siempre la versión correcta sin necesidad de invalidar (que tiene costo si se abusa). Bajar el TTL a casi cero anula el beneficio del caché y dispara los viajes al origen; un bucket público es un riesgo de seguridad y no resuelve el caché; desactivar la política de caché degrada el rendimiento global."
+    },
+    {
+      "tipo": "respuesta_multiple",
+      "dificultad": "media",
+      "enunciado": "Una arquitectura necesita reducir latencia global y elegir el servicio correcto según el tráfico. ¿Cuáles de las siguientes asociaciones entre escenario y servicio son correctas? (elige 3)",
+      "opciones": [
+        "Servir imágenes y vídeo estáticos a usuarios de varios continentes → red de distribución de contenido (CDN)",
+        "Juego en tiempo real por UDP que requiere baja latencia mundial → acelerador global",
+        "Subir archivos muy grandes a un bucket desde otro continente → aceleración de transferencia del almacenamiento de objetos",
+        "Cachear las respuestas de un juego UDP en el borde → red de distribución de contenido (CDN)",
+        "Obtener una IP fija para servir contenido estático cacheable → aceleración de transferencia del almacenamiento de objetos"
+      ],
+      "correctas": [0, 1, 2],
+      "explicacion": "La **CDN** acelera HTTP **cacheable** como imágenes y vídeo; el **acelerador global** acelera TCP/UDP no cacheable, ideal para un juego en tiempo real por UDP; y la **aceleración de transferencia** optimiza subir/bajar objetos desde lejos. Las dos restantes mezclan conceptos: la CDN no cachea tráfico UDP de un juego (no es HTTP cacheable), y una IP fija para contenido cacheable no es función de la aceleración de transferencia."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "media",
+      "enunciado": "Una empresa tiene su aplicación replicada en varias regiones y quiere que cada usuario sea dirigido al despliegue que le responde más rápido, no al de su país. ¿Qué política de enrutamiento de DNS encaja?",
+      "opciones": [
+        "Geolocalización",
+        "Ponderada",
+        "Por latencia",
+        "Failover"
+      ],
+      "correctas": [2],
+      "explicacion": "La política **por latencia** dirige a cada usuario a la región que le responde más rápido, que es exactamente lo pedido. La **geolocalización** decide por el país o continente del usuario (no por velocidad) y es el error clásico aquí; la **ponderada** reparte por porcentajes (despliegues canary); el **failover** es activo/pasivo para disponibilidad, no para minimizar latencia."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "facil",
+      "enunciado": "Instancias en subredes privadas necesitan leer y escribir en el almacenamiento de objetos gestionado sin que el tráfico salga a internet, y se busca que la solución no añada costo por hora. ¿Qué elemento es el adecuado?",
+      "opciones": [
+        "Un punto de enlace de tipo puerta de enlace (gateway endpoint)",
+        "Un punto de enlace de tipo interfaz (interface endpoint / PrivateLink)",
+        "Una pasarela de salida a internet (NAT)",
+        "Un enlace físico dedicado (Direct Connect)"
+      ],
+      "correctas": [0],
+      "explicacion": "El **gateway endpoint** ofrece una ruta privada al almacenamiento de objetos (y a la base NoSQL gestionada) que se añade a la tabla de rutas y **no cobra por hora**, cumpliendo ambos requisitos. El **interface endpoint** sirve para muchos otros servicios pero tiene costo por hora y por datos; la pasarela de salida sí enviaría tráfico a internet; el enlace dedicado es para conectividad híbrida con un centro de datos, no para hablar con un servicio gestionado dentro de la nube."
     },
     {
       "tipo": "respuesta_multiple",
       "dificultad": "dificil",
-      "enunciado": "Una empresa quiere que sus instancias en subredes privadas accedan al almacenamiento de objetos y a la base NoSQL gestionada SIN que el tráfico salga a internet, minimizando costo y latencia. Además quiere un enlace híbrido con su centro de datos de ancho de banda alto, estable y latencia predecible. ¿Qué dos elementos debe elegir? (elige 2)",
+      "enunciado": "Una organización va a conectar su centro de datos con la nube. Necesita un enlace con ancho de banda alto, latencia predecible y rendimiento constante para datos masivos diarios, pero también quiere mantener un camino de respaldo barato y rápido de levantar por si ese enlace falla. ¿Qué dos decisiones son correctas? (elige 2)",
       "opciones": [
-        "Un punto de enlace de tipo puerta de enlace (gateway endpoint) para el almacenamiento de objetos y el NoSQL",
-        "Una pasarela de salida a internet (NAT) para que el tráfico llegue a esos servicios",
-        "Un enlace físico dedicado (Direct Connect) hacia el centro de datos",
-        "Una VPN sitio a sitio sobre internet como conexión principal de alto rendimiento",
-        "Una política de DNS ponderada para repartir el tráfico hacia el almacenamiento de objetos"
+        "Usar un enlace físico dedicado (Direct Connect) como conexión principal de rendimiento estable",
+        "Configurar una VPN sitio a sitio sobre internet como respaldo del enlace principal",
+        "Usar una VPN sitio a sitio sobre internet como conexión principal de alto rendimiento y latencia predecible",
+        "Confiar en una política de DNS por latencia para sustituir el enlace híbrido",
+        "Sustituir el enlace híbrido por un punto de enlace de tipo puerta de enlace (gateway endpoint)"
       ],
-      "correctas": [0, 2],
-      "explicacion": "El **gateway endpoint** da acceso privado y **sin costo por hora** al almacenamiento de objetos y al NoSQL gestionado, manteniendo el tráfico fuera de internet (mejor que pasar por una pasarela de salida, que sí sale a internet y cuesta). Para el enlace híbrido con **ancho de banda alto, estable y latencia predecible** se elige el **enlace dedicado**; una VPN por internet tiene rendimiento variable y no es la opción de \"alto rendimiento estable\". La política de DNS no resuelve el acceso privado."
+      "correctas": [0, 1],
+      "explicacion": "El **enlace dedicado** aporta ancho de banda alto, latencia **predecible** y rendimiento constante, justo lo que pide la conexión principal. Una **VPN sitio a sitio** se levanta en minutos, es barata y trae cifrado de fábrica, así que es el respaldo ideal si el enlace dedicado cae. Una VPN por internet tiene rendimiento variable y no sirve como principal de alto rendimiento; una política de DNS y un gateway endpoint resuelven problemas distintos y no reemplazan la conectividad híbrida."
     }
   ]
 }

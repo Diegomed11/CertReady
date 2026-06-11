@@ -18,49 +18,97 @@
     {
       "tipo": "opcion_multiple",
       "dificultad": "media",
-      "enunciado": "Una tabla del almacen NoSQL serverless tiene capacidad de sobra a nivel global, pero un grupo de items sufre throttling constante. Al revisar el diseno, la clave de particion es un campo 'estado' con solo tres valores posibles. Cual es la causa mas probable y la mejor correccion?",
+      "enunciado": "Una base de datos relacional gestionada recibe muchas consultas pesadas de reporteria que saturan la instancia principal y degradan las escrituras de la aplicacion. El equipo quiere descargar esas lecturas sin afectar la disponibilidad de la BD primaria. Que opcion encaja mejor?",
       "opciones": [
-        "Una particion caliente por baja cardinalidad de la clave; rediseñar la clave de particion con un atributo de alta cardinalidad",
-        "Falta de read replicas; añadir replicas de lectura a la tabla",
-        "La cache no esta activada; habilitar DAX para resolver el throttling de escritura",
-        "El modo de capacidad es bajo demanda; cambiar a aprovisionado para eliminar el throttling"
+        "Crear una o varias read replicas (asincronas) y dirigir las consultas de reporteria hacia ellas",
+        "Activar Multi-AZ y enviar el trafico de reporteria al standby sincrono",
+        "Promover la instancia a un failover manual para repartir la carga",
+        "Reducir el tamano de la instancia primaria para forzar el balanceo automatico"
       ],
       "correctas": [
         0
       ],
-      "explicacion": "Una clave de particion con muy pocos valores concentra el trafico en pocas particiones fisicas (hot partition), causando throttling aunque la tabla tenga capacidad agregada. La solucion es elegir una clave de alta cardinalidad y acceso uniforme. DAX solo ayuda a lecturas repetidas (no a escrituras) y cambiar el modo de capacidad no corrige una clave mal diseñada."
+      "explicacion": "Las read replicas son replicas asincronas pensadas justamente para escalar lecturas (reporteria, consultas pesadas) descargando la primaria. El standby de Multi-AZ es una replica sincrona para failover y NO sirve lecturas, asi que enviarle el reporteria no es valido. El failover manual no reparte carga y achicar la primaria empeora el problema."
     },
     {
-      "tipo": "respuesta_multiple",
-      "dificultad": "dificil",
-      "enunciado": "Un equipo necesita una capa de cache en memoria delante de su base de datos relacional. Los requisitos son: alta disponibilidad con failover, persistencia de los datos cacheados y soporte de estructuras como sorted sets para un leaderboard. Que afirmaciones reflejan la decision correcta? (elige 2)",
+      "tipo": "opcion_multiple",
+      "dificultad": "facil",
+      "enunciado": "Una empresa debe migrar una aplicacion que depende de Oracle con un licenciamiento muy especifico hacia un servicio relacional gestionado. Que decision es la correcta segun el criterio del examen?",
       "opciones": [
-        "El motor en memoria adecuado es Redis, por sus replicas, failover, persistencia y estructuras avanzadas",
-        "Memcached es la mejor opcion porque su simplicidad multihilo cubre estos requisitos",
-        "Una estrategia de lazy loading con TTL es razonable para datos de lectura intensiva que toleran algo de desfase",
-        "Conviene cachear con write-through siempre, ya que nunca sirve datos obsoletos y no tiene desventajas",
-        "Activar read replicas en la cache en memoria es lo que aporta el failover requerido"
+        "Usar el motor relacional gestionado clasico, que soporta Oracle con su licenciamiento",
+        "Usar la variante de alto rendimiento compatible, porque siempre rinde mejor con cualquier motor",
+        "Migrar a un almacen clave-valor serverless para ahorrar en licencias",
+        "Usar la variante serverless porque cubre todos los motores comerciales"
       ],
       "correctas": [
-        0,
-        2
+        0
       ],
-      "explicacion": "Redis es el motor en memoria que ofrece replicas, failover, persistencia y estructuras avanzadas (sorted sets), justo lo que pide el escenario; Memcached es plano y efimero. Lazy loading + TTL es un patron valido para lecturas intensivas con tolerancia a desfase. Write-through no esta 'siempre' libre de desventajas (encarece cada escritura y cachea datos que quiza nunca se lean) y 'read replicas en la cache' no es lo que se configura para el failover descrito."
+      "explicacion": "La variante de alto rendimiento solo es compatible con MySQL y PostgreSQL, no con Oracle ni SQL Server. Cuando el escenario exige un motor o licenciamiento concreto como Oracle, la eleccion es el motor relacional gestionado clasico. Un almacen clave-valor cambia el modelo de datos relacional que la app necesita."
     },
     {
       "tipo": "opcion_multiple",
       "dificultad": "media",
-      "enunciado": "Una aplicacion relacional gestionada (compatible MySQL) recibe trafico muy intermitente: picos cortos varias veces al dia y largos periodos casi sin actividad. El equipo quiere evitar pagar capacidad fija cuando no se usa, sin renunciar al modelo relacional. Que opcion encaja mejor?",
+      "enunciado": "En una tabla del almacen NoSQL serverless ya en produccion, el equipo necesita consultar items por un atributo (email) que NO es la clave de particion de la tabla. Cual es la opcion adecuada?",
       "opciones": [
-        "La variante relacional serverless, que escala la capacidad de computo automaticamente segun la demanda",
-        "Una instancia aprovisionada grande con read replicas permanentes en varias AZ",
-        "Migrar a un almacen clave-valor con capacidad aprovisionada fija",
-        "Una instancia reservada a 3 años para minimizar el costo del pico"
+        "Crear un indice secundario global (GSI) con email como clave de particion",
+        "Crear un indice secundario local (LSI) sobre email despues de que la tabla este creada",
+        "Cambiar la clave de particion de la tabla existente a email",
+        "Habilitar DAX para poder filtrar por email con baja latencia"
       ],
       "correctas": [
         0
       ],
-      "explicacion": "El trafico intermitente e impredecible es el caso ideal de la variante serverless: ajusta el computo solo y evita pagar capacidad fija en los valles. Una instancia aprovisionada grande o reservada desperdicia dinero cuando no hay actividad, y migrar a clave-valor cambia el modelo de datos relacional que el equipo quiere conservar."
+      "explicacion": "El GSI permite una clave de particion distinta de la de la tabla y se puede crear en cualquier momento, ideal para consultar por otro atributo como email. El LSI debe definirse al crear la tabla y comparte la clave de particion de la tabla, asi que no aplica aqui. DAX es una cache de lecturas, no un mecanismo de consulta por atributos."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "facil",
+      "enunciado": "Un servicio de catalogo lee repetidamente los mismos pocos items del almacen NoSQL serverless y necesita reducir la latencia de esas lecturas a microsegundos sin reescribir la logica de cache. Que componente encaja?",
+      "opciones": [
+        "DAX, una cache write-through en memoria especifica de este almacen para lecturas repetidas",
+        "Memcached como cache externa con logica de cache-aside escrita a mano",
+        "Read replicas del almacen NoSQL para acelerar las lecturas repetidas",
+        "Cambiar el modo de capacidad a bajo demanda para bajar la latencia"
+      ],
+      "correctas": [
+        0
+      ],
+      "explicacion": "DAX es la cache write-through, integrada y especifica de este almacen, que ofrece latencia de microsegundos para lecturas muy repetidas sin reescribir la logica de cache. Memcached implicaria construir la logica aparte; el modo de capacidad afecta throughput/costo, no la latencia de microsegundos; y este almacen no usa read replicas como una BD relacional."
+    },
+    {
+      "tipo": "respuesta_multiple",
+      "dificultad": "dificil",
+      "enunciado": "Un equipo disena la capa de cache y de capacidad para una nueva carga impredecible y nueva (sin historico de trafico) sobre un almacen NoSQL serverless, mas una cache en memoria sencilla y efimera delante. Que decisiones son coherentes con las hojas? (elige 3)",
+      "opciones": [
+        "Empezar con capacidad bajo demanda en el almacen NoSQL por ser trafico impredecible y nuevo",
+        "Para una cache plana, efimera y multihilo sin persistencia, Memcached es suficiente",
+        "Usar lazy loading con TTL para cachear solo lo que se pide y acotar la obsolescencia",
+        "Aprovisionar capacidad fija alta desde el inicio porque siempre es mas barata que bajo demanda",
+        "Elegir Memcached porque ofrece failover, persistencia y sorted sets nativos"
+      ],
+      "correctas": [
+        0,
+        1,
+        2
+      ],
+      "explicacion": "Para trafico impredecible y nuevo, el modo bajo demanda evita gestionar capacidad y escala al instante. Memcached encaja como cache plana, efimera y multihilo cuando no se necesita persistencia ni estructuras avanzadas. Lazy loading + TTL cachea solo lo solicitado y limita la obsolescencia. Aprovisionar fijo solo conviene con trafico estable y predecible, no para una carga sin historico; y las capacidades de failover, persistencia y sorted sets son de Redis, no de Memcached."
+    },
+    {
+      "tipo": "respuesta_multiple",
+      "dificultad": "media",
+      "enunciado": "Sobre Multi-AZ y read replicas en un servicio relacional gestionado, cuales afirmaciones son correctas? (elige 2)",
+      "opciones": [
+        "Multi-AZ mantiene una replica sincrona en otra zona orientada al failover y no sirve lecturas",
+        "Las read replicas son asincronas y pueden ubicarse incluso en otra Region para escalar lecturas",
+        "Multi-AZ existe principalmente para repartir las consultas de lectura entre zonas",
+        "Las read replicas garantizan failover automatico de la instancia primaria",
+        "Multi-AZ y read replicas son lo mismo con distinto nombre comercial"
+      ],
+      "correctas": [
+        0,
+        1
+      ],
+      "explicacion": "Multi-AZ es una replica sincrona en otra AZ cuyo proposito es la alta disponibilidad/failover y no atiende lecturas. Las read replicas son asincronas, sirven para escalar lecturas y pueden estar en otra Region. No son lo mismo: las read replicas no aportan el failover automatico que da Multi-AZ, y Multi-AZ no esta pensado para repartir lecturas."
     }
   ]
 }

@@ -131,6 +131,20 @@ Start-Svc 'problems'    "$root\services\problems\build\problems.exe"       'http
 Start-Svc 'progress'    "$root\services\progress\build\progress.exe"       'http://localhost:18093/v1/health'
 Start-Svc 'judge'       "$root\judge\build\judge.exe"                      'http://localhost:18097/v1/health'
 
+# --- DSS (capa de datos): recomendador de certificaciones por CV + readiness/analitica ---
+# El recomendador NO necesita ClickHouse, así que el DSS arranca siempre. La
+# analítica/readiness sí (ClickHouse + ETL), que se levanta best-effort más abajo.
+$env:CLICKHOUSE_HOST = 'localhost'; $env:CLICKHOUSE_PORT = '8123'
+$env:CLICKHOUSE_USER = 'certready'; $env:CLICKHOUSE_PASSWORD = 'certready'; $env:CLICKHOUSE_DB = 'analytics'
+if (Test-Path $py) {
+  Write-Host 'Arrancando el DSS (recomendador + readiness) en :18098...'
+  Start-Process -FilePath $py -ArgumentList '-m', 'uvicorn', 'dss.api:app', '--host', '127.0.0.1', '--port', '18098' -WorkingDirectory "$root\data" -RedirectStandardOutput "$logs\dss.log" -RedirectStandardError "$logs\dss.err"
+  if (Wait-Url 'http://localhost:18098/v1/health' 30) { Write-Host '  DSS arriba.' -ForegroundColor Green }
+  else { Write-Host '  [aviso] el DSS no respondio (revisa .devlogs\dss.err).' -ForegroundColor Yellow }
+} else {
+  Write-Host '  [aviso] no encontre data\.venv; omito el DSS (Mi camino y la analitica no funcionaran)' -ForegroundColor Yellow
+}
+
 Write-Host 'Compilando la web (build de producción, para que responda rápido)...'
 Push-Location "$root\web"
 & node 'node_modules/next/dist/bin/next' build
@@ -153,3 +167,31 @@ if (Wait-Url 'http://localhost:3000/' 80) {
 } else {
   Write-Host 'La web no respondio a tiempo; revisa .devlogs\web.err' -ForegroundColor Yellow
 }
+
+# --- Analitica (dashboards) — OPCIONAL y al final, para no bloquear el arranque ---
+# Requiere Docker. Si está apagado se omite en silencio: el recomendador (Mi camino),
+# los simulacros y el resto del stack ya están arriba; los dashboards mostrarán
+# "sin datos" hasta que enciendas Docker y reejecutes dev-up.
+$prev = $ErrorActionPreference
+$ErrorActionPreference = 'SilentlyContinue'
+$dockerOk = $false
+if (Get-Command docker -ErrorAction SilentlyContinue) {
+  docker info 2>$null 1>$null
+  $dockerOk = ($LASTEXITCODE -eq 0)
+}
+if ($dockerOk -and (Test-Path $py)) {
+  Write-Host ''
+  Write-Host 'Analitica (opcional): levantando ClickHouse + ETL...'
+  Push-Location "$root\data"; docker compose up -d clickhouse | Out-Null; Pop-Location
+  if (Wait-Url 'http://localhost:8123/ping' 30) {
+    $env:DATABASE_URL = $dsn; $env:MONGO_URI = $mongo
+    Push-Location "$root\data"; & $py -m etl.run *> "$logs\etl.log"; Pop-Location
+    Write-Host '  Analitica lista (acierto por dominio en Progreso).' -ForegroundColor Green
+  } else {
+    Write-Host '  [aviso] ClickHouse no respondio; los dashboards mostraran "sin datos".' -ForegroundColor DarkGray
+  }
+} else {
+  Write-Host ''
+  Write-Host 'Analitica: Docker apagado; se omite. Mi camino y el resto del stack funcionan; los dashboards mostraran "sin datos".' -ForegroundColor DarkGray
+}
+$ErrorActionPreference = $prev

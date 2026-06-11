@@ -17,43 +17,83 @@
   "questions": [
     {
       "tipo": "opcion_multiple",
-      "dificultad": "media",
-      "enunciado": "Una empresa de medios sube archivos de video de 8 GB a un bucket de objetos desde estudios ubicados en otro continente respecto a la región del bucket. Las subidas son lentas e inestables y, cuando fallan cerca del final, deben reiniciarse por completo. ¿Qué combinación resuelve ambos problemas con el menor cambio de arquitectura?",
+      "dificultad": "facil",
+      "enunciado": "Una aplicación guarda objetos cuyo patrón de acceso es impredecible: algunos se consultan a diario durante semanas y luego quedan inactivos por meses, sin un calendario claro. El equipo no quiere arriesgarse a pagar cargos de recuperación por elegir mal la clase. ¿Qué clase de almacenamiento de objetos es la más adecuada?",
       "opciones": [
-        "Carga multiparte para paralelizar y reanudar, junto con aceleración de transferencia para acortar la distancia de red en la subida",
-        "Mover el bucket a la región del estudio y subir cada archivo en una sola petición",
-        "Una red de distribución de contenido (CDN) delante del bucket para acelerar las subidas",
-        "Cambiar la clase de almacenamiento a niveles inteligentes para mejorar el rendimiento de escritura"
+        "Niveles inteligentes, que mueve cada objeto entre niveles según su uso real sin penalizar la recuperación",
+        "Acceso infrecuente, porque siempre resulta más barato por GB",
+        "Archivo profundo, ya que el costo por GB es el más bajo",
+        "Una zona de acceso infrecuente, por su menor costo frente a la clase estándar"
       ],
       "correctas": [0],
-      "explicacion": "La carga multiparte divide el archivo en partes que suben en paralelo y permite reintentar solo la parte fallida (resuelve la inestabilidad y el reinicio total). La aceleración de transferencia enruta la subida por el borde más cercano y la red interna, atacando la latencia por distancia. La CDN optimiza descargas, no subidas; mover el bucket complica el resto de la arquitectura; y las clases de almacenamiento no afectan la velocidad de transferencia."
+      "explicacion": "Cuando el patrón de acceso es impredecible o cambiante, niveles inteligentes mueve los objetos entre niveles de acceso automáticamente a cambio de una pequeña cuota de monitoreo y sin cargo de recuperación, evitando el riesgo de elegir mal. Acceso infrecuente cobra por recuperación y castiga objetos leídos seguido; archivo profundo impone esperas de horas; y la clase de una sola zona reduce la resiliencia, lo que no aborda el problema planteado."
     },
     {
       "tipo": "opcion_multiple",
       "dificultad": "media",
-      "enunciado": "Un equipo procesa diariamente grandes archivos de logs con lecturas y escrituras mayormente secuenciales y de alto volumen. El cuello de botella es el throughput en MB/s, no las operaciones por segundo, y buscan el menor costo posible para ese patrón. ¿Qué tipo de volumen de bloque es el más adecuado?",
+      "enunciado": "Un sistema de ingesta escribe decenas de miles de objetos por segundo en un bucket usando claves que empiezan con una marca de tiempo secuencial (año-mes-día-hora). El rendimiento de escritura agregado se estanca pese a que el servicio escala por particiones internas. ¿Cuál es la causa probable y la mejor corrección?",
+      "opciones": [
+        "Las claves secuenciales concentran el tráfico; sembrar variedad al inicio de la clave para repartir entre más prefijos",
+        "Falta activar la aceleración de transferencia, que multiplica las escrituras por segundo",
+        "El bucket llegó a su límite de objetos; crear un segundo bucket es la única salida",
+        "La clase de almacenamiento es estándar; cambiar a acceso infrecuente eleva el techo de escritura"
+      ],
+      "correctas": [0],
+      "explicacion": "El servicio reparte la carga entre particiones internas según el prefijo de la clave, y cada prefijo soporta un alto número de peticiones por segundo. Claves con prefijo secuencial (fechas, IDs incrementales) concentran el tráfico en pocas particiones; sembrar variedad al inicio de la clave distribuye las peticiones entre más prefijos y eleva el techo agregado. La aceleración de transferencia ataca latencia de subida a distancia, no el reparto por prefijos; los buckets no tienen un tope práctico de objetos; y la clase de almacenamiento no cambia el rendimiento de peticiones."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "media",
+      "enunciado": "Una base de datos transaccional sufre por muchas operaciones de entrada/salida pequeñas y aleatorias. El volumen actual es un gp3 con sus IOPS ya al máximo y aún se requieren IOPS más altas, sostenidas y con mayor durabilidad. ¿Qué tipo de volumen de bloque conviene?",
       "opciones": [
         "Un volumen SSD de IOPS provisionadas (io2)",
-        "Un volumen SSD de propósito general (gp3) con IOPS al máximo",
         "Un volumen de disco mecánico optimizado para throughput (st1)",
+        "Un volumen de disco mecánico frío (sc1)",
         "Almacenamiento efímero local de la instancia"
       ],
-      "correctas": [2],
-      "explicacion": "El patrón es secuencial y de alto throughput, no de muchas operaciones aleatorias pequeñas. Un disco mecánico optimizado para throughput (st1) entrega gran MB/s secuencial a menor costo que un SSD. Provisionar IOPS (io2) o exprimir gp3 paga por algo que esta carga no necesita (IOPS), y el efímero local perdería los datos al terminar la instancia y no es el criterio de la pregunta."
+      "correctas": [0],
+      "explicacion": "El cuello de botella son IOPS (operaciones pequeñas y aleatorias), no throughput. Cuando gp3 ya no alcanza el número exigido y se piden IOPS altas, sostenidas y mayor durabilidad, io2 es el tipo indicado. Los discos mecánicos (st1, sc1) sirven para throughput secuencial o datos casi inactivos, no para operaciones aleatorias; y el efímero local pierde los datos al detener o terminar la instancia, inaceptable para una base de datos."
+    },
+    {
+      "tipo": "opcion_multiple",
+      "dificultad": "facil",
+      "enunciado": "Varias instancias Linux en distintas zonas necesitan leer y escribir simultáneamente los mismos archivos de una carpeta compartida, montándola como una unidad de red, con alta disponibilidad regional. ¿Qué modelo de almacenamiento corresponde?",
+      "opciones": [
+        "Un sistema de archivos elástico estilo red que montan muchas instancias Linux a la vez en varias zonas",
+        "Un volumen de bloque conectado y compartido entre todas las instancias",
+        "Almacenamiento de objetos accedido por API sobre HTTP",
+        "Almacenamiento efímero local en cada instancia"
+      ],
+      "correctas": [0],
+      "explicacion": "La pista clave es que varias instancias Linux deben leer y escribir los mismos archivos a la vez montando una unidad de red, con disponibilidad regional: eso es almacenamiento de archivos, resuelto por un sistema de archivos elástico estilo red multi-zona. Un volumen de bloque normalmente sirve a una sola instancia; el almacenamiento de objetos se accede por API, no se monta como sistema de archivos para escritura compartida tradicional; y el efímero local es por instancia y volátil."
     },
     {
       "tipo": "respuesta_multiple",
       "dificultad": "dificil",
-      "enunciado": "Estás diseñando el almacenamiento de varias cargas. Selecciona las afirmaciones CORRECTAS sobre qué servicio o tipo elegir según el patrón de acceso. (Elige las que apliquen.)",
+      "enunciado": "Tu equipo evalúa decisiones sobre clases de objetos y volúmenes de bloque. Selecciona TODAS las afirmaciones CORRECTAS según los criterios y errores comunes del examen. (Elige las que apliquen.)",
       "opciones": [
-        "Para que muchas instancias Linux lean y escriban los mismos archivos de forma simultánea en varias zonas, un sistema de archivos elástico estilo red es lo apropiado",
-        "Para aplicaciones Windows que requieren un recurso compartido por protocolo SMB integrado con el directorio corporativo, conviene la variante de sistema de archivos gestionado para Windows",
-        "Para una carga de cómputo de alto rendimiento que necesita cientos de GB/s de throughput contra un repositorio de objetos, encaja la variante paralela tipo Lustre",
-        "Para datos que deben sobrevivir a la detención y terminación de la instancia, el almacenamiento efímero local es la opción correcta por su baja latencia",
-        "Con gp3 puedes aumentar IOPS y throughput sin necesidad de agrandar el tamaño del volumen"
+        "Poner objetos pequeños o leídos con frecuencia en la clase de acceso infrecuente suele salir más caro por el cargo de recuperación y el tamaño mínimo facturable",
+        "Conviene una política de ciclo de vida que aborte las cargas multiparte incompletas, porque las partes huérfanas siguen ocupando espacio y costando",
+        "La durabilidad de un volumen de bloque ante el fallo de una instancia se logra con snapshots incrementales, no replicando el volumen entre zonas",
+        "La clase de objetos de una sola zona es la elección correcta para datos que no se pueden regenerar, gracias a su menor costo",
+        "Un volumen de bloque rápido siempre entrega su máximo de IOPS sin importar el tipo de instancia a la que esté conectado"
       ],
-      "correctas": [0, 1, 2, 4],
-      "explicacion": "El sistema de archivos elástico resuelve compartición concurrente entre instancias Linux multi-zona; la variante para Windows cubre SMB y directorio corporativo; la variante paralela tipo Lustre apunta a HPC con throughput extremo contra objetos; y gp3 desacopla rendimiento del tamaño, dejando ajustar IOPS y throughput por separado. La afirmación del efímero local es falsa: ese almacenamiento es volátil y pierde los datos al detener o terminar la instancia, por lo que nunca debe usarse para datos que deban persistir."
+      "correctas": [0, 1, 2],
+      "explicacion": "Acceso infrecuente penaliza objetos pequeños o leídos seguido por el cargo de recuperación y el tamaño mínimo facturable; abortar cargas multiparte incompletas con ciclo de vida evita pagar por partes huérfanas; y la durabilidad de un volumen de bloque se obtiene con snapshots incrementales, ya que vive en una sola zona. Son falsas: la clase de una sola zona no debe usarse para datos irrecuperables (si esa zona falla, se pierden), y el tope real de IOPS también depende del tipo de instancia y su ancho de banda hacia el almacenamiento, así que un volumen rápido en una instancia pequeña no entrega su máximo."
+    },
+    {
+      "tipo": "respuesta_multiple",
+      "dificultad": "media",
+      "enunciado": "Estás eligiendo entre los sistemas de archivos gestionados y el almacenamiento efímero local según el patrón de acceso. Selecciona las afirmaciones CORRECTAS. (Elige las que apliquen.)",
+      "opciones": [
+        "Para aplicaciones Windows que exigen un recurso compartido por protocolo SMB integrado con el directorio corporativo, corresponde la variante de sistema de archivos gestionado para Windows",
+        "Para cómputo de alto rendimiento que necesita throughput extremo contra un repositorio de objetos, encaja la variante paralela tipo Lustre",
+        "El almacenamiento efímero local ofrece la latencia más baja y es ideal para cachés y scratch recreables que premian la velocidad",
+        "El sistema de archivos elástico estilo red es la opción correcta para recursos compartidos de aplicaciones Windows mediante SMB",
+        "El almacenamiento efímero local es adecuado para datos que deben sobrevivir a la terminación de la instancia por su alta durabilidad"
+      ],
+      "correctas": [0, 1, 2],
+      "explicacion": "La variante para Windows cubre SMB e integración con el directorio corporativo; la variante paralela tipo Lustre apunta a HPC con throughput extremo contra un repositorio de objetos; y el efímero local, al estar directamente adjunto al host, da la menor latencia y sirve para cachés y scratch recreables. Son falsas: el sistema de archivos elástico estilo red no sirve para Windows ni para el protocolo de compartición de Windows, y el efímero local es volátil (pierde los datos al detener, hibernar o terminar la instancia), por lo que nunca debe usarse para datos que deban persistir."
     }
   ]
 }

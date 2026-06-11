@@ -14,6 +14,13 @@ dependencies = [
     "numpy>=2.0",
     "fastapi>=0.110",
     "uvicorn[standard]>=0.27",
+    # Recomendador de certificaciones por CV (DSS): embeddings locales ONNX
+    # (fastembed, sin torch) + extracción de texto PDF/DOCX. python-multipart lo
+    # exige FastAPI para recibir archivos (multipart/form-data). Ver ADR-14.
+    "fastembed>=0.3",
+    "pypdf>=4.0",
+    "python-docx>=1.1",
+    "python-multipart>=0.0.9",
 ]
 
 [project.optional-dependencies]

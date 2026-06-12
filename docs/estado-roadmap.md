@@ -174,7 +174,14 @@ trabajo continuo. Próximos pasos posibles (a decidir con el responsable):
   el contenido de las certs nuevas (hoy `aws-saa` es la única profunda), además de
   pesos de simulacro y corte de aprobación por cert.
 - **Pulido de UI/UX.** Refinamiento visual y de interacción sobre el MVP.
-- **Fase 6 — Móvil.** Aplicación Flutter consumiendo las mismas APIs.
+- **Fase 6 — Móvil (en curso).** App **Flutter** en `mobile/` consumiendo las mismas
+  APIs Go `/v1` (sin BFF móvil). **Incrementos 1 y 2 hechos**: fundación (config, dio,
+  modelos, auth OIDC+PKCE por HTTP, Riverpod + go_router) + **paridad de módulos**:
+  Estudiar (ruta + lector + quiz), Catálogo+inscripción, Panel, **Exámenes** (simulacro +
+  historial + repaso), **Entrevistas** (problemas + editor + juez, y Q&A), **Progreso**
+  (readiness + acierto por tema) y **Mi camino** (recomendador por CV pegado). Sin deps
+  nativas nuevas; corre en Android (emulador) y Windows. `analyze`/`test`/`build` verdes.
+  Falta: **pulido visual**, login Cognito nativo, push, **iOS** y release a tiendas.
 - **Fase 7 — Endurecimiento, pentesting y producción.** Revisión de seguridad,
   afinado de la infraestructura y **despliegue en AWS** (hoy diferido por costo).
 
@@ -185,8 +192,8 @@ trabajo continuo. Próximos pasos posibles (a decidir con el responsable):
   activarse; el procedimiento está en [`infra/README.md`](../infra/README.md).
 - **CI:** el pipeline está escrito; el despliegue automático se activa cuando
   exista la cuenta de AWS y el repositorio remoto.
-- **Capas `judge/`, `data/` y `mobile/`:** marcadores de carpeta; se materializan
-  en sus fases correspondientes.
+- **`mobile/`:** ya iniciada (Fase 6, incremento 1 — núcleo de estudio en Flutter);
+  el resto de la paridad y el release a tiendas son incrementos siguientes.
 - **Contenido y marcas:** se opta por el camino seguro (contenido original o con
   licencia abierta; sin logos oficiales, identidad propia). Los avisos legales a
   publicar antes de lanzar (disclaimer de marcas, política de contenido,

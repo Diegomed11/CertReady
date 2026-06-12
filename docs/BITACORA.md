@@ -1177,3 +1177,101 @@ todas con `tiene_contenido=true`.
 las certs no-SAA usa muestreo **uniforme** (los pesos por dominio son los de SAA) y
 el corte de aprobación (72%) es global; el catálogo (web) pide los temas de cada
 cert al render (~50 llamadas), aceptable por ahora.
+
+---
+
+## 2026-06-11 · Fase 6 (Móvil Flutter) — Incremento 1: fundación + núcleo de estudio
+
+**Contexto:** arranca la Fase 6. ADR-02 elige **Flutter**; la app es **solo cliente**
+de las mismas APIs Go `/v1` (sin BFF móvil). Alcance acordado del incremento 1: el
+**núcleo de estudio** (Login → Catálogo → Panel → Estudiar: ruta + lector + quiz +
+inscribirse). Preview en **Chrome/Windows**; emulador Android después.
+
+**Toolchain (setup):** `flutter doctor` con Android ✓. El asistente de Android Studio
+y `sdkmanager` fallaban por bloqueo de red de `java.exe` (IO exception / "semáforo");
+se resolvió **descargando el SDK con curl** pieza por pieza (command-line tools,
+platform-tools, **android-36**, build-tools 36.1.0) y escribiendo las licencias
+aceptadas a mano. Flutter SDK 3.44.1 / Dart 3.12.1. Windows requiere **Modo de
+desarrollador** (symlinks de plugins).
+
+**Hecho (`mobile/`):**
+- Proyecto Flutter (Material 3, identidad de marca azul→morado, **sin logos**;
+  monograma por proveedor; disclaimer de marcas). Reglas en `.claude/rules/flutter.md`.
+- **Core** (`lib/core/`): `config.dart` (base URLs por `--dart-define`, defaults dev =
+  `localhost:<puerto>`), `api/client.dart` (dio + interceptor Bearer + refresh en 401 +
+  `ApiError`), `api/models.dart` (DTOs espejo de `web/lib/api/types.ts`),
+  `api/services.dart` (endpoints `/v1` del núcleo, espejo de `services.ts`).
+- **Auth OIDC + PKCE** (`core/auth/`): como `flutter_appauth` no soporta web/Windows y
+  el mock **auto-aprueba**, se implementó el flujo **Auth Code + PKCE por HTTP**
+  (`oidc.dart`): discovery → `/authorize` sin seguir redirección (lee el `code` del 302)
+  → `/token`. Tokens en `flutter_secure_storage` (`token_store.dart`); `AuthController`
+  (Riverpod) con refresh. **`client_id = certready-web`** (igual que la web): el mock
+  emite `aud = client_id` y los servicios validan `aud = certready-web`, así que con
+  otro valor el token daría 401. (El login nativo con navegador para Cognito real queda
+  para el incremento de release.) Helper `tool/adb-reverse.ps1` para el emulador.
+- **Estado/navegación**: `flutter_riverpod` + `go_router` con guard de auth (splash →
+  login/panel). Shell con navegación inferior (Inicio, Catálogo).
+- **Pantallas**: Login; Catálogo (agrupado por proveedor, filtro por nivel) + Detalle
+  (inscribir/cancelar + Estudiar); Panel (saludo + inscripciones con avance); Estudiar
+  (ruta tipo Duolingo con temas bloqueado/disponible/completado), Lector de hojas
+  (markdown paginado) y Quiz por tema (responder → `submit` → `completeQuiz`, desbloquea
+  el siguiente). Clave visible = **slug**.
+
+**Decisiones:** sin BFF móvil (ADR-02); deps mínimas (`go_router`, `dio`,
+`flutter_riverpod`, `flutter_secure_storage`, `crypto`, `flutter_markdown`); PKCE por
+HTTP en dev para que corra en web/Windows/Android sin navegador; el cliente API no
+depende del `AuthController` (evita ciclo) — el refresh va del refresh-token guardado.
+
+**Verificación:** `flutter analyze` **sin issues**; `flutter test` **4/4** (parseo de
+DTOs); `flutter build web` **OK**. El smoke en vivo contra el stack (login PKCE →
+catálogo → /me, y el flujo de estudio) queda al levantar `dev-up`.
+
+**Siguiente:** correr en Chrome/Windows contra el stack; luego incrementos de paridad
+(exámenes, entrevistas, progreso/analítica, recomendador) y el emulador Android.
+
+**Pendiente / diferido:** login nativo con navegador para Cognito (release); iOS no se
+compila/firma aquí (requiere Mac); emulador Android (imagen ~1 GB) cuando se quiera ver
+en Android; racha/meta semanal del panel (opcional).
+
+---
+
+## 2026-06-12 · Fase 6 (Móvil) — Incremento 2: paridad de módulos
+
+**Contexto:** con el núcleo de estudio ya corriendo en Android (login → catálogo →
+estudiar → quiz, incluido el fix de cleartext HTTP y el de layout del botón), el
+responsable eligió **amplitud** (regla "pulir al último"). Este incremento agrega los
+módulos que faltaban para **paridad con la web**, reusando el patrón ya establecido y
+**sin deps nativas nuevas**.
+
+**Setup Android (camino):** el emulador y la app ya funcionan. El bloqueo de red de
+`sdkmanager`/Android Studio resultó ser **TunnelBear (VPN WireGuard "polar") + el proxy
+automático (WPAD) de Windows**; al apagarlos, las descargas de Android Studio funcionan.
+La imagen **API 35 (Pixel 9)** arranca confiable (la 37 se colgaba).
+
+**Hecho (`mobile/`):**
+- **Core**: DTOs nuevos en `core/api/models.dart` (SesionExamen, Problema/CasoProblema,
+  PreguntaQA, ResultadoJuez/ResultadoCaso/RespuestaCorrida, Readiness/CeldaDominio/
+  SiguienteAccion, Analitica/TemaAcierto/PuntoTendencia, Recomendaciones/PerfilCV/Camino/
+  PasoCamino). Métodos en `core/api/services.dart` (listMyExams, createSimulacro,
+  getExamResultado, listProblems/getProblem, listQA/getQA, submitJudge[30s], getReadiness/
+  getAnalytics[degradan a null], getRecommendations[multipart `.txt`]). Helper `jwtSubject`
+  (decodifica el `sub` del JWT para el DSS, que es auth-less).
+- **Navegación**: `AppShell` a **5 pestañas** (Inicio, Catálogo, Exámenes, Entrevistas,
+  Progreso); detalles/runners/editor como rutas **full-screen** sobre el shell; **Mi
+  camino** desde el panel.
+- **Pantallas**: Exámenes (elegir cert → simulacro + historial + repaso), Entrevistas
+  (problemas con **editor monoespaciado** + juez, y Q&A con respuesta modelo), Progreso
+  (dashboard: estudio + readiness + acierto por tema con barras propias; degrada si el DSS
+  no responde), Recomendador (**pegar CV** → perfil + recomendaciones con enlace a Estudiar).
+
+**Decisiones:** **cero plugins nativos nuevos** → recomendador con **texto pegado** (no
+`file_picker`), editor **monoespaciado** (no paquete de editor), gráficas con **barras
+propias** (no `fl_chart`). Así el build de Windows sigue sin Developer Mode y Android igual.
+El juez necesita Docker en el host; sin él, el envío muestra error claro.
+
+**Verificación:** `flutter analyze` **sin issues**, `flutter test` **7/7** (DTOs nuevos),
+`flutter build web` **OK**. Recorrido en vivo en Android queda para cuando el responsable
+levante el stack (`dev-up` + `adb-reverse`).
+
+**Pendiente / diferido (pulido y release):** pulido visual (la UI es funcional, "ligera"),
+login Cognito nativo, iOS, push, release a tiendas; resaltado de sintaxis en el editor.

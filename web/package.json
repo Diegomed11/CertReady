@@ -15,6 +15,7 @@
     "check": "npm run typecheck && npm run lint && npm run format:check && npm run test"
   },
   "dependencies": {
+    "@paper-design/shaders-react": "^0.0.76",
     "@tailwindcss/typography": "^0.5.19",
     "iron-session": "^8.0.4",
     "next": "^15.1.6",

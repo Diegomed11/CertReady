@@ -47,11 +47,11 @@ ADR-07 (Lambda en costo cero) y ADR-08 (Neon) en el documento de arquitectura.
 | Servicios backend | Go | Único lenguaje de servicios. Binarios estáticos, arranque rápido. |
 | Librería compartida | Go (`libs/platform`) | Logging, middleware HTTP, sondas de salud, pool de Postgres, validación OIDC, runner de migraciones. |
 | Web | Next.js 15 + TypeScript | Patrón BFF: el navegador solo habla con la web; esta proxea a los servicios. |
-| Móvil | Flutter (Dart) | Cliente iOS/Android (fase posterior). |
-| Capa de datos | Python (FastAPI + jobs) | ETL, OLAP y DSS (fases posteriores). Único lugar donde se usa Python. |
+| Móvil | Flutter (Dart) | Cliente Android/iOS. Fase 6 en curso (incrementos 1–2 hechos; iOS pendiente). |
+| Capa de datos | Python (FastAPI + jobs) | ETL, OLAP y DSS (Fases 4–5, backend completo). Único lugar donde se usa Python. |
 | Transaccional | PostgreSQL | Integridad relacional. Local/Neon en dev; RDS objetivo en producción. |
-| Contenido y preguntas | MongoDB | Esquemas heterogéneos (fase posterior). |
-| OLAP | ClickHouse + Cube | Modelo dimensional expuesto como API (fase posterior). |
+| Contenido y preguntas | MongoDB | Esquemas heterogéneos. En uso por `content`, `exams`, `problems` y `judge`. |
+| OLAP | ClickHouse + Cube | Modelo dimensional expuesto como API (Fase 4, backend completo). |
 | Identidad | Amazon Cognito | OAuth2/OIDC. En desarrollo se usa un emisor OIDC local. |
 | Infraestructura | Terraform | IaC para AWS (Lambda, Cognito y la ruta Fargate parqueada). |
 | CI | GitHub Actions | Lint, pruebas y empaquetado por servicio. |
@@ -160,11 +160,26 @@ El proyecto se construye por fases, cada una con un criterio de salida (DoD).
 
 - **Fase 0 (Fundaciones):** completada. Estructura del repositorio, primer
   servicio Go, esqueleto de CI e infraestructura validada.
-- **Fase 1 (Identidad y catálogo):** backend completo (servicios `catalog`,
-  `users` y `enrollments`, validación OIDC y módulo Cognito). La web está en
-  curso (la fundación del BFF está lista; faltan las vistas).
-- **Fases 2-7:** planeadas (contenido y exámenes, juez de código, capa
-  analítica, DSS, móvil, endurecimiento y producción).
+- **Fase 1 (Identidad y catálogo):** completada (backend + web): servicios
+  `catalog`, `users` y `enrollments`, validación OIDC, módulo Cognito, y vistas
+  web (login, catálogo con inscripción, panel del estudiante).
+- **Fase 2 (Contenido y exámenes):** completada. Servicios `content` y `exams`;
+  ruta de estudio, simulacro con formato real y repaso en la web.
+- **Fase 3 (Entrevistas y juez de código):** completada. Servicios `problems` y
+  `judge` (sandbox Docker endurecido); editor de código y banco de Q&A en la web.
+- **Fase 4 (Analítica / OLAP):** backend completo. ETL Python → ClickHouse y
+  capa semántica Cube.
+- **Fase 5 (DSS / readiness):** backend completo. Estimación de preparación con
+  IRT Rasch y recomendador de CV (embeddings), expuestos en la web.
+- **Fase 6 (Móvil — Flutter):** en curso. Incrementos 1 y 2 hechos (paridad con
+  la web: estudiar, catálogo, exámenes, entrevistas, progreso y recomendador).
+  Pendiente: pulido visual, login Cognito nativo, push, iOS y release a tiendas.
+- **Fase 7 (Endurecimiento y producción):** planeada (revisión de seguridad,
+  afinado de infraestructura y despliegue en AWS, hoy diferido por costo).
+
+> El **MVP web** está completo y sólido; el backend de las Fases 1–5 está
+> verificado en local. El despliegue en AWS está escrito en Terraform pero
+> pospuesto a propósito (operar a costo cero). El pulido fino de UI es continuo.
 
 El detalle de lo hecho y lo pendiente está en
 [`docs/estado-roadmap.md`](docs/estado-roadmap.md), y la bitácora cronológica de

@@ -40,7 +40,7 @@ export function Landing({
       const t2 = document.getElementById('gooey2')
       if (!t1 || !t2) return
       if (reduce) {
-        t1.textContent = texts[0]
+        t1.textContent = texts[0] ?? ''
         t1.style.opacity = '100%'
         return
       }
@@ -51,8 +51,8 @@ export function Landing({
       let morph = 0
       let cooldown = cooldownTime
       let raf = 0
-      t1.textContent = texts[textIndex % texts.length]
-      t2.textContent = texts[(textIndex + 1) % texts.length]
+      t1.textContent = texts[textIndex % texts.length] ?? ''
+      t2.textContent = texts[(textIndex + 1) % texts.length] ?? ''
       const setMorph = (fraction: number) => {
         t2.style.filter = 'blur(' + Math.min(8 / fraction - 8, 100) + 'px)'
         t2.style.opacity = Math.pow(fraction, 0.4) * 100 + '%'
@@ -87,8 +87,8 @@ export function Landing({
         if (cooldown <= 0) {
           if (shouldIncrement) {
             textIndex = (textIndex + 1) % texts.length
-            t1.textContent = texts[textIndex % texts.length]
-            t2.textContent = texts[(textIndex + 1) % texts.length]
+            t1.textContent = texts[textIndex % texts.length] ?? ''
+            t2.textContent = texts[(textIndex + 1) % texts.length] ?? ''
           }
           doMorph()
         } else {
@@ -157,10 +157,10 @@ export function Landing({
           const w = document.createElement('span')
           w.style.display = 'inline-block'
           w.style.whiteSpace = 'nowrap'
-          for (let i = 0; i < word.length; i++) {
+          for (const chr of word) {
             const s = document.createElement('span')
             s.className = 'ch'
-            s.textContent = word[i]
+            s.textContent = chr
             s.style.display = 'inline-block'
             s.style.willChange = 'transform,opacity'
             const hue = 228 + (gi / Math.max(1, totalChars)) * 72
@@ -185,12 +185,12 @@ export function Landing({
           const rect = grp.el.getBoundingClientRect()
           const prog = Math.min(1, Math.max(0, (vh * 0.86 - rect.top) / (vh * 0.42)))
           const c = reduce ? 0 : 1 - prog
-          for (let i = 0; i < grp.chs.length; i++) {
+          grp.chs.forEach((ch, i) => {
             const dist = i - grp.center
-            grp.chs[i].style.transform =
+            ch.style.transform =
               'translateX(' + dist * 26 * c + 'px) rotateX(' + dist * 16 * c + 'deg)'
-            grp.chs[i].style.opacity = (1 - 0.6 * c).toFixed(3)
-          }
+            ch.style.opacity = (1 - 0.6 * c).toFixed(3)
+          })
         }
       }
       window.addEventListener('scroll', update, { passive: true })
@@ -214,9 +214,9 @@ export function Landing({
       }
       const RAND = '_!X$0-+*#'
       const rnd = (prev?: string) => {
-        let c
+        let c = ''
         do {
-          c = RAND[Math.floor(Math.random() * RAND.length)]
+          c = RAND[Math.floor(Math.random() * RAND.length)] ?? '#'
         } while (c === prev)
         return c
       }
@@ -241,7 +241,8 @@ export function Landing({
             }
           } else {
             const revealed = Math.floor(step / 2)
-            for (i = 0; i < revealed && i < text.length; i++) chars.push(text[i])
+            for (i = 0; i < revealed && i < text.length; i++)
+              chars.push(text[i] ?? '')
             if (revealed < text.length) chars.push(step % 2 === 0 ? '_' : rnd())
             for (i = chars.length; i < text.length; i++) chars.push(rnd())
             el.textContent = chars.join('')

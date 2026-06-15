@@ -1,29 +1,31 @@
 // Command oidc-mock es un emisor OIDC mínimo para desarrollo local de CertReady.
 //
-// Sirve un proveedor OIDC con discovery, JWKS, authorize (auto-aprueba) y token
-// (Authorization Code + PKCE), firmando JWT con una clave RSA generada al
-// arranque. No es código de producción: en producción se usa Amazon Cognito
-// (ADR-06). El validador del backend (libs/platform/auth) es el mismo en ambos
-// casos — solo cambia la fuente del JWKS.
+// Sirve un proveedor OIDC con discovery, JWKS, authorize (auto-aprueba), token
+// (Authorization Code + PKCE) y, para el flujo NATIVO de la app, endpoints de
+// registro/login con contraseña (bcrypt) sobre un store en Postgres. Firma JWT
+// con una clave RSA generada al arranque. No es código de producción: en
+// producción se usa Amazon Cognito (ADR-06). El validador del backend
+// (libs/platform/auth) es el mismo en ambos casos — solo cambia el JWKS.
 //
 // Uso:
 //
 //	go run ./tools/oidc-mock                       # :9099, sub "dev-user"
 //	OIDC_MOCK_ADDR=:9100 go run ./tools/oidc-mock  # otro puerto
 //
-// Parámetros del /authorize (todos opcionales):
+// Variables de entorno:
 //
-//	email      identifica al "usuario" simulado (default OIDC_MOCK_DEFAULT_EMAIL)
-//	name       nombre legible (claim `name`)
-//	groups     CSV de grupos → claim `cognito:groups` (p. ej. "admin,estudiante")
-//	sub        sub explícito (UUID); si falta, se deriva del email
+//	OIDC_MOCK_ADDR            dirección de escucha (default :9099)
+//	OIDC_MOCK_DEFAULT_EMAIL   email del usuario simulado de /authorize (default dev@local)
+//	OIDC_MOCK_DB_DSN          DSN de Postgres para el store de credenciales (register/login)
+//	OIDC_MOCK_ADMIN_EMAILS    CSV de emails que reciben el grupo "admin"
+//	OIDC_MOCK_DEFAULT_CLIENT  client_id (aud) por defecto (default certready-web)
 //
-// El sub se DERIVA determinísticamente del email (UUIDv5-like) para que un mismo
-// email produzca siempre el mismo sub entre logins (no rompe los upserts JIT del
-// servicio users).
+// El sub se DERIVA determinísticamente del email para que un mismo email
+// produzca siempre el mismo sub (no rompe los upserts JIT del servicio users).
 package main
 
 import (
+	"context"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha1"
@@ -37,19 +39,26 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"golang.org/x/crypto/bcrypt"
 )
 
 const (
-	defaultAddr  = ":9099"
-	defaultEmail = "dev@local"
-	tokenTTL     = time.Hour
-	codeTTL      = 5 * time.Minute
+	defaultAddr   = ":9099"
+	defaultEmail  = "dev@local"
+	defaultClient = "certready-web"
+	tokenTTL      = time.Hour
+	codeTTL       = 5 * time.Minute
+	minPassword   = 8
 )
+
+var emailRe = regexp.MustCompile(`^[^@\s]+@[^@\s]+\.[^@\s]+$`)
 
 // pendingCode es un "authorization code" pendiente de canjear: guarda los datos
 // del usuario y el challenge PKCE asociado, con vencimiento.
@@ -66,12 +75,15 @@ type pendingCode struct {
 
 // server agrupa el estado mutable y la clave de firma.
 type server struct {
-	mu       sync.Mutex
-	issuer   string
-	priv     *rsa.PrivateKey
-	kid      string
-	codes    map[string]pendingCode
-	defEmail string
+	mu          sync.Mutex
+	issuer      string
+	priv        *rsa.PrivateKey
+	kid         string
+	codes       map[string]pendingCode
+	defEmail    string
+	defClient   string
+	db          *pgxpool.Pool // store de credenciales (nil si no hay DSN)
+	adminEmails map[string]bool
 }
 
 func main() {
@@ -83,16 +95,33 @@ func main() {
 		log.Fatalf("generar clave RSA: %v", err)
 	}
 
-	// Issuer = scheme + host visto desde fuera. En dev local: http://localhost:<port>.
 	port := strings.TrimPrefix(addr, ":")
 	issuer := "http://localhost:" + port
 
 	s := &server{
-		issuer:   issuer,
-		priv:     priv,
-		kid:      thumbprint(&priv.PublicKey),
-		codes:    map[string]pendingCode{},
-		defEmail: defEmail,
+		issuer:      issuer,
+		priv:        priv,
+		kid:         thumbprint(&priv.PublicKey),
+		codes:       map[string]pendingCode{},
+		defEmail:    defEmail,
+		defClient:   getenv("OIDC_MOCK_DEFAULT_CLIENT", defaultClient),
+		adminEmails: parseAdminEmails(os.Getenv("OIDC_MOCK_ADMIN_EMAILS")),
+	}
+
+	// Store de credenciales (opcional): si hay DSN, registro/login funcionan.
+	if dsn := os.Getenv("OIDC_MOCK_DB_DSN"); dsn != "" {
+		pool, err := pgxpool.New(context.Background(), dsn)
+		if err != nil {
+			log.Fatalf("conectar a Postgres: %v", err)
+		}
+		if err := initSchema(pool); err != nil {
+			log.Fatalf("crear tabla idp_users: %v", err)
+		}
+		s.db = pool
+		defer pool.Close()
+		log.Printf("oidc-mock: store de credenciales activo (registro/login)")
+	} else {
+		log.Printf("oidc-mock: sin OIDC_MOCK_DB_DSN → registro/login deshabilitados")
 	}
 
 	mux := http.NewServeMux()
@@ -101,6 +130,8 @@ func main() {
 	mux.HandleFunc("GET /authorize", s.authorize)
 	mux.HandleFunc("POST /token", s.token)
 	mux.HandleFunc("GET /userinfo", s.userinfo)
+	mux.HandleFunc("POST /register", s.register)
+	mux.HandleFunc("POST /login", s.login)
 	mux.HandleFunc("GET /healthz", func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte("ok"))
 	})
@@ -109,6 +140,18 @@ func main() {
 	if err := http.ListenAndServe(addr, mux); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func initSchema(pool *pgxpool.Pool) error {
+	_, err := pool.Exec(context.Background(), `
+		CREATE TABLE IF NOT EXISTS idp_users (
+			sub           text PRIMARY KEY,
+			email         text UNIQUE NOT NULL,
+			password_hash text NOT NULL,
+			name          text NOT NULL DEFAULT '',
+			created_at    timestamptz NOT NULL DEFAULT now()
+		)`)
+	return err
 }
 
 // discovery sirve /.well-known/openid-configuration con el conjunto mínimo de
@@ -147,8 +190,8 @@ func (s *server) jwks(w http.ResponseWriter, _ *http.Request) {
 }
 
 // authorize emite un code y redirige al callback. No pide credenciales: lee la
-// identidad simulada de los query params (o de los defaults) para que el
-// desarrollador pueda "iniciar sesión" como cualquier usuario en cualquier rol.
+// identidad simulada de los query params (o de los defaults). Se mantiene para
+// compatibilidad con el flujo Authorization Code + PKCE.
 func (s *server) authorize(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query()
 	redirectURI := q.Get("redirect_uri")
@@ -161,7 +204,7 @@ func (s *server) authorize(w http.ResponseWriter, r *http.Request) {
 	email := first(q.Get("email"), s.defEmail)
 	name := first(q.Get("name"), "Dev User")
 	subject := first(q.Get("sub"), subFromEmail(email))
-	var groups []string
+	groups := s.groupsFor(email)
 	if g := q.Get("groups"); g != "" {
 		groups = splitCSV(g)
 	}
@@ -202,7 +245,116 @@ func (s *server) authorize(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, u.String(), http.StatusFound)
 }
 
-// token canjea un code por un id_token (y un access_token equivalente, simplificación).
+// register crea un usuario (email + contraseña con bcrypt) y devuelve tokens.
+// Flujo nativo de la app (first-party). En producción equivale al SignUp de Cognito.
+func (s *server) register(w http.ResponseWriter, r *http.Request) {
+	if s.db == nil {
+		writeErr(w, http.StatusServiceUnavailable, "store de credenciales no disponible")
+		return
+	}
+	var body struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+		Name     string `json:"name"`
+		ClientID string `json:"client_id"`
+	}
+	if !readJSON(w, r, &body) {
+		return
+	}
+	email := strings.ToLower(strings.TrimSpace(body.Email))
+	if !emailRe.MatchString(email) {
+		writeErr(w, http.StatusBadRequest, "email inválido")
+		return
+	}
+	if len(body.Password) < minPassword {
+		writeErr(w, http.StatusBadRequest,
+			fmt.Sprintf("la contraseña debe tener al menos %d caracteres", minPassword))
+		return
+	}
+	hash, err := bcrypt.GenerateFromPassword([]byte(body.Password), bcrypt.DefaultCost)
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, "no se pudo procesar la contraseña")
+		return
+	}
+	sub := subFromEmail(email)
+	name := strings.TrimSpace(body.Name)
+
+	tag, err := s.db.Exec(context.Background(),
+		`INSERT INTO idp_users (sub, email, password_hash, name) VALUES ($1,$2,$3,$4)
+		 ON CONFLICT (email) DO NOTHING`,
+		sub, email, string(hash), name)
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, "no se pudo registrar")
+		return
+	}
+	if tag.RowsAffected() == 0 {
+		writeErr(w, http.StatusConflict, "ese email ya está registrado")
+		return
+	}
+
+	s.issueTokens(w, pendingCode{
+		subject: sub,
+		email:   email,
+		name:    name,
+		groups:  s.groupsFor(email),
+	}, first(body.ClientID, s.defClient))
+}
+
+// login verifica email + contraseña y devuelve tokens. Errores genéricos para no
+// filtrar si el email existe.
+func (s *server) login(w http.ResponseWriter, r *http.Request) {
+	if s.db == nil {
+		writeErr(w, http.StatusServiceUnavailable, "store de credenciales no disponible")
+		return
+	}
+	var body struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+		ClientID string `json:"client_id"`
+	}
+	if !readJSON(w, r, &body) {
+		return
+	}
+	email := strings.ToLower(strings.TrimSpace(body.Email))
+
+	var sub, hash, name string
+	err := s.db.QueryRow(context.Background(),
+		`SELECT sub, password_hash, name FROM idp_users WHERE email = $1`, email).
+		Scan(&sub, &hash, &name)
+	if err != nil {
+		writeErr(w, http.StatusUnauthorized, "email o contraseña incorrectos")
+		return
+	}
+	if bcrypt.CompareHashAndPassword([]byte(hash), []byte(body.Password)) != nil {
+		writeErr(w, http.StatusUnauthorized, "email o contraseña incorrectos")
+		return
+	}
+
+	s.issueTokens(w, pendingCode{
+		subject: sub,
+		email:   email,
+		name:    name,
+		groups:  s.groupsFor(email),
+	}, first(body.ClientID, s.defClient))
+}
+
+// issueTokens firma y devuelve access/id/refresh con el shape OIDC habitual.
+func (s *server) issueTokens(w http.ResponseWriter, pc pendingCode, clientID string) {
+	idToken, err := s.firmar(pc, clientID)
+	if err != nil {
+		writeErr(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]any{
+		"access_token":  idToken,
+		"id_token":      idToken,
+		"refresh_token": "rt:" + pc.subject,
+		"token_type":    "Bearer",
+		"expires_in":    int(tokenTTL.Seconds()),
+	})
+}
+
+// token canjea un code por un id_token (y un access_token equivalente).
 // Verifica PKCE si el authorize registró un challenge.
 func (s *server) token(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
@@ -252,25 +404,34 @@ func (s *server) tokenAuthCode(w http.ResponseWriter, r *http.Request) {
 	writeJSON(w, http.StatusOK, map[string]any{
 		"access_token":  idToken,
 		"id_token":      idToken,
-		"refresh_token": "rt:" + pc.subject, // refresh determinístico simplificado
+		"refresh_token": "rt:" + pc.subject,
 		"token_type":    "Bearer",
 		"expires_in":    int(tokenTTL.Seconds()),
 	})
 }
 
 // tokenRefresh re-emite tokens a partir del subject codificado en el refresh.
-// No persiste estado: cualquier refresh con un sub válido funciona en dev.
+// Si hay store, restaura email/name/groups del usuario (para conservar el rol).
 func (s *server) tokenRefresh(w http.ResponseWriter, r *http.Request) {
 	rt := r.Form.Get("refresh_token")
 	if !strings.HasPrefix(rt, "rt:") {
 		http.Error(w, "refresh_token inválido", http.StatusBadRequest)
 		return
 	}
-	pc := pendingCode{
-		subject: strings.TrimPrefix(rt, "rt:"),
-		email:   s.defEmail,
-		name:    "Dev User",
+	sub := strings.TrimPrefix(rt, "rt:")
+	pc := pendingCode{subject: sub, email: s.defEmail, name: "Dev User"}
+
+	if s.db != nil {
+		var email, name string
+		if err := s.db.QueryRow(context.Background(),
+			`SELECT email, name FROM idp_users WHERE sub = $1`, sub).
+			Scan(&email, &name); err == nil {
+			pc.email = email
+			pc.name = name
+			pc.groups = s.groupsFor(email)
+		}
 	}
+
 	clientID := r.Form.Get("client_id")
 	idToken, err := s.firmar(pc, clientID)
 	if err != nil {
@@ -285,8 +446,7 @@ func (s *server) tokenRefresh(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// userinfo devuelve los claims básicos del bearer. Útil si el cliente OIDC
-// prefiere consultarlo en vez de leer el id_token.
+// userinfo devuelve los claims básicos del bearer.
 func (s *server) userinfo(w http.ResponseWriter, r *http.Request) {
 	raw := strings.TrimPrefix(r.Header.Get("Authorization"), "Bearer ")
 	if raw == "" {
@@ -330,6 +490,15 @@ func (s *server) firmar(pc pendingCode, clientID string) (string, error) {
 	return t.SignedString(s.priv)
 }
 
+// groupsFor asigna grupos según el email: siempre "estudiante"; "admin" si está
+// en la lista configurada (OIDC_MOCK_ADMIN_EMAILS).
+func (s *server) groupsFor(email string) []string {
+	if s.adminEmails[strings.ToLower(strings.TrimSpace(email))] {
+		return []string{"admin", "estudiante"}
+	}
+	return []string{"estudiante"}
+}
+
 // --- helpers ---------------------------------------------------------------
 
 func pkceOK(method, challenge, verifier string) bool {
@@ -344,10 +513,9 @@ func pkceOK(method, challenge, verifier string) bool {
 	}
 }
 
-// subFromEmail deriva un UUID-like determinístico (12345678-1234-1234-1234-123456789012)
-// del SHA-1 del email. No es un UUIDv5 oficial, pero es estable y suficiente para dev.
+// subFromEmail deriva un UUID-like determinístico del SHA-1 del email.
 func subFromEmail(email string) string {
-	sum := sha1.Sum([]byte(email))
+	sum := sha1.Sum([]byte(strings.ToLower(strings.TrimSpace(email))))
 	h := hex.EncodeToString(sum[:])
 	return fmt.Sprintf("%s-%s-%s-%s-%s", h[0:8], h[8:12], h[12:16], h[16:20], h[20:32])
 }
@@ -356,6 +524,26 @@ func subFromEmail(email string) string {
 func thumbprint(pub *rsa.PublicKey) string {
 	sum := sha256.Sum256(pub.N.Bytes())
 	return base64.RawURLEncoding.EncodeToString(sum[:8])
+}
+
+func parseAdminEmails(csv string) map[string]bool {
+	out := map[string]bool{}
+	for _, e := range splitCSV(csv) {
+		out[strings.ToLower(strings.TrimSpace(e))] = true
+	}
+	return out
+}
+
+func readJSON(w http.ResponseWriter, r *http.Request, v any) bool {
+	if err := json.NewDecoder(http.MaxBytesReader(w, r.Body, 1<<16)).Decode(v); err != nil {
+		writeErr(w, http.StatusBadRequest, "JSON inválido")
+		return false
+	}
+	return true
+}
+
+func writeErr(w http.ResponseWriter, status int, msg string) {
+	writeJSON(w, status, map[string]any{"error": msg})
 }
 
 func writeJSON(w http.ResponseWriter, status int, v any) {

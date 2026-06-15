@@ -22,12 +22,12 @@ export interface AuthedSession {
  * requireSession exige una sesión válida.
  *
  * Returns la identidad autenticada. Si no hay sesión válida, redirige a
- * `/api/auth/login` (no retorna: `redirect` lanza).
+ * `/login` (la página de inicio de sesión nativa; no retorna: `redirect` lanza).
  */
 export async function requireSession(): Promise<AuthedSession> {
   const s = await getSession()
   if (!s.subject || !s.accessToken) {
-    redirect('/api/auth/login')
+    redirect('/login')
   }
   return {
     subject: s.subject,

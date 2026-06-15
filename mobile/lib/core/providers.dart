@@ -58,14 +58,28 @@ class AuthController extends AsyncNotifier<Cuenta?> {
     }
   }
 
-  /// login runs the OIDC flow for the given identity (dev: any email auto-approves).
-  Future<void> login({String email = 'dev@local', String? name}) async {
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      final ts = await _oidc.login(email: email, name: name);
-      await _store.save(ts);
-      return ref.read(apiProvider).getMe();
-    });
+  /// login verifica email + contraseña contra el IdP y carga el perfil. Lanza en
+  /// error (la pantalla muestra el mensaje); fija la sesión solo si tiene éxito,
+  /// para no disparar el redirect global mientras se intenta.
+  Future<void> login({required String email, required String password}) async {
+    final ts = await _oidc.loginNative(email: email, password: password);
+    await _store.save(ts);
+    state = AsyncValue.data(await ref.read(apiProvider).getMe());
+  }
+
+  /// register crea la cuenta en el IdP y entra (auto-login). Lanza en error.
+  Future<void> register({
+    required String email,
+    required String password,
+    required String name,
+  }) async {
+    final ts = await _oidc.registerNative(
+      email: email,
+      password: password,
+      name: name,
+    );
+    await _store.save(ts);
+    state = AsyncValue.data(await ref.read(apiProvider).getMe());
   }
 
   Future<void> logout() async {

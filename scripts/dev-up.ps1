@@ -111,6 +111,10 @@ if (Test-Path $py) {
 
 # Variables de entorno de los servicios.
 $env:OIDC_MOCK_ADDR = ':9099'
+# Store de credenciales del emisor (registro/login nativo) en el mismo Postgres,
+# y email(s) que reciben el grupo admin.
+$env:OIDC_MOCK_DB_DSN = $dsn
+$env:OIDC_MOCK_ADMIN_EMAILS = 'admin@certready.local'
 $env:CATALOG_ADDR = ':18090'
 $env:USERS_ADDR = ':18091'; $env:USERS_OIDC_ISSUER = 'http://localhost:9099'; $env:USERS_OIDC_AUDIENCE = 'certready-web'
 $env:ENROLLMENTS_ADDR = ':18092'; $env:ENROLLMENTS_OIDC_ISSUER = 'http://localhost:9099'; $env:ENROLLMENTS_OIDC_AUDIENCE = 'certready-web'

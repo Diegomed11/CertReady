@@ -1,18 +1,16 @@
 /**
- * /api/auth/login
+ * POST /api/auth/register — registro NATIVO.
  *
- * - POST: login NATIVO. Recibe {email, password}, valida contra el IdP y sella
- *   la identidad en la sesión cifrada. El navegador solo recibe la cookie.
- * - GET: inicia el flow OIDC por redirección (compat / futuro Cognito Hosted UI).
+ * Recibe {email, password, name}, crea la cuenta en el IdP y sella la identidad
+ * en la sesión (auto-login). Devuelve JSON; el cliente redirige al panel.
  */
 import { NextResponse } from 'next/server'
 
-import { nativeLogin, AuthError } from '@/lib/auth/native'
-import { authorizationURL } from '@/lib/auth/oidc'
+import { nativeRegister, AuthError } from '@/lib/auth/native'
 import { getSession } from '@/lib/auth/session'
 
 export async function POST(req: Request) {
-  let body: { email?: unknown; password?: unknown }
+  let body: { email?: unknown; password?: unknown; name?: unknown }
   try {
     body = await req.json()
   } catch {
@@ -20,12 +18,19 @@ export async function POST(req: Request) {
   }
   const email = typeof body.email === 'string' ? body.email.trim() : ''
   const password = typeof body.password === 'string' ? body.password : ''
+  const name = typeof body.name === 'string' ? body.name.trim() : ''
   if (!email || !password) {
     return NextResponse.json({ error: 'Escribe tu email y contraseña' }, { status: 400 })
   }
+  if (password.length < 8) {
+    return NextResponse.json(
+      { error: 'La contraseña debe tener al menos 8 caracteres' },
+      { status: 400 },
+    )
+  }
 
   try {
-    const r = await nativeLogin(email, password)
+    const r = await nativeRegister(email, password, name)
     const session = await getSession()
     session.subject = r.subject
     session.email = r.email
@@ -39,15 +44,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true })
   } catch (e) {
     const status = e instanceof AuthError ? e.status : 500
-    const error = e instanceof AuthError ? e.message : 'No se pudo iniciar sesión'
+    const error = e instanceof AuthError ? e.message : 'No se pudo crear la cuenta'
     return NextResponse.json({ error }, { status })
   }
-}
-
-export async function GET() {
-  const session = await getSession()
-  const { url, state, nonce, codeVerifier } = await authorizationURL()
-  session.pkce = { state, nonce, codeVerifier }
-  await session.save()
-  return NextResponse.redirect(url.toString())
 }

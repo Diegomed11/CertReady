@@ -102,6 +102,55 @@ class OidcClient {
     });
   }
 
+  /// loginNative verifica email + contraseña contra el IdP (endpoint /login) y
+  /// devuelve el token set. Flujo first-party (en prod = API de Cognito).
+  Future<TokenSet> loginNative({
+    required String email,
+    required String password,
+  }) => _native('/login', {'email': email, 'password': password});
+
+  /// registerNative crea la cuenta en el IdP (/register) y devuelve los tokens.
+  Future<TokenSet> registerNative({
+    required String email,
+    required String password,
+    required String name,
+  }) => _native('/register', {
+    'email': email,
+    'password': password,
+    'name': name,
+  });
+
+  Future<TokenSet> _native(String path, Map<String, dynamic> body) async {
+    Response<Map<String, dynamic>> res;
+    try {
+      res = await _dio.postUri<Map<String, dynamic>>(
+        Uri.parse('${AppConfig.oidcIssuer}$path'),
+        data: {...body, 'client_id': AppConfig.oidcClientId},
+        options: Options(
+          contentType: Headers.jsonContentType,
+          responseType: ResponseType.json,
+          validateStatus: (_) => true, // leemos {error} de los 4xx nosotros
+        ),
+      );
+    } on DioException {
+      throw const OidcException(
+        'No se pudo contactar al servidor. ¿El stack local está arriba?',
+      );
+    }
+    final status = res.statusCode ?? 0;
+    final j = res.data ?? const <String, dynamic>{};
+    if (status < 200 || status >= 300) {
+      throw OidcException((j['error'] as String?) ?? 'No se pudo autenticar');
+    }
+    final expiresIn = (j['expires_in'] as num?)?.toInt() ?? 3600;
+    return TokenSet(
+      accessToken: j['access_token'] as String,
+      refreshToken: j['refresh_token'] as String?,
+      idToken: j['id_token'] as String?,
+      expiresAt: DateTime.now().add(Duration(seconds: expiresIn)),
+    );
+  }
+
   /// refresh exchanges a refresh token for a fresh token set.
   Future<TokenSet> refresh(String refreshToken) async {
     return _exchange({

@@ -5,8 +5,8 @@ import { getSession, isAuthenticated } from '@/lib/auth/session'
 export default async function HomePage() {
   const session = await getSession()
   const autenticado = isAuthenticated(session)
-  const ctaHref = autenticado ? '/panel' : '/api/auth/login'
-  const accesoHref = autenticado ? '/panel' : '/api/auth/login'
+  const ctaHref = autenticado ? '/panel' : '/registro'
+  const accesoHref = autenticado ? '/panel' : '/login'
   const accesoText = autenticado ? 'Panel' : 'Iniciar sesión'
 
   return <Landing ctaHref={ctaHref} accesoHref={accesoHref} accesoText={accesoText} />

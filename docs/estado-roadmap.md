@@ -47,6 +47,10 @@ pulido fino de UI.
 - **Autenticación:** validación de JWT/OIDC agnóstica del emisor (Cognito en
   producción, emisor local en desarrollo), con RBAC. Prevención de IDOR/BOLA y de
   manipulación de tokens cubierta por diseño y por pruebas.
+- **Login/registro nativo (local):** el emisor local hace de IdP con store en
+  Postgres (`idp_users`, bcrypt) y endpoints `POST /register` y `/login`; web y
+  móvil tienen formularios propios (no redirect). $0 local; en prod = API de
+  Cognito. Admin por grupos (`OIDC_MOCK_ADMIN_EMAILS`). Detalle en la bitácora.
 - **Infraestructura de Cognito** escrita en Terraform y validada (User Pool, App
   Client con PKCE, grupos de roles, Hosted UI). Parqueada hasta el despliegue.
 - **Web (Next.js, patrón BFF):** fundación (autenticación OIDC con PKCE, sesión

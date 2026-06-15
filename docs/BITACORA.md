@@ -1332,3 +1332,39 @@ visibles y regreso del quiz correcto). Web sin tocar (su typecheck quedó verde 
 
 **Siguiente:** (opcional) skeletons de carga, más microinteracciones; luego login Cognito
 nativo, iOS y release. Pendiente: commit del responsable.
+
+---
+
+## 2026-06-14 · Auth · Login y registro nativo (IdP local + web + móvil)
+
+**Decisión:** auth **nativo first-party** (formularios propios en web y móvil) en vez del
+redirect OIDC, por mejor UX (sobre todo en móvil, sin rebote al navegador). Todo **local
+$0**; en producción se migra a la **API de Cognito** (cambio de config). La validación de
+JWT del backend (JWKS) **no cambia**. Identidad canónica = `sub`; credenciales solo en el
+IdP; datos de app por `sub` en los servicios. Migración a Cognito: datos por dump/restore;
+contraseñas por *migrate-on-login* o arranque limpio (Cognito no importa hashes bcrypt) —
+re-vinculación por email.
+
+**Hecho:**
+- **IdP** (`tools/oidc-mock`): store `idp_users` en Postgres (se crea al arrancar),
+  contraseñas **bcrypt**, endpoints `POST /register` y `POST /login` que devuelven los
+  mismos JWT RS256; grupos por `OIDC_MOCK_ADMIN_EMAILS` (→ `cognito:groups:["admin",...]`);
+  refresh restaura email/rol desde el store. `/authorize`/`/token`/`/jwks` intactos.
+  `dev-up` pasa el DSN y `admin@certready.local` como admin.
+- **Web** (BFF): páginas `/login` y `/registro` (form propio), rutas `POST /api/auth/login`
+  y `/api/auth/register` que llaman al IdP y sellan la sesión cifrada (iron-session). Guard
+  y CTAs de la portada → `/login`/`/registro`. El GET OIDC se conserva (futuro Cognito).
+- **Móvil** (Flutter): pantallas de login y registro nativas; `OidcClient.loginNative/
+  registerNative`; `AuthController.login/register` (lanza en error, fija sesión solo en
+  éxito → sin rebote a splash); ruta `/registro` + redirect.
+
+**Seguridad (base):** bcrypt, validación (email + contraseña ≥ 8), errores genéricos, RBAC.
+Diferido a Cognito/Fase 7: MFA, verificación de email, lockout/rate-limit.
+
+**Verificación:** IdP probado con `Invoke-RestMethod` (registro/login → tokens; 401 con
+contraseña mala; usuario en `idp_users` con hash `$2a$`). Web: typecheck+lint+formato verdes;
+entra/registra OK. Móvil: `flutter analyze` limpio, `flutter test` 7/7; entra/registra OK
+(misma cuenta sirve en web y móvil).
+
+**Siguiente:** (futuro) panel de administrador (endpoints admin-only + pantalla), y luego
+Cognito real / iOS / release. Pendiente: commit del responsable.

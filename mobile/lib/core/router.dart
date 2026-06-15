@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/auth/login_screen.dart';
+import '../features/auth/register_screen.dart';
 import '../features/catalog/catalog_screen.dart';
 import '../features/catalog/cert_detail_screen.dart';
 import '../features/exams/exam_cert_screen.dart';
@@ -42,13 +43,18 @@ final routerProvider = Provider<GoRouter>((ref) {
         return loc == '/splash' ? null : '/splash';
       }
       final loggedIn = auth.value != null;
-      if (!loggedIn) return loc == '/login' ? null : '/login';
-      if (loc == '/login' || loc == '/splash') return '/panel';
+      if (!loggedIn) {
+        return (loc == '/login' || loc == '/registro') ? null : '/login';
+      }
+      if (loc == '/login' || loc == '/registro' || loc == '/splash') {
+        return '/panel';
+      }
       return null;
     },
     routes: [
       GoRoute(path: '/splash', builder: (_, _) => const _Splash()),
       GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
+      GoRoute(path: '/registro', builder: (_, _) => const RegisterScreen()),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navShell) => AppShell(navShell: navShell),
         branches: [

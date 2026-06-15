@@ -15,7 +15,7 @@ export default function AuthErrorPage() {
       <p className="text-sm text-muted">
         Hubo un problema al completar el inicio de sesión. Vuelve a intentarlo.
       </p>
-      <a href="/api/auth/login" className={buttonStyles('primary', 'md')}>
+      <a href="/login" className={buttonStyles('primary', 'md')}>
         Reintentar
       </a>
     </Container>

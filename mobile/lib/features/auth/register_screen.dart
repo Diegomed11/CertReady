@@ -5,15 +5,16 @@ import 'package:go_router/go_router.dart';
 import '../../core/providers.dart';
 import 'auth_widgets.dart';
 
-/// Login nativo: email + contraseña contra el IdP. Enlace a registro.
-class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+/// Registro nativo: nombre + email + contraseña → crea la cuenta en el IdP y entra.
+class RegisterScreen extends ConsumerStatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen> {
+class _RegisterScreenState extends ConsumerState<RegisterScreen> {
+  final _name = TextEditingController();
   final _email = TextEditingController();
   final _password = TextEditingController();
   bool _loading = false;
@@ -21,16 +22,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   void dispose() {
+    _name.dispose();
     _email.dispose();
     _password.dispose();
     super.dispose();
   }
 
-  Future<void> _entrar() async {
+  Future<void> _crear() async {
     final email = _email.text.trim();
     final pass = _password.text;
     if (email.isEmpty || pass.isEmpty) {
       setState(() => _error = 'Escribe tu email y contraseña');
+      return;
+    }
+    if (pass.length < 8) {
+      setState(() => _error = 'La contraseña debe tener al menos 8 caracteres');
       return;
     }
     setState(() {
@@ -38,8 +44,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       _error = null;
     });
     try {
-      // Éxito → el redirect del router lleva al panel (no navegamos a mano).
-      await ref.read(authProvider.notifier).login(email: email, password: pass);
+      await ref
+          .read(authProvider.notifier)
+          .register(email: email, password: pass, name: _name.text.trim());
     } catch (e) {
       if (mounted) {
         setState(() {
@@ -53,9 +60,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return AuthShell(
-      subtitle: 'Inicia sesión para continuar',
+      subtitle: 'Crea tu cuenta',
       child: Column(
         children: [
+          AuthField(
+            controller: _name,
+            label: 'Nombre',
+            icon: Icons.person_outline,
+            textInputAction: TextInputAction.next,
+          ),
           AuthField(
             controller: _email,
             label: 'Email',
@@ -65,14 +78,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ),
           AuthField(
             controller: _password,
-            label: 'Contraseña',
+            label: 'Contraseña (mín. 8)',
             icon: Icons.lock_outline,
             obscure: true,
             textInputAction: TextInputAction.done,
-            onSubmitted: (_) => _entrar(),
+            onSubmitted: (_) => _crear(),
           ),
           FilledButton(
-            onPressed: _loading ? null : _entrar,
+            onPressed: _loading ? null : _crear,
             child: _loading
                 ? const SizedBox(
                     height: 22,
@@ -82,7 +95,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       color: Colors.white,
                     ),
                   )
-                : const Text('Entrar'),
+                : const Text('Crear cuenta'),
           ),
           if (_error != null) ...[
             const SizedBox(height: 12),
@@ -97,8 +110,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ],
           const SizedBox(height: 14),
           TextButton(
-            onPressed: _loading ? null : () => context.push('/registro'),
-            child: const Text('¿No tienes cuenta? Regístrate'),
+            onPressed: _loading ? null : () => context.pop(),
+            child: const Text('¿Ya tienes cuenta? Inicia sesión'),
           ),
         ],
       ),

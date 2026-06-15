@@ -241,8 +241,7 @@ export function Landing({
             }
           } else {
             const revealed = Math.floor(step / 2)
-            for (i = 0; i < revealed && i < text.length; i++)
-              chars.push(text[i] ?? '')
+            for (i = 0; i < revealed && i < text.length; i++) chars.push(text[i] ?? '')
             if (revealed < text.length) chars.push(step % 2 === 0 ? '_' : rnd())
             for (i = chars.length; i < text.length; i++) chars.push(rnd())
             el.textContent = chars.join('')
@@ -403,10 +402,7 @@ export function Landing({
                     </ul>
                   </div>
                   <div className={'feature-media' + (f.mediaLeft ? ' order1' : '')}>
-                    <div
-                      className="media-frame"
-                      dangerouslySetInnerHTML={{ __html: f.svg }}
-                    />
+                    <div className="media-frame" dangerouslySetInnerHTML={{ __html: f.svg }} />
                   </div>
                 </div>
               ))}
@@ -417,11 +413,7 @@ export function Landing({
         <section className="section-cta">
           <div className="cr-container">
             <div className="cta-inner">
-              <h2
-                className="cta-h2 cta-decode"
-                id="cta-decode"
-                data-text="¿Listo para empezar?"
-              >
+              <h2 className="cta-h2 cta-decode" id="cta-decode" data-text="¿Listo para empezar?">
                 ¿Listo para empezar?
               </h2>
               <p className="cta-p">Crea tu cuenta y empieza a prepararte hoy mismo.</p>

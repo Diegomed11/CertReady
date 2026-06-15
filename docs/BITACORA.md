@@ -1393,3 +1393,23 @@ login/registro animados funcionan).
 
 **Siguiente:** (futuro) más campos de perfil (contacto), métricas globales en admin, Cognito
 real / iOS / release. Pendiente: commit del responsable.
+
+---
+
+## 2026-06-15 · Web · Rediseño del panel (shell colapsable) — handoff de Claude Design
+
+**Hecho (solo web; datos reales intactos, solo cambió lo visual):**
+- **Shell/sidebar colapsable** (`components/sidebar.tsx` + `app/panel.css`): menú "liquid
+  glass" con toggle hamburguesa→X, revelado circular (clip-path), entrada escalonada (WAAPI),
+  barrido morado al hover, perfil → /perfil y botón Salir rojo expandible. Fondo glow morado.
+- **Panel** (`/panel`): saludo con blurred-stagger + emoji que saluda, inscripciones con
+  border-beam + botón Continuar colorido, columna de gamificación, footer como badge-pill.
+- **Dar de baja un curso**: menú ⋮ en cada inscripción → `DELETE /api/enrollments/[id]`
+  (confirmación; el progreso se conserva). `components/enroll-menu.tsx`.
+
+**Ajustes tras prueba del responsable:** footer centrado; botón Salir a posición **absoluta**
+(su expansión ya no reacomoda la fila → sin parpadeo); "Continuar" centrado (`inline-flex`);
+fondo base en `surface` (no blanco) para que tarjetas/bordes resalten en todas las páginas.
+
+**Verificación:** typecheck + lint + formato verdes. Pendiente: commit del responsable.
+**Abierto:** ¿extender el estilo nuevo (botones/bordes) a las demás pestañas? (a decidir).

@@ -1,7 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { Badge, type BadgeTone } from '@/components/ui/badge'
+import { EnrollMenu } from '@/components/enroll-menu'
+import { GreetingStagger } from '@/components/greeting-stagger'
 import { buttonStyles } from '@/components/ui/button'
 import {
   getMe,
@@ -19,14 +20,14 @@ const META_SEMANAL = 5
 /** Corte de aprobación del examen real (720/1000 ≈ 72%). */
 const APROBADO_PCT = 72
 
-function estadoTone(estado: EstadoInscripcion): BadgeTone {
+/** Clase del badge (CSS .badge.*) según el estado de la inscripción. */
+function estadoBadge(estado: EstadoInscripcion): string {
   if (estado === 'activa') return 'good'
   if (estado === 'completada') return 'brand'
   if (estado === 'pausada') return 'warn'
   return 'neutral'
 }
 
-/** ymd devuelve la fecha local en formato YYYY-MM-DD (para comparar días). */
 function ymd(d: Date): string {
   return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
 }
@@ -69,63 +70,11 @@ function calcSemana(fechas: string[]): { dias: Set<number>; total: number } {
   return { dias, total }
 }
 
-/** DiaDot es un punto de la racha semanal (completado / hoy / pendiente). */
-function DiaDot({ done, today }: { done: boolean; today: boolean }) {
-  const cls = done
-    ? 'border-brand bg-brand'
-    : today
-      ? 'border-dashed border-brand bg-bg'
-      : 'border-line-strong bg-bg'
-  return (
-    <span className={`grid h-[22px] w-[22px] place-items-center rounded-full border-2 ${cls}`}>
-      {done && (
-        <svg width="9" height="6" viewBox="0 0 9 6" aria-hidden>
-          <path
-            d="M1 3 L3.4 5 L8 1"
-            fill="none"
-            stroke="#fff"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      )}
-    </span>
-  )
-}
-
-/** StatCard envuelve una tarjeta de la columna derecha (racha, meta, simulacro). */
-function StatCard({
-  icon,
-  titulo,
-  children,
-}: {
-  icon: string
-  titulo: string
-  children: React.ReactNode
-}) {
-  return (
-    <div className="rounded-[18px] border-2 border-line bg-bg px-5 py-[18px]">
-      <div className="flex items-center gap-2.5">
-        <Image
-          src={icon}
-          alt=""
-          width={30}
-          height={30}
-          className="h-[30px] w-[30px] object-contain"
-        />
-        <span className="font-display text-sm font-semibold text-ink">{titulo}</span>
-      </div>
-      {children}
-    </div>
-  )
-}
-
 /**
- * Panel del estudiante: saludo, inscripciones con su avance, y una columna de
+ * Panel del estudiante: saludo, inscripciones con su avance y una columna de
  * gamificación moderada (racha, meta semanal y último simulacro). La racha y la
- * meta se calculan de las lecciones reales completadas (servicio progress);
- * `getMe` provisiona la cuenta en el primer acceso.
+ * meta se calculan de las lecciones reales (servicio progress). El diseño visual
+ * (shell colapsable, fondo glow, animaciones, border-beam) vive en `app/panel.css`.
  */
 export default async function PanelPage() {
   const { accessToken, nombre: nombreSesion } = await requireSession()
@@ -147,7 +96,6 @@ export default async function PanelPage() {
       return cert ? [{ ins: i, cert }] : []
     })
 
-  // Avance por inscripción + lecciones para la racha/meta (servicios que sí corren).
   const detalles = await Promise.all(
     certEnrolls.map(async ({ ins, cert }) => {
       const [prog, temas] = await Promise.all([
@@ -183,72 +131,76 @@ export default async function PanelPage() {
   const dias = ['L', 'M', 'X', 'J', 'V', 'S', 'D']
 
   return (
-    <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,1fr)_300px]">
+    <div className="panel-grid">
       {/* Columna izquierda */}
-      <div className="flex min-w-0 flex-col gap-9">
-        <header>
-          <span className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-brand">
-            Panel
-          </span>
-          <h1 className="mt-1 flex items-center gap-2.5 font-display text-[34px] font-semibold leading-tight text-ink">
-            Hola{nombre ? `, ${nombre}` : ''}
-            <Image src="/icons/wave.png" alt="" width={36} height={36} className="h-9 w-9" />
+      <div className="col-left">
+        <header className="page-head">
+          <span className="section-label">Panel</span>
+          <h1>
+            <GreetingStagger text={`Hola${nombre ? `, ${nombre}` : ''}`} />
+            <Image src="/icons/wave.png" alt="" width={36} height={36} className="wave-emoji" />
           </h1>
-          <p className="mt-1.5 max-w-[48ch] text-muted">{lead}</p>
+          <p className="lead">{lead}</p>
         </header>
 
         <section>
-          <div className="mb-3.5 flex items-baseline justify-between gap-3">
-            <h2 className="font-display text-xl font-semibold">Mis inscripciones</h2>
-            <Link
-              href="/certifications"
-              className="text-[13.5px] font-bold text-muted transition-colors hover:text-brand"
-            >
+          <div className="row-head">
+            <h2>Mis inscripciones</h2>
+            <Link href="/certifications" className="link-quiet">
               Explorar catálogo →
             </Link>
           </div>
 
           {detalles.length === 0 ? (
-            <div className="flex flex-col items-center gap-2 rounded-[18px] border-2 border-dashed border-line-strong bg-bg px-6 py-11 text-center">
-              <Image src="/icons/rocket.png" alt="" width={56} height={56} className="h-14 w-14" />
-              <p className="font-display text-[19px] font-semibold">Aún no tienes inscripciones</p>
-              <p className="mx-auto max-w-[38ch] text-muted">
-                Elige una certificación del catálogo y arma tu ruta de estudio.
-              </p>
+            <div className="empty">
+              <Image src="/icons/rocket.png" alt="" width={56} height={56} />
+              <p className="t">Aún no tienes inscripciones</p>
+              <p className="s">Elige una certificación del catálogo y arma tu ruta de estudio.</p>
               <Link href="/certifications" className={`mt-2.5 ${buttonStyles('primary', 'md')}`}>
                 Explorar catálogo
               </Link>
             </div>
           ) : (
-            <ul className="flex flex-col gap-3">
+            <ul className="enroll-list">
               {detalles.map(({ ins, cert, total, hechos, pct, siguiente }) => (
                 <li key={ins.id}>
-                  <div className="flex items-center gap-[18px] rounded-[18px] border-2 border-line bg-bg px-5 py-[18px]">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-2.5">
-                        <Badge tone="brand">{cert.proveedor}</Badge>
-                        <Link
-                          href={`/estudiar/${cert.slug}`}
-                          className="font-display text-base font-semibold text-ink hover:text-brand"
-                        >
+                  <div className="card beam enroll-card">
+                    <div className="info">
+                      <div className="top-line">
+                        <span className="badge brand">{cert.proveedor}</span>
+                        <Link href={`/estudiar/${cert.slug}`} className="name">
                           {cert.nombre}
                         </Link>
-                        <Badge tone={estadoTone(ins.estado)}>{ins.estado}</Badge>
+                        <span className={`badge ${estadoBadge(ins.estado)}`}>{ins.estado}</span>
                       </div>
-                      <p className="mt-1 text-[12.5px] font-semibold text-faint">
+                      <p className="meta">
                         {hechos} de {total} temas
                         {siguiente ? ` · Siguiente: ${siguiente.nombre}` : ' · ¡Completado!'}
                       </p>
-                      <div className="mt-2.5 h-2.5 overflow-hidden rounded-full bg-sunken">
-                        <div
-                          className="h-full rounded-full bg-gradient-to-r from-brand to-brand-2 transition-[width] duration-500"
-                          style={{ width: `${Math.max(3, pct)}%` }}
-                        />
+                      <div className="progress-track">
+                        <div className="progress-fill" style={{ width: `${Math.max(3, pct)}%` }} />
                       </div>
                     </div>
-                    <Link href={`/estudiar/${cert.slug}`} className={buttonStyles('ghost', 'sm')}>
-                      Continuar
+                    <Link href={`/estudiar/${cert.slug}`} className="btn-colorful">
+                      <span className="bc-glow" />
+                      <span className="bc-content">
+                        Continuar
+                        <svg
+                          className="bc-arrow"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          aria-hidden="true"
+                        >
+                          <line x1="7" y1="17" x2="17" y2="7" />
+                          <polyline points="7 7 17 7 17 17" />
+                        </svg>
+                      </span>
                     </Link>
+                    <EnrollMenu id={ins.id} nombre={cert.nombre} />
                   </div>
                 </li>
               ))}
@@ -258,65 +210,71 @@ export default async function PanelPage() {
       </div>
 
       {/* Columna derecha — gamificación moderada */}
-      <div className="flex flex-col gap-4 lg:sticky lg:top-0">
-        <StatCard icon="/icons/fire.png" titulo="Racha">
-          <p className="mt-2 font-display text-[30px] font-semibold text-ink">
-            {racha}{' '}
-            <span className="text-[15px] font-semibold text-faint">
-              día{racha === 1 ? '' : 's'}
-            </span>
+      <div className="col-right">
+        <div className="card beam stat-card">
+          <div className="head">
+            <Image src="/icons/fire.png" alt="" width={30} height={30} />
+            <span className="k">Racha</span>
+          </div>
+          <p className="big">
+            {racha} <span>día{racha === 1 ? '' : 's'}</span>
           </p>
-          <p className="mt-1 text-[12.5px] text-muted">
+          <p className="note">
             {racha > 0
               ? 'Una lección al día la mantiene viva.'
               : 'Completa una lección hoy para encenderla.'}
           </p>
-          <div className="mt-3.5 flex gap-1.5">
+          <div className="week">
             {dias.map((l, i) => (
               <div
                 key={l}
-                className="flex flex-1 flex-col items-center gap-1.5 text-[10px] font-extrabold text-faint"
+                className={
+                  'd' + (semana.dias.has(i) ? ' done' : '') + (i === hoyIdx ? ' today' : '')
+                }
               >
-                <DiaDot done={semana.dias.has(i)} today={i === hoyIdx} />
+                <span className="dot" />
                 {l}
               </div>
             ))}
           </div>
-        </StatCard>
+        </div>
 
-        <StatCard icon="/icons/target.png" titulo="Meta semanal">
-          <p className="mt-2 font-display text-[30px] font-semibold text-ink">
-            {semana.total}{' '}
-            <span className="text-[15px] font-semibold text-faint">
-              de {META_SEMANAL} lecciones
-            </span>
+        <div className="card beam stat-card">
+          <div className="head">
+            <Image src="/icons/target.png" alt="" width={30} height={30} />
+            <span className="k">Meta semanal</span>
+          </div>
+          <p className="big">
+            {semana.total} <span>de {META_SEMANAL} lecciones</span>
           </p>
-          <div className="mt-3 h-3 overflow-hidden rounded-full bg-sunken">
+          <div className="goal-bar">
             <div
-              className="h-full rounded-full bg-good transition-[width] duration-500"
+              className="goal-fill"
               style={{ width: `${Math.min(100, (semana.total / META_SEMANAL) * 100)}%` }}
             />
           </div>
-          <p className="mt-2 text-[12.5px] text-muted">
+          <p className="note">
             {semana.total >= META_SEMANAL
               ? '¡Meta cumplida esta semana!'
               : `Te faltan ${META_SEMANAL - semana.total} para cumplirla.`}
           </p>
-        </StatCard>
+        </div>
 
         {ultimoSim && ultimoSim.puntaje !== null && (
-          <StatCard icon="/icons/trophy.png" titulo="Último simulacro">
-            <p className="mt-2 font-display text-[30px] font-semibold text-ink">
+          <div className="card beam stat-card">
+            <div className="head">
+              <Image src="/icons/trophy.png" alt="" width={30} height={30} />
+              <span className="k">Último simulacro</span>
+            </div>
+            <p className="big">
               {Math.round(ultimoSim.puntaje)}%{' '}
-              <span className="text-[15px] font-semibold text-faint">
-                · {nombrePorSlug.get(ultimoSim.certificacion) ?? ultimoSim.certificacion}
-              </span>
+              <span>· {nombrePorSlug.get(ultimoSim.certificacion) ?? ultimoSim.certificacion}</span>
             </p>
-            <p className="mt-1 text-[12.5px] text-muted">
+            <p className="note">
               Corte de aprobación: {APROBADO_PCT}%.{' '}
               {ultimoSim.puntaje >= APROBADO_PCT ? 'Vas por buen camino.' : 'Sigue practicando.'}
             </p>
-          </StatCard>
+          </div>
         )}
       </div>
     </div>

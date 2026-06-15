@@ -1,7 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import 'api/client.dart';
 import 'theme.dart';
+
+/// Animación de entrada estándar (fade + slide), con escalonado opcional por
+/// índice. Reutilizable en listas y tarjetas para un pulido consistente.
+extension CREntrance on Widget {
+  Widget crEnter({int index = 0}) => animate()
+      .fadeIn(delay: (index * 70).ms, duration: 380.ms)
+      .slideY(
+        begin: 0.18,
+        end: 0,
+        delay: (index * 70).ms,
+        duration: 380.ms,
+        curve: Curves.easeOutCubic,
+      );
+}
 
 /// Spanish label + tone for a certification level.
 ({String label, Color color}) nivelInfo(String nivel) {

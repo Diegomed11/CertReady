@@ -19,18 +19,50 @@ class CRColors {
   );
 }
 
+/// Fuentes de marca (empaquetadas en `fonts/`, declaradas en pubspec).
+const String kFontDisplay = 'Fredoka'; // títulos
+const String kFontBody = 'Nunito'; // texto
+
+/// Aplica Fredoka a los estilos de título/encabezado; el resto hereda Nunito.
+TextTheme _applyBrandFonts(TextTheme t) {
+  TextStyle? d(TextStyle? s, FontWeight w) =>
+      s?.copyWith(fontFamily: kFontDisplay, fontWeight: w);
+  return t.copyWith(
+    displayLarge: d(t.displayLarge, FontWeight.w700),
+    displayMedium: d(t.displayMedium, FontWeight.w700),
+    displaySmall: d(t.displaySmall, FontWeight.w700),
+    headlineLarge: d(t.headlineLarge, FontWeight.w700),
+    headlineMedium: d(t.headlineMedium, FontWeight.w700),
+    headlineSmall: d(t.headlineSmall, FontWeight.w700),
+    titleLarge: d(t.titleLarge, FontWeight.w700),
+    titleMedium: d(t.titleMedium, FontWeight.w600),
+    titleSmall: d(t.titleSmall, FontWeight.w600),
+  );
+}
+
 /// buildTheme returns the app's Material 3 theme seeded from the brand color.
 ThemeData buildTheme() {
   final scheme = ColorScheme.fromSeed(
     seedColor: CRColors.brand,
     brightness: Brightness.light,
   );
-  final base = ThemeData(colorScheme: scheme, useMaterial3: true);
+  final base = ThemeData(
+    colorScheme: scheme,
+    useMaterial3: true,
+    fontFamily: kFontBody,
+  );
   return base.copyWith(
     scaffoldBackgroundColor: const Color(0xFFFBFAFF),
+    textTheme: _applyBrandFonts(base.textTheme),
     appBarTheme: const AppBarTheme(
       centerTitle: false,
       scrolledUnderElevation: 0,
+      titleTextStyle: TextStyle(
+        fontFamily: kFontDisplay,
+        fontWeight: FontWeight.w700,
+        fontSize: 20,
+        color: CRColors.ink,
+      ),
     ),
     cardTheme: CardThemeData(
       elevation: 0,
@@ -42,9 +74,15 @@ ThemeData buildTheme() {
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        minimumSize: const Size.fromHeight(50),
+        // Altura fija pero ancho según contenido (Size(0,50)). Usar Size.fromHeight
+        // daba ancho infinito y rompía cualquier botón dentro de un Row.
+        minimumSize: const Size(0, 50),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+        textStyle: const TextStyle(
+          fontFamily: kFontDisplay,
+          fontWeight: FontWeight.w700,
+          fontSize: 16,
+        ),
       ),
     ),
     chipTheme: base.chipTheme.copyWith(

@@ -51,7 +51,7 @@ class _StudyPathScreenState extends ConsumerState<StudyPathScreen> {
     return _Ruta(cert, temas, prog.temasAprobados);
   }
 
-  void _abrir(_Ruta r, Tema t, _Estado estado) {
+  Future<void> _abrir(_Ruta r, Tema t, _Estado estado) async {
     if (estado == _Estado.bloqueado) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -60,7 +60,9 @@ class _StudyPathScreenState extends ConsumerState<StudyPathScreen> {
       );
       return;
     }
-    context.push('/estudiar/${r.cert.slug}/${t.slug}');
+    await context.push('/estudiar/${r.cert.slug}/${t.slug}');
+    // Al volver del flujo lección→quiz, recargar para reflejar el tema aprobado.
+    if (mounted) setState(() => _future = _load());
   }
 
   @override

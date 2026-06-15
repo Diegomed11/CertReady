@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -8,8 +9,8 @@ import '../../core/providers.dart';
 import '../../core/theme.dart';
 import '../../core/ui.dart';
 
-/// "Mi camino": paste a CV/summary and get certification recommendations (DSS
-/// embeddings). Pastes text instead of uploading a file to avoid a native plugin.
+/// "Mi camino": sube tu CV (PDF/DOC/TXT) o pega el texto y obtén recomendaciones
+/// de certificación (embeddings del DSS).
 class RecommenderScreen extends ConsumerStatefulWidget {
   const RecommenderScreen({super.key});
 
@@ -22,11 +23,53 @@ class _RecommenderScreenState extends ConsumerState<RecommenderScreen> {
   bool _loading = false;
   Recomendaciones? _rec;
   String? _error;
+  String? _archivo; // nombre del archivo subido (si se usó esa vía)
 
   @override
   void dispose() {
     _cv.dispose();
     super.dispose();
+  }
+
+  Future<void> _subirArchivo() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'doc', 'docx', 'txt'],
+      withData: true,
+    );
+    if (result == null || result.files.isEmpty) return;
+    final f = result.files.first;
+    final bytes = f.bytes;
+    if (bytes == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudo leer el archivo.')),
+        );
+      }
+      return;
+    }
+    setState(() {
+      _loading = true;
+      _error = null;
+      _rec = null;
+      _archivo = f.name;
+    });
+    try {
+      final r = await ref
+          .read(apiProvider)
+          .getRecommendationsFile(bytes: bytes, filename: f.name);
+      setState(() {
+        _rec = r;
+        _loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e is ApiError
+            ? e.mensaje
+            : 'No se pudo analizar el archivo (¿el DSS está arriba?)';
+        _loading = false;
+      });
+    }
   }
 
   Future<void> _analizar() async {
@@ -43,6 +86,7 @@ class _RecommenderScreenState extends ConsumerState<RecommenderScreen> {
       _loading = true;
       _error = null;
       _rec = null;
+      _archivo = null;
     });
     try {
       final r = await ref.read(apiProvider).getRecommendations(texto);
@@ -68,11 +112,55 @@ class _RecommenderScreenState extends ConsumerState<RecommenderScreen> {
         padding: const EdgeInsets.all(20),
         children: [
           const Text(
-            'Pega un resumen de tu CV (experiencia, área, skills, certificaciones) y te '
-            'recomendamos las mejores certificaciones para ti.',
+            'Sube tu CV (PDF, DOC o TXT) o pega un resumen (experiencia, área, '
+            'skills, certificaciones) y te recomendamos las mejores certificaciones.',
             style: TextStyle(color: Colors.black54, height: 1.4),
           ),
           const SizedBox(height: 14),
+          OutlinedButton.icon(
+            onPressed: _loading ? null : _subirArchivo,
+            icon: const Icon(Icons.upload_file_rounded),
+            label: const Text('Subir CV (PDF, DOC, TXT)'),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(48),
+            ),
+          ),
+          if (_archivo != null) ...[
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Icon(
+                  Icons.description_rounded,
+                  size: 16,
+                  color: CRColors.brand,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    _archivo!,
+                    style: const TextStyle(fontSize: 12.5, color: Colors.black54),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ],
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 14),
+            child: Row(
+              children: [
+                Expanded(child: Divider()),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                    'o pega el texto',
+                    style: TextStyle(fontSize: 12, color: Colors.black45),
+                  ),
+                ),
+                Expanded(child: Divider()),
+              ],
+            ),
+          ),
           TextField(
             controller: _cv,
             maxLines: 8,
@@ -95,7 +183,7 @@ class _RecommenderScreenState extends ConsumerState<RecommenderScreen> {
                     ),
                   )
                 : const Icon(Icons.auto_awesome_rounded),
-            label: Text(_loading ? 'Analizando…' : 'Analizar'),
+            label: Text(_loading ? 'Analizando…' : 'Analizar texto'),
           ),
           if (_error != null) ...[
             const SizedBox(height: 12),
@@ -113,7 +201,9 @@ class _RecommenderScreenState extends ConsumerState<RecommenderScreen> {
               style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
             ),
             const SizedBox(height: 8),
-            ..._rec!.recomendaciones.take(8).map((p) => _PasoCard(paso: p)),
+            ..._rec!.recomendaciones.take(8).toList().asMap().entries.map(
+              (e) => _PasoCard(paso: e.value).crEnter(index: e.key),
+            ),
             const DisclaimerMarcas(),
           ],
         ],

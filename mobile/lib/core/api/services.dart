@@ -370,4 +370,40 @@ class ApiService {
       throw _toApiError(e);
     }
   }
+
+  /// getRecommendationsFile sube el archivo del CV (PDF/DOC/DOCX/TXT) al DSS, que
+  /// extrae el texto según la extensión del nombre. Se preserva el filename real.
+  Future<Recomendaciones> getRecommendationsFile({
+    required List<int> bytes,
+    required String filename,
+  }) async {
+    try {
+      final ext = filename.contains('.')
+          ? filename.split('.').last.toLowerCase()
+          : '';
+      final contentType = switch (ext) {
+        'pdf' => DioMediaType('application', 'pdf'),
+        'doc' => DioMediaType('application', 'msword'),
+        'docx' => DioMediaType(
+          'application',
+          'vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ),
+        _ => DioMediaType('text', 'plain'),
+      };
+      final form = FormData.fromMap({
+        'file': MultipartFile.fromBytes(
+          bytes,
+          filename: filename,
+          contentType: contentType,
+        ),
+      });
+      final res = await _dio.post<Map<String, dynamic>>(
+        '${AppConfig.dss}/v1/recommendations',
+        data: form,
+      );
+      return Recomendaciones.fromJson(res.data ?? const {});
+    } on DioException catch (e) {
+      throw _toApiError(e);
+    }
+  }
 }

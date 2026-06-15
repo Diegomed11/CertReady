@@ -1275,3 +1275,60 @@ levante el stack (`dev-up` + `adb-reverse`).
 
 **Pendiente / diferido (pulido y release):** pulido visual (la UI es funcional, "ligera"),
 login Cognito nativo, iOS, push, release a tiendas; resaltado de sintaxis en el editor.
+
+---
+
+## 2026-06-14 · Fase 6 — Móvil · ajustes de UX + arranque de pulido
+
+**Hecho:**
+- **Fuentes de marca empaquetadas** (Fredoka + Nunito, OFL, en `mobile/fonts/`, variables);
+  aplicadas en el tema (Fredoka en títulos/AppBar/botones, Nunito en texto), igual que la web.
+  Arreglado el footgun del `FilledButton` (`Size.fromHeight` daba ancho infinito → `Size(0,50)`).
+- **Entrevistas: se quitó el código.** Codear en celular es incómodo, así que se eliminó el
+  módulo de **Problemas** (editor monoespaciado + juez): borrado `problem_screen.dart`, su ruta
+  y la pestaña; `interviews_screen` queda solo con el **banco de Q&A**. (El móvil ya no necesita
+  Docker.) Los métodos `listProblems/getProblem/submitJudge` quedan en `services.dart` sin uso.
+- **Q&A respondibles:** `qa_screen` ahora tiene campo **"Tu respuesta"** + botón **"Ver
+  respuesta modelo"** (autoevaluación; son preguntas abiertas, sin autocalificación).
+- **Recomendador: subir CV en archivo.** Botón **"Subir CV (PDF/DOC/TXT)"** con `file_picker`
+  (`getRecommendationsFile` → multipart con el filename real; el DSS ya extrae PDF/DOCX). Se
+  mantiene también el pegar-texto.
+
+**Decisiones:** se revierte la regla de "cero plugins nativos" **a propósito** para el
+recomendador: se agrega **`file_picker`** (subir PDF era requisito del responsable) y
+**`flutter_animate`** (para el pulido visual, Dart puro). Consecuencia: en **Windows** ahora
+se requiere **Modo de desarrollador** (symlinks de plugins) — ya contemplado en `flutter.md`.
+
+**Build:** `file_picker` (vía `flutter_plugin_android_lifecycle`) exige **compileSdk 36**. Se
+fija `compileSdk = 36` en `app/build.gradle.kts` y se fuerza en los **plugins** desde el Gradle
+raíz vía `subprojects { afterEvaluate { … compileSdkVersion(36) } }` (omitiendo `:app` para no
+chocar con `evaluationDependsOn(":app")`).
+
+**Verificación:** corre en Android (emulador Pixel 9 API 35); build Gradle OK con compileSdk 36.
+
+**Siguiente:** pulido visual del móvil (componentes compartidos, skeletons, gauge/barras
+animadas y animaciones con `flutter_animate` + Hero por pantalla).
+
+---
+
+## 2026-06-14 · Fase 6 — Móvil · inc. 3 pulido visual (animaciones) + fix de navegación
+
+**Hecho:**
+- **Animaciones con `flutter_animate`** en todas las pantallas: helper reutilizable
+  `crEnter()` (fade+slide escalonado) en `core/ui.dart`; entradas escalonadas en Catálogo,
+  Panel, Exámenes/Progreso (lista de certs), Entrevistas (Q&A) y Mi camino; **Hero** del
+  monograma Catálogo→detalle; barras de progreso animadas (Panel + dashboard); **readiness
+  con conteo 0→%** y barras de acierto que crecen; reveal con rebote del resultado de
+  quiz/examen; fundido por hoja en el lector.
+- **Fix de navegación del quiz:** "Continuar" usaba `context.go('/estudiar/slug')`, que
+  reemplazaba la pila (se perdía el shell y el "atrás" → atascado). Ahora el flujo
+  estudiar→lección→quiz encadena `push`+`await`+`pop`: el quiz hace `pop`, la lección se
+  cierra al volver y la ruta de estudio **recarga el progreso** (tema desbloqueado), con
+  "atrás" funcionando en cada nivel.
+
+**Verificación:** `flutter analyze` **sin issues**; probado en vivo en Android (animaciones
+visibles y regreso del quiz correcto). Web sin tocar (su typecheck quedó verde tras arreglar
+`noUncheckedIndexedAccess` en la portada del shader).
+
+**Siguiente:** (opcional) skeletons de carga, más microinteracciones; luego login Cognito
+nativo, iOS y release. Pendiente: commit del responsable.

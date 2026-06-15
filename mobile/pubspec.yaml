@@ -39,6 +39,8 @@ dependencies:
   flutter_riverpod: ^3.3.2
   crypto: ^3.0.7
   flutter_markdown: ^0.7.7+1
+  flutter_animate: ^4.5.0
+  file_picker: ^8.1.0
 
 dev_dependencies:
   flutter_test:
@@ -61,6 +63,16 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  # Fuentes de marca (mismas que la web): Fredoka para títulos, Nunito para texto.
+  # Son fuentes variables (eje wght); Flutter aplica fontWeight al eje. OFL en fonts/.
+  fonts:
+    - family: Fredoka
+      fonts:
+        - asset: fonts/Fredoka-VariableFont.ttf
+    - family: Nunito
+      fonts:
+        - asset: fonts/Nunito-VariableFont_wght.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

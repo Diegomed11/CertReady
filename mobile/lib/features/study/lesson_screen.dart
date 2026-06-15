@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -54,7 +55,11 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
         /* no bloquea el quiz */
       }
     }
-    if (mounted) context.push('/estudiar/${widget.slug}/${widget.tema}/quiz');
+    if (!mounted) return;
+    // Espera a que el quiz se cierre y entonces cierra también la lección, para
+    // volver a la ruta de estudio (que recargará el progreso).
+    await context.push('/estudiar/${widget.slug}/${widget.tema}/quiz');
+    if (mounted) context.pop();
   }
 
   @override
@@ -116,7 +121,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
                             ),
                         ],
                       ),
-                    );
+                    ).animate(key: ValueKey(h.id)).fadeIn(duration: 280.ms);
                   },
                 ),
               ),

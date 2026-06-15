@@ -53,20 +53,22 @@ class _EnrolledCertsListState extends ConsumerState<EnrolledCertsList> {
         return ListView(
           padding: const EdgeInsets.all(16),
           children: certs
+              .asMap()
+              .entries
               .map(
-                (c) => Card(
+                (e) => Card(
                   margin: const EdgeInsets.only(bottom: 8),
                   child: ListTile(
-                    leading: Monograma(c.proveedor),
+                    leading: Monograma(e.value.proveedor),
                     title: Text(
-                      c.nombre,
+                      e.value.nombre,
                       style: const TextStyle(fontWeight: FontWeight.w700),
                     ),
-                    subtitle: Text(c.proveedor),
+                    subtitle: Text(e.value.proveedor),
                     trailing: const Icon(Icons.chevron_right),
-                    onTap: () => widget.onTap(c),
+                    onTap: () => widget.onTap(e.value),
                   ),
-                ),
+                ).crEnter(index: e.key),
               )
               .toList(),
         );

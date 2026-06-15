@@ -90,7 +90,10 @@ class _CertDetailScreenState extends ConsumerState<CertDetailScreen> {
             children: [
               Row(
                 children: [
-                  Monograma(d.cert.proveedor, size: 52),
+                  Hero(
+                    tag: 'mono-${d.cert.slug}',
+                    child: Monograma(d.cert.proveedor, size: 52),
+                  ),
                   const SizedBox(width: 14),
                   Expanded(
                     child: Column(

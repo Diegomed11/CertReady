@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../core/api/models.dart';
 import '../../core/theme.dart';
@@ -156,6 +157,11 @@ class ResultadoExamenView extends StatelessWidget {
               ),
             ],
           ),
+        ).animate().fadeIn(duration: 400.ms).scale(
+          begin: const Offset(0.85, 0.85),
+          end: const Offset(1, 1),
+          duration: 500.ms,
+          curve: Curves.easeOutBack,
         ),
         const SizedBox(height: 18),
         const Text(
@@ -163,8 +169,8 @@ class ResultadoExamenView extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
         ),
         const SizedBox(height: 8),
-        ...resultado.resultados.map(
-          (r) => Card(
+        ...resultado.resultados.asMap().entries.map(
+          (e) => Card(
             margin: const EdgeInsets.only(bottom: 10),
             child: Padding(
               padding: const EdgeInsets.all(14),
@@ -172,10 +178,10 @@ class ResultadoExamenView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
-                    r.correcto
+                    e.value.correcto
                         ? Icons.check_circle_rounded
                         : Icons.cancel_rounded,
-                    color: r.correcto
+                    color: e.value.correcto
                         ? CRColors.good
                         : Theme.of(context).colorScheme.error,
                     size: 22,
@@ -183,15 +189,21 @@ class ResultadoExamenView extends StatelessWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      r.explicacion.isEmpty
-                          ? (r.correcto ? 'Correcta' : 'Incorrecta')
-                          : r.explicacion,
+                      e.value.explicacion.isEmpty
+                          ? (e.value.correcto ? 'Correcta' : 'Incorrecta')
+                          : e.value.explicacion,
                       style: const TextStyle(height: 1.4, fontSize: 13.5),
                     ),
                   ),
                 ],
               ),
             ),
+          ).animate().fadeIn(delay: (e.key * 45).ms, duration: 240.ms).slideY(
+            begin: 0.12,
+            end: 0,
+            delay: (e.key * 45).ms,
+            duration: 240.ms,
+            curve: Curves.easeOut,
           ),
         ),
       ],

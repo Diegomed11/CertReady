@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -66,7 +67,8 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                     ),
                   ),
                 ),
-                for (final c in porProveedor[prov]!) _CertCard(cert: c),
+                for (final e in porProveedor[prov]!.asMap().entries)
+                  _CertCard(cert: e.value, indice: e.key),
               ],
               const DisclaimerMarcas(),
             ],
@@ -118,9 +120,10 @@ class _FiltroNiveles extends StatelessWidget {
 }
 
 class _CertCard extends StatelessWidget {
-  const _CertCard({required this.cert});
+  const _CertCard({required this.cert, this.indice = 0});
 
   final Certificacion cert;
+  final int indice;
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +132,10 @@ class _CertCard extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(16, 6, 16, 0),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-        leading: Monograma(cert.proveedor),
+        leading: Hero(
+          tag: 'mono-${cert.slug}',
+          child: Monograma(cert.proveedor),
+        ),
         title: Text(
           cert.nombre,
           style: const TextStyle(fontWeight: FontWeight.w700),
@@ -144,6 +150,12 @@ class _CertCard extends StatelessWidget {
         trailing: const Icon(Icons.chevron_right),
         onTap: () => context.push('/certs/${cert.slug}'),
       ),
+    ).animate().fadeIn(delay: (indice * 70).ms, duration: 420.ms).slideX(
+      begin: 0.18,
+      end: 0,
+      delay: (indice * 70).ms,
+      duration: 420.ms,
+      curve: Curves.easeOutCubic,
     );
   }
 }

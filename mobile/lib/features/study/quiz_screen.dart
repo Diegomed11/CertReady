@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -123,7 +124,9 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       return _Resultado(
         resultado: _resultado!,
         aprobado: _progreso?.quizAprobado ?? false,
-        onContinuar: () => context.go('/estudiar/${widget.slug}'),
+        // Cierra el quiz; la lección (que lo abrió) se cierra sola al volver y la
+        // ruta de estudio recarga el progreso. Conserva el shell y el "atrás".
+        onContinuar: () => context.pop(),
         onReintentar: _cargar,
       );
     }
@@ -325,9 +328,19 @@ class _Resultado extends StatelessWidget {
               ),
             ],
           ),
+        ).animate().fadeIn(duration: 400.ms).scale(
+          begin: const Offset(0.8, 0.8),
+          end: const Offset(1, 1),
+          duration: 500.ms,
+          curve: Curves.elasticOut,
         ),
         const SizedBox(height: 20),
-        ...resultado.resultados.map((r) => _RepasoItem(item: r)),
+        ...resultado.resultados.asMap().entries.map(
+          (e) => _RepasoItem(item: e.value)
+              .animate()
+              .fadeIn(delay: (e.key * 60).ms, duration: 260.ms)
+              .slideY(begin: 0.1, end: 0, curve: Curves.easeOut),
+        ),
         const SizedBox(height: 16),
         if (aprobado)
           FilledButton(onPressed: onContinuar, child: const Text('Continuar'))

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -103,12 +104,36 @@ class _PanelScreenState extends ConsumerState<PanelScreen> {
                   style: const TextStyle(color: Colors.black54),
                 ),
                 const SizedBox(height: 16),
-                _MiCaminoTile(onTap: () => context.push('/recomendaciones')),
+                _MiCaminoTile(onTap: () => context.push('/recomendaciones'))
+                    .animate()
+                    .fadeIn(duration: 450.ms)
+                    .slideY(
+                      begin: 0.28,
+                      end: 0,
+                      duration: 450.ms,
+                      curve: Curves.easeOutCubic,
+                    )
+                    .shimmer(
+                      delay: 500.ms,
+                      duration: 1200.ms,
+                      color: Colors.white24,
+                    ),
                 const SizedBox(height: 20),
                 if (d.avances.isEmpty)
                   _VacioInscripciones(onExplorar: () => context.go('/certs'))
                 else
-                  ...d.avances.map((a) => _AvanceCard(avance: a)),
+                  ...d.avances.asMap().entries.map(
+                    (e) => _AvanceCard(avance: e.value)
+                        .animate()
+                        .fadeIn(delay: (e.key * 90).ms, duration: 420.ms)
+                        .slideY(
+                          begin: 0.22,
+                          end: 0,
+                          delay: (e.key * 90).ms,
+                          duration: 420.ms,
+                          curve: Curves.easeOutCubic,
+                        ),
+                  ),
               ],
             );
           },
@@ -152,12 +177,20 @@ class _AvanceCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(999),
-              child: LinearProgressIndicator(
-                value: avance.total == 0 ? 0 : avance.hechos / avance.total,
-                minHeight: 8,
-                backgroundColor: CRColors.brand.withValues(alpha: 0.12),
+            TweenAnimationBuilder<double>(
+              tween: Tween(
+                begin: 0,
+                end: avance.total == 0 ? 0 : avance.hechos / avance.total,
+              ),
+              duration: 700.ms,
+              curve: Curves.easeOutCubic,
+              builder: (_, v, _) => ClipRRect(
+                borderRadius: BorderRadius.circular(999),
+                child: LinearProgressIndicator(
+                  value: v,
+                  minHeight: 8,
+                  backgroundColor: CRColors.brand.withValues(alpha: 0.12),
+                ),
               ),
             ),
             const SizedBox(height: 8),

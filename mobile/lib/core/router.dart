@@ -10,7 +10,6 @@ import '../features/exams/exam_review_screen.dart';
 import '../features/exams/exam_runner_screen.dart';
 import '../features/exams/exams_screen.dart';
 import '../features/interviews/interviews_screen.dart';
-import '../features/interviews/problem_screen.dart';
 import '../features/interviews/qa_screen.dart';
 import '../features/panel/panel_screen.dart';
 import '../features/progress/progress_dash_screen.dart';
@@ -130,10 +129,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
 
       // --- Entrevistas (full-screen) ---
-      GoRoute(
-        path: '/entrevistas/problema/:id',
-        builder: (_, s) => ProblemScreen(id: idOf(s)),
-      ),
       GoRoute(
         path: '/entrevistas/qa/:id',
         builder: (_, s) => QAScreen(id: idOf(s)),

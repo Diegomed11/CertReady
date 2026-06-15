@@ -99,12 +99,22 @@ class _ProgressDashScreenState extends ConsumerState<ProgressDashScreen> {
                       style: const TextStyle(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 8),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(999),
-                      child: LinearProgressIndicator(
-                        value: d.total == 0 ? 0 : d.hechos / d.total,
-                        minHeight: 8,
-                        backgroundColor: CRColors.brand.withValues(alpha: 0.12),
+                    TweenAnimationBuilder<double>(
+                      tween: Tween(
+                        begin: 0,
+                        end: d.total == 0 ? 0 : d.hechos / d.total,
+                      ),
+                      duration: const Duration(milliseconds: 700),
+                      curve: Curves.easeOutCubic,
+                      builder: (_, v, _) => ClipRRect(
+                        borderRadius: BorderRadius.circular(999),
+                        child: LinearProgressIndicator(
+                          value: v,
+                          minHeight: 8,
+                          backgroundColor: CRColors.brand.withValues(
+                            alpha: 0.12,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -118,12 +128,20 @@ class _ProgressDashScreenState extends ConsumerState<ProgressDashScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '${(d.readiness!.probabilidadAprobar * 100).round()}%',
-                        style: const TextStyle(
-                          fontSize: 40,
-                          fontWeight: FontWeight.w800,
-                          color: CRColors.brand,
+                      TweenAnimationBuilder<double>(
+                        tween: Tween(
+                          begin: 0,
+                          end: d.readiness!.probabilidadAprobar * 100,
+                        ),
+                        duration: const Duration(milliseconds: 900),
+                        curve: Curves.easeOutCubic,
+                        builder: (_, v, _) => Text(
+                          '${v.round()}%',
+                          style: const TextStyle(
+                            fontSize: 40,
+                            fontWeight: FontWeight.w800,
+                            color: CRColors.brand,
+                          ),
                         ),
                       ),
                       const Text(
@@ -247,13 +265,18 @@ class _BarraTema extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 4),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(999),
-            child: LinearProgressIndicator(
-              value: (pct / 100).clamp(0, 1),
-              minHeight: 7,
-              backgroundColor: CRColors.brand.withValues(alpha: 0.10),
-              color: pct >= 70 ? CRColors.good : CRColors.brand,
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: (pct / 100).clamp(0, 1).toDouble()),
+            duration: const Duration(milliseconds: 750),
+            curve: Curves.easeOutCubic,
+            builder: (_, v, _) => ClipRRect(
+              borderRadius: BorderRadius.circular(999),
+              child: LinearProgressIndicator(
+                value: v,
+                minHeight: 7,
+                backgroundColor: CRColors.brand.withValues(alpha: 0.10),
+                color: pct >= 70 ? CRColors.good : CRColors.brand,
+              ),
             ),
           ),
         ],

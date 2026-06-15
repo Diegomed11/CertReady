@@ -175,13 +175,17 @@ trabajo continuo. Próximos pasos posibles (a decidir con el responsable):
   pesos de simulacro y corte de aprobación por cert.
 - **Pulido de UI/UX.** Refinamiento visual y de interacción sobre el MVP.
 - **Fase 6 — Móvil (en curso).** App **Flutter** en `mobile/` consumiendo las mismas
-  APIs Go `/v1` (sin BFF móvil). **Incrementos 1 y 2 hechos**: fundación (config, dio,
+  APIs Go `/v1` (sin BFF móvil). **Incrementos 1, 2 y 3 hechos**: fundación (config, dio,
   modelos, auth OIDC+PKCE por HTTP, Riverpod + go_router) + **paridad de módulos**:
   Estudiar (ruta + lector + quiz), Catálogo+inscripción, Panel, **Exámenes** (simulacro +
-  historial + repaso), **Entrevistas** (problemas + editor + juez, y Q&A), **Progreso**
-  (readiness + acierto por tema) y **Mi camino** (recomendador por CV pegado). Sin deps
-  nativas nuevas; corre en Android (emulador) y Windows. `analyze`/`test`/`build` verdes.
-  Falta: **pulido visual**, login Cognito nativo, push, **iOS** y release a tiendas.
+  historial + repaso), **Entrevistas** (banco de Q&A; los problemas de código se quitaron
+  del móvil), **Progreso** (readiness + acierto por tema) y **Mi camino** (recomendador por
+  CV: **subir PDF/DOC** con `file_picker`, o pegar texto). **Inc. 3 — pulido visual**:
+  fuentes de marca (Fredoka/Nunito), tema afinado, y animaciones con `flutter_animate`
+  (entradas escalonadas, Hero, gauge/barras animadas, reveal de resultados). Q&A ahora
+  respondibles (escribe → ver respuesta modelo). Corre en Android; en Windows requiere
+  Modo de desarrollador (por `file_picker`). `analyze` verde.
+  Falta: login Cognito nativo, push, **iOS** y release a tiendas.
 - **Fase 7 — Endurecimiento, pentesting y producción.** Revisión de seguridad,
   afinado de la infraestructura y **despliegue en AWS** (hoy diferido por costo).
 

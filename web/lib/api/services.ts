@@ -27,6 +27,7 @@ import type {
   SesionExamen,
   Tema,
   TemaProgreso,
+  Usuario,
 } from './types'
 
 /** Lista vacía reutilizable cuando un endpoint responde 204/sin cuerpo. */
@@ -85,6 +86,40 @@ export async function getMe(accessToken: string): Promise<Cuenta> {
     accessToken,
   })
   if (!data) throw new Error('respuesta vacía de users /v1/me')
+  return data
+}
+
+/** listUsers devuelve una página de usuarios (solo admin: el backend exige rol admin). */
+export async function listUsers(
+  accessToken: string,
+  opts: { limit?: number; offset?: number } = {},
+): Promise<PaginatedList<Usuario>> {
+  const data = await fetchJSON<PaginatedList<Usuario>>({
+    baseURL: env().USERS_BASE_URL,
+    path: `/v1/users${querystring({ limit: opts.limit, offset: opts.offset })}`,
+    accessToken,
+  })
+  return data ?? listaVacia<Usuario>()
+}
+
+/** Campos editables del propio perfil (PATCH /v1/me). nil = no cambiar. */
+export interface ActualizarPerfil {
+  nombre?: string
+  bio?: string
+  pais?: string
+  avatar_url?: string
+}
+
+/** updateMe actualiza el perfil del usuario autenticado. */
+export async function updateMe(accessToken: string, body: ActualizarPerfil): Promise<Cuenta> {
+  const data = await fetchJSON<Cuenta>({
+    baseURL: env().USERS_BASE_URL,
+    path: '/v1/me',
+    method: 'PATCH',
+    accessToken,
+    body,
+  })
+  if (!data) throw new Error('respuesta vacía de users PATCH /v1/me')
   return data
 }
 

@@ -1368,3 +1368,28 @@ entra/registra OK. Móvil: `flutter analyze` limpio, `flutter test` 7/7; entra/r
 
 **Siguiente:** (futuro) panel de administrador (endpoints admin-only + pantalla), y luego
 Cognito real / iOS / release. Pendiente: commit del responsable.
+
+---
+
+## 2026-06-14 · Web · Panel de admin, perfil y rediseño del login
+
+**Hecho (solo web; sin tocar backend):**
+- **Panel de administración** (`/admin`, solo rol admin): tabla de usuarios (nombre, email,
+  rol, alta). Reusa el endpoint `GET /v1/users` (ya era admin-only); `listUsers` en el cliente
+  BFF; entrada "Admin" en el sidebar **solo si el rol es admin** (lo pasa el layout protegido).
+  Doble verificación (página + backend).
+- **Panel de perfil** (`/perfil`): ver email (solo lectura), rol y alta; **editar el nombre**
+  (lo demás —foto, bio, contacto— queda para después). `PATCH /api/me` con lista blanca
+  (`nombre`) que además **sincroniza el nombre en la sesión** (sidebar al día sin re-login);
+  `updateMe` en el cliente. El chip de usuario del sidebar abre el perfil.
+- **Rediseño del login/registro**: panel animado (partículas, etiquetas flotantes,
+  mostrar/ocultar contraseña, toggle claro/oscuro scopeado, validación de email) en
+  `auth-form.tsx` + `app/auth.css`. En español; **sin** recuérdame / olvidé contraseña /
+  logins sociales (no implementados). Sin deps nuevas (íconos SVG inline, no `lucide-react`).
+
+**Verificación:** `typecheck` + `lint` + `format` verdes; probado en vivo (admin ve la tabla;
+no-admin no ve "Admin" y `/admin` muestra "acceso restringido"; perfil edita el nombre;
+login/registro animados funcionan).
+
+**Siguiente:** (futuro) más campos de perfil (contacto), métricas globales en admin, Cognito
+real / iOS / release. Pendiente: commit del responsable.

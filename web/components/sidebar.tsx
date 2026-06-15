@@ -26,11 +26,24 @@ function esActivo(pathname: string, href: string): boolean {
  * pantallas anchas muestra iconos + etiquetas y el usuario al pie; en estrechas se
  * colapsa a una columna de solo iconos. El item activo se resuelve por la ruta.
  */
-export function Sidebar({ nombre, email }: { nombre?: string; email?: string }) {
+export function Sidebar({
+  nombre,
+  email,
+  esAdmin = false,
+}: {
+  nombre?: string
+  email?: string
+  esAdmin?: boolean
+}) {
   const pathname = usePathname()
   const router = useRouter()
   const [saliendo, setSaliendo] = useState(false)
   const inicial = (nombre?.trim()?.[0] ?? email?.trim()?.[0] ?? 'U').toUpperCase()
+
+  // El item de administración solo aparece para usuarios con rol admin.
+  const items = esAdmin
+    ? [...NAV, { href: '/admin', label: 'Admin', icon: '/icons/target.png' }]
+    : NAV
 
   async function salir() {
     setSaliendo(true)
@@ -54,7 +67,7 @@ export function Sidebar({ nombre, email }: { nombre?: string; email?: string }) 
       </Link>
 
       <nav className="flex flex-1 flex-col gap-1.5">
-        {NAV.map((n) => {
+        {items.map((n) => {
           const activo = esActivo(pathname, n.href)
           return (
             <Link
@@ -81,16 +94,23 @@ export function Sidebar({ nombre, email }: { nombre?: string; email?: string }) 
         })}
       </nav>
 
-      <div className="mt-3 flex items-center gap-2.5 border-t-2 border-line p-1 md:p-3">
-        <div className="grid h-9 w-9 flex-none place-items-center rounded-full bg-gradient-to-br from-brand to-brand-2 font-display font-semibold text-white">
-          {inicial}
-        </div>
-        <div className="hidden min-w-0 flex-1 md:block">
-          {nombre ? <div className="text-[13px] font-bold text-ink">{nombre}</div> : null}
-          {email ? (
-            <div className="truncate font-mono text-[10.5px] text-faint">{email}</div>
-          ) : null}
-        </div>
+      <div className="mt-3 flex items-center gap-1.5 border-t-2 border-line p-1 md:p-2">
+        <Link
+          href="/perfil"
+          title="Tu perfil"
+          aria-current={esActivo(pathname, '/perfil') ? 'page' : undefined}
+          className="flex min-w-0 flex-1 items-center gap-2.5 rounded-xl p-1 transition-colors hover:bg-surface"
+        >
+          <div className="grid h-9 w-9 flex-none place-items-center rounded-full bg-gradient-to-br from-brand to-brand-2 font-display font-semibold text-white">
+            {inicial}
+          </div>
+          <div className="hidden min-w-0 flex-1 md:block">
+            {nombre ? <div className="text-[13px] font-bold text-ink">{nombre}</div> : null}
+            {email ? (
+              <div className="truncate font-mono text-[10.5px] text-faint">{email}</div>
+            ) : null}
+          </div>
+        </Link>
         <button
           onClick={salir}
           disabled={saliendo}

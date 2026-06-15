@@ -10,7 +10,11 @@ export default async function ProtectedLayout({ children }: { children: React.Re
   const session = await requireSession()
   return (
     <div className="grid h-screen grid-cols-[72px_1fr] md:grid-cols-[240px_1fr]">
-      <Sidebar nombre={session.nombre} email={session.email} />
+      <Sidebar
+        nombre={session.nombre}
+        email={session.email}
+        esAdmin={session.roles.includes('admin')}
+      />
       <div className="flex min-h-0 flex-col overflow-y-auto bg-surface">
         <main className="flex-1">
           <div className="mx-auto w-full max-w-[1100px] px-5 py-10 sm:px-10">{children}</div>

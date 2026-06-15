@@ -1,0 +1,253 @@
+/*
+ * Estilos del panel de autenticación (login / registro). Diseño animado con
+ * partículas de fondo, tarjeta elevada y etiquetas flotantes. Todo scopeado bajo
+ * .cr-auth para no afectar al resto de la app; tema claro/oscuro local.
+ */
+.cr-auth {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  overflow: hidden;
+  font-family: var(--font-body), system-ui, sans-serif;
+  --cr-brand: #4b5bf0;
+  --cr-brand-2: #9c8cfa;
+}
+/* Tema claro */
+.cr-auth.light {
+  background:
+    radial-gradient(60% 60% at 80% 0%, #e8ebff 0%, rgba(232, 235, 255, 0) 60%),
+    radial-gradient(60% 60% at 0% 100%, #efe9ff 0%, rgba(239, 233, 255, 0) 60%), #f6f7fc;
+  --cr-ink: #1c1b29;
+  --cr-muted: #5b5c70;
+  --cr-faint: #9294a8;
+  --cr-card: #ffffff;
+  --cr-card-border: rgba(28, 27, 41, 0.08);
+  --cr-input-border: #d6d8e8;
+}
+/* Tema oscuro */
+.cr-auth.dark {
+  background:
+    radial-gradient(60% 60% at 80% 0%, #221d52 0%, rgba(34, 29, 82, 0) 60%),
+    radial-gradient(60% 60% at 0% 100%, #2a2350 0%, rgba(42, 35, 80, 0) 60%), #0b0a16;
+  --cr-ink: #f2f3fb;
+  --cr-muted: #b7bad0;
+  --cr-faint: #8a8da6;
+  --cr-card: #15132b;
+  --cr-card-border: rgba(255, 255, 255, 0.08);
+  --cr-input-border: rgba(255, 255, 255, 0.16);
+}
+
+.cr-auth .particles-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.cr-auth .theme-toggle {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 9999px;
+  cursor: pointer;
+  color: var(--cr-muted);
+  background: var(--cr-card);
+  border: 1px solid var(--cr-card-border);
+  transition:
+    transform 0.2s,
+    color 0.2s;
+}
+.cr-auth .theme-toggle:hover {
+  transform: rotate(-15deg) scale(1.05);
+  color: var(--cr-brand);
+}
+
+/* Tarjeta */
+.cr-auth .login-card {
+  position: relative;
+  z-index: 5;
+  width: 100%;
+  max-width: 25rem;
+}
+.cr-auth .login-card-inner {
+  background: var(--cr-card);
+  border: 1px solid var(--cr-card-border);
+  border-radius: 22px;
+  padding: 2rem 1.75rem;
+  box-shadow: 0 24px 60px -20px rgba(28, 27, 41, 0.25);
+  animation: cr-auth-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes cr-auth-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.cr-auth .login-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.cr-auth .login-brand {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 700;
+  font-size: 1.6rem;
+  background: linear-gradient(100deg, var(--cr-brand), var(--cr-brand-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.cr-auth .login-header h1 {
+  font-family: var(--font-display), sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--cr-ink);
+  margin: 0.6rem 0 0.25rem;
+}
+.cr-auth .login-header p {
+  color: var(--cr-muted);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Campos con etiqueta flotante */
+.cr-auth .form-field {
+  position: relative;
+  margin-bottom: 1.1rem;
+}
+.cr-auth .form-field input {
+  width: 100%;
+  padding: 1.3rem 0.9rem 0.5rem;
+  font-size: 0.95rem;
+  color: var(--cr-ink);
+  background: transparent;
+  border: 1.5px solid var(--cr-input-border);
+  border-radius: 12px;
+  outline: none;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+.cr-auth .form-field input:focus {
+  border-color: var(--cr-brand);
+  box-shadow: 0 0 0 3px rgba(75, 91, 240, 0.14);
+}
+.cr-auth .form-field label {
+  position: absolute;
+  left: 0.95rem;
+  top: 0.95rem;
+  color: var(--cr-faint);
+  font-size: 0.95rem;
+  pointer-events: none;
+  transition:
+    transform 0.18s ease,
+    color 0.18s ease,
+    font-size 0.18s ease;
+}
+.cr-auth .form-field.active label {
+  transform: translateY(-0.62rem);
+  font-size: 0.7rem;
+  color: var(--cr-brand);
+  font-weight: 600;
+}
+.cr-auth .form-field.invalid input {
+  border-color: #e84c4c;
+}
+.cr-auth .form-field.invalid input:focus {
+  box-shadow: 0 0 0 3px rgba(232, 76, 76, 0.14);
+}
+.cr-auth .error-message {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  color: #e84c4c;
+}
+.cr-auth .toggle-password {
+  position: absolute;
+  right: 0.6rem;
+  top: 0.85rem;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--cr-faint);
+  cursor: pointer;
+  border-radius: 8px;
+}
+.cr-auth .toggle-password:hover {
+  color: var(--cr-brand);
+}
+
+/* Mensaje de error/estado del formulario */
+.cr-auth .form-alert {
+  margin: 0 0 1rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  background: rgba(232, 76, 76, 0.1);
+  color: #e84c4c;
+}
+
+/* Botón */
+.cr-auth .login-button {
+  width: 100%;
+  padding: 0.85rem;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #fff;
+  background: linear-gradient(100deg, var(--cr-brand), var(--cr-brand-2));
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    filter 0.15s,
+    transform 0.1s,
+    opacity 0.2s;
+}
+.cr-auth .login-button:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+.cr-auth .login-button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.cr-auth .login-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cr-auth .signup-prompt {
+  margin: 1.4rem 0 0;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--cr-muted);
+}
+.cr-auth .signup-prompt a {
+  color: var(--cr-brand);
+  font-weight: 600;
+  text-decoration: none;
+}
+.cr-auth .signup-prompt a:hover {
+  text-decoration: underline;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cr-auth .login-card-inner {
+    animation: none;
+  }
+}

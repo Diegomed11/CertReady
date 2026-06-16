@@ -2,11 +2,17 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+
 from clickhouse_connect.driver.client import Client
 
 
 class Repo:
-    """Acceso de solo lectura a ``fact_intento`` en ClickHouse."""
+    """Acceso de solo lectura a los hechos analíticos en ClickHouse.
+
+    Cubre las tres señales de preparación: exámenes (``fact_intento``), código
+    (``fact_corrida``) y preguntas de entrevista (``fact_qa``).
+    """
 
     def __init__(self, client: Client, database: str = "analytics") -> None:
         self.client = client
@@ -59,3 +65,52 @@ class Repo:
             parameters={"c": certificacion, "u": usuario_id},
         )
         return [(f, int(a), int(n)) for f, a, n in res.result_rows]
+
+    def codigo_por_area(
+        self, usuario_id: str, areas: Sequence[str]
+    ) -> list[tuple[str, str, int, int]]:
+        """Desempeño del usuario en código por problema, en las áreas dadas.
+
+        Agrupa por problema y se queda con el **mejor** veredicto (``max(aceptado)``):
+        haber resuelto el problema alguna vez cuenta como dominado, sin penalizar
+        los intentos previos fallidos.
+
+        Returns
+        -------
+        list : ``(problema_ref, area, mejor_aceptado, intentos)`` por problema
+        distinto; lista vacía si no hay áreas o corridas.
+        """
+        if not areas:
+            return []
+        res = self.client.query(
+            f"select problema_ref, any(area), max(aceptado), count() "  # noqa: S608 (db es interno)
+            f"from {self.db}.fact_corrida "
+            f"where usuario_id = {{u:String}} and area in {{a:Array(String)}} "
+            f"group by problema_ref",
+            parameters={"u": usuario_id, "a": list(areas)},
+        )
+        return [(p, a, int(m), int(n)) for p, a, m, n in res.result_rows]
+
+    def qa_por_area(
+        self, usuario_id: str, areas: Sequence[str]
+    ) -> list[tuple[str, str, str, int, int]]:
+        """Autoevaluación del usuario en Q&A por pregunta, en las áreas dadas.
+
+        Agrupa por pregunta y toma el **mejor** nivel declarado (``max(nivel)``):
+        refleja el estado más reciente de dominio percibido.
+
+        Returns
+        -------
+        list : ``(qa_ref, area, categoria, mejor_nivel, revisiones)`` por pregunta
+        distinta; lista vacía si no hay áreas o revisiones.
+        """
+        if not areas:
+            return []
+        res = self.client.query(
+            f"select qa_ref, any(area), any(categoria), max(nivel), count() "  # noqa: S608 (db es interno)
+            f"from {self.db}.fact_qa "
+            f"where usuario_id = {{u:String}} and area in {{a:Array(String)}} "
+            f"group by qa_ref",
+            parameters={"u": usuario_id, "a": list(areas)},
+        )
+        return [(q, a, c, int(m), int(n)) for q, a, c, m, n in res.result_rows]

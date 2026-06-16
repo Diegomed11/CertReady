@@ -21,6 +21,8 @@ class _QAScreenState extends ConsumerState<QAScreen> {
   late Future<PreguntaQA?> _future;
   final _respuesta = TextEditingController();
   bool _revelado = false;
+  int? _nivel; // autoevaluación enviada (1-3), null si aún no
+  bool _enviando = false;
 
   @override
   void initState() {
@@ -32,6 +34,24 @@ class _QAScreenState extends ConsumerState<QAScreen> {
   void dispose() {
     _respuesta.dispose();
     super.dispose();
+  }
+
+  /// Envía la autoevaluación (1=me costó · 2=regular · 3=bien) al servicio
+  /// progress; alimenta la señal de Q&A del DSS de preparación por puesto.
+  Future<void> _autoevaluar(String qaRef, int nivel) async {
+    setState(() => _enviando = true);
+    try {
+      await ref.read(apiProvider).submitQARevision(qaRef: qaRef, nivel: nivel);
+      if (!mounted) return;
+      setState(() => _nivel = nivel);
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No se pudo guardar la autoevaluación.')),
+      );
+    } finally {
+      if (mounted) setState(() => _enviando = false);
+    }
   }
 
   @override
@@ -128,6 +148,46 @@ class _QAScreenState extends ConsumerState<QAScreen> {
                     ),
                   ),
                 ],
+                const Divider(height: 28),
+                const Text(
+                  '¿Qué tal te fue comparado con la respuesta?',
+                  style: TextStyle(fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'Tu autoevaluación mide tu preparación para entrevistas por puesto.',
+                  style: TextStyle(color: Colors.black54, fontSize: 13),
+                ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  children: [
+                    for (final o in const [
+                      (nivel: 1, etiqueta: 'Me costó'),
+                      (nivel: 2, etiqueta: 'Regular'),
+                      (nivel: 3, etiqueta: 'Bien'),
+                    ])
+                      ChoiceChip(
+                        label: Text(o.etiqueta),
+                        selected: _nivel == o.nivel,
+                        onSelected: _enviando
+                            ? null
+                            : (_) => _autoevaluar(q.id, o.nivel),
+                      ),
+                  ],
+                ),
+                if (_nivel != null)
+                  const Padding(
+                    padding: EdgeInsets.only(top: 8),
+                    child: Text(
+                      '✓ Autoevaluación guardada. Puedes cambiarla cuando quieras.',
+                      style: TextStyle(
+                        color: CRColors.good,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
                 const SizedBox(height: 16),
                 OutlinedButton.icon(
                   onPressed: () => setState(() => _revelado = false),

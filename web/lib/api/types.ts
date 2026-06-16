@@ -280,6 +280,40 @@ export interface Readiness {
   siguiente_accion: SiguienteAccion | null
 }
 
+// --- dss / preparación por puesto ------------------------------------------
+
+/** Un puesto del catálogo para el que se puede estimar preparación. */
+export interface PuestoResumen {
+  slug: string
+  nombre: string
+  descripcion: string
+}
+
+/** Una de las señales que componen la preparación por puesto. */
+export interface SenalPreparacion {
+  clave: 'examenes' | 'codigo' | 'qa'
+  etiqueta: string
+  /** Score de la señal en [0,100], o null si no tiene datos. */
+  score_pct: number | null
+  peso: number
+  /** Nº de ítems con datos (certs / problemas / preguntas). */
+  cobertura: number
+  detalle: string
+}
+
+/** Preparación combinada (exámenes + código + Q&A) de un usuario para un puesto. */
+export interface JobReadiness {
+  usuario_id: string
+  puesto: string
+  nombre: string
+  /** Readiness combinada en [0,100], o null si ninguna señal tiene datos. */
+  readiness_pct: number | null
+  nivel: string
+  senales: SenalPreparacion[]
+  /** Señal (con datos) de menor score: dónde conviene enfocarse. */
+  enfoque: string | null
+}
+
 // --- progress --------------------------------------------------------------
 
 export interface LeccionCompletada {

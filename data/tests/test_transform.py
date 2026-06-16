@@ -85,3 +85,40 @@ def test_fila_corrida_no_aceptado_y_sin_enriquecimiento():
     assert fila["aceptado"] == 0
     assert fila["area"] == transform.DESCONOCIDO
     assert fila["dificultad"] == transform.DESCONOCIDO
+
+
+def test_fila_qa_enriquece_y_mapea():
+    revision = {
+        "id": "r1",
+        "usuario_id": "u1",
+        "qa_ref": "qa1",
+        "nivel": 3,
+        "creado_en": datetime(2026, 6, 7, 13, 0, 0),
+    }
+    qa = {"qa1": {"puesto": "backend", "area": "sistemas", "categoria": "concurrencia"}}
+
+    fila = transform.fila_qa(revision, qa)
+
+    assert fila["qa_id"] == "r1"
+    assert fila["qa_ref"] == "qa1"
+    assert fila["puesto"] == "backend"
+    assert fila["area"] == "sistemas"
+    assert fila["categoria"] == "concurrencia"
+    assert fila["nivel"] == 3
+    assert fila["fecha"] == datetime(2026, 6, 7, 13, 0, 0).date()
+
+
+def test_fila_qa_sin_enriquecimiento():
+    revision = {
+        "id": "r2",
+        "usuario_id": "u1",
+        "qa_ref": "huerfana",
+        "nivel": 1,
+        "creado_en": datetime(2026, 6, 7, 13, 5, 0),
+    }
+    fila = transform.fila_qa(revision, {})
+
+    assert fila["puesto"] == transform.DESCONOCIDO
+    assert fila["area"] == transform.DESCONOCIDO
+    assert fila["categoria"] == transform.DESCONOCIDO
+    assert fila["nivel"] == 1

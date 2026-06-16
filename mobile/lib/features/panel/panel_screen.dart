@@ -118,6 +118,17 @@ class _PanelScreenState extends ConsumerState<PanelScreen> {
                       duration: 1200.ms,
                       color: Colors.white24,
                     ),
+                const SizedBox(height: 12),
+                _PreparacionTile(onTap: () => context.push('/preparacion'))
+                    .animate()
+                    .fadeIn(delay: 120.ms, duration: 450.ms)
+                    .slideY(
+                      begin: 0.28,
+                      end: 0,
+                      delay: 120.ms,
+                      duration: 450.ms,
+                      curve: Curves.easeOutCubic,
+                    ),
                 const SizedBox(height: 20),
                 if (d.avances.isEmpty)
                   _VacioInscripciones(onExplorar: () => context.go('/certs'))
@@ -290,6 +301,51 @@ class _MiCaminoTile extends StatelessWidget {
               ),
             ),
             const Icon(Icons.chevron_right, color: Colors.white),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// "Preparación por puesto" entry: opens the combined job-readiness view.
+class _PreparacionTile extends StatelessWidget {
+  const _PreparacionTile({required this.onTap});
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(18),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: CRColors.brand.withValues(alpha: 0.06),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: CRColors.brand.withValues(alpha: 0.30)),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.rocket_launch_rounded, color: CRColors.brand),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Preparación por puesto',
+                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    '¿Qué tan listo estás? Combina exámenes, código y entrevista',
+                    style: TextStyle(color: Colors.black54, fontSize: 12.5),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right, color: CRColors.brand),
           ],
         ),
       ),

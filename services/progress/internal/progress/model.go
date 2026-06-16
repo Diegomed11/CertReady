@@ -59,6 +59,28 @@ func (n NuevaLeccion) Validar() []string {
 	return errs
 }
 
+// NuevaRevisionQA registra la autoevaluación de una pregunta de entrevista (Q&A):
+// qué tan bien la respondió el usuario tras ver la respuesta modelo. El usuario lo
+// fija el handler a partir del token (nunca el body). nivel ∈ {1,2,3}.
+type NuevaRevisionQA struct {
+	QaRef string `json:"qa_ref"`
+	Nivel int    `json:"nivel"` // 1=me costó · 2=regular · 3=bien
+}
+
+// Validar comprueba las reglas básicas de la entrada.
+//
+// Returns la lista de errores por campo; vacía si la entrada es válida.
+func (n NuevaRevisionQA) Validar() []string {
+	var errs []string
+	if strings.TrimSpace(n.QaRef) == "" {
+		errs = append(errs, "qa_ref: requerido")
+	}
+	if n.Nivel < 1 || n.Nivel > 3 {
+		errs = append(errs, "nivel: debe ser 1, 2 o 3")
+	}
+	return errs
+}
+
 // NuevoQuiz registra el resultado de un quiz de tema. El usuario lo fija el handler
 // a partir del token.
 type NuevoQuiz struct {

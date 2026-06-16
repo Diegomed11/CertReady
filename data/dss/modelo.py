@@ -130,3 +130,47 @@ def siguiente_accion(theta: float, celdas: Sequence[Celda]) -> Celda | None:
 def dominio(theta: float, b: float) -> float:
     """Dominio del estudiante en una celda: ``sigmoid(theta - b)`` en [0,1]."""
     return float(sigmoid(theta - b))
+
+
+# --- Preparación por puesto: combinación de señales ---------------------------
+# La readiness por puesto integra tres señales heterogéneas, cada una en [0,1]:
+# exámenes (readiness IRT), código (problemas resueltos) y Q&A (autoevaluación).
+# Son funciones puras: no tocan bases de datos y se prueban en aislamiento.
+
+# Niveles de la autoevaluación de Q&A: 1=me costó · 2=regular · 3=bien.
+QA_NIVEL_MIN = 1
+QA_NIVEL_MAX = 3
+
+
+def nivel_a_score(nivel: int) -> float:
+    """Convierte un nivel de autoevaluación de Q&A a un score en [0,1].
+
+    Mapea linealmente {1,2,3} -> {0.0, 0.5, 1.0}. Recorta fuera de rango por
+    robustez ante datos sucios.
+    """
+    n = min(max(int(nivel), QA_NIVEL_MIN), QA_NIVEL_MAX)
+    return (n - QA_NIVEL_MIN) / (QA_NIVEL_MAX - QA_NIVEL_MIN)
+
+
+def combinar_readiness(componentes: Sequence[tuple[float, float | None]]) -> float | None:
+    """Combina señales ``(peso, score)`` en una readiness única en [0,1].
+
+    Las señales sin datos (``score`` es ``None``) se ignoran y los pesos se
+    renormalizan sobre las presentes, de modo que una señal faltante no arrastra
+    el resultado a cero (degradación elegante, como la analítica).
+
+    Parameters
+    ----------
+    componentes : pares ``(peso, score)``; ``score`` en [0,1] o ``None`` si la
+        señal no tiene datos para el usuario.
+
+    Returns
+    -------
+    float | None : readiness combinada en [0,1], o ``None`` si ninguna señal
+        tiene datos.
+    """
+    activos = [(w, s) for w, s in componentes if s is not None and w > 0]
+    total = sum(w for w, _ in activos)
+    if total <= 0:
+        return None
+    return sum(w * s for w, s in activos) / total

@@ -177,6 +177,14 @@ class ApiService {
     return TemaProgreso.fromJson(data ?? const {});
   }
 
+  /// submitQARevision registra la autoevaluación de una pregunta de entrevista
+  /// (nivel 1=me costó · 2=regular · 3=bien). Alimenta la señal de Q&A del DSS.
+  Future<void> submitQARevision({required String qaRef, required int nivel}) =>
+      _send(
+        '${AppConfig.progress}/v1/progress/qa',
+        body: {'qa_ref': qaRef, 'nivel': nivel},
+      );
+
   // --- exams (quiz por tema) ----------------------------------------------
 
   Future<SesionConPreguntas> createTemaQuiz({
@@ -347,6 +355,33 @@ class ApiService {
       );
     } catch (_) {
       return null;
+    }
+  }
+
+  // --- dss: preparación por puesto (degrada a [] / null si el DSS no responde) -
+
+  /// listPuestos devuelve el catálogo de puestos (el endpoint responde un arreglo
+  /// JSON de nivel superior, no un objeto, así que se llama a `dio` directo).
+  Future<List<PuestoResumen>> listPuestos() async {
+    try {
+      final res = await _dio.get<List<dynamic>>('${AppConfig.dss}/v1/puestos');
+      return (res.data ?? const [])
+          .map((e) => PuestoResumen.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      return const [];
+    }
+  }
+
+  Future<JobReadiness?> getJobReadiness(String usuarioId, String puesto) async {
+    try {
+      return await _get(
+        '${AppConfig.dss}/v1/job-readiness/${Uri.encodeComponent(usuarioId)}',
+        JobReadiness.fromJson,
+        query: {'puesto': puesto},
+      );
+    } catch (_) {
+      return null; // 404 puesto desconocido o DSS/ClickHouse apagado
     }
   }
 

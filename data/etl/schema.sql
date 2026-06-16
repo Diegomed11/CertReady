@@ -47,6 +47,21 @@ create table if not exists {db}.fact_corrida
 engine = ReplacingMergeTree
 order by (fecha, area, lenguaje, usuario_id, corrida_id);
 
+create table if not exists {db}.fact_qa
+(
+    qa_id      String,
+    usuario_id String,
+    qa_ref     String,
+    puesto     LowCardinality(String),
+    area       LowCardinality(String),
+    categoria  LowCardinality(String),
+    nivel      UInt8,
+    fecha      Date,
+    creado_en  DateTime64(6, 'UTC')
+)
+engine = ReplacingMergeTree
+order by (fecha, puesto, area, usuario_id, qa_id);
+
 create table if not exists {db}.etl_estado
 (
     fuente    String,

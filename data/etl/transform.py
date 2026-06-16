@@ -84,3 +84,31 @@ def fila_corrida(corrida: dict[str, Any], problemas: dict[str, dict[str, Any]]) 
         "fecha": creado.date(),
         "creado_en": creado,
     }
+
+
+def fila_qa(revision: dict[str, Any], qa: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    """Construye una fila de ``fact_qa`` a partir de una autoevaluación de Q&A.
+
+    Parameters
+    ----------
+    revision : fila de ``progress.qa_revisiones`` (id, usuario_id, qa_ref, nivel,
+        creado_en). nivel ∈ {1,2,3} (1=me costó, 2=regular, 3=bien).
+    qa : mapa ``qa_ref -> {puesto, area, categoria}`` desde MongoDB.
+
+    Returns
+    -------
+    dict : fila lista para insertar en ``analytics.fact_qa``.
+    """
+    meta = qa.get(revision["qa_ref"], {})
+    creado = _utc(revision["creado_en"])
+    return {
+        "qa_id": revision["id"],
+        "usuario_id": revision["usuario_id"],
+        "qa_ref": revision["qa_ref"],
+        "puesto": meta.get("puesto") or DESCONOCIDO,
+        "area": meta.get("area") or DESCONOCIDO,
+        "categoria": meta.get("categoria") or DESCONOCIDO,
+        "nivel": revision["nivel"],
+        "fecha": creado.date(),
+        "creado_en": creado,
+    }

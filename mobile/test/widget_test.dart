@@ -91,6 +91,51 @@ void main() {
     expect(p.casos.single.oculto, isFalse);
   });
 
+  test('JobReadiness parsea readiness combinada + señales (con sin-datos)', () {
+    final d = JobReadiness.fromJson({
+      'usuario_id': 'u1',
+      'puesto': 'backend',
+      'nombre': 'Desarrollador(a) Backend',
+      'readiness_pct': 62.5,
+      'nivel': 'Sólido',
+      'enfoque': 'Código',
+      'senales': [
+        {
+          'clave': 'examenes',
+          'etiqueta': 'Exámenes',
+          'score_pct': 70.0,
+          'peso': 0.25,
+          'cobertura': 1,
+          'detalle': '1 certificación(es) con intentos',
+        },
+        {
+          'clave': 'codigo',
+          'etiqueta': 'Código',
+          'score_pct': null, // sin datos: debe quedar null
+          'peso': 0.40,
+          'cobertura': 0,
+          'detalle': 'sin envíos de código',
+        },
+      ],
+    });
+    expect(d.readinessPct, 62.5);
+    expect(d.nivel, 'Sólido');
+    expect(d.enfoque, 'Código');
+    expect(d.senales.length, 2);
+    expect(d.senales[0].scorePct, 70.0);
+    expect(d.senales[1].scorePct, isNull);
+  });
+
+  test('PuestoResumen parsea slug + nombre', () {
+    final p = PuestoResumen.fromJson({
+      'slug': 'backend',
+      'nombre': 'Backend',
+      'descripcion': 'Servicios y APIs',
+    });
+    expect(p.slug, 'backend');
+    expect(p.nombre, 'Backend');
+  });
+
   test('Recomendaciones parsea perfil + recomendaciones', () {
     final r = Recomendaciones.fromJson({
       'perfil': {

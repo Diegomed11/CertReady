@@ -46,6 +46,17 @@ _SQL_CORRIDAS = """
     order by creado_en
 """
 
+_SQL_REVISIONES_QA = """
+    select id::text         as id,
+           usuario_id::text as usuario_id,
+           qa_ref           as qa_ref,
+           nivel            as nivel,
+           creado_en        as creado_en
+    from progress.qa_revisiones
+    where creado_en > %s
+    order by creado_en
+"""
+
 
 def leer_intentos(conn: psycopg.Connection, desde: datetime) -> list[dict[str, Any]]:
     """Devuelve los intentos de examen creados después de ``desde``."""
@@ -58,6 +69,13 @@ def leer_corridas(conn: psycopg.Connection, desde: datetime) -> list[dict[str, A
     """Devuelve las corridas del juez creadas después de ``desde``."""
     with conn.cursor(row_factory=dict_row) as cur:
         cur.execute(_SQL_CORRIDAS, (desde,))
+        return cur.fetchall()
+
+
+def leer_revisiones_qa(conn: psycopg.Connection, desde: datetime) -> list[dict[str, Any]]:
+    """Devuelve las autoevaluaciones de Q&A creadas después de ``desde``."""
+    with conn.cursor(row_factory=dict_row) as cur:
+        cur.execute(_SQL_REVISIONES_QA, (desde,))
         return cur.fetchall()
 
 
@@ -79,5 +97,16 @@ def mapa_problemas(db: Database, refs: set[str]) -> dict[str, dict[str, Any]]:
     cursor = db.problemas.find(
         {"_id": {"$in": list(refs)}},
         {"area": 1, "dificultad": 1},
+    )
+    return {doc["_id"]: doc for doc in cursor}
+
+
+def mapa_qa(db: Database, refs: set[str]) -> dict[str, dict[str, Any]]:
+    """Mapa ``qa_ref -> {puesto, area, categoria}`` para las refs dadas."""
+    if not refs:
+        return {}
+    cursor = db.qa.find(
+        {"_id": {"$in": list(refs)}},
+        {"puesto": 1, "area": 1, "categoria": 1},
     )
     return {doc["_id"]: doc for doc in cursor}

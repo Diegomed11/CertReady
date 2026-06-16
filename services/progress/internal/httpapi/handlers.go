@@ -66,6 +66,32 @@ func (a *API) guardarQuiz(w http.ResponseWriter, r *http.Request) {
 	httpx.WriteJSON(w, http.StatusOK, res)
 }
 
+// guardarRevisionQA registra la autoevaluación de una pregunta de entrevista del
+// usuario autenticado (señal de Q&A para el DSS de preparación por puesto).
+func (a *API) guardarRevisionQA(w http.ResponseWriter, r *http.Request) {
+	ident, ok := auth.IdentityFromContext(r.Context())
+	if !ok {
+		httpx.WriteError(w, http.StatusUnauthorized, "no_autenticado", "se requiere autenticación")
+		return
+	}
+
+	var in progress.NuevaRevisionQA
+	if err := httpx.DecodeJSON(w, r, &in); err != nil {
+		httpx.WriteError(w, http.StatusBadRequest, "cuerpo_invalido", err.Error())
+		return
+	}
+	if errs := in.Validar(); len(errs) > 0 {
+		httpx.WriteError(w, http.StatusUnprocessableEntity, "validacion", "datos inválidos", errs...)
+		return
+	}
+
+	if err := a.store.GuardarRevisionQA(r.Context(), ident.Subject, in); err != nil {
+		a.errorInterno(w, r, "guardar revisión Q&A", err)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+}
+
 // obtenerMio devuelve el progreso del usuario autenticado en una certificación.
 func (a *API) obtenerMio(w http.ResponseWriter, r *http.Request) {
 	ident, ok := auth.IdentityFromContext(r.Context())

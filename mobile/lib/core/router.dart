@@ -12,6 +12,7 @@ import '../features/exams/exam_runner_screen.dart';
 import '../features/exams/exams_screen.dart';
 import '../features/interviews/interviews_screen.dart';
 import '../features/interviews/qa_screen.dart';
+import '../features/jobs/job_readiness_screen.dart';
 import '../features/panel/panel_screen.dart';
 import '../features/progress/progress_dash_screen.dart';
 import '../features/progress/progress_screen.dart';
@@ -150,6 +151,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/recomendaciones',
         builder: (_, _) => const RecommenderScreen(),
+      ),
+
+      // --- Preparación por puesto ---
+      GoRoute(
+        path: '/preparacion',
+        builder: (_, _) => const JobReadinessScreen(),
       ),
     ],
   );

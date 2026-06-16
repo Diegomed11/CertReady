@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CertReady — Diagramas Proyecto 4 (OLAP · ETL · Dimensional)</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        margin: 0;
+        padding: 32px 28px 60px;
+        background: #f6f7fc;
+        color: #1c1b29;
+      }
+      h1 {
+        font-size: 24px;
+        margin: 0 0 4px;
+      }
+      .sub {
+        color: #5b5c70;
+        margin: 0 0 28px;
+      }
+      h2 {
+        font-size: 18px;
+        margin: 36px 0 10px;
+        padding-top: 14px;
+        border-top: 2px solid #e4e6f3;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid #e4e6f3;
+        border-radius: 14px;
+        padding: 18px;
+        overflow-x: auto;
+      }
+      .mermaid {
+        display: flex;
+        justify-content: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>CertReady — Diagramas del Proyecto 4</h1>
+    <p class="sub">OLAP (ClickHouse + Cube) · ETL (Python) · Modelado dimensional (estrella)</p>
+
+    <h2>Problema 1 — Exámenes · Diagrama relacional (OLTP)</h2>
+    <div class="card">
+      <pre class="mermaid">
+erDiagram
+  CERTIFICACIONES ||--o{ TEMAS : "tiene"
+  SESIONES ||--o{ INTENTOS : "agrupa"
+  PREGUNTAS ||--o{ INTENTOS : "ref logica (pregunta_ref)"
+  CERTIFICACIONES { uuid id PK
+    text slug UK
+    text nombre
+    text proveedor
+    text nivel }
+  TEMAS { uuid id PK
+    uuid certificacion_id FK
+    text slug
+    text nombre
+    text dominio
+    int orden }
+  SESIONES { uuid id PK
+    uuid usuario_id
+    text certificacion
+    text modo
+    text estado
+    float puntaje
+    timestamptz iniciado_en
+    timestamptz finalizado_en }
+  INTENTOS { uuid id PK
+    uuid sesion_id FK
+    uuid usuario_id
+    text pregunta_ref
+    bool correcto
+    jsonb seleccion
+    timestamptz creado_en }
+  PREGUNTAS { string _id PK
+    string certificacion
+    string tema
+    string dificultad
+    string tipo
+    string enunciado }
+      </pre>
+    </div>
+
+    <h2>Problema 1 — Exámenes · Diagrama dimensional (estrella fact_intento)</h2>
+    <div class="card">
+      <pre class="mermaid">
+erDiagram
+  DIM_FECHA ||--o{ FACT_INTENTO : ""
+  DIM_USUARIO ||--o{ FACT_INTENTO : ""
+  DIM_CERTIFICACION ||--o{ FACT_INTENTO : ""
+  DIM_TEMA ||--o{ FACT_INTENTO : ""
+  DIM_DIFICULTAD ||--o{ FACT_INTENTO : ""
+  DIM_TIPO_PREGUNTA ||--o{ FACT_INTENTO : ""
+  DIM_MODO ||--o{ FACT_INTENTO : ""
+  FACT_INTENTO { string intento_id PK
+    date fecha FK
+    string usuario_id FK
+    string certificacion FK
+    string tema FK
+    string dificultad FK
+    string tipo_pregunta FK
+    string modo FK
+    uint8 es_correcto "medida"
+    uint8 intentos_n "medida" }
+  DIM_FECHA { date fecha }
+  DIM_USUARIO { string usuario_id }
+  DIM_CERTIFICACION { string certificacion }
+  DIM_TEMA { string tema }
+  DIM_DIFICULTAD { string dificultad }
+  DIM_TIPO_PREGUNTA { string tipo_pregunta }
+  DIM_MODO { string modo }
+      </pre>
+    </div>
+
+    <h2>Problema 2 — Juez de código · Diagrama relacional (OLTP)</h2>
+    <div class="card">
+      <pre class="mermaid">
+erDiagram
+  PROBLEMAS ||--o{ CORRIDAS : "ref logica (problema_ref)"
+  CORRIDAS { uuid id PK
+    uuid usuario_id
+    text problema_ref
+    text lenguaje
+    text veredicto
+    int casos_pasados
+    int casos_total
+    int duracion_ms
+    timestamptz creado_en }
+  PROBLEMAS { string _id PK
+    string area
+    string dificultad
+    string titulo
+    array lenguajes_permitidos }
+      </pre>
+    </div>
+
+    <h2>Problema 2 — Juez de código · Diagrama dimensional (estrella fact_corrida)</h2>
+    <div class="card">
+      <pre class="mermaid">
+erDiagram
+  DIM_FECHA ||--o{ FACT_CORRIDA : ""
+  DIM_USUARIO ||--o{ FACT_CORRIDA : ""
+  DIM_PROBLEMA ||--o{ FACT_CORRIDA : ""
+  DIM_AREA ||--o{ FACT_CORRIDA : ""
+  DIM_DIFICULTAD ||--o{ FACT_CORRIDA : ""
+  DIM_LENGUAJE ||--o{ FACT_CORRIDA : ""
+  DIM_VEREDICTO ||--o{ FACT_CORRIDA : ""
+  FACT_CORRIDA { string corrida_id PK
+    date fecha FK
+    string usuario_id FK
+    string problema_ref FK
+    string area FK
+    string dificultad FK
+    string lenguaje FK
+    string veredicto FK
+    uint8 aceptado "medida"
+    uint16 casos_pasados "medida"
+    uint16 casos_total "medida"
+    uint32 duracion_ms "medida" }
+  DIM_FECHA { date fecha }
+  DIM_USUARIO { string usuario_id }
+  DIM_PROBLEMA { string problema_ref }
+  DIM_AREA { string area }
+  DIM_DIFICULTAD { string dificultad }
+  DIM_LENGUAJE { string lenguaje }
+  DIM_VEREDICTO { string veredicto }
+      </pre>
+    </div>
+
+    <h2>Proceso ETL — Diagrama de flujo</h2>
+    <div class="card">
+      <pre class="mermaid">
+flowchart TD
+  A([Inicio: python -m etl.run]) --> B[Leer watermark por fuente&lt;br/&gt;tabla etl_estado en ClickHouse]
+  B --> C[/EXTRACT - PostgreSQL&lt;br/&gt;intentos + sesiones y corridas&lt;br/&gt;creado_en posterior al watermark/]
+  C --> D{Hay filas nuevas?}
+  D -- No --> Z([Fin: no-op])
+  D -- Si --> E[/EXTRACT - MongoDB&lt;br/&gt;preguntas: tema, dificultad, tipo&lt;br/&gt;problemas: area, dificultad/]
+  E --> F[TRANSFORM - funciones puras&lt;br/&gt;denormaliza dimensiones - UTC&lt;br/&gt;deriva es_correcto / aceptado y fecha]
+  F --> G[(LOAD - ClickHouse&lt;br/&gt;fact_intento / fact_corrida&lt;br/&gt;ReplacingMergeTree = idempotente)]
+  G --> H[Avanzar watermark&lt;br/&gt;max creado_en por fuente]
+  H --> I[[Cube: capa semantica&lt;br/&gt;medidas y dimensiones]]
+  I --> J([Dashboards web y DSS de readiness])
+      </pre>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+      mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' })
+    </script>
+  </body>
+</html>

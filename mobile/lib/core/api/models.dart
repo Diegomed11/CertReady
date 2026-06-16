@@ -654,6 +654,82 @@ class Analitica {
   );
 }
 
+// --- dss: preparación por puesto --------------------------------------------
+
+/// A job role for which job readiness can be estimated.
+class PuestoResumen {
+  PuestoResumen({
+    required this.slug,
+    required this.nombre,
+    required this.descripcion,
+  });
+  final String slug;
+  final String nombre;
+  final String descripcion;
+
+  factory PuestoResumen.fromJson(Map<String, dynamic> j) => PuestoResumen(
+    slug: (j['slug'] ?? '') as String,
+    nombre: (j['nombre'] ?? '') as String,
+    descripcion: (j['descripcion'] ?? '') as String,
+  );
+}
+
+/// One signal that makes up the job readiness (examenes | codigo | qa).
+class SenalPreparacion {
+  SenalPreparacion({
+    required this.clave,
+    required this.etiqueta,
+    this.scorePct,
+    required this.peso,
+    required this.cobertura,
+    required this.detalle,
+  });
+  final String clave;
+  final String etiqueta;
+  final num? scorePct; // null = sin datos
+  final num peso;
+  final int cobertura;
+  final String detalle;
+
+  factory SenalPreparacion.fromJson(Map<String, dynamic> j) => SenalPreparacion(
+    clave: (j['clave'] ?? '') as String,
+    etiqueta: (j['etiqueta'] ?? '') as String,
+    scorePct: j['score_pct'] as num?,
+    peso: (j['peso'] as num?) ?? 0,
+    cobertura: (j['cobertura'] as num?)?.toInt() ?? 0,
+    detalle: (j['detalle'] ?? '') as String,
+  );
+}
+
+/// Combined readiness (exams + code + Q&A) of a user for a job role.
+class JobReadiness {
+  JobReadiness({
+    required this.puesto,
+    required this.nombre,
+    this.readinessPct,
+    required this.nivel,
+    required this.senales,
+    this.enfoque,
+  });
+  final String puesto;
+  final String nombre;
+  final num? readinessPct; // null = ninguna señal con datos
+  final String nivel;
+  final List<SenalPreparacion> senales;
+  final String? enfoque;
+
+  factory JobReadiness.fromJson(Map<String, dynamic> j) => JobReadiness(
+    puesto: (j['puesto'] ?? '') as String,
+    nombre: (j['nombre'] ?? '') as String,
+    readinessPct: j['readiness_pct'] as num?,
+    nivel: (j['nivel'] ?? '') as String,
+    senales: ((j['senales'] as List?) ?? const [])
+        .map((e) => SenalPreparacion.fromJson(e as Map<String, dynamic>))
+        .toList(),
+    enfoque: j['enfoque'] as String?,
+  );
+}
+
 // --- dss: recomendador por CV -----------------------------------------------
 
 class PasoCamino {

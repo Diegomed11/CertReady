@@ -32,6 +32,16 @@ func (s *Store) MarcarLeccion(ctx context.Context, usuarioID string, n progress.
 	return err
 }
 
+// GuardarRevisionQA registra una autoevaluación de una pregunta de entrevista
+// (evento append-only; alimenta la señal de Q&A del DSS vía el ETL).
+func (s *Store) GuardarRevisionQA(ctx context.Context, usuarioID string, n progress.NuevaRevisionQA) error {
+	_, err := s.pool.Exec(ctx,
+		`insert into progress.qa_revisiones (usuario_id, qa_ref, nivel)
+		 values ($1, $2, $3)`,
+		usuarioID, n.QaRef, n.Nivel)
+	return err
+}
+
 // GuardarQuiz registra el resultado del quiz de un tema y devuelve el estado
 // resultante. Conserva el mejor puntaje y deja el tema aprobado de forma pegajosa
 // (una vez aprobado, sigue aprobado).

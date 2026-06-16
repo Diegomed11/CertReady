@@ -42,6 +42,18 @@ COLUMNAS_CORRIDA = [
     "creado_en",
 ]
 
+COLUMNAS_QA = [
+    "qa_id",
+    "usuario_id",
+    "qa_ref",
+    "puesto",
+    "area",
+    "categoria",
+    "nivel",
+    "fecha",
+    "creado_en",
+]
+
 _EPOCH = datetime(1970, 1, 1, tzinfo=UTC)
 
 

@@ -34,6 +34,7 @@ type Options struct {
 //	GET  /v1/ready               readiness (ping a Postgres)
 //	POST /v1/progress/lessons    marcar una lección como leída (auth)
 //	POST /v1/progress/quizzes    registrar el resultado del quiz de un tema (auth)
+//	POST /v1/progress/qa         autoevaluación de una pregunta de entrevista (auth)
 //	GET  /v1/me/progress         progreso del usuario en una certificación (auth)
 //
 // Toda la autorización es por **pertenencia**: el handler usa el `sub` del JWT
@@ -52,6 +53,7 @@ func NewRouter(opts Options) http.Handler {
 
 	mux.Handle("POST /v1/progress/lessons", authGate(opts.Auth, http.HandlerFunc(api.marcarLeccion)))
 	mux.Handle("POST /v1/progress/quizzes", authGate(opts.Auth, http.HandlerFunc(api.guardarQuiz)))
+	mux.Handle("POST /v1/progress/qa", authGate(opts.Auth, http.HandlerFunc(api.guardarRevisionQA)))
 	mux.Handle("GET /v1/me/progress", authGate(opts.Auth, http.HandlerFunc(api.obtenerMio)))
 
 	return httpx.Chain(mux,

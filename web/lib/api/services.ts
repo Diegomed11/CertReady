@@ -13,11 +13,13 @@ import type {
   Corrida,
   Cuenta,
   Inscripcion,
+  JobReadiness,
   Material,
   PaginatedList,
   Problema,
   PreguntaQA,
   Progreso,
+  PuestoResumen,
   Readiness,
   Recomendaciones,
   RespuestaCorrida,
@@ -559,6 +561,46 @@ export async function getAnalytics(
   }
 }
 
+/**
+ * listPuestos devuelve el catálogo de puestos para la preparación por rol, o []
+ * si el DSS no está disponible (degrada en silencio, como readiness/analytics).
+ */
+export async function listPuestos(): Promise<PuestoResumen[]> {
+  try {
+    const data = await fetchJSON<PuestoResumen[]>({
+      baseURL: requireUrl('DSS_BASE_URL', env().DSS_BASE_URL),
+      path: '/v1/puestos',
+      timeoutMs: 8000,
+    })
+    return data ?? []
+  } catch {
+    return []
+  }
+}
+
+/**
+ * getJobReadiness devuelve qué tan preparado está el usuario para un puesto,
+ * combinando exámenes + código + Q&A. Devuelve null si el puesto no existe (404)
+ * o si el DSS no está disponible. El DSS no lleva auth; el BFF le pasa el subject
+ * de la sesión como usuario_id.
+ */
+export async function getJobReadiness(
+  usuarioId: string,
+  puesto: string,
+): Promise<JobReadiness | null> {
+  const suffix = querystring({ puesto })
+  try {
+    return await fetchJSON<JobReadiness>({
+      baseURL: requireUrl('DSS_BASE_URL', env().DSS_BASE_URL),
+      path: `/v1/job-readiness/${encodeURIComponent(usuarioId)}${suffix}`,
+      timeoutMs: 8000,
+    })
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 404) return null
+    return null
+  }
+}
+
 // --- catalog: temas (ruta de aprendizaje) ----------------------------------
 
 /** getCertification devuelve una certificación por id o slug, o null si no existe. */
@@ -629,4 +671,24 @@ export async function completeQuiz(
   })
   if (!data) throw new Error('respuesta vacía al guardar el quiz')
   return data
+}
+
+/**
+ * submitQARevision registra la autoevaluación de una pregunta de entrevista (Q&A).
+ *
+ * `nivel` ∈ {1,2,3} (1=me costó · 2=regular · 3=bien). El servicio progress fija
+ * el usuario desde el token (nunca el body): defensa anti-IDOR. Alimenta la señal
+ * de Q&A del DSS de preparación por puesto.
+ */
+export async function submitQARevision(
+  accessToken: string,
+  body: { qa_ref: string; nivel: number },
+): Promise<void> {
+  await fetchJSON({
+    baseURL: requireUrl('PROGRESS_BASE_URL', env().PROGRESS_BASE_URL),
+    path: '/v1/progress/qa',
+    method: 'POST',
+    accessToken,
+    body,
+  })
 }

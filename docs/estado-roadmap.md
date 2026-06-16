@@ -172,11 +172,13 @@ trabajo continuo. Próximos pasos posibles (a decidir con el responsable):
 ## Planeado
 
 - **Más analítica en la web.** Ya están el acierto por dominio + el recomendador
-  de CV (DSS) y un **catálogo de ~50 certificaciones** (AWS/Azure/GCP + otras) con
-  camino, estudio y quiz (contenido ligero, se refina cert por cert). Falta
-  surfacear más medidas de Cube (tendencias, comparativas) y **refinar/profundizar**
-  el contenido de las certs nuevas (hoy `aws-saa` es la única profunda), además de
-  pesos de simulacro y corte de aprobación por cert.
+  de CV (DSS), la **preparación por puesto** (el DSS combina exámenes + código + Q&A
+  y estima qué tan listo estás para un rol; web `/preparacion` y móvil `/preparacion`)
+  y un **catálogo de ~50 certificaciones** (AWS/Azure/GCP + otras) con camino, estudio
+  y quiz (contenido ligero, se refina cert por cert). Falta surfacear más medidas de
+  Cube (tendencias, comparativas) y **refinar/profundizar** el contenido de las certs
+  nuevas (hoy `aws-saa` es la única profunda), además de pesos de simulacro y corte de
+  aprobación por cert.
 - **Pulido de UI/UX.** Refinamiento visual y de interacción sobre el MVP.
 - **Fase 6 — Móvil (en curso).** App **Flutter** en `mobile/` consumiendo las mismas
   APIs Go `/v1` (sin BFF móvil). **Incrementos 1, 2 y 3 hechos**: fundación (config, dio,

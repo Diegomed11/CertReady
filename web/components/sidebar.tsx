@@ -12,6 +12,7 @@ const NAV = [
   { href: '/examenes', label: 'Exámenes', icon: '/icons/memo.png' },
   { href: '/entrevistas', label: 'Entrevistas', icon: '/icons/laptop.png' },
   { href: '/progreso', label: 'Progreso', icon: '/icons/chart.png' },
+  { href: '/preparacion', label: 'Preparación', icon: '/icons/rocket.png' },
   { href: '/recomendaciones', label: 'Mi camino', icon: '/icons/target.png' },
   { href: '/certifications', label: 'Catálogo', icon: '/icons/books.png' },
 ]

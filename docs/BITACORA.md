@@ -1413,3 +1413,48 @@ fondo base en `surface` (no blanco) para que tarjetas/bordes resalten en todas l
 
 **Verificación:** typecheck + lint + formato verdes. Pendiente: commit del responsable.
 **Abierto:** ¿extender el estilo nuevo (botones/bordes) a las demás pestañas? (a decidir).
+
+---
+
+## 2026-06-15 · Datos + DSS + UI · Preparación por puesto (exámenes + código + Q&A)
+
+**Hecho (las 3 capas; el DSS ahora estima "qué tan listo estás para tal puesto"):**
+- **Inc A — Datos.** `progress` (Go): migración `0002_qa_revisiones` (tabla
+  `qa_revisiones`: usuario, `qa_ref`, `nivel` 1–3) + `POST /v1/progress/qa`
+  (autoevaluación; usuario desde el JWT, anti-IDOR). **ETL**: nuevo hecho **`fact_qa`**
+  (fuente `progress.qa_revisiones` enriquecida con Mongo `qa`: puesto/área/categoría),
+  con su watermark e idempotencia (ReplacingMergeTree). `sources`/`transform`/`load`/`run`
+  extendidos.
+- **Inc B — DSS.** `data/dss/puestos.json` (catálogo curado: cada puesto declara qué
+  señales lo componen —exámenes/código/Q&A— y con qué peso). `repo` lee `fact_corrida`
+  (problemas resueltos por área) y `fact_qa` (autoevaluación por área). Modelo puro:
+  `nivel_a_score` (1–3 → 0/.5/1) y `combinar_readiness` (media ponderada que **ignora
+  señales sin datos y renormaliza**). Endpoints `GET /v1/puestos` y
+  `GET /v1/job-readiness/{usuario}?puesto=`. Se factorizó `_calcular_cert` (readiness IRT
+  por cert) reutilizado por `readiness` y por la señal de exámenes.
+- **Inc C — UI (web + móvil).** Autoevaluación de Q&A tras revelar la respuesta
+  (web `reveal.tsx` → `POST /api/progress/qa`; móvil `qa_screen` con ChoiceChips).
+  Vista **"Preparación por puesto"**: selector de puesto + medidor combinado + desglose
+  por señal (peso, score o "sin datos", detalle) y "dónde enfocarte". Web:
+  `/preparacion` (+ entrada en el sidebar, ícono cohete). Móvil: `/preparacion`
+  (+ tile en el panel).
+
+**Decisiones:**
+- La señal de Q&A es **autoevaluación** (no autocalificación): las preguntas son
+  abiertas; el usuario declara 1=me costó / 2=regular / 3=bien tras ver la respuesta
+  modelo. Es la única forma de obtener señal de Q&A sin un evaluador de texto.
+- Señales **filtradas por área** (no por puesto) en código y Q&A → reutilizables entre
+  roles. El catálogo mapea cada puesto a áreas/certs reales del contenido sembrado
+  (`aws-saa`, `algoritmos`, `sistemas`/`bases-de-datos`), así la demo da datos no vacíos.
+- Degradación elegante: si el DSS/ClickHouse no responde, web y móvil muestran "sin
+  datos" (igual que readiness/analítica), sin romper.
+
+**Verificación:** Go `build`+`vet` (progress) verdes. Data `ruff`+`black`+`pytest`
+(transform `fact_qa`, modelo combinar/nivel, catálogo puestos) verdes; integración
+ClickHouse gated por `DATA_ETL_IT=1` (la corre el responsable). Web typecheck+lint+
+formato verdes. Móvil `analyze`+`format`+`test` (smokes de `JobReadiness`/`PuestoResumen`)
+verdes. Falta verificación en vivo end-to-end (requiere stack + sembrar + correr ETL).
+
+**Siguiente:** el responsable levanta el stack, siembra, corre el ETL y prueba el flujo;
+luego commit. (Aparte: hay un test preexistente del recomendador en rojo por casing
+de skills —`EC2` vs `ec2`— ajeno a este cambio; se dejó marcado para arreglar.)

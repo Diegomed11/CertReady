@@ -52,3 +52,30 @@ def test_siguiente_accion_elige_celda_mas_debil():
     # Con theta=0, la celda de mayor dificultad (b=2) es la de menor dominio.
     assert accion is not None
     assert accion.dificultad == "dificil"
+
+
+def test_nivel_a_score_mapea_y_recorta():
+    assert modelo.nivel_a_score(1) == 0.0
+    assert modelo.nivel_a_score(2) == 0.5
+    assert modelo.nivel_a_score(3) == 1.0
+    # Fuera de rango se recorta (robustez ante datos sucios).
+    assert modelo.nivel_a_score(0) == 0.0
+    assert modelo.nivel_a_score(9) == 1.0
+
+
+def test_combinar_readiness_renormaliza_e_ignora_faltantes():
+    # Con todas las señales presentes: media ponderada normal.
+    r = modelo.combinar_readiness([(0.5, 1.0), (0.5, 0.0)])
+    assert r == 0.5
+    # Una señal sin datos (None) se ignora y los pesos se renormalizan.
+    r2 = modelo.combinar_readiness([(0.25, 1.0), (0.75, None)])
+    assert r2 == 1.0
+    # Peso cero no cuenta aunque traiga score.
+    r3 = modelo.combinar_readiness([(0.0, 0.0), (1.0, 0.8)])
+    assert abs(r3 - 0.8) < 1e-9
+
+
+def test_combinar_readiness_sin_datos_es_none():
+    assert modelo.combinar_readiness([]) is None
+    assert modelo.combinar_readiness([(1.0, None), (2.0, None)]) is None
+    assert modelo.combinar_readiness([(0.0, 0.5)]) is None  # solo pesos nulos

@@ -1499,3 +1499,78 @@ demo + ETL, y rebuild de la app móvil.
 
 **Siguiente:** `dev-up` → seed-demo-user + ETL → probar filtros en Entrevistas y las
 nuevas especialidades en Preparación por puesto; luego commit.
+
+## 2026-06-16 · UI/UX (web + móvil) + datos · pulido, perfil, íconos Lottie y seeder de panel
+
+**Hecho (web):**
+- **CTA colorido + borde "beam"** del panel reutilizados en las demás pestañas
+  (Exámenes, Estudiar, Entrevistas, Progreso, Preparación, Mi camino y los "Repaso" del
+  quiz): primitivas globales `.cr-beam` y `.cta` en `globals.css`, prop `beam` en `<Card>`
+  y componente `<Cta>/<CtaLink>`. El catálogo (~50) y las listas largas quedan sin beam
+  por rendimiento.
+- **Íconos Lottie** (lordicon) en el menú lateral: dep `lottie-react` + componente
+  `LottieIcon` (carga el `.json` de `public/icons`, se re-anima al hover); el menú apunta
+  a `panel/estudiar/examenes/entrevistas/progreso/preparacion/camino/catalogo`.
+
+**Hecho (móvil):**
+- **Catálogo**: barra de búsqueda (nombre/proveedor/slug, sin acentos) + estado vacío.
+- **Inicio**: rediseño con tarjeta de **Perfil** (ver/editar nombre, cerrar sesión) en
+  lugar de "accesos rápidos"; nueva pantalla `/perfil` (`updateMe` PATCH /v1/me, `creadoEn`).
+- **Fix**: la barra de navegación inferior ocultaba los íconos no seleccionados
+  (`.animate().scale()` con target 0 = escala 0); se quitó esa animación.
+- **Logo/íconos de app** (escudo) en login/splash + Android/iOS.
+
+**Hecho (datos):** `scripts/seed-demo-user.py` ahora también puebla **inscripción +
+progreso de estudio** (temas aprobados + lecciones leídas), para que el panel (cursos + %
+temas) se vea igual en web y móvil; antes solo sembraba las señales del DSS.
+
+**Nota — progreso compartido:** verificado que web (`session.subject`) y móvil
+(`jwtSubject`) usan el mismo `sub` (= SHA-1 del correo en el oidc-mock) contra el mismo
+backend → mismos datos con el mismo correo; el "no se comparte" se debía a sembrar la demo
+bajo un correo distinto al del login.
+
+**Verificación:** web `typecheck/lint`; móvil `analyze/test`. En vivo lo corre el
+responsable (hot reload / `flutter run` para el ícono de app).
+
+## 2026-06-16 · Fase 7 — Endurecimiento de seguridad (sin desplegar, $0 local)
+
+Arranque de Fase 7: cerrar brechas de seguridad en el código y documentar lo pendiente de
+despliegue. Guía viva en [`seguridad-y-produccion.md`](seguridad-y-produccion.md).
+
+**Hecho:**
+- **Headers de seguridad** (web, `next.config.mjs`): HSTS, `X-Content-Type-Options`,
+  `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy` y **CSP en Report-Only** (no
+  rompe el landing 3D / Lottie; se promueve a enforce con nonce más adelante).
+- **Rate-limit** (token-bucket por IP, sin dependencias nuevas):
+  - `libs/platform/httpx/ratelimit.go` (middleware reutilizable; exime `/v1/health|ready`;
+    429 + `Retry-After`) aplicado en los **7 servicios** (catalog, users, enrollments,
+    content, exams, problems, progress).
+  - **BFF** (`web/lib/rate-limit.ts`) en `/api/auth/login` y `/api/auth/register`.
+  - **DSS** (FastAPI) en `POST /v1/recommendations` (subida de CV).
+- **Sanitización de archivos** (DSS): lectura **acotada** (no materializa >5 MB), límite
+  de páginas en PDF, guardia **anti zip-bomb** en DOCX y parseo tolerante (cualquier fallo
+  del parser → 422, nunca 500). `recomendador.extraer_texto` reescrito a la defensiva.
+- **RLS — piloto en `enrollments`** (defensa en profundidad; la autorización por usuario
+  ya estaba en el código y probada anti-IDOR/BOLA): plumbing reutilizable
+  (`libs/platform/postgres/rls.go`: `Querier`, `Q(ctx,pool)`, middleware `RLSTx`),
+  migración `0002_rls` (rol `certready_app`, `ENABLE/FORCE RLS`, política por
+  `current_setting('app.usuario_id')`) y store enrutado por `Q(...)`. Con **kill-switch**
+  `ENROLLMENTS_RLS_ENABLED` (default **off**) → entra sin cambiar el comportamiento actual.
+
+**Hallazgos confirmados (relevamiento read-only):** CORS ausente por diseño (el navegador
+solo habla con el BFF, mismo origen) — mantener; sin `NEXT_PUBLIC_*` con secretos ni
+claves/contraseñas hardcodeadas; `npm audit` (7) es **tooling de dev** (vitest→vite→esbuild,
+postcss anidado en Next), no del runtime de prod → **no** correr `npm audit fix --force`
+(degradaría Next a v9).
+
+**Decisión:** RLS por petición vía transacción + `SET LOCAL app.usuario_id`, con
+interruptor por servicio para un despliegue reversible; el **juez** queda fuera (su
+petición larga amarraría una conexión del pool durante la ejecución del sandbox).
+
+**Verificación:** la corre el responsable — Go `build/vet/test` (incl. `ratelimit_test`),
+data `ruff/black/pytest`, web `lint`. Con RLS apagado por defecto no cambia el
+comportamiento; runbook de activación (rol con login, DSN, flag) en
+`seguridad-y-produccion.md`.
+
+**Siguiente:** commit; replicar el RLS a `progress` y `exams`; (prod, diferido) Cognito,
+Secrets Manager, WAF / rate-limit distribuido, promover CSP a enforce y pentesting.

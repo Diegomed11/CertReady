@@ -10,6 +10,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"github.com/certready/certready/libs/platform/postgres"
 	"github.com/certready/certready/services/enrollments/internal/enrollments"
 )
 
@@ -36,7 +37,7 @@ func (s *Store) Ping(ctx context.Context) error { return s.pool.Ping(ctx) }
 //
 // Returns ErrConflict si ya existe una inscripción (usuario, tipo, objetivo).
 func (s *Store) Crear(ctx context.Context, usuarioID string, n enrollments.NuevaInscripcion) (enrollments.Inscripcion, error) {
-	rows, err := s.pool.Query(ctx,
+	rows, err := postgres.Q(ctx, s.pool).Query(ctx,
 		`insert into enrollments.inscripciones (usuario_id, tipo_objetivo, objetivo_id)
 		 values ($1, $2, $3)
 		 returning `+cols,
@@ -78,7 +79,7 @@ func (s *Store) ListarDeUsuario(ctx context.Context, usuarioID string, f FiltroD
 	args = append(args, f.Offset)
 	q += fmt.Sprintf(" offset $%d", len(args))
 
-	rows, err := s.pool.Query(ctx, q, args...)
+	rows, err := postgres.Q(ctx, s.pool).Query(ctx, q, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +92,7 @@ func (s *Store) ListarDeUsuario(ctx context.Context, usuarioID string, f FiltroD
 // Returns ErrNotFound si no existe o no pertenece (no se distingue para no
 // filtrar la existencia de IDs ajenos — defensa BOLA).
 func (s *Store) CambiarEstadoDeUsuario(ctx context.Context, usuarioID, id string, estado enrollments.Estado) (enrollments.Inscripcion, error) {
-	rows, err := s.pool.Query(ctx,
+	rows, err := postgres.Q(ctx, s.pool).Query(ctx,
 		`update enrollments.inscripciones set estado = $3
 		 where id::text = $1 and usuario_id::text = $2
 		 returning `+cols,
@@ -110,7 +111,7 @@ func (s *Store) CambiarEstadoDeUsuario(ctx context.Context, usuarioID, id string
 //
 // Returns ErrNotFound si no existe o no pertenece (igual que CambiarEstado).
 func (s *Store) EliminarDeUsuario(ctx context.Context, usuarioID, id string) error {
-	tag, err := s.pool.Exec(ctx,
+	tag, err := postgres.Q(ctx, s.pool).Exec(ctx,
 		`delete from enrollments.inscripciones where id::text = $1 and usuario_id::text = $2`,
 		id, usuarioID)
 	if err != nil {

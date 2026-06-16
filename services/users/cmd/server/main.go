@@ -12,6 +12,7 @@ import (
 	"syscall"
 
 	"github.com/certready/certready/libs/platform/auth"
+	"github.com/certready/certready/libs/platform/httpx"
 	"github.com/certready/certready/libs/platform/logging"
 	"github.com/certready/certready/libs/platform/postgres"
 
@@ -68,7 +69,7 @@ func run(cfg config.Config, logger *slog.Logger) error {
 
 	srv := &http.Server{
 		Addr:         cfg.Addr,
-		Handler:      router,
+		Handler:      httpx.RateLimit(httpx.DefaultRPS, httpx.DefaultBurst)(router),
 		ReadTimeout:  cfg.ReadTimeout,
 		WriteTimeout: cfg.WriteTimeout,
 		IdleTimeout:  cfg.IdleTimeout,

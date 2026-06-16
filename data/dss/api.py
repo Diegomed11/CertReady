@@ -8,13 +8,15 @@ unitarias y la recolección de pytest no requieran la base.
 from __future__ import annotations
 
 import json
+import time
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
 
 import clickhouse_connect
 from clickhouse_connect.driver.client import Client
-from fastapi import FastAPI, HTTPException, UploadFile
+from fastapi import FastAPI, HTTPException, Request, UploadFile
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from dss import modelo, recomendador
@@ -28,6 +30,42 @@ MAX_CV_BYTES = 5 * 1024 * 1024
 PUESTOS_PATH = Path(__file__).resolve().parent / "puestos.json"
 
 app = FastAPI(title="CertReady DSS", version="dev")
+
+
+# --- Rate-limit de la subida de CV (anti abuso) -------------------------------
+# Token-bucket en memoria por IP, SOLO para POST /v1/recommendations (no afecta a
+# readiness/analytics). En producción el límite distribuido lo aplica el WAF; esto
+# es defensa base por instancia.
+_RL_CAP = 8.0  # ráfaga máxima por IP
+_RL_REFILL = 0.1  # tokens/segundo (~6/min sostenido)
+_rl_buckets: dict[str, tuple[float, float]] = {}  # ip -> (tokens, last_monotonic)
+
+
+def _cliente_ip(request: Request) -> str:
+    """IP del cliente: primer salto de X-Forwarded-For tras un proxy, o la remota."""
+    xff = request.headers.get("x-forwarded-for", "")
+    if xff:
+        return xff.split(",")[0].strip()
+    return request.client.host if request.client else "?"
+
+
+@app.middleware("http")
+async def _rate_limit_subidas(request: Request, call_next):
+    """Limita POST /v1/recommendations por IP (token-bucket en memoria)."""
+    if request.method == "POST" and request.url.path == "/v1/recommendations":
+        ip = _cliente_ip(request)
+        now = time.monotonic()
+        tokens, last = _rl_buckets.get(ip, (_RL_CAP, now))
+        tokens = min(_RL_CAP, tokens + (now - last) * _RL_REFILL)
+        if tokens < 1:
+            _rl_buckets[ip] = (tokens, now)
+            return JSONResponse(
+                status_code=429,
+                content={"detail": "demasiadas subidas; intenta de nuevo en un momento"},
+                headers={"Retry-After": "10"},
+            )
+        _rl_buckets[ip] = (tokens - 1.0, now)
+    return await call_next(request)
 
 
 @lru_cache(maxsize=1)
@@ -246,14 +284,24 @@ class RecomendacionesResponse(BaseModel):
 async def recommendations(file: UploadFile) -> RecomendacionesResponse:
     """Lee el CV subido (PDF/DOCX/texto) y devuelve perfil + caminos recomendados.
 
-    El archivo se procesa en memoria y **no se persiste**. No depende de ClickHouse.
+    El archivo se trata como **no confiable**: se rechaza por tamaño antes de
+    materializarlo, se parsea de forma defensiva (anti zip-bomb, límite de páginas)
+    y **no se persiste**. No depende de ClickHouse.
     """
-    datos = await file.read()
+    # Rechazo temprano por el tamaño declarado (si el cliente lo informa).
+    if file.size is not None and file.size > MAX_CV_BYTES:
+        raise HTTPException(status_code=413, detail="archivo demasiado grande (máx 5 MB)")
+    # Lectura ACOTADA: no materializamos en memoria más de MAX_CV_BYTES (+1 para
+    # detectar el exceso). Evita el DoS de cargar entero un archivo enorme.
+    datos = await file.read(MAX_CV_BYTES + 1)
     if not datos:
         raise HTTPException(status_code=400, detail="archivo vacío")
     if len(datos) > MAX_CV_BYTES:
         raise HTTPException(status_code=413, detail="archivo demasiado grande (máx 5 MB)")
-    texto = recomendador.extraer_texto(file.filename or "", datos)
+    try:
+        texto = recomendador.extraer_texto(file.filename or "", datos)
+    except recomendador.CVInvalido as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
     if len(texto.strip()) < 30:
         raise HTTPException(
             status_code=422, detail="no se pudo leer texto del CV; sube un PDF/DOCX con texto"

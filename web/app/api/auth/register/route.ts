@@ -8,8 +8,15 @@ import { NextResponse } from 'next/server'
 
 import { nativeRegister, AuthError } from '@/lib/auth/native'
 import { getSession } from '@/lib/auth/session'
+import { clientKey, rateLimit } from '@/lib/rate-limit'
 
 export async function POST(req: Request) {
+  if (!rateLimit(`register:${clientKey(req)}`)) {
+    return NextResponse.json(
+      { error: 'Demasiados intentos. Espera un momento e inténtalo de nuevo.' },
+      { status: 429 },
+    )
+  }
   let body: { email?: unknown; password?: unknown; name?: unknown }
   try {
     body = await req.json()

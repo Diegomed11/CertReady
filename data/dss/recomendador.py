@@ -19,6 +19,7 @@ import json
 import os
 import re
 import unicodedata
+import zipfile
 from collections.abc import Callable
 from dataclasses import dataclass
 from functools import lru_cache
@@ -98,31 +99,78 @@ def _norm(s: str) -> str:
     return "".join(ch for ch in s if unicodedata.category(ch) != "Mn")
 
 
-# --- extracción de texto del CV -----------------------------------------------
+# --- extracción de texto del CV (defensiva) -----------------------------------
+class CVInvalido(Exception):
+    """El CV no se pudo leer de forma segura (corrupto, sospechoso o sin texto)."""
+
+
+# Límites defensivos para parsear un archivo subido (no confiable): acotan CPU,
+# memoria y el texto resultante ante un archivo malicioso.
+MAX_PDF_PAGES = 50
+MAX_TEXT_CHARS = 200_000
+MAX_DOCX_UNCOMPRESSED = 50 * 1024 * 1024  # 50 MB descomprimidos (anti zip-bomb)
+
+
 def extraer_texto(nombre: str, datos: bytes) -> str:
-    """Extrae el texto de un CV en PDF, DOCX o texto plano.
+    """Extrae el texto de un CV en PDF, DOCX o texto plano, de forma defensiva.
+
+    Trata el archivo como **no confiable**: limita páginas/tamaño descomprimido y
+    convierte cualquier fallo del parser en ``CVInvalido`` (nunca un 500). El texto
+    se recorta a ``MAX_TEXT_CHARS``.
 
     Parameters
     ----------
     nombre : nombre original del archivo (se usa la extensión).
-    datos  : bytes del archivo.
+    datos  : bytes del archivo (ya acotados a un máximo por el llamador).
 
     Returns
     -------
-    str : texto plano extraído (puede venir con saltos de línea).
+    str : texto plano extraído.
+
+    Raises
+    ------
+    CVInvalido : si el archivo está corrupto o no se puede parsear con seguridad.
     """
     ext = Path(nombre or "").suffix.lower()
     if ext == ".pdf":
-        from pypdf import PdfReader
-
-        lector = PdfReader(io.BytesIO(datos))
-        return "\n".join((p.extract_text() or "") for p in lector.pages)
+        return _texto_pdf(datos)
     if ext == ".docx":
-        import docx
+        return _texto_docx(datos)
+    return datos.decode("utf-8", errors="ignore")[:MAX_TEXT_CHARS]
 
+
+def _texto_pdf(datos: bytes) -> str:
+    """Texto de un PDF, acotado a ``MAX_PDF_PAGES`` y con parseo tolerante a fallos."""
+    from pypdf import PdfReader
+
+    try:
+        lector = PdfReader(io.BytesIO(datos))
+        paginas = list(lector.pages)[:MAX_PDF_PAGES]
+        texto = "\n".join((p.extract_text() or "") for p in paginas)
+    except Exception as exc:  # archivo no confiable: cualquier fallo del parser → 422
+        raise CVInvalido("PDF corrupto o ilegible") from exc
+    return texto[:MAX_TEXT_CHARS]
+
+
+def _texto_docx(datos: bytes) -> str:
+    """Texto de un DOCX, con guardia anti zip-bomb y parseo tolerante a fallos."""
+    import docx
+
+    # Un DOCX es un ZIP: rechazar antes de parsear si lo descomprimido es desmesurado.
+    try:
+        with zipfile.ZipFile(io.BytesIO(datos)) as zf:
+            descomprimido = sum(info.file_size for info in zf.infolist())
+    except zipfile.BadZipFile as exc:
+        raise CVInvalido("DOCX corrupto") from exc
+    if descomprimido > MAX_DOCX_UNCOMPRESSED:
+        raise CVInvalido("DOCX demasiado grande al descomprimir")
+
+    try:
         doc = docx.Document(io.BytesIO(datos))
-        return "\n".join(p.text for p in doc.paragraphs)
-    return datos.decode("utf-8", errors="ignore")
+        texto = "\n".join(p.text for p in doc.paragraphs)
+    except Exception as exc:  # archivo no confiable: cualquier fallo del parser → 422
+        raise CVInvalido("DOCX ilegible") from exc
+    return texto[:MAX_TEXT_CHARS]
 
 
 # --- perfil -------------------------------------------------------------------

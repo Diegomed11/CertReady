@@ -5,16 +5,18 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
-/** Navegación principal de la app autenticada. */
+import { LottieIcon } from './lottie-icon'
+
+/** Navegación principal de la app autenticada (iconos Lottie animados). */
 const NAV = [
-  { href: '/panel', label: 'Panel', icon: '/icons/house.png' },
-  { href: '/estudiar', label: 'Estudiar', icon: '/icons/open-book.png' },
-  { href: '/examenes', label: 'Exámenes', icon: '/icons/memo.png' },
-  { href: '/entrevistas', label: 'Entrevistas', icon: '/icons/laptop.png' },
-  { href: '/progreso', label: 'Progreso', icon: '/icons/chart.png' },
-  { href: '/preparacion', label: 'Preparación', icon: '/icons/rocket.png' },
-  { href: '/recomendaciones', label: 'Mi camino', icon: '/icons/target.png' },
-  { href: '/certifications', label: 'Catálogo', icon: '/icons/books.png' },
+  { href: '/panel', label: 'Panel', icon: '/icons/panel.json' },
+  { href: '/estudiar', label: 'Estudiar', icon: '/icons/estudiar.json' },
+  { href: '/examenes', label: 'Exámenes', icon: '/icons/examenes.json' },
+  { href: '/entrevistas', label: 'Entrevistas', icon: '/icons/entrevistas.json' },
+  { href: '/progreso', label: 'Progreso', icon: '/icons/progreso.json' },
+  { href: '/preparacion', label: 'Preparación', icon: '/icons/preparacion.json' },
+  { href: '/recomendaciones', label: 'Mi camino', icon: '/icons/camino.json' },
+  { href: '/certifications', label: 'Catálogo', icon: '/icons/catalogo.json' },
 ]
 
 function esActivo(pathname: string, href: string): boolean {
@@ -39,6 +41,7 @@ export function Sidebar({
   const router = useRouter()
   const navRef = useRef<HTMLElement>(null)
   const [open, setOpen] = useState(false)
+  const [hover, setHover] = useState<string | null>(null)
   const [saliendo, setSaliendo] = useState(false)
   const inicial = (nombre?.trim()?.[0] ?? email?.trim()?.[0] ?? 'U').toUpperCase()
 
@@ -127,8 +130,14 @@ export function Sidebar({
                 href={n.href}
                 aria-current={activo ? 'page' : undefined}
                 className={'side-item' + (activo ? ' active' : '')}
+                onMouseEnter={() => setHover(n.href)}
+                onMouseLeave={() => setHover((h) => (h === n.href ? null : h))}
               >
-                <Image src={n.icon} alt="" width={33} height={33} draggable={false} />
+                {n.icon.endsWith('.json') ? (
+                  <LottieIcon src={n.icon} size={33} playing={hover === n.href} />
+                ) : (
+                  <Image src={n.icon} alt="" width={33} height={33} draggable={false} />
+                )}
                 <span className="lbl">{n.label}</span>
               </Link>
             )

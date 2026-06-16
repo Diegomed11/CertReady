@@ -94,7 +94,7 @@ function PuestoDetalle({
   return (
     <>
       <div className="grid items-stretch gap-5 md:grid-cols-3">
-        <Card className="flex flex-col items-center justify-center p-6">
+        <Card beam className="flex flex-col items-center justify-center p-6">
           {combinada !== null ? (
             <Gauge value={combinada} etiqueta="Preparación" />
           ) : (
@@ -111,7 +111,7 @@ function PuestoDetalle({
           ) : null}
         </Card>
 
-        <Card className="flex flex-col justify-center p-6 md:col-span-2">
+        <Card beam className="flex flex-col justify-center p-6 md:col-span-2">
           <h2 className="font-display text-lg font-semibold">{activo.nombre}</h2>
           <p className="mt-1 text-sm text-muted">{activo.descripcion}</p>
           {datos?.enfoque ? (

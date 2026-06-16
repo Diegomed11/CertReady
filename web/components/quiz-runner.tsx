@@ -5,6 +5,7 @@ import { useState } from 'react'
 
 import { Button, buttonStyles } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import { Cta } from '@/components/ui/cta'
 import { Markdown } from '@/components/ui/markdown'
 import type { ResultadoExamen, SesionConPreguntas } from '@/lib/api/types'
 
@@ -124,7 +125,7 @@ export function QuizRunner({
   // --- inicio (en línea) ---------------------------------------------------
   if (fase === 'inicio') {
     return (
-      <Card className="flex flex-col items-center p-6 text-center sm:p-8">
+      <Card beam className="flex flex-col items-center p-6 text-center sm:p-8">
         <p className="text-4xl">{aprobado ? '🏆' : '🧠'}</p>
         <h2 className="mt-2 font-display text-lg font-bold">
           {aprobado ? `${titulo} · superado` : titulo}
@@ -137,9 +138,9 @@ export function QuizRunner({
               }.`}
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <Button onClick={empezar} disabled={loading}>
+          <Cta onClick={empezar} disabled={loading}>
             {loading ? 'Preparando…' : aprobado ? 'Repetir quiz' : 'Empezar quiz'}
-          </Button>
+          </Cta>
           {aprobado && nextHref ? (
             <Link href={nextHref} className={buttonStyles('ghost', 'md')}>
               {nextLabel}

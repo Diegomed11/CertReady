@@ -65,7 +65,7 @@ export default async function EstudiarPage() {
             return (
               <li key={cert.id}>
                 <Link href={`/estudiar/${cert.slug}`} className="block h-full">
-                  <Card interactive className="flex h-full flex-col p-6">
+                  <Card beam interactive className="flex h-full flex-col p-6">
                     <div className="flex flex-wrap items-center gap-2">
                       <Badge tone="brand">{cert.proveedor}</Badge>
                       <Badge tone="neutral">{cert.nivel}</Badge>

@@ -69,7 +69,7 @@ export default async function ExamenesPage() {
             para empezar a hacer simulacros.
           </EmptyState>
         ) : (
-          <Card className="p-6">
+          <Card beam className="p-6">
             <h2 className="font-display text-xl font-semibold">Nuevo examen de práctica</h2>
             <p className="mt-1 text-sm text-muted">
               Un simulacro con el formato del examen real: preguntas de todos los dominios y
@@ -93,7 +93,7 @@ export default async function ExamenesPage() {
             {simulacros.map((s: SesionExamen) => (
               <li key={s.id}>
                 <Link href={`/examenes/${s.id}`} className="block">
-                  <Card interactive className="flex items-center justify-between gap-4 p-4">
+                  <Card beam interactive className="flex items-center justify-between gap-4 p-4">
                     <div className="flex items-center gap-4">
                       <Badge tone={estadoTone(s.estado)}>{etiquetaEstado(s.estado)}</Badge>
                       <div>

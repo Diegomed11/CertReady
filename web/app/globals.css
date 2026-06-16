@@ -30,6 +30,18 @@
   --bad: 232 76 76;
 }
 
+/* Ángulo animado del borde "beam" (glow girando). Registrado para poder animarlo. */
+@property --beam-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes beam-spin {
+  to {
+    --beam-angle: 1turn;
+  }
+}
+
 @layer base {
   body {
     background-color: rgb(var(--bg));
@@ -60,6 +72,95 @@
 
   .bg-gradient-brand {
     background-image: linear-gradient(100deg, rgb(var(--brand)), rgb(var(--brand-2)));
+  }
+
+  /* Borde "beam": glow animado de marca girando alrededor de una tarjeta. Se
+     aplica como overlay (::after) sobre cualquier contenedor con radio propio. */
+  .cr-beam {
+    position: relative;
+  }
+  .cr-beam::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: conic-gradient(
+      from var(--beam-angle),
+      transparent 0turn,
+      transparent 0.62turn,
+      rgb(var(--brand-2)) 0.8turn,
+      #ffffff 0.9turn,
+      rgb(var(--brand)) 0.97turn,
+      transparent 1turn
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    animation: beam-spin 6s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Botón CTA colorido (degradado arcoíris borroso detrás). Estructura:
+     <button class="cta"><span class="cta-glow"/><span class="cta-content">…</span></button> */
+  .cta {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    padding: 0 22px;
+    border: none;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #3730a3;
+    cursor: pointer;
+    font-family: var(--font-display), sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #fff;
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.2s ease;
+    box-shadow: 0 4px 14px rgb(124 58 237 / 0.25);
+  }
+  .cta:disabled {
+    opacity: 0.55;
+    cursor: default;
+  }
+  .cta-glow {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899);
+    opacity: 0.55;
+    filter: blur(8px);
+    transition: opacity 0.5s ease;
+  }
+  .cta:hover:not(:disabled) .cta-glow {
+    opacity: 0.92;
+  }
+  .cta-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .cta-arrow {
+    width: 15px;
+    height: 15px;
+    color: rgb(255 255 255 / 0.9);
+  }
+  .cta:active:not(:disabled) {
+    transform: translateY(1px);
   }
 }
 
@@ -167,6 +268,10 @@
     .il-draw {
       animation: none;
       stroke-dashoffset: 0;
+    }
+    .cr-beam::after {
+      animation: none;
+      opacity: 0;
     }
   }
 }

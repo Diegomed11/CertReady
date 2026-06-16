@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
+import { CtaLink } from '@/components/ui/cta'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Gauge } from '@/components/ui/gauge'
 import { PageHeader } from '@/components/ui/page-header'
@@ -197,7 +198,7 @@ async function ProgresoCert({
 
       <div className="grid items-stretch gap-5 md:grid-cols-3">
         {/* Estudio */}
-        <Card className="flex flex-col items-center justify-center p-6">
+        <Card beam className="flex flex-col items-center justify-center p-6">
           <Gauge value={pctEstudio} etiqueta="Estudio" />
           <p className="mt-3 text-center text-sm text-muted">
             {temasAprobados} de {totalTemas} temas aprobados
@@ -209,7 +210,7 @@ async function ProgresoCert({
         </Card>
 
         {/* Simulacros */}
-        <Card className="flex flex-col justify-center p-6 md:col-span-2">
+        <Card beam className="flex flex-col justify-center p-6 md:col-span-2">
           <div className="flex items-center justify-between">
             <p className="text-xs font-bold uppercase tracking-wide text-faint">Simulacros</p>
             {mejor !== null && (
@@ -224,12 +225,9 @@ async function ProgresoCert({
               <p className="text-sm text-muted">
                 Todavía no has entregado ningún simulacro de esta certificación.
               </p>
-              <Link
-                href="/examenes"
-                className="mt-3 inline-block rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand/90"
-              >
-                Hacer un simulacro →
-              </Link>
+              <CtaLink href="/examenes" arrow className="mt-3">
+                Hacer un simulacro
+              </CtaLink>
             </div>
           ) : (
             <>

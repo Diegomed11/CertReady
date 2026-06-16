@@ -18,6 +18,7 @@
     "@paper-design/shaders-react": "^0.0.76",
     "@tailwindcss/typography": "^0.5.19",
     "iron-session": "^8.0.4",
+    "lottie-react": "^2.4.1",
     "next": "^15.1.6",
     "openid-client": "^6.1.7",
     "react": "^19.0.0",

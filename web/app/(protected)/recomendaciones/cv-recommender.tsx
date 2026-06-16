@@ -4,8 +4,9 @@ import Link from 'next/link'
 import { useState } from 'react'
 
 import { Badge } from '@/components/ui/badge'
-import { Button, buttonStyles } from '@/components/ui/button'
+import { buttonStyles } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import { Cta } from '@/components/ui/cta'
 import type { Camino, PasoCamino, Recomendaciones } from '@/lib/api/types'
 
 const NIVEL: Record<string, string> = {
@@ -99,7 +100,7 @@ export function CvRecommender() {
 
   return (
     <div className="space-y-8">
-      <Card className="p-6">
+      <Card beam className="p-6">
         <label className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <input
             type="file"
@@ -110,9 +111,9 @@ export function CvRecommender() {
             }}
             className="block w-full text-sm text-muted file:mr-4 file:rounded-lg file:border-2 file:border-line-strong file:bg-white file:px-4 file:py-2 file:font-display file:text-sm file:font-semibold file:text-brand hover:file:border-brand"
           />
-          <Button onClick={analizar} disabled={!file || loading} className="shrink-0">
+          <Cta onClick={analizar} disabled={!file || loading} className="shrink-0">
             {loading ? 'Analizando…' : 'Analizar mi CV'}
-          </Button>
+          </Cta>
         </label>
         <p className="mt-3 text-xs text-faint">
           Aceptamos PDF o DOCX (máx 5 MB). Tu CV se procesa en el momento para detectar tu perfil y{' '}

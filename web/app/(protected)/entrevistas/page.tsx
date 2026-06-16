@@ -35,7 +35,7 @@ export default async function EntrevistasPage() {
         {SECCIONES.map((s) => (
           <li key={s.href}>
             <Link href={s.href} className="block h-full">
-              <Card interactive className="flex h-full flex-col p-8">
+              <Card beam interactive className="flex h-full flex-col p-8">
                 <span className="text-5xl">{s.emoji}</span>
                 <h2 className="mt-4 font-display text-2xl font-semibold">{s.titulo}</h2>
                 <p className="mt-2 text-sm text-muted">{s.desc}</p>

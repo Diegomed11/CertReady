@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
-import { Button } from '@/components/ui/button'
+import { Cta } from '@/components/ui/cta'
 
 /** Opciones de número de preguntas. 65 es el formato real del examen. */
 const TAMANOS = [65, 30, 15]
@@ -100,9 +100,9 @@ export function StartExam({
       </p>
 
       <div className="flex items-center gap-4">
-        <Button onClick={iniciar} disabled={loading || !cert}>
+        <Cta onClick={iniciar} disabled={loading || !cert} arrow>
           {loading ? 'Preparando…' : 'Empezar examen'}
-        </Button>
+        </Cta>
         {error ? <span className="text-sm font-semibold text-bad">{error}</span> : null}
       </div>
     </div>

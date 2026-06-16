@@ -287,12 +287,20 @@ class ApiService {
   Future<PaginatedList<PreguntaQA>> listQA({
     String? puesto,
     String? area,
+    List<String>? areas,
     int? limit,
     int? offset,
   }) => _get(
     '${AppConfig.problems}/v1/qa',
     (j) => PaginatedList.fromJson(j, PreguntaQA.fromJson),
-    query: {'puesto': puesto, 'area': area, 'limit': limit, 'offset': offset},
+    query: {
+      'puesto': puesto,
+      'area': area,
+      // Varias áreas (p. ej. las de una especialidad) → filtro $in en el backend.
+      'areas': (areas != null && areas.isNotEmpty) ? areas.join(',') : null,
+      'limit': limit,
+      'offset': offset,
+    },
   );
 
   Future<PreguntaQA?> getQA(String id) async {

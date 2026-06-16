@@ -1,12 +1,11 @@
 import Link from 'next/link'
 
 import { Badge, type BadgeTone } from '@/components/ui/badge'
-import { buttonStyles } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { PageHeader } from '@/components/ui/page-header'
 import { SectionLabel } from '@/components/ui/section-label'
-import { listProblems } from '@/lib/api/services'
+import { listProblems, listPuestos } from '@/lib/api/services'
 import type { Dificultad } from '@/lib/api/types'
 import { requireSession } from '@/lib/auth/guard'
 
@@ -22,70 +21,119 @@ const DIFICULTADES: { valor: Dificultad; etiqueta: string }[] = [
   { valor: 'dificil', etiqueta: 'Difícil' },
 ]
 
-/** Listado de problemas de código con filtros por dificultad y área. */
-export default async function ProblemasPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ dificultad?: string; area?: string }>
-}) {
+type SP = { dificultad?: string; especialidad?: string; area?: string }
+
+/** Construye un href de la página fusionando los filtros actuales con un cambio. */
+function href(sp: SP, patch: Partial<SP>): string {
+  const merged: SP = { ...sp, ...patch }
+  const qs = new URLSearchParams()
+  for (const [k, v] of Object.entries(merged)) if (v) qs.set(k, v)
+  const s = qs.toString()
+  return `/entrevistas/problemas${s ? `?${s}` : ''}`
+}
+
+function chipCls(sel: boolean): string {
+  return `rounded-full border-2 px-4 py-1.5 text-sm font-semibold transition-colors ${
+    sel ? 'border-brand bg-brand/10 text-brand' : 'border-line-strong text-muted hover:border-brand'
+  }`
+}
+
+function smChipCls(sel: boolean): string {
+  return `rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+    sel ? 'border-brand bg-brand/10 text-brand' : 'border-line text-muted hover:border-brand'
+  }`
+}
+
+/**
+ * Problemas de código, navegables por **especialidad** o **área**, y por
+ * dificultad. Elegir una especialidad filtra por sus áreas de código.
+ */
+export default async function ProblemasPage({ searchParams }: { searchParams: Promise<SP> }) {
   await requireSession()
   const sp = await searchParams
+  const puestos = await listPuestos()
+
+  const esp = puestos.find((p) => p.slug === sp.especialidad)
   const problemas = await listProblems({
     dificultad: sp.dificultad,
-    area: sp.area,
+    areas: esp ? esp.code_areas : undefined,
+    area: !esp ? sp.area : undefined,
     limit: 100,
   })
+
+  const areas = Array.from(new Set(puestos.flatMap((p) => p.code_areas))).sort()
 
   return (
     <div className="space-y-8">
       <PageHeader
         label={<SectionLabel>Entrevistas · Código</SectionLabel>}
         title="Problemas de código"
-        lead="Elige un reto, escribe tu solución y ejecútala contra el juez."
+        lead="Elige una especialidad o un área, escribe tu solución y ejecútala contra el juez."
       />
 
-      <form method="get" className="flex flex-wrap items-end gap-3">
-        <label className="block">
-          <span className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-muted">
-            Dificultad
-          </span>
-          <select
-            name="dificultad"
-            defaultValue={sp.dificultad ?? ''}
-            className="rounded-xl border-2 border-line-strong bg-white px-3 py-2 text-sm font-semibold text-ink outline-none focus:border-brand"
-          >
-            <option value="">Todas</option>
-            {DIFICULTADES.map((d) => (
-              <option key={d.valor} value={d.valor}>
-                {d.etiqueta}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block">
-          <span className="mb-1.5 block text-xs font-bold uppercase tracking-wide text-muted">
-            Área
-          </span>
-          <input
-            name="area"
-            defaultValue={sp.area ?? ''}
-            placeholder="p. ej. algoritmos"
-            className="rounded-xl border-2 border-line-strong bg-white px-3 py-2 text-sm text-ink outline-none focus:border-brand"
-          />
-        </label>
-        <button type="submit" className={buttonStyles('ghost', 'sm')}>
-          Filtrar
-        </button>
-        {sp.dificultad || sp.area ? (
-          <Link href="/entrevistas/problemas" className={buttonStyles('quiet', 'sm')}>
-            Limpiar
-          </Link>
+      <div className="space-y-3">
+        {/* Especialidad / área */}
+        {puestos.length > 0 ? (
+          <>
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href={href(sp, { especialidad: undefined, area: undefined })}
+                className={chipCls(!esp && !sp.area)}
+              >
+                Todas
+              </Link>
+              {puestos.map((p) => (
+                <Link
+                  key={p.slug}
+                  href={href(sp, { especialidad: p.slug, area: undefined })}
+                  className={chipCls(esp?.slug === p.slug)}
+                >
+                  {p.nombre}
+                </Link>
+              ))}
+            </div>
+            {areas.length > 0 ? (
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="mr-1 text-xs font-bold uppercase tracking-wide text-faint">
+                  o por área:
+                </span>
+                {areas.map((a) => (
+                  <Link
+                    key={a}
+                    href={href(sp, { area: a, especialidad: undefined })}
+                    className={smChipCls(!esp && sp.area === a)}
+                  >
+                    {a}
+                  </Link>
+                ))}
+              </div>
+            ) : null}
+          </>
         ) : null}
-      </form>
+
+        {/* Dificultad (combina con lo anterior) */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="mr-1 text-xs font-bold uppercase tracking-wide text-faint">
+            dificultad:
+          </span>
+          <Link href={href(sp, { dificultad: undefined })} className={smChipCls(!sp.dificultad)}>
+            Todas
+          </Link>
+          {DIFICULTADES.map((d) => (
+            <Link
+              key={d.valor}
+              href={href(sp, { dificultad: d.valor })}
+              className={smChipCls(sp.dificultad === d.valor)}
+            >
+              {d.etiqueta}
+            </Link>
+          ))}
+        </div>
+      </div>
 
       {problemas.data.length === 0 ? (
         <EmptyState title="No hay problemas con esos filtros">
-          Prueba a quitar los filtros o vuelve más tarde: estamos sumando retos.
+          Prueba a quitar algún filtro o vuelve más tarde: estamos sumando retos.
         </EmptyState>
       ) : (
         <ul className="grid gap-4 sm:grid-cols-2">

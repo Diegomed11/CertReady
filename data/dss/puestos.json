@@ -1,5 +1,5 @@
 {
-  "_comentario": "Catálogo curado de puestos para la preparación por rol del DSS. Cada puesto declara qué señales lo componen y con qué peso: exámenes (readiness IRT por certificación), código (problemas resueltos por área) y Q&A (autoevaluación de entrevista por área). Los pesos se renormalizan sobre las señales con datos. Las claves (certificaciones/áreas) son los slugs reales del contenido sembrado.",
+  "_comentario": "Catálogo curado de puestos/especialidades para la preparación por rol del DSS. Cada puesto declara qué señales lo componen y con qué peso: exámenes (readiness IRT por certificación), código (problemas resueltos por área) y Q&A (autoevaluación de entrevista por área). Los pesos se renormalizan sobre las señales con datos (una señal sin certs/áreas con datos no hunde el total). Las áreas se COMPARTEN entre especialidades a propósito: una misma pregunta/problema (con su única área) cuenta para todas las especialidades que incluyen esa área (p. ej. 'bases-de-datos' la usan backend, ingeniero-datos y data-scientist). Las claves (certificaciones/áreas) son slugs reales del contenido sembrado.",
   "puestos": [
     {
       "slug": "backend",
@@ -7,7 +7,7 @@
       "descripcion": "Diseña y construye servicios, APIs y la lógica del lado servidor.",
       "senales": {
         "examenes": { "peso": 0.25, "certificaciones": ["aws-saa"] },
-        "codigo": { "peso": 0.40, "areas": ["algoritmos"] },
+        "codigo": { "peso": 0.40, "areas": ["algoritmos", "estructuras-datos"] },
         "qa": { "peso": 0.35, "areas": ["sistemas", "bases-de-datos"] }
       }
     },
@@ -16,19 +16,49 @@
       "nombre": "Ingeniero(a) de Datos",
       "descripcion": "Construye pipelines, modela datos y opera plataformas analíticas.",
       "senales": {
-        "examenes": { "peso": 0.40, "certificaciones": ["aws-saa"] },
+        "examenes": { "peso": 0.35, "certificaciones": ["aws-saa"] },
         "codigo": { "peso": 0.25, "areas": ["algoritmos"] },
-        "qa": { "peso": 0.35, "areas": ["bases-de-datos"] }
+        "qa": { "peso": 0.40, "areas": ["bases-de-datos", "pipelines-datos"] }
+      }
+    },
+    {
+      "slug": "data-scientist",
+      "nombre": "Data Scientist / ML",
+      "descripcion": "Modela datos, entrena modelos y comunica hallazgos con estadística.",
+      "senales": {
+        "examenes": { "peso": 0.20, "certificaciones": [] },
+        "codigo": { "peso": 0.35, "areas": ["algoritmos", "estructuras-datos"] },
+        "qa": { "peso": 0.45, "areas": ["machine-learning", "estadistica", "bases-de-datos"] }
+      }
+    },
+    {
+      "slug": "frontend",
+      "nombre": "Desarrollador(a) Frontend",
+      "descripcion": "Construye interfaces web accesibles, rápidas y mantenibles.",
+      "senales": {
+        "examenes": { "peso": 0.15, "certificaciones": [] },
+        "codigo": { "peso": 0.35, "areas": ["algoritmos", "cadenas"] },
+        "qa": { "peso": 0.50, "areas": ["frontend", "web-performance", "accesibilidad"] }
       }
     },
     {
       "slug": "cloud-devops",
-      "nombre": "Ingeniero(a) Cloud / DevOps",
-      "descripcion": "Despliega y opera infraestructura en la nube de forma segura y resiliente.",
+      "nombre": "Ingeniero(a) Cloud / DevOps / SRE",
+      "descripcion": "Despliega y opera infraestructura confiable, observable y automatizada.",
       "senales": {
-        "examenes": { "peso": 0.55, "certificaciones": ["aws-saa"] },
-        "codigo": { "peso": 0.20, "areas": ["algoritmos"] },
-        "qa": { "peso": 0.25, "areas": ["sistemas"] }
+        "examenes": { "peso": 0.45, "certificaciones": ["aws-saa"] },
+        "codigo": { "peso": 0.15, "areas": ["algoritmos"] },
+        "qa": { "peso": 0.40, "areas": ["contenedores", "observabilidad", "ci-cd", "redes", "sistemas"] }
+      }
+    },
+    {
+      "slug": "seguridad",
+      "nombre": "Ingeniero(a) de Seguridad",
+      "descripcion": "Protege aplicaciones, datos y redes; piensa como atacante y defensor.",
+      "senales": {
+        "examenes": { "peso": 0.25, "certificaciones": ["aws-saa"] },
+        "codigo": { "peso": 0.25, "areas": ["algoritmos"] },
+        "qa": { "peso": 0.50, "areas": ["seguridad-app", "criptografia", "redes"] }
       }
     },
     {
@@ -36,9 +66,9 @@
       "nombre": "Desarrollador(a) Full-Stack",
       "descripcion": "Trabaja de extremo a extremo: interfaz, servicios y datos.",
       "senales": {
-        "examenes": { "peso": 0.30, "certificaciones": ["aws-saa"] },
-        "codigo": { "peso": 0.40, "areas": ["algoritmos"] },
-        "qa": { "peso": 0.30, "areas": ["sistemas", "bases-de-datos"] }
+        "examenes": { "peso": 0.25, "certificaciones": ["aws-saa"] },
+        "codigo": { "peso": 0.40, "areas": ["algoritmos", "estructuras-datos"] },
+        "qa": { "peso": 0.35, "areas": ["frontend", "sistemas", "bases-de-datos"] }
       }
     }
   ]

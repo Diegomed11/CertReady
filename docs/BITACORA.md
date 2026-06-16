@@ -1458,3 +1458,44 @@ verdes. Falta verificación en vivo end-to-end (requiere stack + sembrar + corre
 **Siguiente:** el responsable levanta el stack, siembra, corre el ETL y prueba el flujo;
 luego commit. (Aparte: hay un test preexistente del recomendador en rojo por casing
 de skills —`EC2` vs `ec2`— ajeno a este cambio; se dejó marcado para arreglar.)
+
+---
+
+## 2026-06-15 · Entrevistas · Más problemas + Q&A por especialidad/área
+
+**Hecho:** banco de entrevistas mucho más rico y navegable por **especialidad/área**,
+con áreas **compartidas** entre especialidades (modelo ligero, sin cambiar el esquema de
+documentos).
+- **Contenido** (`scripts/seed-mongo.py`): de 3 a **14 problemas** (áreas algoritmos,
+  matemáticas, cadenas, ordenamiento, estructuras-datos; `problema()` ahora acepta `area`)
+  y de 4 a **34 Q&A originales** en 14 áreas conceptuales (sistemas, bases-de-datos,
+  pipelines-datos, machine-learning, estadística, frontend, web-performance, accesibilidad,
+  seguridad-app, criptografía, redes, contenedores, observabilidad, ci-cd).
+- **Catálogo** (`data/dss/puestos.json`): 7 especialidades (nuevas: data-scientist,
+  frontend, seguridad; cloud-devops enriquecido con DevOps/SRE). Áreas compartidas (p. ej.
+  `bases-de-datos` ∈ backend, ingeniero-datos, data-scientist; `redes` ∈ cloud-devops,
+  seguridad) = una misma pregunta cuenta para varias especialidades.
+- **DSS** (`data/dss/api.py`): `/v1/puestos` ahora incluye `qa_areas`/`code_areas` por
+  especialidad (la UI arma los chips de filtro con eso).
+- **Go `problems`**: filtro **multi-área** (`areas` CSV → `$in` en Mongo) en
+  `GET /v1/qa` y `/v1/problems`; sin cambiar el esquema (área sigue siendo string).
+- **Web**: `entrevistas/preguntas` y `entrevistas/problemas` con **chips de
+  especialidad + área** (y dificultad combinable en problemas); elegir especialidad
+  filtra por sus áreas.
+- **Móvil**: `interviews_screen` con barra de **chips de especialidad** (filtra Q&A por
+  las áreas de la especialidad).
+
+**Decisión:** modelo "por especialidad" (las especialidades agrupan y comparten áreas) en
+vez de multi-área por pregunta → sin tocar esquema/DTOs, y mejora también "Preparación por
+puesto". Contenido original (regla de marcas).
+
+**Verificación:** Go `build/vet/test` (incl. test de filtro `$in` y de parseo CSV) verdes;
+data `ruff/black/pytest` (24 passed, catálogo + áreas compartidas) verdes; web
+`typecheck/lint` verdes; móvil `analyze/test` (9/9) verdes. En vivo: Mongo resembrado
+(14 problemas / 34 Q&A); DSS reiniciado → `/v1/puestos` devuelve las 7 especialidades con
+áreas. **Pendiente en vivo:** reiniciar el stack (el IdP 9099 murió en la sesión larga;
+`dev-up` lo restaura y reconstruye el binario `problems` con el filtro nuevo), re-sembrar
+demo + ETL, y rebuild de la app móvil.
+
+**Siguiente:** `dev-up` → seed-demo-user + ETL → probar filtros en Entrevistas y las
+nuevas especialidades en Preparación por puesto; luego commit.

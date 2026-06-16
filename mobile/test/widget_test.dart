@@ -126,14 +126,18 @@ void main() {
     expect(d.senales[1].scorePct, isNull);
   });
 
-  test('PuestoResumen parsea slug + nombre', () {
+  test('PuestoResumen parsea slug + nombre + áreas', () {
     final p = PuestoResumen.fromJson({
       'slug': 'backend',
       'nombre': 'Backend',
       'descripcion': 'Servicios y APIs',
+      'qa_areas': ['sistemas', 'bases-de-datos'],
+      'code_areas': ['algoritmos'],
     });
     expect(p.slug, 'backend');
     expect(p.nombre, 'Backend');
+    expect(p.qaAreas, ['sistemas', 'bases-de-datos']);
+    expect(p.codeAreas, ['algoritmos']);
   });
 
   test('Recomendaciones parsea perfil + recomendaciones', () {

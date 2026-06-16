@@ -282,11 +282,15 @@ export interface Readiness {
 
 // --- dss / preparación por puesto ------------------------------------------
 
-/** Un puesto del catálogo para el que se puede estimar preparación. */
+/** Un puesto/especialidad del catálogo para el que se puede estimar preparación. */
 export interface PuestoResumen {
   slug: string
   nombre: string
   descripcion: string
+  /** Áreas conceptuales de Q&A de la especialidad (para filtrar el banco). */
+  qa_areas: string[]
+  /** Áreas de código de la especialidad (para filtrar los problemas). */
+  code_areas: string[]
 }
 
 /** Una de las señales que componen la preparación por puesto. */

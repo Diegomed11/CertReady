@@ -139,3 +139,33 @@ func TestQACrearObtenerListar(t *testing.T) {
 		t.Errorf("listar qa por área = %d; quería 1", len(lista))
 	}
 }
+
+// TestListarQAPorVariasAreas verifica el filtro multi-área (`$in`): elegir una
+// especialidad que agrupa varias áreas trae las preguntas de cualquiera de ellas.
+func TestListarQAPorVariasAreas(t *testing.T) {
+	st := testStore(t)
+	ctx := context.Background()
+	mk := func(id, area string) problems.NuevaPreguntaQA {
+		return problems.NuevaPreguntaQA{
+			ID: id, Puesto: "x", Area: area, Categoria: "c",
+			Enunciado: "e", RespuestaModelo: "r",
+		}
+	}
+	for _, p := range []problems.NuevaPreguntaQA{
+		mk("q_sis", "sistemas"), mk("q_bd", "bases-de-datos"), mk("q_fe", "frontend"),
+	} {
+		if _, err := st.CrearQA(ctx, p); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	lista, err := st.ListarQA(ctx, store.FiltroQA{
+		Areas: []string{"sistemas", "bases-de-datos"}, Limit: 10,
+	})
+	if err != nil {
+		t.Fatalf("listar qa: %v", err)
+	}
+	if len(lista) != 2 {
+		t.Errorf("filtro multi-área = %d; quería 2", len(lista))
+	}
+}

@@ -220,6 +220,24 @@ func TestObtenerQA(t *testing.T) {
 	}
 }
 
+// TestListarQAFiltraPorAreas verifica que el handler parsea `areas` (CSV, con
+// espacios) y lo pasa al filtro como lista para el `$in` del store.
+func TestListarQAFiltraPorAreas(t *testing.T) {
+	var capturado store.FiltroQA
+	fs := &fakeStore{listQA: func(_ context.Context, fl store.FiltroQA) ([]problems.PreguntaQA, error) {
+		capturado = fl
+		return []problems.PreguntaQA{}, nil
+	}}
+	rec := do(t, newTestRouter(fs), http.MethodGet, "/v1/qa?areas=sistemas,%20bases-de-datos", "")
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %d; quería 200", rec.Code)
+	}
+	want := []string{"sistemas", "bases-de-datos"}
+	if len(capturado.Areas) != len(want) || capturado.Areas[0] != want[0] || capturado.Areas[1] != want[1] {
+		t.Fatalf("Areas = %v; quería %v", capturado.Areas, want)
+	}
+}
+
 func TestReadinessSegunPing(t *testing.T) {
 	tests := []struct {
 		name       string

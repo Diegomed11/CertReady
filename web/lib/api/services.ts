@@ -358,6 +358,8 @@ export async function submitExam(
 export interface ListProblemsOptions {
   accessToken?: string
   area?: string
+  /** Varias áreas (p. ej. las de una especialidad): filtra por cualquiera de ellas. */
+  areas?: string[]
   dificultad?: string
   etiqueta?: string
   limit?: number
@@ -370,6 +372,7 @@ export async function listProblems(
 ): Promise<PaginatedList<Problema>> {
   const suffix = querystring({
     area: opts.area,
+    areas: opts.areas && opts.areas.length > 0 ? opts.areas.join(',') : undefined,
     dificultad: opts.dificultad,
     etiqueta: opts.etiqueta,
     limit: opts.limit,
@@ -402,6 +405,8 @@ export interface ListQAOptions {
   accessToken?: string
   puesto?: string
   area?: string
+  /** Varias áreas (p. ej. las de una especialidad): filtra por cualquiera de ellas. */
+  areas?: string[]
   categoria?: string
   limit?: number
   offset?: number
@@ -412,6 +417,7 @@ export async function listQA(opts: ListQAOptions = {}): Promise<PaginatedList<Pr
   const suffix = querystring({
     puesto: opts.puesto,
     area: opts.area,
+    areas: opts.areas && opts.areas.length > 0 ? opts.areas.join(',') : undefined,
     categoria: opts.categoria,
     limit: opts.limit,
     offset: opts.offset,

@@ -40,8 +40,13 @@ func (s *Store) Ping(ctx context.Context) error {
 // --- Problemas -------------------------------------------------------------
 
 // FiltroProblemas acota y pagina el listado de problemas.
+//
+// Areas (si trae varias) filtra por cualquiera de ellas (`$in`); permite elegir
+// una especialidad que agrupa varias áreas. Area (una sola) mantiene el filtro
+// exacto previo. Si ambas vienen, Areas tiene prioridad.
 type FiltroProblemas struct {
 	Area       string
+	Areas      []string
 	Dificultad string
 	Etiqueta   string
 	Limit      int
@@ -56,7 +61,9 @@ type FiltroProblemas struct {
 // completos; la proyección a vista pública es responsabilidad del handler.
 func (s *Store) ListarProblemas(ctx context.Context, f FiltroProblemas) ([]problems.Problema, error) {
 	filter := bson.M{}
-	if f.Area != "" {
+	if len(f.Areas) > 0 {
+		filter["area"] = bson.M{"$in": f.Areas}
+	} else if f.Area != "" {
 		filter["area"] = f.Area
 	}
 	if f.Dificultad != "" {
@@ -124,9 +131,14 @@ func (s *Store) CrearProblema(ctx context.Context, n problems.NuevoProblema) (pr
 // --- Q&A -------------------------------------------------------------------
 
 // FiltroQA acota y pagina el listado de preguntas de Q&A.
+//
+// Areas (si trae varias) filtra por cualquiera de ellas (`$in`): elegir una
+// especialidad equivale a sus áreas, que pueden compartirse entre especialidades.
+// Area (una sola) mantiene el filtro exacto previo; si ambas vienen, gana Areas.
 type FiltroQA struct {
 	Puesto    string
 	Area      string
+	Areas     []string
 	Categoria string
 	Limit     int
 	Offset    int
@@ -139,7 +151,9 @@ func (s *Store) ListarQA(ctx context.Context, f FiltroQA) ([]problems.PreguntaQA
 	if f.Puesto != "" {
 		filter["puesto"] = f.Puesto
 	}
-	if f.Area != "" {
+	if len(f.Areas) > 0 {
+		filter["area"] = bson.M{"$in": f.Areas}
+	} else if f.Area != "" {
 		filter["area"] = f.Area
 	}
 	if f.Categoria != "" {

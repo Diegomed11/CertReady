@@ -22,6 +22,18 @@ def test_catalogo_no_vacio_y_bien_formado():
     assert puestos, "el catálogo de puestos no debe estar vacío"
     for p in puestos:
         assert p["slug"] and p["nombre"] and "descripcion" in p
+        # La UI usa estas áreas para los filtros de Entrevistas.
+        assert isinstance(p["qa_areas"], list) and p["qa_areas"], f"{p['slug']} sin qa_areas"
+        assert isinstance(p["code_areas"], list)
+
+
+def test_areas_compartidas_entre_especialidades():
+    # El "compartir" pedido: una misma área aparece en varias especialidades
+    # (p. ej. bases-de-datos en backend, ingeniero-datos y data-scientist).
+    puestos = cliente.get("/v1/puestos").json()
+    por_slug = {p["slug"]: p["qa_areas"] for p in puestos}
+    assert "bases-de-datos" in por_slug.get("ingeniero-datos", [])
+    assert "bases-de-datos" in por_slug.get("data-scientist", [])
 
 
 def test_puesto_desconocido_404():

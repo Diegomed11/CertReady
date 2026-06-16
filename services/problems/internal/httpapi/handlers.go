@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/certready/certready/libs/platform/httpx"
 
@@ -25,6 +26,7 @@ func (a *API) listarProblemas(w http.ResponseWriter, r *http.Request) {
 	}
 	items, err := a.store.ListarProblemas(r.Context(), store.FiltroProblemas{
 		Area:       r.URL.Query().Get("area"),
+		Areas:      areasCSV(r),
 		Dificultad: r.URL.Query().Get("dificultad"),
 		Etiqueta:   r.URL.Query().Get("etiqueta"),
 		Limit:      limit,
@@ -90,6 +92,7 @@ func (a *API) listarQA(w http.ResponseWriter, r *http.Request) {
 	items, err := a.store.ListarQA(r.Context(), store.FiltroQA{
 		Puesto:    r.URL.Query().Get("puesto"),
 		Area:      r.URL.Query().Get("area"),
+		Areas:     areasCSV(r),
 		Categoria: r.URL.Query().Get("categoria"),
 		Limit:     limit,
 		Offset:    offset,
@@ -141,6 +144,23 @@ func (a *API) crearQA(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	httpx.WriteJSON(w, http.StatusCreated, q)
+}
+
+// areasCSV lee el parámetro `areas` (lista separada por comas) y devuelve los
+// valores no vacíos, ya recortados. Returns nil si el parámetro no viene; permite
+// filtrar por una especialidad que agrupa varias áreas.
+func areasCSV(r *http.Request) []string {
+	raw := r.URL.Query().Get("areas")
+	if raw == "" {
+		return nil
+	}
+	var out []string
+	for _, a := range strings.Split(raw, ",") {
+		if a = strings.TrimSpace(a); a != "" {
+			out = append(out, a)
+		}
+	}
+	return out
 }
 
 // paginacion lee y valida los parámetros limit/offset comunes a los listados.

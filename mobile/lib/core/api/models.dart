@@ -656,21 +656,31 @@ class Analitica {
 
 // --- dss: preparación por puesto --------------------------------------------
 
-/// A job role for which job readiness can be estimated.
+/// A job role/specialty for which job readiness can be estimated.
 class PuestoResumen {
   PuestoResumen({
     required this.slug,
     required this.nombre,
     required this.descripcion,
+    this.qaAreas = const [],
+    this.codeAreas = const [],
   });
   final String slug;
   final String nombre;
   final String descripcion;
+  final List<String> qaAreas; // áreas conceptuales de Q&A de la especialidad
+  final List<String> codeAreas; // áreas de código de la especialidad
 
   factory PuestoResumen.fromJson(Map<String, dynamic> j) => PuestoResumen(
     slug: (j['slug'] ?? '') as String,
     nombre: (j['nombre'] ?? '') as String,
     descripcion: (j['descripcion'] ?? '') as String,
+    qaAreas: ((j['qa_areas'] as List?) ?? const [])
+        .map((e) => e.toString())
+        .toList(),
+    codeAreas: ((j['code_areas'] as List?) ?? const [])
+        .map((e) => e.toString())
+        .toList(),
   );
 }
 

@@ -327,6 +327,8 @@ class PuestoResumen(BaseModel):
     slug: str
     nombre: str
     descripcion: str
+    qa_areas: list[str]  # áreas conceptuales de Q&A (para filtrar el banco)
+    code_areas: list[str]  # áreas de código (para filtrar los problemas)
 
 
 class SenalPreparacion(BaseModel):
@@ -363,13 +365,25 @@ def _nivel_label(score: float | None) -> str:
 
 @app.get("/v1/puestos", response_model=list[PuestoResumen])
 def puestos() -> list[PuestoResumen]:
-    """Catálogo de puestos para los que se puede estimar preparación."""
-    return [
-        PuestoResumen(
-            slug=p["slug"], nombre=p.get("nombre", p["slug"]), descripcion=p.get("descripcion", "")
+    """Catálogo de puestos para los que se puede estimar preparación.
+
+    Incluye las áreas de cada especialidad (qa_areas/code_areas) para que la UI
+    arme los filtros de Entrevistas: elegir una especialidad equivale a filtrar el
+    banco por sus áreas (que pueden compartirse entre especialidades).
+    """
+    out: list[PuestoResumen] = []
+    for p in _puestos():
+        senales = p.get("senales", {})
+        out.append(
+            PuestoResumen(
+                slug=p["slug"],
+                nombre=p.get("nombre", p["slug"]),
+                descripcion=p.get("descripcion", ""),
+                qa_areas=list(senales.get("qa", {}).get("areas", [])),
+                code_areas=list(senales.get("codigo", {}).get("areas", [])),
+            )
         )
-        for p in _puestos()
-    ]
+    return out
 
 
 @app.get("/v1/job-readiness/{usuario_id}", response_model=JobReadinessResponse)

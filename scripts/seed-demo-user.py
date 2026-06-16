@@ -76,9 +76,15 @@ def resolver_sub(conn: psycopg.Connection, email: str) -> str:
 
 
 def _ts(dia: int, hora: int = 10, minuto: int = 0) -> datetime:
-    """Timestamp UTC a `dia` días atrás (para repartir la actividad en el tiempo)."""
-    base = datetime.now(UTC) - timedelta(days=dia)
-    return base.replace(hour=hora, minute=minuto, second=0, microsecond=0)
+    """Timestamp UTC a `dia` días atrás (para repartir la actividad en el tiempo).
+
+    `minuto` se suma con timedelta (no con replace), así que admite valores > 59:
+    el desfase desborda a horas/días sin error cuando hay muchos ítems.
+    """
+    base = (datetime.now(UTC) - timedelta(days=dia)).replace(
+        hour=hora, minute=0, second=0, microsecond=0
+    )
+    return base + timedelta(minutes=minuto)
 
 
 def limpiar(conn: psycopg.Connection, sub: str) -> None:

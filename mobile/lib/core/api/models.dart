@@ -108,18 +108,21 @@ class Cuenta {
     required this.email,
     this.nombre,
     required this.rol,
+    this.creadoEn = '',
   });
 
   final String id;
   final String email;
   final String? nombre;
   final String rol; // estudiante | admin
+  final String creadoEn; // ISO-8601 (creado_en)
 
   factory Cuenta.fromJson(Map<String, dynamic> j) => Cuenta(
     id: j['id'] as String,
     email: (j['email'] ?? '') as String,
     nombre: j['nombre'] as String?,
     rol: (j['rol'] ?? 'estudiante') as String,
+    creadoEn: (j['creado_en'] ?? '') as String,
   );
 }
 

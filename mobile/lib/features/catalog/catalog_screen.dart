@@ -19,12 +19,20 @@ class CatalogScreen extends ConsumerStatefulWidget {
 
 class _CatalogScreenState extends ConsumerState<CatalogScreen> {
   late Future<PaginatedList<Certificacion>> _future;
+  final _ctrl = TextEditingController();
   String? _nivel; // null = todos
+  String _query = '';
 
   @override
   void initState() {
     super.initState();
     _future = ref.read(apiProvider).listCertifications(limit: 100);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
   }
 
   @override
@@ -37,9 +45,12 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
           _future = ref.read(apiProvider).listCertifications(limit: 100);
         }),
         builder: (context, page) {
-          final certs = _nivel == null
-              ? page.data
-              : page.data.where((c) => c.nivel == _nivel).toList();
+          final q = _norm(_query);
+          final certs = page.data.where((c) {
+            final okNivel = _nivel == null || c.nivel == _nivel;
+            final okTexto = q.isEmpty || _coincide(c, q);
+            return okNivel && okTexto;
+          }).toList();
 
           // Agrupar por proveedor (orden alfabético).
           final porProveedor = <String, List<Certificacion>>{};
@@ -51,29 +62,129 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
           return ListView(
             padding: const EdgeInsets.only(bottom: 24),
             children: [
+              _Buscador(
+                controller: _ctrl,
+                onChanged: (v) => setState(() => _query = v),
+                onClear: () => setState(() {
+                  _ctrl.clear();
+                  _query = '';
+                }),
+              ),
               _FiltroNiveles(
                 seleccionado: _nivel,
                 onSelect: (n) => setState(() => _nivel = n),
               ),
-              for (final prov in proveedores) ...[
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
-                  child: Text(
-                    prov,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 0.4,
+              if (certs.isEmpty)
+                _SinResultados(query: _query)
+              else ...[
+                for (final prov in proveedores) ...[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
+                    child: Text(
+                      prov,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.4,
+                      ),
                     ),
                   ),
-                ),
-                for (final e in porProveedor[prov]!.asMap().entries)
-                  _CertCard(cert: e.value, indice: e.key),
+                  for (final e in porProveedor[prov]!.asMap().entries)
+                    _CertCard(cert: e.value, indice: e.key),
+                ],
+                const DisclaimerMarcas(),
               ],
-              const DisclaimerMarcas(),
             ],
           );
         },
+      ),
+    );
+  }
+}
+
+/// Lowercases + strips accents for diacritic-insensitive matching.
+String _norm(String s) {
+  const from = 'áàäâãéèëêíìïîóòöôõúùüûñç';
+  const to = 'aaaaaeeeeiiiiooooouuuunc';
+  final sb = StringBuffer();
+  for (final ch in s.toLowerCase().split('')) {
+    final i = from.indexOf(ch);
+    sb.write(i == -1 ? ch : to[i]);
+  }
+  return sb.toString();
+}
+
+/// True if the query (already normalized) matches the cert's name, provider or slug.
+bool _coincide(Certificacion c, String q) =>
+    _norm(c.nombre).contains(q) ||
+    _norm(c.proveedor).contains(q) ||
+    _norm(c.slug).contains(q);
+
+/// Search field for the catalog (filters by name / provider / slug as you type).
+class _Buscador extends StatelessWidget {
+  const _Buscador({
+    required this.controller,
+    required this.onChanged,
+    required this.onClear,
+  });
+
+  final TextEditingController controller;
+  final ValueChanged<String> onChanged;
+  final VoidCallback onClear;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      child: TextField(
+        controller: controller,
+        onChanged: onChanged,
+        textInputAction: TextInputAction.search,
+        decoration: InputDecoration(
+          hintText: 'Buscar certificación…',
+          prefixIcon: const Icon(Icons.search_rounded),
+          suffixIcon: controller.text.isEmpty
+              ? null
+              : IconButton(
+                  icon: const Icon(Icons.close_rounded),
+                  tooltip: 'Limpiar',
+                  onPressed: onClear,
+                ),
+          filled: true,
+          isDense: true,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: BorderSide.none,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Friendly empty state when no certification matches the active filters.
+class _SinResultados extends StatelessWidget {
+  const _SinResultados({required this.query});
+
+  final String query;
+
+  @override
+  Widget build(BuildContext context) {
+    final q = query.trim();
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 56, 24, 24),
+      child: Column(
+        children: [
+          const Icon(Icons.search_off_rounded, size: 44, color: Colors.black26),
+          const SizedBox(height: 12),
+          Text(
+            q.isEmpty
+                ? 'No hay certificaciones para este filtro.'
+                : 'Sin resultados para “$q”.',
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: Colors.black54),
+          ),
+        ],
       ),
     );
   }
@@ -134,7 +245,15 @@ class _CertCard extends StatelessWidget {
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         leading: Hero(
           tag: 'mono-${cert.slug}',
-          child: Monograma(cert.proveedor),
+          child: Monograma(cert.proveedor)
+              .animate(onPlay: (c) => c.repeat(reverse: true))
+              .scale(
+                delay: (indice * 100).ms,
+                duration: 2000.ms,
+                begin: const Offset(1, 1),
+                end: const Offset(1.05, 1.05),
+                curve: Curves.easeInOut,
+              ),
         ),
         title: Text(
           cert.nombre,
@@ -150,12 +269,6 @@ class _CertCard extends StatelessWidget {
         trailing: const Icon(Icons.chevron_right),
         onTap: () => context.push('/certs/${cert.slug}'),
       ),
-    ).animate().fadeIn(delay: (indice * 70).ms, duration: 420.ms).slideX(
-      begin: 0.18,
-      end: 0,
-      delay: (indice * 70).ms,
-      duration: 420.ms,
-      curve: Curves.easeOutCubic,
-    );
+    ).crSlideIn(index: indice, fromLeft: indice % 2 == 0);
   }
 }

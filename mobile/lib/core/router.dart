@@ -14,6 +14,7 @@ import '../features/interviews/interviews_screen.dart';
 import '../features/interviews/qa_screen.dart';
 import '../features/jobs/job_readiness_screen.dart';
 import '../features/panel/panel_screen.dart';
+import '../features/profile/profile_screen.dart';
 import '../features/progress/progress_dash_screen.dart';
 import '../features/progress/progress_screen.dart';
 import '../features/recommender/recommender_screen.dart';
@@ -158,6 +159,9 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/preparacion',
         builder: (_, _) => const JobReadinessScreen(),
       ),
+
+      // --- Perfil ---
+      GoRoute(path: '/perfil', builder: (_, _) => const ProfileScreen()),
     ],
   );
 });
@@ -165,6 +169,16 @@ final routerProvider = Provider<GoRouter>((ref) {
 class _Splash extends StatelessWidget {
   const _Splash();
   @override
-  Widget build(BuildContext context) =>
-      const Scaffold(body: Center(child: CircularProgressIndicator()));
+  Widget build(BuildContext context) => Scaffold(
+    body: Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset('assets/icon-shield.png', height: 110),
+          const SizedBox(height: 24),
+          const CircularProgressIndicator(),
+        ],
+      ),
+    ),
+  );
 }

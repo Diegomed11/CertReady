@@ -163,13 +163,26 @@ class _QAScreenState extends ConsumerState<QAScreen> {
                   spacing: 8,
                   children: [
                     for (final o in const [
-                      (nivel: 1, etiqueta: 'Me costó'),
-                      (nivel: 2, etiqueta: 'Regular'),
-                      (nivel: 3, etiqueta: 'Bien'),
+                      (
+                        nivel: 1,
+                        etiqueta: 'Me costó',
+                        color: Color(0xFFDC2626),
+                      ),
+                      (nivel: 2, etiqueta: 'Regular', color: CRColors.warn),
+                      (nivel: 3, etiqueta: 'Bien', color: CRColors.good),
                     ])
                       ChoiceChip(
                         label: Text(o.etiqueta),
                         selected: _nivel == o.nivel,
+                        showCheckmark: false,
+                        selectedColor: o.color.withValues(alpha: 0.16),
+                        side: BorderSide(
+                          color: _nivel == o.nivel ? o.color : Colors.black26,
+                        ),
+                        labelStyle: TextStyle(
+                          color: _nivel == o.nivel ? o.color : Colors.black87,
+                          fontWeight: FontWeight.w700,
+                        ),
                         onSelected: _enviando
                             ? null
                             : (_) => _autoevaluar(q.id, o.nivel),

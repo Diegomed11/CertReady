@@ -49,7 +49,9 @@ class _CertDetailScreenState extends ConsumerState<CertDetailScreen> {
     return _Detalle(cert, temas, matches.isEmpty ? null : matches.first);
   }
 
-  void _reload() => setState(() => _future = _load());
+  void _reload() => setState(() {
+    _future = _load();
+  });
 
   Future<void> _toggleInscripcion(_Detalle d) async {
     setState(() => _busy = true);
@@ -63,6 +65,7 @@ class _CertDetailScreenState extends ConsumerState<CertDetailScreen> {
       } else {
         await api.deleteEnrollment(d.inscripcion!.id);
       }
+      ref.read(enrollmentsRevProvider.notifier).bump(); // refresca Inicio
       _reload();
     } catch (_) {
       if (mounted) {

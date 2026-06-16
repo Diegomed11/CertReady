@@ -9,6 +9,10 @@ un usuario en las tres señales del DSS:
   veredicto mayormente `accepted`.
 - **Q&A**: autoevaluaciones (nivel 1–3) de las preguntas de entrevista reales.
 
+También puebla el **panel** (transaccional, sin ETL): inscribe al usuario en la cert y
+marca ~60 % de sus temas como aprobados (con sus lecciones leídas), para que "cursos +
+% de temas" se vea igual en web y móvil.
+
 Luego basta correr el ETL (`python -m etl.run`) para que el DSS muestre números.
 
 El `usuario_id` es el **`sub`** del JWT (lo que ve el DSS). Se busca en `idp_users`
@@ -39,7 +43,7 @@ PG_DSN = os.getenv(
 )
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 MONGO_DB = os.getenv("MONGO_DB", "certready")
-EMAIL = os.getenv("SEED_USER_EMAIL", "medinayc03@gmail.com")
+EMAIL = os.getenv("SEED_USER_EMAIL", "medinayo03@gmail.com")
 CERT = os.getenv("SEED_CERT_SLUG", "aws-saa")
 
 # Acierto ponderado por dificultad: un perfil sólido pero no perfecto.
@@ -87,12 +91,27 @@ def _ts(dia: int, hora: int = 10, minuto: int = 0) -> datetime:
     return base + timedelta(minutes=minuto)
 
 
-def limpiar(conn: psycopg.Connection, sub: str) -> None:
+def limpiar(conn: psycopg.Connection, sub: str, cert_id: str | None) -> None:
     """Borra la actividad demo previa del usuario (idempotencia)."""
     conn.execute("delete from exams.intentos where usuario_id = %s", (sub,))
     conn.execute("delete from exams.sesiones where usuario_id = %s", (sub,))
     conn.execute("delete from judge.corridas where usuario_id = %s", (sub,))
     conn.execute("delete from progress.qa_revisiones where usuario_id = %s", (sub,))
+    # Panel: inscripción (a esta cert) + progreso de estudio de la cert.
+    if cert_id is not None:
+        conn.execute(
+            "delete from enrollments.inscripciones "
+            "where usuario_id = %s and tipo_objetivo = 'certificacion' and objetivo_id = %s",
+            (sub, cert_id),
+        )
+    conn.execute(
+        "delete from progress.temas where usuario_id = %s and certificacion = %s",
+        (sub, CERT),
+    )
+    conn.execute(
+        "delete from progress.lecciones where usuario_id = %s and certificacion = %s",
+        (sub, CERT),
+    )
 
 
 def sembrar_examenes(conn: psycopg.Connection, sub: str, preguntas: list[dict]) -> int:
@@ -197,6 +216,74 @@ def sembrar_qa(conn: psycopg.Connection, sub: str, qa: list[dict]) -> int:
     return len(qa)
 
 
+def cargar_catalogo(conn: psycopg.Connection, cert_slug: str) -> tuple[str | None, list[str]]:
+    """Devuelve (uuid de la cert, slugs de temas ordenados) del catálogo, o (None, [])."""
+    row = conn.execute(
+        "select id from catalog.certificaciones where slug = %s", (cert_slug,)
+    ).fetchone()
+    if not row:
+        print(f"  [aviso] no encuentro la certificación {cert_slug} en catalog; omito panel")
+        return None, []
+    cert_id = row[0]
+    temas = [
+        r[0]
+        for r in conn.execute(
+            "select slug from catalog.temas where certificacion_id = %s order by orden",
+            (cert_id,),
+        ).fetchall()
+    ]
+    return cert_id, temas
+
+
+def sembrar_inscripcion(conn: psycopg.Connection, sub: str, cert_id: str) -> None:
+    """Inscribe al usuario en la certificación (idempotente)."""
+    conn.execute(
+        """insert into enrollments.inscripciones
+               (usuario_id, tipo_objetivo, objetivo_id, estado, creado_en)
+           values (%s, 'certificacion', %s, 'activa', %s)
+           on conflict (usuario_id, tipo_objetivo, objetivo_id) do nothing""",
+        (sub, cert_id, _ts(14)),
+    )
+
+
+def sembrar_estudio(
+    conn: psycopg.Connection, sub: str, temas: list[str], materiales: list[dict]
+) -> tuple[int, int]:
+    """Aprueba ~60 % de los temas y marca leídas las lecciones de esos temas.
+
+    El panel calcula el avance como (temas aprobados / temas totales), así que basta con
+    filas en `progress.temas` con `quiz_aprobado=true`; las lecciones dan detalle en la
+    ruta de estudio.
+    """
+    if not temas:
+        return 0, 0
+    n_aprob = max(1, round(len(temas) * 0.6))
+    aprobados = set(temas[:n_aprob])
+    for i, tema in enumerate(temas[:n_aprob]):
+        conn.execute(
+            """insert into progress.temas
+                   (usuario_id, certificacion, tema, quiz_puntaje, quiz_aprobado, actualizado_en)
+               values (%s, %s, %s, %s, true, %s)
+               on conflict (usuario_id, certificacion, tema) do update
+                   set quiz_puntaje = excluded.quiz_puntaje,
+                       quiz_aprobado = true,
+                       actualizado_en = excluded.actualizado_en""",
+            (sub, CERT, tema, round(random.uniform(80, 100), 1), _ts(5, minuto=i)),
+        )
+    n_lec = 0
+    for m in materiales:
+        if m.get("tema") in aprobados:
+            conn.execute(
+                """insert into progress.lecciones
+                       (usuario_id, certificacion, tema, material_id, creado_en)
+                   values (%s, %s, %s, %s, %s)
+                   on conflict (usuario_id, material_id) do nothing""",
+                (sub, CERT, m["tema"], m["_id"], _ts(5, minuto=n_lec)),
+            )
+            n_lec += 1
+    return n_aprob, n_lec
+
+
 def main() -> None:
     mongo = MongoClient(MONGO_URI)
     try:
@@ -206,21 +293,29 @@ def main() -> None:
         )
         problemas = list(db.problemas.find({}, {"_id": 1, "area": 1}))
         qa = list(db.qa.find({}, {"_id": 1, "area": 1}))
+        materiales = list(db.materiales.find({"certificacion": CERT}, {"_id": 1, "tema": 1}))
     finally:
         mongo.close()
 
     print(f"Sembrando demo para {EMAIL} en {PG_DSN}")
     with psycopg.connect(PG_DSN) as conn:
         sub = resolver_sub(conn, EMAIL)
-        limpiar(conn, sub)
+        cert_id, temas = cargar_catalogo(conn, CERT)
+        limpiar(conn, sub, cert_id)
         n_int = sembrar_examenes(conn, sub, preguntas)
         n_cod = sembrar_codigo(conn, sub, problemas)
         n_qa = sembrar_qa(conn, sub, qa)
+        n_insc = 0
+        if cert_id is not None:
+            sembrar_inscripcion(conn, sub, cert_id)
+            n_insc = 1
+        n_temas, n_lec = sembrar_estudio(conn, sub, temas, materiales)
         conn.commit()
 
     print(
         f"Listo. usuario_id (sub) = {sub}\n"
         f"  exámenes: {n_int} intentos · código: {n_cod} corridas · Q&A: {n_qa} revisiones\n"
+        f"  panel: {n_insc} inscripción(es) · {n_temas} temas aprobados · {n_lec} lecciones leídas\n"
         "Ahora corre el ETL para volcarlo a ClickHouse:\n"
         "  cd data\n"
         "  $env:CLICKHOUSE_USER='certready'; $env:CLICKHOUSE_PASSWORD='certready'\n"

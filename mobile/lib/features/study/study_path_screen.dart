@@ -62,7 +62,11 @@ class _StudyPathScreenState extends ConsumerState<StudyPathScreen> {
     }
     await context.push('/estudiar/${r.cert.slug}/${t.slug}');
     // Al volver del flujo lección→quiz, recargar para reflejar el tema aprobado.
-    if (mounted) setState(() => _future = _load());
+    if (mounted) {
+      setState(() {
+        _future = _load();
+      });
+    }
   }
 
   @override
@@ -71,7 +75,9 @@ class _StudyPathScreenState extends ConsumerState<StudyPathScreen> {
       appBar: AppBar(title: const Text('Estudiar')),
       body: DataView<_Ruta>(
         future: _future,
-        onRetry: () => setState(() => _future = _load()),
+        onRetry: () => setState(() {
+          _future = _load();
+        }),
         builder: (context, r) {
           final disp = r.disponible;
           return ListView(

@@ -65,19 +65,20 @@ ThemeData buildTheme() {
       ),
     ),
     cardTheme: CardThemeData(
-      elevation: 0,
+      elevation: 2,
+      shadowColor: CRColors.brand.withValues(alpha: 0.1),
       color: Colors.white,
       shape: RoundedRectangleBorder(
-        side: BorderSide(color: scheme.outlineVariant),
-        borderRadius: BorderRadius.circular(18),
+        side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.5)),
+        borderRadius: BorderRadius.circular(20),
       ),
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        // Altura fija pero ancho según contenido (Size(0,50)). Usar Size.fromHeight
-        // daba ancho infinito y rompía cualquier botón dentro de un Row.
-        minimumSize: const Size(0, 50),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        minimumSize: const Size(0, 54),
+        elevation: 2,
+        shadowColor: CRColors.brand.withValues(alpha: 0.3),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         textStyle: const TextStyle(
           fontFamily: kFontDisplay,
           fontWeight: FontWeight.w700,

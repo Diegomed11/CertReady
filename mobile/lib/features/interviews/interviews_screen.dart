@@ -59,19 +59,24 @@ class _InterviewsScreenState extends ConsumerState<InterviewsScreen> {
             builder: (context, snap) {
               final puestos = snap.data ?? const <PuestoResumen>[];
               if (puestos.isEmpty) return const SizedBox.shrink();
-              return SizedBox(
-                height: 56,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
+              return Container(
+                decoration: const BoxDecoration(
+                  border: Border(bottom: BorderSide(color: Color(0x14000000))),
+                ),
+                child: SizedBox(
+                  height: 56,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    children: [
+                      _chip('Todas', _sel == null, () => _select(null)),
+                      for (final p in puestos)
+                        _chip(p.nombre, _sel == p.slug, () => _select(p.slug)),
+                    ],
                   ),
-                  children: [
-                    _chip('Todas', _sel == null, () => _select(null)),
-                    for (final p in puestos)
-                      _chip(p.nombre, _sel == p.slug, () => _select(p.slug)),
-                  ],
                 ),
               );
             },
@@ -79,7 +84,9 @@ class _InterviewsScreenState extends ConsumerState<InterviewsScreen> {
           Expanded(
             child: DataView<PaginatedList<PreguntaQA>>(
               future: _future,
-              onRetry: () => setState(() => _future = _load()),
+              onRetry: () => setState(() {
+                _future = _load();
+              }),
               builder: (context, page) {
                 if (page.data.isEmpty) {
                   return const Center(

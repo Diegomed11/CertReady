@@ -24,8 +24,8 @@ class AuthShell extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Monograma('CertReady', size: 72),
-                  const SizedBox(height: 18),
+                  Image.asset('assets/icon-shield.png', height: 92),
+                  const SizedBox(height: 14),
                   const Text(
                     'CertReady',
                     style: TextStyle(

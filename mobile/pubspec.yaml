@@ -53,6 +53,12 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
 
+# Nota: el ícono de la app (Android/iOS) ya se generó con flutter_launcher_icons
+# a partir de `assets/app-icon.png` (escudo). Es un paso de una sola vez; la
+# dependencia se quitó para no perturbar la resolución de `flutter_animate`. Para
+# regenerar: añadir temporalmente `flutter_launcher_icons` + su bloque de config y
+# correr `dart run flutter_launcher_icons`.
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -63,6 +69,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/
 
   # Fuentes de marca (mismas que la web): Fredoka para títulos, Nunito para texto.
   # Son fuentes variables (eje wght); Flutter aplica fontWeight al eje. OFL en fonts/.

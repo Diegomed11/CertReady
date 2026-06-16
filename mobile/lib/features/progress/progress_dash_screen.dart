@@ -73,7 +73,9 @@ class _ProgressDashScreenState extends ConsumerState<ProgressDashScreen> {
       appBar: AppBar(title: const Text('Progreso')),
       body: DataView<_Dash>(
         future: _future,
-        onRetry: () => setState(() => _future = _load()),
+        onRetry: () => setState(() {
+          _future = _load();
+        }),
         builder: (context, d) {
           final tieneAnalitica = d.analitica != null && d.analitica!.total > 0;
           return ListView(

@@ -49,7 +49,9 @@ class _ExamCertScreenState extends ConsumerState<ExamCertScreen> {
       appBar: AppBar(title: const Text('Simulacro')),
       body: DataView<_Datos>(
         future: _future,
-        onRetry: () => setState(() => _future = _load()),
+        onRetry: () => setState(() {
+          _future = _load();
+        }),
         builder: (context, d) {
           return ListView(
             padding: const EdgeInsets.all(20),

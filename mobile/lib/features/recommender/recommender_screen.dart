@@ -138,7 +138,10 @@ class _RecommenderScreenState extends ConsumerState<RecommenderScreen> {
                 Expanded(
                   child: Text(
                     _archivo!,
-                    style: const TextStyle(fontSize: 12.5, color: Colors.black54),
+                    style: const TextStyle(
+                      fontSize: 12.5,
+                      color: Colors.black54,
+                    ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -201,9 +204,12 @@ class _RecommenderScreenState extends ConsumerState<RecommenderScreen> {
               style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
             ),
             const SizedBox(height: 8),
-            ..._rec!.recomendaciones.take(8).toList().asMap().entries.map(
-              (e) => _PasoCard(paso: e.value).crEnter(index: e.key),
-            ),
+            ..._rec!.recomendaciones
+                .take(8)
+                .toList()
+                .asMap()
+                .entries
+                .map((e) => _PasoCard(paso: e.value).crEnter(index: e.key)),
             const DisclaimerMarcas(),
           ],
         ],

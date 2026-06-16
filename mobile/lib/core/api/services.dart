@@ -36,12 +36,17 @@ class ApiService {
     Duration? timeout,
   }) async {
     try {
-      final res = await _dio.request<Map<String, dynamic>>(
+      // Pedimos `dynamic`, no `Map`: las respuestas 204 No Content (DELETE
+      // inscripción, marcar lección, autoevaluar Q&A) no traen cuerpo. Tipar a
+      // Map hacía que dio intentara castear el cuerpo vacío y lanzara, marcando
+      // un éxito (201/204) como error.
+      final res = await _dio.request<dynamic>(
         url,
         data: body,
         options: Options(method: method, receiveTimeout: timeout),
       );
-      return res.data;
+      final data = res.data;
+      return data is Map<String, dynamic> ? data : null;
     } on DioException catch (e) {
       throw _toApiError(e);
     }
@@ -102,6 +107,17 @@ class ApiService {
   // --- users ---------------------------------------------------------------
 
   Future<Cuenta> getMe() => _get('${AppConfig.users}/v1/me', Cuenta.fromJson);
+
+  /// updateMe edita el perfil propio (por ahora solo el nombre). Espejo de
+  /// `updateMe` en web (`PATCH /v1/me`).
+  Future<Cuenta> updateMe({String? nombre}) async {
+    final data = await _send(
+      '${AppConfig.users}/v1/me',
+      method: 'PATCH',
+      body: {if (nombre != null) 'nombre': nombre},
+    );
+    return Cuenta.fromJson(data ?? const {});
+  }
 
   // --- enrollments ---------------------------------------------------------
 

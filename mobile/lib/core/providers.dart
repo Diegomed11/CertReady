@@ -14,6 +14,19 @@ final tokenStoreProvider = Provider<TokenStore>((ref) => TokenStore());
 /// OIDC client for the PKCE flow.
 final oidcProvider = Provider<OidcClient>((ref) => OidcClient());
 
+/// Señal para refrescar las pantallas que listan inscripciones (Inicio, detalle)
+/// tras inscribirse o darse de baja. `bump()` incrementa el contador para forzar
+/// la recarga de quien lo escuche.
+class EnrollmentsRev extends Notifier<int> {
+  @override
+  int build() => 0;
+  void bump() => state++;
+}
+
+final enrollmentsRevProvider = NotifierProvider<EnrollmentsRev, int>(
+  EnrollmentsRev.new,
+);
+
 /// Configured API service. Depends only on the token store + OIDC client (NOT on
 /// the auth controller) so there is no circular dependency: the 401 refresh hook
 /// refreshes straight from the stored refresh token.

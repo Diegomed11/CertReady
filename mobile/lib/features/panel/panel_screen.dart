@@ -64,10 +64,14 @@ class _PanelScreenState extends ConsumerState<PanelScreen> {
     return _PanelData(cuenta, avances);
   }
 
-  void _reload() => setState(() => _future = _load());
+  void _reload() => setState(() {
+    _future = _load();
+  });
 
   @override
   Widget build(BuildContext context) {
+    // Recarga cuando cambian las inscripciones (inscribir/cancelar en el detalle).
+    ref.listen(enrollmentsRevProvider, (_, _) => _reload());
     return Scaffold(
       appBar: AppBar(
         title: const Text('Inicio'),
@@ -86,6 +90,12 @@ class _PanelScreenState extends ConsumerState<PanelScreen> {
           onRetry: _reload,
           builder: (context, d) {
             final nombre = d.cuenta.nombre ?? d.cuenta.email.split('@').first;
+            final hayInscripciones = d.avances.isNotEmpty;
+            final promedio = hayInscripciones
+                ? (d.avances.map((a) => a.pct).reduce((x, y) => x + y) /
+                          d.avances.length)
+                      .round()
+                : 0;
             return ListView(
               padding: const EdgeInsets.all(20),
               children: [
@@ -95,56 +105,65 @@ class _PanelScreenState extends ConsumerState<PanelScreen> {
                     fontSize: 26,
                     fontWeight: FontWeight.w800,
                   ),
-                ),
+                ).crScaleIn(),
                 const SizedBox(height: 4),
                 Text(
-                  d.avances.isEmpty
-                      ? 'Elige una certificación para armar tu ruta de estudio.'
-                      : 'Retoma tu ruta de estudio.',
+                  hayInscripciones
+                      ? 'Retoma tu ruta de estudio.'
+                      : 'Elige una certificación para armar tu ruta de estudio.',
                   style: const TextStyle(color: Colors.black54),
-                ),
-                const SizedBox(height: 16),
+                ).crEnter(index: 1),
+
+                // Resumen rápido de un vistazo (solo con inscripciones).
+                if (hayInscripciones) ...[
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      CRChip('${d.avances.length} en curso'),
+                      CRChip('$promedio% promedio', color: CRColors.good),
+                    ],
+                  ).crEnter(index: 2),
+                ],
+
+                const SizedBox(height: 20),
+                _PerfilTile(
+                  cuenta: d.cuenta,
+                  onTap: () async {
+                    await context.push('/perfil');
+                    if (mounted) _reload();
+                  },
+                ).crScaleIn(index: 3),
+
+                const SizedBox(height: 22),
                 _MiCaminoTile(onTap: () => context.push('/recomendaciones'))
-                    .animate()
-                    .fadeIn(duration: 450.ms)
-                    .slideY(
-                      begin: 0.28,
-                      end: 0,
-                      duration: 450.ms,
-                      curve: Curves.easeOutCubic,
-                    )
+                    .crScaleIn(index: 4)
+                    .animate(onPlay: (controller) => controller.repeat())
                     .shimmer(
-                      delay: 500.ms,
-                      duration: 1200.ms,
+                      delay: 2000.ms,
+                      duration: 1500.ms,
                       color: Colors.white24,
                     ),
                 const SizedBox(height: 12),
-                _PreparacionTile(onTap: () => context.push('/preparacion'))
-                    .animate()
-                    .fadeIn(delay: 120.ms, duration: 450.ms)
-                    .slideY(
-                      begin: 0.28,
-                      end: 0,
-                      delay: 120.ms,
-                      duration: 450.ms,
-                      curve: Curves.easeOutCubic,
-                    ),
-                const SizedBox(height: 20),
-                if (d.avances.isEmpty)
-                  _VacioInscripciones(onExplorar: () => context.go('/certs'))
-                else
+                _PreparacionTile(
+                  onTap: () => context.push('/preparacion'),
+                ).crScaleIn(index: 5),
+
+                const SizedBox(height: 24),
+                if (hayInscripciones) ...[
+                  const _SeccionTitulo(
+                    'Continúa donde lo dejaste',
+                  ).crEnter(index: 6),
+                  const SizedBox(height: 10),
                   ...d.avances.asMap().entries.map(
-                    (e) => _AvanceCard(avance: e.value)
-                        .animate()
-                        .fadeIn(delay: (e.key * 90).ms, duration: 420.ms)
-                        .slideY(
-                          begin: 0.22,
-                          end: 0,
-                          delay: (e.key * 90).ms,
-                          duration: 420.ms,
-                          curve: Curves.easeOutCubic,
-                        ),
+                    (e) =>
+                        _AvanceCard(avance: e.value).crEnter(index: e.key + 7),
                   ),
+                ] else
+                  _VacioInscripciones(
+                    onExplorar: () => context.go('/certs'),
+                  ).crEnter(index: 6),
               ],
             );
           },
@@ -193,13 +212,13 @@ class _AvanceCard extends StatelessWidget {
                 begin: 0,
                 end: avance.total == 0 ? 0 : avance.hechos / avance.total,
               ),
-              duration: 700.ms,
-              curve: Curves.easeOutCubic,
+              duration: 1200.ms,
+              curve: Curves.elasticOut,
               builder: (_, v, _) => ClipRRect(
                 borderRadius: BorderRadius.circular(999),
                 child: LinearProgressIndicator(
                   value: v,
-                  minHeight: 8,
+                  minHeight: 10,
                   backgroundColor: CRColors.brand.withValues(alpha: 0.12),
                 ),
               ),
@@ -221,6 +240,59 @@ class _AvanceCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Small bold section heading used across the home screen.
+class _SeccionTitulo extends StatelessWidget {
+  const _SeccionTitulo(this.texto);
+
+  final String texto;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      texto,
+      style: const TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.w800,
+        letterSpacing: 0.2,
+      ),
+    );
+  }
+}
+
+/// Account entry on the home: avatar + name + email; opens `/perfil`.
+class _PerfilTile extends StatelessWidget {
+  const _PerfilTile({required this.cuenta, required this.onTap});
+
+  final Cuenta cuenta;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final nombre = (cuenta.nombre?.trim().isNotEmpty ?? false)
+        ? cuenta.nombre!.trim()
+        : cuenta.email.split('@').first;
+    return Card(
+      margin: EdgeInsets.zero,
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        leading: Monograma(nombre),
+        title: Text(
+          nombre,
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        ),
+        subtitle: Text(
+          cuenta.email,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(color: Colors.black54),
+        ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: onTap,
       ),
     );
   }

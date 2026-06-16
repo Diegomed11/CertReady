@@ -125,44 +125,47 @@ class ResultadoExamenView extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(vertical: 26),
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            children: [
-              Text(
-                '$pct%',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 48,
-                  fontWeight: FontWeight.w800,
-                ),
+              padding: const EdgeInsets.symmetric(vertical: 26),
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: BorderRadius.circular(20),
               ),
-              Text(
-                '${resultado.correctas} de ${resultado.total} correctas',
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.92),
-                  fontWeight: FontWeight.w600,
-                ),
+              child: Column(
+                children: [
+                  Text(
+                    '$pct%',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 48,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  Text(
+                    '${resultado.correctas} de ${resultado.total} correctas',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.92),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    aprobado ? 'Aprobado ✓' : 'Sigue practicando',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 6),
-              Text(
-                aprobado ? 'Aprobado ✓' : 'Sigue practicando',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-        ).animate().fadeIn(duration: 400.ms).scale(
-          begin: const Offset(0.85, 0.85),
-          end: const Offset(1, 1),
-          duration: 500.ms,
-          curve: Curves.easeOutBack,
-        ),
+            )
+            .animate()
+            .fadeIn(duration: 400.ms)
+            .scale(
+              begin: const Offset(0.85, 0.85),
+              end: const Offset(1, 1),
+              duration: 500.ms,
+              curve: Curves.easeOutBack,
+            ),
         const SizedBox(height: 18),
         const Text(
           'Repaso',
@@ -170,41 +173,50 @@ class ResultadoExamenView extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         ...resultado.resultados.asMap().entries.map(
-          (e) => Card(
-            margin: const EdgeInsets.only(bottom: 10),
-            child: Padding(
-              padding: const EdgeInsets.all(14),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(
-                    e.value.correcto
-                        ? Icons.check_circle_rounded
-                        : Icons.cancel_rounded,
-                    color: e.value.correcto
-                        ? CRColors.good
-                        : Theme.of(context).colorScheme.error,
-                    size: 22,
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      e.value.explicacion.isEmpty
-                          ? (e.value.correcto ? 'Correcta' : 'Incorrecta')
-                          : e.value.explicacion,
-                      style: const TextStyle(height: 1.4, fontSize: 13.5),
+          (e) =>
+              Card(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    child: Padding(
+                      padding: const EdgeInsets.all(14),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            e.value.correcto
+                                ? Icons.check_circle_rounded
+                                : Icons.cancel_rounded,
+                            color: e.value.correcto
+                                ? CRColors.good
+                                : Theme.of(context).colorScheme.error,
+                            size: 22,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              e.value.explicacion.isEmpty
+                                  ? (e.value.correcto
+                                        ? 'Correcta'
+                                        : 'Incorrecta')
+                                  : e.value.explicacion,
+                              style: const TextStyle(
+                                height: 1.4,
+                                fontSize: 13.5,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                  )
+                  .animate()
+                  .fadeIn(delay: (e.key * 45).ms, duration: 240.ms)
+                  .slideY(
+                    begin: 0.12,
+                    end: 0,
+                    delay: (e.key * 45).ms,
+                    duration: 240.ms,
+                    curve: Curves.easeOut,
                   ),
-                ],
-              ),
-            ),
-          ).animate().fadeIn(delay: (e.key * 45).ms, duration: 240.ms).slideY(
-            begin: 0.12,
-            end: 0,
-            delay: (e.key * 45).ms,
-            duration: 240.ms,
-            curve: Curves.easeOut,
-          ),
         ),
       ],
     );

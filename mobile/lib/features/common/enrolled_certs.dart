@@ -43,7 +43,9 @@ class _EnrolledCertsListState extends ConsumerState<EnrolledCertsList> {
   Widget build(BuildContext context) {
     return DataView<List<Certificacion>>(
       future: _future,
-      onRetry: () => setState(() => _future = _load()),
+      onRetry: () => setState(() {
+        _future = _load();
+      }),
       builder: (context, certs) {
         if (certs.isEmpty) {
           return _Vacio(

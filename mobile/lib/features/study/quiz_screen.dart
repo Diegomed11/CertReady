@@ -296,44 +296,49 @@ class _Resultado extends StatelessWidget {
       children: [
         const SizedBox(height: 12),
         Container(
-          padding: const EdgeInsets.symmetric(vertical: 28),
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            children: [
-              Text(
-                '${resultado.puntaje.round()}%',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 52,
-                  fontWeight: FontWeight.w800,
-                ),
+              padding: const EdgeInsets.symmetric(vertical: 28),
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: BorderRadius.circular(20),
               ),
-              Text(
-                '${resultado.correctas} de ${resultado.total} correctas',
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.92),
-                  fontWeight: FontWeight.w600,
-                ),
+              child: Column(
+                children: [
+                  Text(
+                    '${resultado.puntaje.round()}%',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 52,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  Text(
+                    '${resultado.correctas} de ${resultado.total} correctas',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.92),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    aprobado
+                        ? '¡Tema aprobado! 🎉'
+                        : 'Casi… vuelve a intentarlo',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 8),
-              Text(
-                aprobado ? '¡Tema aprobado! 🎉' : 'Casi… vuelve a intentarlo',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-        ).animate().fadeIn(duration: 400.ms).scale(
-          begin: const Offset(0.8, 0.8),
-          end: const Offset(1, 1),
-          duration: 500.ms,
-          curve: Curves.elasticOut,
-        ),
+            )
+            .animate()
+            .fadeIn(duration: 400.ms)
+            .scale(
+              begin: const Offset(0.8, 0.8),
+              end: const Offset(1, 1),
+              duration: 500.ms,
+              curve: Curves.elasticOut,
+            ),
         const SizedBox(height: 20),
         ...resultado.resultados.asMap().entries.map(
           (e) => _RepasoItem(item: e.value)

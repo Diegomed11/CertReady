@@ -7,15 +7,39 @@ import 'theme.dart';
 /// Animación de entrada estándar (fade + slide), con escalonado opcional por
 /// índice. Reutilizable en listas y tarjetas para un pulido consistente.
 extension CREntrance on Widget {
-  Widget crEnter({int index = 0}) => animate()
-      .fadeIn(delay: (index * 70).ms, duration: 380.ms)
+  Widget crEnter({int index = 0, double delayMs = 70}) => animate()
+      .fadeIn(delay: (index * delayMs).ms, duration: 380.ms)
       .slideY(
         begin: 0.18,
         end: 0,
-        delay: (index * 70).ms,
+        delay: (index * delayMs).ms,
         duration: 380.ms,
         curve: Curves.easeOutCubic,
       );
+
+  Widget crScaleIn({int index = 0, double delayMs = 70}) => animate()
+      .scale(
+        begin: const Offset(0.9, 0.9),
+        end: const Offset(1, 1),
+        delay: (index * delayMs).ms,
+        duration: 400.ms,
+        curve: Curves.easeOutBack,
+      )
+      .fadeIn(delay: (index * delayMs).ms, duration: 300.ms);
+
+  Widget crSlideIn({
+    int index = 0,
+    double delayMs = 70,
+    bool fromLeft = true,
+  }) => animate()
+      .slideX(
+        begin: fromLeft ? -0.2 : 0.2,
+        end: 0,
+        delay: (index * delayMs).ms,
+        duration: 400.ms,
+        curve: Curves.easeOutCubic,
+      )
+      .fadeIn(delay: (index * delayMs).ms, duration: 300.ms);
 }
 
 /// Spanish label + tone for a certification level.

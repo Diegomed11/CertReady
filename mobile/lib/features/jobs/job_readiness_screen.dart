@@ -30,8 +30,9 @@ class _JobReadinessScreenState extends ConsumerState<JobReadinessScreen> {
       appBar: AppBar(title: const Text('Preparación por puesto')),
       body: DataView<List<PuestoResumen>>(
         future: _future,
-        onRetry: () =>
-            setState(() => _future = ref.read(apiProvider).listPuestos()),
+        onRetry: () => setState(() {
+          _future = ref.read(apiProvider).listPuestos();
+        }),
         builder: (context, puestos) {
           if (puestos.isEmpty) {
             return const Center(
@@ -113,6 +114,7 @@ class _PuestoViewState extends ConsumerState<_PuestoView> {
               ChoiceChip(
                 label: Text(p.nombre),
                 selected: p.slug == _sel,
+                showCheckmark: false,
                 onSelected: (_) => _select(p.slug),
               ),
           ],

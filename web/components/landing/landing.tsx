@@ -65,6 +65,28 @@ export function Landing({
         t1.style.opacity = '100%'
         return
       }
+      // En móvil NO usamos el morph con rAF + blur + filtro SVG: corre 60fps en el
+      // hilo principal y compite con el scroll (lo traba), aunque el hero esté fuera
+      // de pantalla. En su lugar, cambio de palabra por crossfade (setInterval +
+      // transición CSS): casi cero costo y las palabras igual cambian.
+      if (isMobile) {
+        let i = 0
+        let showT1 = true
+        t1.textContent = texts[0] ?? ''
+        t1.style.opacity = '1'
+        t2.style.opacity = '0'
+        const id = setInterval(() => {
+          i = (i + 1) % texts.length
+          const incoming = showT1 ? t2 : t1
+          const outgoing = showT1 ? t1 : t2
+          incoming.textContent = texts[i] ?? ''
+          incoming.style.opacity = '1'
+          outgoing.style.opacity = '0'
+          showT1 = !showT1
+        }, 2200)
+        cleanups.push(() => clearInterval(id))
+        return
+      }
       const morphTime = 1
       const cooldownTime = 0.6
       let textIndex = texts.length - 1

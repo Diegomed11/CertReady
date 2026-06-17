@@ -964,4 +964,12 @@
     transform: none;
     transition: none;
   }
+  /* Título del hero: sin filtro SVG "gooey" (caro); las palabras cambian con un
+     crossfade simple (el JS hace setInterval, esto da la transición de opacidad). */
+  .cr-landing .gooey-inner {
+    filter: none;
+  }
+  .cr-landing .gooey-inner span {
+    transition: opacity 0.5s ease;
+  }
 }

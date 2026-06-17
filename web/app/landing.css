@@ -924,3 +924,44 @@
     font-size: 0.75rem;
   }
 }
+
+/* ---- Móvil: pintura barata para que el scroll no deje partes en blanco ----
+   Lo que satura el rasterizado al scrollear son los FILTROS (sombras SVG,
+   backdrop-blur) y animar elementos filtrados. En móvil los apagamos: las
+   ilustraciones quedan planas y estáticas (se ven igual, sin sombra) y el scroll
+   pinta rápido, sin tiles en blanco. */
+@media (max-width: 900px) {
+  /* Sin sombras SVG (feDropShadow): es lo más caro de rasterizar al scrollear. */
+  .cr-landing .il-svg [filter] {
+    filter: none;
+  }
+  /* Sin animaciones continuas sobre las ilustraciones (re-rasterizan cada frame). */
+  .cr-landing .il-float,
+  .cr-landing .il-pulse,
+  .cr-landing .il-rise {
+    animation: none;
+  }
+  .cr-landing .il-draw {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  /* Sin blur de fondo en la sección de cierre. */
+  .cr-landing .section-cta {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  /* Degradado de texto estático (no animar el background-position cada frame). */
+  .cr-landing .text-gradient-brand {
+    animation: none;
+  }
+  /* Sin "reveal" diferido: el contenido se muestra desde el inicio para que NO se
+     vea en blanco mientras entra (el fade tardío se leía como "cargando"). */
+  .cr-landing.reveal-on .feature .feature-text,
+  .cr-landing.reveal-on .feature .feature-media,
+  .cr-landing.reveal-on .cta-inner,
+  .cr-landing.reveal-on .feature .bullet-check {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

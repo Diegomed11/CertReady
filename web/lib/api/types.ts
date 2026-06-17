@@ -15,6 +15,8 @@ export interface Certificacion {
   nivel: string
   descripcion: string | null
   activo: boolean
+  /** Conteo de temas de la ruta; solo lo trae el listado (ausente en el detalle). */
+  num_temas?: number
   creado_en: string
   actualizado_en: string
 }

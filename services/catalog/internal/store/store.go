@@ -54,10 +54,14 @@ type FiltroCertificaciones struct {
 
 // ListarCertificaciones devuelve la página de certificaciones que cumple el filtro.
 //
+// Cada fila incluye num_temas (conteo de temas de la certificación) vía una
+// subconsulta correlacionada, para que el cliente no haga un N+1 por tarjeta.
 // Todas las condiciones se aplican con parámetros ($1, $2, …): no se concatena
 // entrada del usuario en el SQL (defensa contra inyección).
 func (s *Store) ListarCertificaciones(ctx context.Context, f FiltroCertificaciones) ([]catalog.Certificacion, error) {
-	q := `select ` + certCols + ` from catalog.certificaciones`
+	q := `select ` + certCols +
+		`, (select count(*) from catalog.temas t where t.certificacion_id = certificaciones.id)::int as num_temas` +
+		` from catalog.certificaciones`
 	var conds []string
 	var args []any
 

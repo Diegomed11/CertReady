@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { PageHeader } from '@/components/ui/page-header'
 import { SectionLabel } from '@/components/ui/section-label'
-import { listCertifications, listMyEnrollments, listTopics } from '@/lib/api/services'
+import { listCertifications, listMyEnrollments } from '@/lib/api/services'
 import type { Certificacion } from '@/lib/api/types'
 import { requireSession } from '@/lib/auth/guard'
 
@@ -25,13 +25,6 @@ export default async function CertificationsPage() {
 
   const inscritas = new Set(
     mias.data.filter((i) => i.tipo_objetivo === 'certificacion').map((i) => i.objetivo_id),
-  )
-  const numTemas = new Map<string, number>(
-    await Promise.all(
-      certs.data.map(
-        async (c) => [c.id, (await listTopics(c.id, accessToken)).length] as [string, number],
-      ),
-    ),
   )
 
   const porProveedor = new Map<string, Certificacion[]>()
@@ -63,7 +56,7 @@ export default async function CertificationsPage() {
             <ul className="grid gap-5 sm:grid-cols-2">
               {lista.map((cert) => {
                 const inscrito = inscritas.has(cert.id)
-                const temas = numTemas.get(cert.id) ?? 0
+                const temas = cert.num_temas ?? 0
                 return (
                   <li key={cert.id}>
                     <Card className="flex h-full flex-col justify-between gap-5 p-6">

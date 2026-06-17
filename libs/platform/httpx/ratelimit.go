@@ -11,9 +11,16 @@ import (
 // Defaults de rate-limit por IP. Generosos: son defensa en profundidad por
 // instancia (anti fuerza bruta / abuso), no el límite fino de producción (ese lo
 // aplica el WAF de forma distribuida).
+//
+// Estos servicios son internos: solo los llama el BFF (nunca el navegador
+// directo), así que todas las peticiones llegan desde una sola IP y comparten un
+// único bucket. Un render del BFF puede abanicar decenas de llamadas legítimas en
+// una ráfaga (p. ej. una página de catálogo + el prefetch de sus enlaces), de modo
+// que el cupo debe absorberlas sin pegar 429; un límite bajo solo estrangularía al
+// propio BFF, nunca a un atacante (que no alcanza estos servicios).
 const (
-	DefaultRPS   = 20.0
-	DefaultBurst = 40
+	DefaultRPS   = 200.0
+	DefaultBurst = 400
 )
 
 const (

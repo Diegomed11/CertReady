@@ -12,6 +12,11 @@ import (
 )
 
 // Certificacion es una certificación del catálogo (p. ej. "AWS SAA").
+//
+// NumTemas es el conteo de temas de la ruta de estudio. Solo lo calcula el
+// listado (ListarCertificaciones); en las consultas individuales queda en 0 y se
+// omite del JSON (`omitempty`). Evita un N+1 en el cliente: el catálogo pinta
+// "{n} temas" por tarjeta sin una llamada por certificación.
 type Certificacion struct {
 	ID            string    `json:"id" db:"id"`
 	Slug          string    `json:"slug" db:"slug"`
@@ -20,6 +25,7 @@ type Certificacion struct {
 	Nivel         string    `json:"nivel" db:"nivel"`
 	Descripcion   *string   `json:"descripcion,omitempty" db:"descripcion"`
 	Activo        bool      `json:"activo" db:"activo"`
+	NumTemas      int       `json:"num_temas,omitempty" db:"num_temas"`
 	CreadoEn      time.Time `json:"creado_en" db:"creado_en"`
 	ActualizadoEn time.Time `json:"actualizado_en" db:"actualizado_en"`
 }

@@ -924,6 +924,30 @@
   .cr-shell .stat-card .big {
     font-size: 26px;
   }
+
+  /* Menú compacto e intuitivo: ítems e íconos más chicos, lista fácil de escanear. */
+  .cr-shell .menu-panel {
+    padding: 10px;
+  }
+  .cr-shell .side-nav {
+    gap: 2px;
+  }
+  .cr-shell .side-item {
+    padding: 9px 12px;
+    gap: 11px;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    border-radius: 12px;
+    opacity: 1;
+  }
+  .cr-shell .side-item img {
+    width: 24px;
+    height: 24px;
+  }
+  .cr-shell .side-user {
+    margin-top: 8px;
+    padding: 6px;
+  }
 }
 
 /* Velo detrás del menú en móvil (toca fuera para cerrar). Oculto en desktop. */

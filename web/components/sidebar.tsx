@@ -45,6 +45,7 @@ export function Sidebar({
   const [isCoarse, setIsCoarse] = useState(false)
   const [saliendo, setSaliendo] = useState(false)
   const inicial = (nombre?.trim()?.[0] ?? email?.trim()?.[0] ?? 'U').toUpperCase()
+  const iconSize = isCoarse ? 24 : 33 // íconos más chicos en móvil (menú compacto)
 
   const items = esAdmin
     ? [...NAV, { href: '/admin', label: 'Admin', icon: '/icons/bullseye-cal.png' }]
@@ -160,11 +161,11 @@ export function Sidebar({
                 {n.icon.endsWith('.json') ? (
                   <LottieIcon
                     src={n.icon}
-                    size={33}
+                    size={iconSize}
                     playing={hover === n.href || (isCoarse && open)}
                   />
                 ) : (
-                  <Image src={n.icon} alt="" width={33} height={33} draggable={false} />
+                  <Image src={n.icon} alt="" width={iconSize} height={iconSize} draggable={false} />
                 )}
                 <span className="lbl">{n.label}</span>
               </Link>

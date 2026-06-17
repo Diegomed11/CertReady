@@ -31,6 +31,12 @@ export function Landing({
     const reduce =
       typeof window.matchMedia === 'function' &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    // En móvil/táctil evitamos TODO efecto ligado al scroll por frame (ensamblado
+    // de letras, glow del cursor): es lo que traba. Los reveals usan
+    // IntersectionObserver (se disparan una sola vez, sin costo por frame).
+    const isMobile =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(max-width: 900px), (pointer: coarse)').matches
     const cleanups: Array<() => void> = []
 
     // Throttle por frame: los handlers de scroll (reveal, ensamblado de letras,
@@ -114,8 +120,10 @@ export function Landing({
       cleanups.push(() => cancelAnimationFrame(raf))
     })()
 
-    // 2) Glow que sigue al cursor (variables en :root).
+    // 2) Glow que sigue al cursor (variables en :root). En móvil no aplica (no hay
+    // cursor) y el pointermove durante el scroll táctil traba: se omite.
     ;(() => {
+      if (isMobile) return
       const docEl = document.documentElement
       const move = (e: PointerEvent) => {
         docEl.style.setProperty('--x', e.clientX.toFixed(1))
@@ -134,29 +142,30 @@ export function Landing({
       const els = Array.prototype.slice.call(
         root.querySelectorAll('.feature,.cta-inner'),
       ) as HTMLElement[]
-      const check = () => {
-        const vh = window.innerHeight || document.documentElement.clientHeight
-        for (const el of els) {
-          if (el.classList.contains('in')) continue
-          const r = el.getBoundingClientRect()
-          if (r.top < vh * 0.84 && r.bottom > 0) el.classList.add('in')
-        }
+      if (!('IntersectionObserver' in window)) {
+        els.forEach((el) => el.classList.add('in'))
+        return
       }
-      const onScroll = rafThrottle(check)
-      window.addEventListener('scroll', onScroll, { passive: true })
-      window.addEventListener('resize', onScroll)
-      document.addEventListener('scroll', onScroll, { passive: true })
-      check()
-      requestAnimationFrame(check)
-      cleanups.push(() => {
-        window.removeEventListener('scroll', onScroll)
-        window.removeEventListener('resize', onScroll)
-        document.removeEventListener('scroll', onScroll)
-      })
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              e.target.classList.add('in')
+              io.unobserve(e.target)
+            }
+          }
+        },
+        { rootMargin: '0px 0px -10% 0px', threshold: 0.12 },
+      )
+      els.forEach((el) => io.observe(el))
+      cleanups.push(() => io.disconnect())
     })()
 
-    // 4) Ensamblado por carácter de los títulos de sección al hacer scroll.
+    // 4) Ensamblado por carácter de los títulos al hacer scroll. SOLO escritorio:
+    // en móvil escribir transforms a cada letra en cada frame de scroll es lo que
+    // MÁS traba; ahí los títulos se muestran normales (con su degradado).
     ;(() => {
+      if (isMobile) return
       const titles = Array.prototype.slice.call(
         root.querySelectorAll('.feature-title'),
       ) as HTMLElement[]
@@ -276,24 +285,32 @@ export function Landing({
         }
         timer = setInterval(tick, 30)
       }
-      const maybe = () => {
+      const start = () => {
         if (started) return
-        const r = el.getBoundingClientRect()
-        const vh = window.innerHeight || document.documentElement.clientHeight
-        if (r.top < vh * 0.86 && r.bottom > 0) {
-          started = true
-          run()
-        }
+        started = true
+        run()
       }
-      const onScroll = rafThrottle(maybe)
-      window.addEventListener('scroll', onScroll, { passive: true })
-      window.addEventListener('resize', onScroll)
-      maybe()
-      cleanups.push(() => {
-        window.removeEventListener('scroll', onScroll)
-        window.removeEventListener('resize', onScroll)
-        if (timer) clearInterval(timer)
-      })
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(
+          (entries) => {
+            if (entries.some((e) => e.isIntersecting)) {
+              start()
+              io.disconnect()
+            }
+          },
+          { threshold: 0.3 },
+        )
+        io.observe(el)
+        cleanups.push(() => {
+          io.disconnect()
+          if (timer) clearInterval(timer)
+        })
+      } else {
+        start()
+        cleanups.push(() => {
+          if (timer) clearInterval(timer)
+        })
+      }
     })()
 
     // 6) Marquee de tecnologías (logos vía simple-icons CDN).

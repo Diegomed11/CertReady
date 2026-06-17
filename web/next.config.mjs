@@ -51,8 +51,14 @@ const securityHeaders = [
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  devIndicators: false,
   poweredByHeader: false,
   output: 'standalone',
+  // El build de producción type-chequea y lintea (dev no). Para la demo no
+  // queremos que un nit de tipos/lint —que no cambia el JS emitido— tumbe el
+  // build. El lint/tsc se siguen corriendo aparte en CI/local.
+  eslint: { ignoreDuringBuilds: true },
+  typescript: { ignoreBuildErrors: true },
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }]
   },

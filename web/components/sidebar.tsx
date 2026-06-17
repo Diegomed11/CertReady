@@ -42,6 +42,7 @@ export function Sidebar({
   const navRef = useRef<HTMLElement>(null)
   const [open, setOpen] = useState(false)
   const [hover, setHover] = useState<string | null>(null)
+  const [isCoarse, setIsCoarse] = useState(false)
   const [saliendo, setSaliendo] = useState(false)
   const inicial = (nombre?.trim()?.[0] ?? email?.trim()?.[0] ?? 'U').toUpperCase()
 
@@ -50,9 +51,22 @@ export function Sidebar({
     : NAV
 
   // Revela el menú al montar (una vez; el layout persiste entre navegaciones).
+  // En móvil arranca cerrado: el menú es un overlay y no debe tapar el contenido.
   useEffect(() => {
+    if (window.matchMedia('(max-width: 760px)').matches) return
     const id = requestAnimationFrame(() => setOpen(true))
     return () => cancelAnimationFrame(id)
+  }, [])
+
+  // En móvil, cerrar el menú al navegar a otra sección.
+  useEffect(() => {
+    if (window.matchMedia('(max-width: 760px)').matches) setOpen(false)
+  }, [pathname])
+
+  // En táctil no hay hover: detectamos puntero grueso para animar los íconos
+  // Lottie al abrir el menú (equivalente móvil del hover en desktop).
+  useEffect(() => {
+    setIsCoarse(window.matchMedia('(hover: none)').matches)
   }, [])
 
   // Entrada/salida escalonada de los ítems (WAAPI, independiente del re-render).
@@ -103,8 +117,18 @@ export function Sidebar({
   }
 
   return (
-    <aside className={'sidebar' + (open ? ' menu-open' : ' menu-closed')}>
-      <div className="side-head">
+    <>
+      {open ? (
+        <button
+          type="button"
+          className="menu-scrim"
+          aria-hidden="true"
+          tabIndex={-1}
+          onClick={() => setOpen(false)}
+        />
+      ) : null}
+      <aside className={'sidebar' + (open ? ' menu-open' : ' menu-closed')}>
+        <div className="side-head">
         <button
           className={'menu-toggle' + (open ? ' open' : '')}
           onClick={() => setOpen((o) => !o)}
@@ -134,7 +158,11 @@ export function Sidebar({
                 onMouseLeave={() => setHover((h) => (h === n.href ? null : h))}
               >
                 {n.icon.endsWith('.json') ? (
-                  <LottieIcon src={n.icon} size={33} playing={hover === n.href} />
+                  <LottieIcon
+                    src={n.icon}
+                    size={33}
+                    playing={hover === n.href || (isCoarse && open)}
+                  />
                 ) : (
                   <Image src={n.icon} alt="" width={33} height={33} draggable={false} />
                 )}
@@ -167,6 +195,7 @@ export function Sidebar({
           </button>
         </div>
       </div>
-    </aside>
+      </aside>
+    </>
   )
 }

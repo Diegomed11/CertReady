@@ -102,6 +102,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 .cr-landing .topbar {
   display: grid;
@@ -235,7 +236,7 @@
 }
 .cr-landing .hero-title {
   font-family: var(--font-display);
-  font-size: clamp(3.2rem, 14.5vw, 12.5rem);
+  font-size: clamp(2.6rem, 13.5vw, 12.5rem);
   font-weight: 700;
   line-height: 1.02;
   letter-spacing: -0.03em;
@@ -838,5 +839,47 @@
   }
   .cr-landing .bg .mesh {
     animation: none;
+  }
+}
+
+/* ---- Ajustes móvil (mismo diseño; proporciones para pantalla chica) ---- */
+@media (max-width: 768px) {
+  .cr-landing .hero-body {
+    padding: 0 1rem 3rem;
+  }
+  /* Las secciones dejan de medir 88vh (enormes/vacías en celular) y se ajustan
+     a su contenido con respiración vertical. */
+  .cr-landing .feature {
+    min-height: auto;
+    gap: 1.5rem;
+    padding: 2.5rem 0;
+  }
+  .cr-landing .features-wrap {
+    padding: 1rem 0;
+    gap: 0.5rem;
+  }
+  .cr-landing .il-svg {
+    max-width: 420px;
+  }
+  .cr-landing .feature-title {
+    font-size: 2rem;
+  }
+  .cr-landing .feature-desc {
+    font-size: 1.05rem;
+  }
+}
+
+/* En táctil el glow no puede seguir el cursor (no hay cursor). En su lugar, el
+   botón conserva "vida" con un borde de degradado de marca estático; se quita el
+   halo exterior (dependía del cursor) y el background-attachment: fixed (glitchy
+   en móvil). */
+@media (hover: none) {
+  .cr-landing .glow-btn::before {
+    background: linear-gradient(120deg, rgb(var(--brand)), rgb(var(--brand-2)));
+    background-attachment: scroll;
+    opacity: 0.9;
+  }
+  .cr-landing .glow-btn::after {
+    display: none;
   }
 }

@@ -162,7 +162,8 @@
   z-index: 0;
   pointer-events: none;
 }
-.cr-shell .side-item:hover::before {
+.cr-shell .side-item:hover::before,
+.cr-shell .side-item:active::before {
   transform: translate(0, 100%) rotate(-40deg);
   margin: 0 0 128px 0;
 }
@@ -177,7 +178,8 @@
   object-fit: contain;
   flex: none;
 }
-.cr-shell .side-item:hover {
+.cr-shell .side-item:hover,
+.cr-shell .side-item:active {
   color: #fff;
 }
 .cr-shell .side-item.active {
@@ -831,15 +833,109 @@
     position: static;
   }
 }
+
+/* Móvil: la barra lateral pasa a barra superior fija; el menú se abre como
+   overlay flotante (no empuja el contenido) con un velo detrás. Tipografía y
+   espacios más compactos para que no se vea "amontonado". */
 @media (max-width: 760px) {
   .cr-shell {
-    grid-template-columns: 1fr;
+    display: block;
+    height: auto;
+    min-height: 100dvh;
+  }
+
+  /* Barra superior: solo logo + hamburguesa, fija arriba con vidrio. */
+  .cr-shell .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 60;
+    background: rgb(var(--bg) / 0.85);
+    backdrop-filter: blur(12px) saturate(1.4);
+    -webkit-backdrop-filter: blur(12px) saturate(1.4);
+    border-bottom: 1.5px solid rgb(var(--line));
+  }
+  .cr-shell .side-head {
+    padding: 11px 16px;
+  }
+  .cr-shell .side-head .logo {
+    font-size: 26px;
+  }
+
+  /* El menú cae bajo la barra como panel flotante (fixed → no ocupa layout). */
+  .cr-shell .menu-panel {
+    position: fixed;
+    top: 60px;
+    left: 12px;
+    right: 12px;
+    max-height: calc(100dvh - 76px);
+    overflow-y: auto;
+    border-left: 1.5px solid rgb(255 255 255 / 0.7);
+    border-radius: 18px;
+    transition:
+      opacity 0.22s ease,
+      transform 0.22s ease;
+  }
+  .cr-shell .menu-closed .menu-panel {
+    clip-path: none;
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+  }
+  .cr-shell .menu-open .menu-panel {
+    clip-path: none;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  /* Contenido: scroll natural de la página, con hueco para la barra fija. */
+  .cr-shell .main {
+    overflow: visible;
+    padding-top: 60px;
   }
   .cr-shell .main-inner {
-    padding: 24px 20px 40px;
+    padding: 20px 16px 36px;
   }
   .cr-shell .app-footer {
-    padding: 18px 20px 24px;
+    padding: 16px 16px 24px;
+  }
+
+  /* Tipografía y espacios más compactos. */
+  .cr-shell .page-head h1 {
+    font-size: 26px;
+  }
+  .cr-shell .panel-grid {
+    gap: 24px;
+  }
+  .cr-shell .col-left {
+    gap: 24px;
+  }
+  .cr-shell .enroll-card {
+    flex-wrap: wrap;
+    padding: 14px 16px;
+    gap: 12px;
+  }
+  .cr-shell .stat-card .big {
+    font-size: 26px;
+  }
+}
+
+/* Velo detrás del menú en móvil (toca fuera para cerrar). Oculto en desktop. */
+.menu-scrim {
+  display: none;
+}
+@media (max-width: 760px) {
+  .menu-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    border: none;
+    background: rgb(10 8 25 / 0.4);
+    -webkit-backdrop-filter: blur(1px);
+    backdrop-filter: blur(1px);
   }
 }
 

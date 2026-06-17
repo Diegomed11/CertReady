@@ -35,6 +35,7 @@ export function rateLimit(key: string, cap = 10, refillPerSec = 0.2): boolean {
 /** clientKey deriva una clave por IP (primer salto de X-Forwarded-For tras el proxy). */
 export function clientKey(req: Request): string {
   const xff = req.headers.get('x-forwarded-for')
-  if (xff) return xff.split(',')[0].trim()
+  const first = xff?.split(',')[0]?.trim()
+  if (first) return first
   return req.headers.get('x-real-ip') ?? 'local'
 }

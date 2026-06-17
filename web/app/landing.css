@@ -883,3 +883,44 @@
     display: none;
   }
 }
+
+/* ---- Móvil: fondo SIN capa fija ni blur ----
+   Un fondo position:fixed + blur (sea WebGL o el mesh CSS) se re-rasteriza en CADA
+   scroll y en móvil parpadea / se queda en blanco ("no se ve nada al bajar"). Lo
+   sustituimos por un degradado pegado al contenido (sin capa fija): el scroll es
+   plano y el fondo nunca desaparece. */
+@media (max-width: 900px) {
+  .cr-landing .bg {
+    display: none;
+  }
+  .cr-landing {
+    background-color: #070612;
+    background-image:
+      radial-gradient(72% 40% at 80% 3%, rgba(44, 53, 133, 0.62), transparent 58%),
+      radial-gradient(62% 34% at 14% 15%, rgba(86, 75, 176, 0.48), transparent 60%);
+    background-repeat: no-repeat;
+  }
+}
+
+/* ---- Móvil: barra superior (logo + botón) sin encimarse ---- */
+@media (max-width: 640px) {
+  .cr-landing .topbar {
+    padding: 0.85rem 1rem;
+    gap: 0.5rem;
+  }
+  .cr-landing .brand {
+    margin-top: 0.3rem;
+    gap: 0.45rem;
+  }
+  .cr-landing .brand-logo {
+    height: 2.5rem;
+  }
+  .cr-landing .brand-name {
+    font-size: 1.45rem;
+  }
+  .cr-landing .access-pill {
+    height: 2rem;
+    padding: 0 0.85rem;
+    font-size: 0.75rem;
+  }
+}

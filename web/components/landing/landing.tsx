@@ -261,7 +261,9 @@ export function Landing({
       const el = document.getElementById('cta-decode')
       if (!el) return
       const text = el.getAttribute('data-text') || el.textContent || ''
-      if (reduce) {
+      if (reduce || isMobile) {
+        // En móvil mostramos el texto fijo: el "decode" cambia el largo/saltos de
+        // línea del título y eso hacía REBOTAR la página al dispararse.
         el.textContent = text
         return
       }
@@ -355,11 +357,16 @@ export function Landing({
       const item = (t: { name: string; slug: string }) =>
         '<div class="tech"><img src="https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/' +
         t.slug +
-        '.svg" alt="" loading="lazy"/><span>' +
+        '.svg" alt="" width="28" height="28"/><span>' +
         t.name +
         '</span></div>'
       const html = techs.map(item).join('')
       track.innerHTML = html + html
+      // Reinicia la animación para que arranque desde el inicio ya con contenido
+      // (su timeline había empezado con el track vacío, por eso "no empezaba luego").
+      track.style.animation = 'none'
+      void track.offsetWidth
+      track.style.animation = ''
     })()
 
     return () => {

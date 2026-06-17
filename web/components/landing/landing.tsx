@@ -33,6 +33,21 @@ export function Landing({
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const cleanups: Array<() => void> = []
 
+    // Throttle por frame: los handlers de scroll (reveal, ensamblado de letras,
+    // decode) leían/escribían layout en CADA evento de scroll → trababa el móvil.
+    // Con rAF se ejecutan como máximo una vez por frame.
+    const rafThrottle = (fn: () => void) => {
+      let queued = false
+      return () => {
+        if (queued) return
+        queued = true
+        requestAnimationFrame(() => {
+          queued = false
+          fn()
+        })
+      }
+    }
+
     // 1) Titular gooey: morphing entre palabras con desenfoque pegajoso.
     ;(() => {
       const texts = ['Aprende', 'Practica', 'Certifícate']
@@ -127,15 +142,16 @@ export function Landing({
           if (r.top < vh * 0.84 && r.bottom > 0) el.classList.add('in')
         }
       }
-      window.addEventListener('scroll', check, { passive: true })
-      window.addEventListener('resize', check)
-      document.addEventListener('scroll', check, { passive: true })
+      const onScroll = rafThrottle(check)
+      window.addEventListener('scroll', onScroll, { passive: true })
+      window.addEventListener('resize', onScroll)
+      document.addEventListener('scroll', onScroll, { passive: true })
       check()
       requestAnimationFrame(check)
       cleanups.push(() => {
-        window.removeEventListener('scroll', check)
-        window.removeEventListener('resize', check)
-        document.removeEventListener('scroll', check)
+        window.removeEventListener('scroll', onScroll)
+        window.removeEventListener('resize', onScroll)
+        document.removeEventListener('scroll', onScroll)
       })
     })()
 
@@ -181,6 +197,11 @@ export function Landing({
       })
       const update = () => {
         const vh = window.innerHeight || document.documentElement.clientHeight
+        // En móvil reducimos la separación horizontal: con la pantalla angosta, un
+        // desplazamiento grande saca las letras del borde y se ven cortadas.
+        const narrow = window.innerWidth < 760
+        const sx = narrow ? 8 : 26
+        const sr = narrow ? 5 : 16
         for (const grp of groups) {
           const rect = grp.el.getBoundingClientRect()
           const prog = Math.min(1, Math.max(0, (vh * 0.86 - rect.top) / (vh * 0.42)))
@@ -188,18 +209,19 @@ export function Landing({
           grp.chs.forEach((ch, i) => {
             const dist = i - grp.center
             ch.style.transform =
-              'translateX(' + dist * 26 * c + 'px) rotateX(' + dist * 16 * c + 'deg)'
+              'translateX(' + dist * sx * c + 'px) rotateX(' + dist * sr * c + 'deg)'
             ch.style.opacity = (1 - 0.6 * c).toFixed(3)
           })
         }
       }
-      window.addEventListener('scroll', update, { passive: true })
-      window.addEventListener('resize', update)
+      const onScroll = rafThrottle(update)
+      window.addEventListener('scroll', onScroll, { passive: true })
+      window.addEventListener('resize', onScroll)
       update()
       requestAnimationFrame(update)
       cleanups.push(() => {
-        window.removeEventListener('scroll', update)
-        window.removeEventListener('resize', update)
+        window.removeEventListener('scroll', onScroll)
+        window.removeEventListener('resize', onScroll)
       })
     })()
 
@@ -263,12 +285,13 @@ export function Landing({
           run()
         }
       }
-      window.addEventListener('scroll', maybe, { passive: true })
-      window.addEventListener('resize', maybe)
+      const onScroll = rafThrottle(maybe)
+      window.addEventListener('scroll', onScroll, { passive: true })
+      window.addEventListener('resize', onScroll)
       maybe()
       cleanups.push(() => {
-        window.removeEventListener('scroll', maybe)
-        window.removeEventListener('resize', maybe)
+        window.removeEventListener('scroll', onScroll)
+        window.removeEventListener('resize', onScroll)
         if (timer) clearInterval(timer)
       })
     })()

@@ -14,19 +14,28 @@ import { MeshGradient } from '@paper-design/shaders-react'
  * shader que anima en bucle.
  */
 export function ShaderField() {
-  // Arranca en "reduced" para que SSR y la primera pintura usen el respaldo CSS
-  // (evita parpadeos de hidratación); tras montar se decide según la preferencia.
-  const [reduced, setReduced] = useState(true)
+  // Arranca en "true" para que SSR y la 1ª pintura usen el respaldo CSS (evita
+  // parpadeos de hidratación). Tras montar decidimos: respaldo CSS si el usuario
+  // prefiere menos movimiento O si es móvil/táctil. Motivo: dos lienzos WebGL a
+  // pantalla completa en móvil TRABAN el scroll y el navegador puede PERDER el
+  // contexto WebGL (pantalla en blanco). El respaldo CSS anima el mismo degradado
+  // de marca, va fluido y no se rompe.
+  const [useCss, setUseCss] = useState(true)
 
   useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const apply = () => setReduced(mq.matches)
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const mobile = window.matchMedia('(max-width: 900px), (pointer: coarse)')
+    const apply = () => setUseCss(reduce.matches || mobile.matches)
     apply()
-    mq.addEventListener('change', apply)
-    return () => mq.removeEventListener('change', apply)
+    reduce.addEventListener('change', apply)
+    mobile.addEventListener('change', apply)
+    return () => {
+      reduce.removeEventListener('change', apply)
+      mobile.removeEventListener('change', apply)
+    }
   }, [])
 
-  if (reduced) {
+  if (useCss) {
     return <div className="mesh" />
   }
 

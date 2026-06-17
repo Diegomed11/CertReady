@@ -844,20 +844,24 @@
     min-height: 100dvh;
   }
 
-  /* Barra superior: solo logo + hamburguesa, fija arriba con vidrio. */
+  /* Barra superior fija. OJO: el vidrio (backdrop-filter) va en .side-head, NO en
+     el aside: un backdrop-filter en el aside lo vuelve "contenedor" de sus hijos
+     position:fixed y, con overflow:hidden, RECORTA el panel del menú (no se abría).
+     Por eso el aside queda transparente y con overflow visible. */
   .cr-shell .sidebar {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 60;
-    background: rgb(var(--bg) / 0.85);
-    backdrop-filter: blur(12px) saturate(1.4);
-    -webkit-backdrop-filter: blur(12px) saturate(1.4);
-    border-bottom: 1.5px solid rgb(var(--line));
+    overflow: visible;
   }
   .cr-shell .side-head {
     padding: 11px 16px;
+    background: rgb(var(--bg) / 0.92);
+    -webkit-backdrop-filter: blur(12px) saturate(1.4);
+    backdrop-filter: blur(12px) saturate(1.4);
+    border-bottom: 1.5px solid rgb(var(--line));
   }
   .cr-shell .side-head .logo {
     font-size: 26px;

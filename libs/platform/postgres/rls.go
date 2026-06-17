@@ -27,6 +27,16 @@ func ContextWithTx(ctx context.Context, tx pgx.Tx) context.Context {
 	return context.WithValue(ctx, rlsTxKey{}, tx)
 }
 
+// TxFromContext devuelve la transacción de la petición (RLS activo) si existe.
+//
+// La usan los stores que necesitan abrir su propia transacción (varias sentencias
+// atómicas): si ya hay una de petición con el usuario fijado, deben reutilizarla en
+// vez de abrir otra (que iría sin el `app.usuario_id` y fallaría bajo RLS).
+func TxFromContext(ctx context.Context) (pgx.Tx, bool) {
+	tx, ok := ctx.Value(rlsTxKey{}).(pgx.Tx)
+	return tx, ok && tx != nil
+}
+
 // Q devuelve el ejecutor de queries para esta petición.
 //
 // Si RLSTx colocó una transacción en el context (RLS activo), la devuelve para que

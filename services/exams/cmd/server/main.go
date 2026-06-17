@@ -74,11 +74,13 @@ func run(cfg config.Config, logger *slog.Logger) error {
 		Sesiones:      store.NewSesiones(pool),
 		Auth:          authn,
 		NumPorDefecto: cfg.DefaultPregntas,
+		Pool:          pool,
+		RLSEnabled:    cfg.RLSEnabled,
 	})
 
 	srv := &http.Server{
 		Addr:         cfg.Addr,
-		Handler:      httpx.RateLimit(httpx.DefaultRPS, httpx.DefaultBurst)(router),
+		Handler:      httpx.MaxBytes(httpx.DefaultMaxBodyBytes)(httpx.RateLimit(httpx.DefaultRPS, httpx.DefaultBurst)(router)),
 		ReadTimeout:  cfg.ReadTimeout,
 		WriteTimeout: cfg.WriteTimeout,
 		IdleTimeout:  cfg.IdleTimeout,

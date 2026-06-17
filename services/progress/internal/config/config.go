@@ -20,6 +20,7 @@ type Config struct {
 	OIDCIssuer    string
 	OIDCAudience  string
 	AutoMigrate   bool
+	RLSEnabled    bool // activa Row Level Security (requiere conectar con rol sin superusuario)
 	ReadTimeout   time.Duration
 	WriteTimeout  time.Duration
 	IdleTimeout   time.Duration
@@ -63,6 +64,14 @@ func Load() (Config, error) {
 			return Config{}, fmt.Errorf("PROGRESS_AUTO_MIGRATE: booleano inválido %q: %w", v, err)
 		}
 		cfg.AutoMigrate = b
+	}
+
+	if v := os.Getenv("PROGRESS_RLS_ENABLED"); v != "" {
+		b, err := strconv.ParseBool(v)
+		if err != nil {
+			return Config{}, fmt.Errorf("PROGRESS_RLS_ENABLED: booleano inválido %q: %w", v, err)
+		}
+		cfg.RLSEnabled = b
 	}
 
 	var err error

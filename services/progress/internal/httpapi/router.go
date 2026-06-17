@@ -6,8 +6,11 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/jackc/pgx/v5/pgxpool"
+
 	"github.com/certready/certready/libs/platform/auth"
 	"github.com/certready/certready/libs/platform/httpx"
+	"github.com/certready/certready/libs/platform/postgres"
 )
 
 // API agrupa las dependencias de los handlers.
@@ -19,11 +22,13 @@ type API struct {
 // Options son las dependencias del router. Auth es opcional: si es nil, las rutas
 // protegidas responden 501 (no se exponen sin control).
 type Options struct {
-	Service string
-	Version string
-	Logger  *slog.Logger
-	Store   ProgresoStore
-	Auth    *auth.Authenticator
+	Service    string
+	Version    string
+	Logger     *slog.Logger
+	Store      ProgresoStore
+	Auth       *auth.Authenticator
+	Pool       *pgxpool.Pool // pool para la transacción RLS por petición
+	RLSEnabled bool          // interruptor de Row Level Security (defensa en profundidad)
 }
 
 // NewRouter construye el http.Handler raíz del servicio.
@@ -51,10 +56,13 @@ func NewRouter(opts Options) http.Handler {
 	mux.HandleFunc("GET /v1/health", health.Liveness)
 	mux.HandleFunc("GET /v1/ready", health.Readiness)
 
-	mux.Handle("POST /v1/progress/lessons", authGate(opts.Auth, http.HandlerFunc(api.marcarLeccion)))
-	mux.Handle("POST /v1/progress/quizzes", authGate(opts.Auth, http.HandlerFunc(api.guardarQuiz)))
-	mux.Handle("POST /v1/progress/qa", authGate(opts.Auth, http.HandlerFunc(api.guardarRevisionQA)))
-	mux.Handle("GET /v1/me/progress", authGate(opts.Auth, http.HandlerFunc(api.obtenerMio)))
+	// RLS por petición (no-op si RLSEnabled=false): por dentro del auth (de ahí el sub).
+	rls := postgres.RLSTx(opts.Pool, opts.RLSEnabled, subjectOf)
+
+	mux.Handle("POST /v1/progress/lessons", authGate(opts.Auth, rls(http.HandlerFunc(api.marcarLeccion))))
+	mux.Handle("POST /v1/progress/quizzes", authGate(opts.Auth, rls(http.HandlerFunc(api.guardarQuiz))))
+	mux.Handle("POST /v1/progress/qa", authGate(opts.Auth, rls(http.HandlerFunc(api.guardarRevisionQA))))
+	mux.Handle("GET /v1/me/progress", authGate(opts.Auth, rls(http.HandlerFunc(api.obtenerMio))))
 
 	return httpx.Chain(mux,
 		httpx.Recover(opts.Logger),
@@ -73,4 +81,13 @@ func authGate(authn *auth.Authenticator, next http.Handler) http.Handler {
 		})
 	}
 	return authn.Middleware(next)
+}
+
+// subjectOf extrae el `sub` del usuario autenticado del context (lo coloca el auth);
+// "" si la petición no pasó por auth, en cuyo caso RLSTx no abre transacción.
+func subjectOf(ctx context.Context) string {
+	if id, ok := auth.IdentityFromContext(ctx); ok {
+		return id.Subject
+	}
+	return ""
 }

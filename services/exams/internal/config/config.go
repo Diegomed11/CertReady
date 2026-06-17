@@ -22,7 +22,8 @@ type Config struct {
 	OIDCIssuer      string
 	OIDCAudience    string
 	AutoMigrate     bool
-	DefaultPregntas int // nº de preguntas por simulacro si no se indica.
+	RLSEnabled      bool // activa Row Level Security (requiere conectar con rol sin superusuario)
+	DefaultPregntas int  // nº de preguntas por simulacro si no se indica.
 	ReadTimeout     time.Duration
 	WriteTimeout    time.Duration
 	IdleTimeout     time.Duration
@@ -73,6 +74,13 @@ func Load() (Config, error) {
 			return Config{}, fmt.Errorf("EXAMS_AUTO_MIGRATE: booleano inválido %q: %w", v, err)
 		}
 		cfg.AutoMigrate = b
+	}
+	if v := os.Getenv("EXAMS_RLS_ENABLED"); v != "" {
+		b, err := strconv.ParseBool(v)
+		if err != nil {
+			return Config{}, fmt.Errorf("EXAMS_RLS_ENABLED: booleano inválido %q: %w", v, err)
+		}
+		cfg.RLSEnabled = b
 	}
 	if v := os.Getenv("EXAMS_DEFAULT_PREGUNTAS"); v != "" {
 		n, err := strconv.Atoi(v)

@@ -6,8 +6,11 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/jackc/pgx/v5/pgxpool"
+
 	"github.com/certready/certready/libs/platform/auth"
 	"github.com/certready/certready/libs/platform/httpx"
+	"github.com/certready/certready/libs/platform/postgres"
 )
 
 // API agrupa las dependencias de los handlers.
@@ -28,6 +31,8 @@ type Options struct {
 	Sesiones      SesionesStore
 	Auth          *auth.Authenticator
 	NumPorDefecto int
+	Pool          *pgxpool.Pool // pool para la transacción RLS por petición
+	RLSEnabled    bool          // interruptor de Row Level Security (defensa en profundidad)
 }
 
 // NewRouter construye el http.Handler raíz del servicio.
@@ -58,10 +63,14 @@ func NewRouter(opts Options) http.Handler {
 	mux.HandleFunc("GET /v1/health", health.Liveness)
 	mux.HandleFunc("GET /v1/ready", health.Readiness)
 
-	mux.Handle("POST /v1/exams/sessions", authGate(opts.Auth, http.HandlerFunc(api.crearSesion)))
-	mux.Handle("POST /v1/exams/sessions/{id}/submit", authGate(opts.Auth, http.HandlerFunc(api.enviar)))
-	mux.Handle("GET /v1/exams/sessions/{id}", authGate(opts.Auth, http.HandlerFunc(api.obtenerSesion)))
-	mux.Handle("GET /v1/me/exams", authGate(opts.Auth, http.HandlerFunc(api.listarMias)))
+	// RLS por petición (no-op si RLSEnabled=false) en las rutas que tocan Postgres
+	// (sesiones/intentos). /v1/questions es admin sobre Mongo: no aplica.
+	rls := postgres.RLSTx(opts.Pool, opts.RLSEnabled, subjectOf)
+
+	mux.Handle("POST /v1/exams/sessions", authGate(opts.Auth, rls(http.HandlerFunc(api.crearSesion))))
+	mux.Handle("POST /v1/exams/sessions/{id}/submit", authGate(opts.Auth, rls(http.HandlerFunc(api.enviar))))
+	mux.Handle("GET /v1/exams/sessions/{id}", authGate(opts.Auth, rls(http.HandlerFunc(api.obtenerSesion))))
+	mux.Handle("GET /v1/me/exams", authGate(opts.Auth, rls(http.HandlerFunc(api.listarMias))))
 	mux.Handle("POST /v1/questions", adminGate(opts.Auth, http.HandlerFunc(api.crearPregunta)))
 
 	return httpx.Chain(mux,
@@ -90,4 +99,13 @@ func gateCerrado() http.Handler {
 		httpx.WriteError(w, http.StatusNotImplemented, "auth_no_disponible",
 			"esta ruta requiere OIDC configurado (EXAMS_OIDC_ISSUER)")
 	})
+}
+
+// subjectOf extrae el `sub` del usuario autenticado del context (lo coloca el auth);
+// "" si la petición no pasó por auth, en cuyo caso RLSTx no abre transacción.
+func subjectOf(ctx context.Context) string {
+	if id, ok := auth.IdentityFromContext(ctx); ok {
+		return id.Subject
+	}
+	return ""
 }

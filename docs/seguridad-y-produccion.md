@@ -43,6 +43,9 @@ separa lo **ya cubierto**, lo **hecho ahora** y lo **pendiente de despliegue**.
     ([api.py](../data/dss/api.py)); no afecta a readiness/analytics.
   - *Pendiente*: el IdP `oidc-mock` es **dev-only**; en prod el throttle de auth lo da
     **Cognito**.
+- **Límite de tamaño de cuerpo** ([httpx/bodylimit.go](../libs/platform/httpx/bodylimit.go)):
+  middleware `MaxBytes` (1 MiB) en los 7 servicios Go (anti-DoS por payload grande); el CV
+  (5 MB) lo acota el DSS aparte. Los timeouts del `http.Server` ya estaban puestos.
 - **Sanitización de la subida de CV** ([recomendador.py](../data/dss/recomendador.py) +
   [api.py](../data/dss/api.py)): lectura **acotada** (no materializa más de 5 MB),
   rechazo temprano por tamaño, **límite de páginas** PDF, guardia **anti zip-bomb** en
@@ -52,7 +55,7 @@ separa lo **ya cubierto**, lo **hecho ahora** y lo **pendiente de despliegue**.
 - **Secretos/API keys**: auditoría sin hallazgos — sin `NEXT_PUBLIC_*` con secretos, sin
   claves AWS/privadas/contraseñas hardcodeadas; los "tokens" del cliente son de diseño.
 
-## Hecho ahora (Fase 7, incremento 3 — piloto RLS en enrollments)
+## Hecho ahora (Fase 7, incremento 3 — RLS en enrollments, progress y exams)
 
 Row Level Security en `enrollments.inscripciones` como **piloto** (defensa en
 profundidad; la autorización por usuario ya está en el código y probada), detrás de un
@@ -77,8 +80,11 @@ profundidad; la autorización por usuario ya está en el código y probada), det
 4. Probar: un usuario solo ve/edita SUS inscripciones; con otro `sub` no aparecen. Si algo
    falla, apagar el flag (vuelve al comportamiento actual) — sin revertir código.
 
-*Pendiente*: replicar el patrón a **progress** y **exams** (el **juez** queda fuera por su
-petición larga, ver más abajo).
+**Replicado a `progress` y `exams`** con el mismo patrón (migraciones `progress/0003_rls`
+y `exams/0002_rls`, stores por `Q(...)`, `RLSTx` en el router, flags `PROGRESS_RLS_ENABLED`
+y `EXAMS_RLS_ENABLED`). En `exams`, el cierre del simulacro (`Finalizar`) **reutiliza la
+transacción de la petición** cuando RLS está activo (vía `postgres.TxFromContext`), para
+que el `SET LOCAL` aplique. El **juez** queda fuera por su petición larga.
 
 ## Dependencias (npm audit) — sin acción urgente
 
@@ -92,13 +98,9 @@ zod/three están limpios), así que **no** llegan al bundle desplegado.
 
 ## Pendiente de código (próximos incrementos, a $0)
 
-- **RLS — replicar a `progress` y `exams`**: el piloto ya está en `enrollments` (ver
-  arriba). Replicar el mismo patrón (migración `0002_rls` + store por `Q(ctx, pool)` +
-  `RLSTx` en el router + flag `*_RLS_ENABLED`). El **juez** queda fuera por su petición
-  larga (la transacción amarraría una conexión del pool durante la ejecución del sandbox).
-- **Límite de tamaño de cuerpo en servicios Go**: `http.MaxBytesReader` donde el cuerpo
-  lo controla el usuario (`judge`, `content`); los timeouts del `http.Server`
-  (`ReadTimeout`/`WriteTimeout`/`IdleTimeout`) ya están puestos en cada servicio.
+- **RLS en el `judge`**: queda fuera del patrón RLS-por-transacción (su petición es larga:
+  la transacción amarraría una conexión del pool durante la ejecución del sandbox). Si se
+  quiere cubrir, aplicar el `SET LOCAL` solo alrededor de la escritura de la corrida.
 - **CSP a enforce**: promover de Report-Only a `Content-Security-Policy` con **nonce**
   por request, tras verificar que no hay violaciones legítimas en consola.
 

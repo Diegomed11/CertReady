@@ -1574,3 +1574,25 @@ comportamiento; runbook de activación (rol con login, DSN, flag) en
 
 **Siguiente:** commit; replicar el RLS a `progress` y `exams`; (prod, diferido) Cognito,
 Secrets Manager, WAF / rate-limit distribuido, promover CSP a enforce y pentesting.
+
+## 2026-06-16 · Fase 7 — Cierre del hardening (límite de cuerpo + RLS en 3 servicios)
+
+**Hecho:**
+- **Límite de tamaño de cuerpo**: middleware `MaxBytes` (1 MiB) en
+  `libs/platform/httpx/bodylimit.go`, aplicado (junto al rate-limit) en los **7 servicios
+  Go** — defensa anti-DoS por payload grande; el CV (5 MB) lo acota el DSS aparte.
+- **RLS replicado** del piloto (`enrollments`) a **`progress`** (migración `0003_rls`:
+  lecciones, temas, qa_revisiones) y **`exams`** (migración `0002_rls`: sesiones, intentos),
+  con el mismo **kill-switch** (`PROGRESS_RLS_ENABLED` / `EXAMS_RLS_ENABLED`, off por
+  defecto) y los stores enrutados por `postgres.Q(ctx, pool)`. En `exams`, `Finalizar`
+  reutiliza la **transacción de la petición** cuando RLS está activo
+  (`postgres.TxFromContext`), para que el `SET LOCAL app.usuario_id` aplique al cierre del
+  simulacro. El **juez** queda fuera (su petición larga amarraría una conexión del pool).
+
+**Verificación:** `go build`/`go vet` de `libs/platform` + los 7 servicios en verde;
+`go test ./httpx/...` (rate-limit) en verde. Con RLS apagado por defecto, el comportamiento
+no cambia (los stores usan el pool tal cual).
+
+**Siguiente:** commit. Con esto queda **cerrado el endurecimiento de Fase 7** salvo lo
+atado a despliegue (Cognito, Secrets Manager, WAF, CSP a enforce, pentesting) → la
+siguiente fase es el **despliegue a AWS**.

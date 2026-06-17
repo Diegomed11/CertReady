@@ -7,6 +7,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"github.com/certready/certready/libs/platform/postgres"
 	"github.com/certready/certready/services/progress/internal/progress"
 )
 
@@ -24,7 +25,7 @@ func (s *Store) Ping(ctx context.Context) error { return s.pool.Ping(ctx) }
 // MarcarLeccion registra una lección como leída por el usuario. Es idempotente:
 // marcar dos veces la misma lección no falla ni duplica.
 func (s *Store) MarcarLeccion(ctx context.Context, usuarioID string, n progress.NuevaLeccion) error {
-	_, err := s.pool.Exec(ctx,
+	_, err := postgres.Q(ctx, s.pool).Exec(ctx,
 		`insert into progress.lecciones (usuario_id, certificacion, tema, material_id)
 		 values ($1, $2, $3, $4)
 		 on conflict (usuario_id, material_id) do nothing`,
@@ -35,7 +36,7 @@ func (s *Store) MarcarLeccion(ctx context.Context, usuarioID string, n progress.
 // GuardarRevisionQA registra una autoevaluación de una pregunta de entrevista
 // (evento append-only; alimenta la señal de Q&A del DSS vía el ETL).
 func (s *Store) GuardarRevisionQA(ctx context.Context, usuarioID string, n progress.NuevaRevisionQA) error {
-	_, err := s.pool.Exec(ctx,
+	_, err := postgres.Q(ctx, s.pool).Exec(ctx,
 		`insert into progress.qa_revisiones (usuario_id, qa_ref, nivel)
 		 values ($1, $2, $3)`,
 		usuarioID, n.QaRef, n.Nivel)
@@ -46,7 +47,7 @@ func (s *Store) GuardarRevisionQA(ctx context.Context, usuarioID string, n progr
 // resultante. Conserva el mejor puntaje y deja el tema aprobado de forma pegajosa
 // (una vez aprobado, sigue aprobado).
 func (s *Store) GuardarQuiz(ctx context.Context, usuarioID string, n progress.NuevoQuiz, aprobado bool) (progress.TemaProgreso, error) {
-	rows, err := s.pool.Query(ctx,
+	rows, err := postgres.Q(ctx, s.pool).Query(ctx,
 		`insert into progress.temas (usuario_id, certificacion, tema, quiz_puntaje, quiz_aprobado)
 		 values ($1, $2, $3, $4, $5)
 		 on conflict (usuario_id, certificacion, tema) do update
@@ -66,7 +67,7 @@ func (s *Store) GuardarQuiz(ctx context.Context, usuarioID string, n progress.Nu
 func (s *Store) ObtenerDeUsuario(ctx context.Context, usuarioID, certificacion string) (progress.ProgresoCert, error) {
 	out := progress.ProgresoCert{Lecciones: []progress.LeccionCompletada{}, Temas: []progress.TemaProgreso{}}
 
-	rowsL, err := s.pool.Query(ctx,
+	rowsL, err := postgres.Q(ctx, s.pool).Query(ctx,
 		`select tema, material_id, creado_en
 		 from progress.lecciones
 		 where usuario_id::text = $1 and certificacion = $2
@@ -83,7 +84,7 @@ func (s *Store) ObtenerDeUsuario(ctx context.Context, usuarioID, certificacion s
 		out.Lecciones = lecciones
 	}
 
-	rowsT, err := s.pool.Query(ctx,
+	rowsT, err := postgres.Q(ctx, s.pool).Query(ctx,
 		`select tema, quiz_puntaje, quiz_aprobado
 		 from progress.temas
 		 where usuario_id::text = $1 and certificacion = $2`,

@@ -8,6 +8,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"github.com/certready/certready/libs/platform/postgres"
 	"github.com/certready/certready/services/exams/internal/exams"
 )
 
@@ -31,7 +32,7 @@ func (s *SesionesStore) CrearSesion(ctx context.Context, usuarioID, certificacio
 		return exams.Sesion{}, err
 	}
 	var ses exams.Sesion
-	err = s.pool.QueryRow(ctx,
+	err = postgres.Q(ctx, s.pool).QueryRow(ctx,
 		`insert into exams.sesiones (usuario_id, certificacion, modo, preguntas)
 		 values ($1, $2, $3, $4::jsonb)
 		 returning `+sesionCols,
@@ -48,7 +49,7 @@ func (s *SesionesStore) CrearSesion(ctx context.Context, usuarioID, certificacio
 func (s *SesionesStore) ObtenerSesion(ctx context.Context, usuarioID, id string) (exams.Sesion, []string, error) {
 	var ses exams.Sesion
 	var refsRaw []byte
-	err := s.pool.QueryRow(ctx,
+	err := postgres.Q(ctx, s.pool).QueryRow(ctx,
 		`select `+sesionCols+`, preguntas from exams.sesiones where id::text = $1 and usuario_id::text = $2`,
 		id, usuarioID,
 	).Scan(&ses.ID, &ses.UsuarioID, &ses.Certificacion, &ses.Modo, &ses.Estado, &ses.Puntaje, &ses.IniciadoEn, &ses.FinalizadoEn, &refsRaw)
@@ -67,7 +68,7 @@ func (s *SesionesStore) ObtenerSesion(ctx context.Context, usuarioID, id string)
 
 // ListarSesiones devuelve las sesiones del usuario, más recientes primero.
 func (s *SesionesStore) ListarSesiones(ctx context.Context, usuarioID string, limit, offset int) ([]exams.Sesion, error) {
-	rows, err := s.pool.Query(ctx,
+	rows, err := postgres.Q(ctx, s.pool).Query(ctx,
 		`select `+sesionCols+` from exams.sesiones where usuario_id::text = $1
 		 order by iniciado_en desc limit $2 offset $3`,
 		usuarioID, limit, offset)
@@ -89,7 +90,7 @@ func (s *SesionesStore) ListarSesiones(ctx context.Context, usuarioID string, li
 
 // ObtenerIntentos devuelve los intentos registrados de una sesión.
 func (s *SesionesStore) ObtenerIntentos(ctx context.Context, sesionID string) ([]exams.Intento, error) {
-	rows, err := s.pool.Query(ctx,
+	rows, err := postgres.Q(ctx, s.pool).Query(ctx,
 		`select pregunta_ref, correcto, seleccion from exams.intentos where sesion_id::text = $1 order by creado_en`,
 		sesionID)
 	if err != nil {
@@ -118,14 +119,28 @@ func (s *SesionesStore) ObtenerIntentos(ctx context.Context, sesionID string) ([
 // Returns ErrNotFound si no existe o no pertenece; ErrYaFinalizada si ya estaba
 // cerrada.
 func (s *SesionesStore) Finalizar(ctx context.Context, usuarioID, id string, puntaje float64, intentos []exams.Intento) error {
+	// Con RLS activo reutiliza la transacción de la petición (que ya fijó el usuario);
+	// el commit lo hace el middleware. Sin RLS, abre y cierra su propia transacción.
+	if tx, ok := postgres.TxFromContext(ctx); ok {
+		return finalizarEnTx(ctx, tx, usuarioID, id, puntaje, intentos)
+	}
 	tx, err := s.pool.Begin(ctx)
 	if err != nil {
 		return err
 	}
 	defer func() { _ = tx.Rollback(ctx) }()
+	if err := finalizarEnTx(ctx, tx, usuarioID, id, puntaje, intentos); err != nil {
+		return err
+	}
+	return tx.Commit(ctx)
+}
 
+// finalizarEnTx cierra la sesión sobre la transacción dada: verifica pertenencia y
+// estado con FOR UPDATE, inserta los intentos y la marca finalizada. NO hace commit:
+// lo hace el llamador (o el middleware RLS si es la transacción de la petición).
+func finalizarEnTx(ctx context.Context, tx pgx.Tx, usuarioID, id string, puntaje float64, intentos []exams.Intento) error {
 	var estado string
-	err = tx.QueryRow(ctx,
+	err := tx.QueryRow(ctx,
 		`select estado from exams.sesiones where id::text = $1 and usuario_id::text = $2 for update`,
 		id, usuarioID,
 	).Scan(&estado)
@@ -160,5 +175,5 @@ func (s *SesionesStore) Finalizar(ctx context.Context, usuarioID, id string, pun
 		return err
 	}
 
-	return tx.Commit(ctx)
+	return nil
 }

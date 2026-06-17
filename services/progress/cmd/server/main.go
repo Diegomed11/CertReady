@@ -60,16 +60,18 @@ func run(cfg config.Config, logger *slog.Logger) error {
 	}
 
 	router := httpapi.NewRouter(httpapi.Options{
-		Service: cfg.ServiceName,
-		Version: cfg.Version,
-		Logger:  logger,
-		Store:   store.New(pool),
-		Auth:    authn,
+		Service:    cfg.ServiceName,
+		Version:    cfg.Version,
+		Logger:     logger,
+		Store:      store.New(pool),
+		Auth:       authn,
+		Pool:       pool,
+		RLSEnabled: cfg.RLSEnabled,
 	})
 
 	srv := &http.Server{
 		Addr:         cfg.Addr,
-		Handler:      httpx.RateLimit(httpx.DefaultRPS, httpx.DefaultBurst)(router),
+		Handler:      httpx.MaxBytes(httpx.DefaultMaxBodyBytes)(httpx.RateLimit(httpx.DefaultRPS, httpx.DefaultBurst)(router)),
 		ReadTimeout:  cfg.ReadTimeout,
 		WriteTimeout: cfg.WriteTimeout,
 		IdleTimeout:  cfg.IdleTimeout,

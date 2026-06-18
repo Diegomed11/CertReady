@@ -22,4 +22,6 @@ type SesionesStore interface {
 	ListarSesiones(ctx context.Context, usuarioID string, limit, offset int) ([]exams.Sesion, error)
 	ObtenerIntentos(ctx context.Context, sesionID string) ([]exams.Intento, error)
 	Finalizar(ctx context.Context, usuarioID, id string, puntaje float64, intentos []exams.Intento) error
+	AgregadoPorCelda(ctx context.Context, usuarioID, certificacion string) ([]exams.CeldaAgg, error)
+	AgregadoPorFecha(ctx context.Context, usuarioID, certificacion string) ([]exams.PuntoFecha, error)
 }

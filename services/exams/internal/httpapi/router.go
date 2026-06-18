@@ -45,6 +45,8 @@ type Options struct {
 //	POST /v1/exams/sessions/{id}/submit   entregar y calificar (auth, propia)
 //	GET  /v1/exams/sessions/{id}          consultar/repasar (auth, propia)
 //	GET  /v1/me/exams                     listar mis sesiones (auth)
+//	GET  /v1/me/analytics                 acierto por tema + tendencia (auth)
+//	GET  /v1/me/readiness                 preparación operativa por cert (auth)
 //	POST /v1/questions                    crear pregunta (admin)
 func NewRouter(opts Options) http.Handler {
 	api := &API{
@@ -71,6 +73,8 @@ func NewRouter(opts Options) http.Handler {
 	mux.Handle("POST /v1/exams/sessions/{id}/submit", authGate(opts.Auth, rls(http.HandlerFunc(api.enviar))))
 	mux.Handle("GET /v1/exams/sessions/{id}", authGate(opts.Auth, rls(http.HandlerFunc(api.obtenerSesion))))
 	mux.Handle("GET /v1/me/exams", authGate(opts.Auth, rls(http.HandlerFunc(api.listarMias))))
+	mux.Handle("GET /v1/me/analytics", authGate(opts.Auth, rls(http.HandlerFunc(api.analitica))))
+	mux.Handle("GET /v1/me/readiness", authGate(opts.Auth, rls(http.HandlerFunc(api.readiness))))
 	mux.Handle("POST /v1/questions", adminGate(opts.Auth, http.HandlerFunc(api.crearPregunta)))
 
 	return httpx.Chain(mux,

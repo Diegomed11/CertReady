@@ -59,7 +59,11 @@ export async function authorizationURL(): Promise<{
 
   const url = oidc.buildAuthorizationUrl(config, {
     redirect_uri: cfg.OIDC_REDIRECT_URI,
-    scope: 'openid email profile',
+    // Solo openid + email: son los scopes garantizados en el app client de Cognito
+    // (email da el correo; los roles vienen en `cognito:groups`, sin scope aparte).
+    // Pedir `profile` rompería el login si ese scope no está habilitado; el "nombre"
+    // es opcional y no se usa para autorizar.
+    scope: 'openid email',
     code_challenge: codeChallenge,
     code_challenge_method: 'S256',
     state,

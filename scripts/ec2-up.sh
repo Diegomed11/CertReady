@@ -60,6 +60,12 @@ pkill -f "/judge/build/judge" 2>/dev/null || true
 pkill -f 'uvicorn dss.api:app' 2>/dev/null || true
 pkill -f 'next start' 2>/dev/null || true
 pkill -f 'next dev' 2>/dev/null || true
+# El servidor de producción de Next corre como `next-server` (no como `next start`),
+# así que hay que matarlo por ese nombre; y por si quedó algo pegado al 3000, se
+# libera el puerto. Sin esto, el `next start` nuevo no enlaza y se sigue sirviendo
+# el build anterior.
+pkill -f 'next-server' 2>/dev/null || true
+fuser -k 3000/tcp 2>/dev/null || true
 sleep 2
 
 wait_url() { for _ in $(seq 1 "${2:-60}"); do curl -fsS --max-time 4 "$1" >/dev/null 2>&1 && return 0; sleep 1; done; return 1; }

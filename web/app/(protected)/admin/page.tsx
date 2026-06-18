@@ -52,12 +52,14 @@ export default async function AdminPage() {
     redirect('/panel')
   }
 
-  const [overview, areas, churn, usuarios] = await Promise.all([
-    getBusinessOverview(),
-    getBusinessAreas(),
-    getBusinessChurn(),
-    listUsers(session.accessToken, { limit: 100 }),
-  ])
+  // En SECUENCIA, no en paralelo: el DSS comparte un único cliente de ClickHouse
+  // que no es seguro para consultas concurrentes; dispararlas a la vez hacía que
+  // overview/churn chocaran y degradaran a ceros. El padrón de usuarios es de otro
+  // servicio (users), así que ese sí puede ir aparte.
+  const usuarios = await listUsers(session.accessToken, { limit: 100 })
+  const overview = await getBusinessOverview()
+  const areas = await getBusinessAreas()
+  const churn = await getBusinessChurn()
 
   const sinDss = !overview && !areas && !churn
 

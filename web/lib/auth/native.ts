@@ -56,6 +56,9 @@ function toResult(tok: TokenResponse): CallbackResult {
     nombre: typeof claims.name === 'string' ? claims.name : undefined,
     roles,
     accessToken: tok.access_token,
+    // A los servicios Go se les reenvía el id token (trae aud=client_id, email,
+    // cognito:groups); el access token de Cognito no. Igual que en el flujo OIDC.
+    idToken: tok.id_token,
     refreshToken: tok.refresh_token,
     expiresAt: Math.floor(Date.now() / 1000) + expiresIn,
   }

@@ -49,7 +49,7 @@ func TestCorridaCrearObtenerListar(t *testing.T) {
 	ctx := context.Background()
 	envio, res := envioYResultado()
 
-	c, err := st.CrearCorrida(ctx, usuarioA, envio, res)
+	c, err := st.CrearCorrida(ctx, usuarioA, envio, res, "arrays")
 	if err != nil {
 		t.Fatalf("crear: %v", err)
 	}
@@ -79,7 +79,7 @@ func TestCorridaPertenencia(t *testing.T) {
 	ctx := context.Background()
 	envio, res := envioYResultado()
 
-	c, err := st.CrearCorrida(ctx, usuarioA, envio, res)
+	c, err := st.CrearCorrida(ctx, usuarioA, envio, res, "arrays")
 	if err != nil {
 		t.Fatal(err)
 	}

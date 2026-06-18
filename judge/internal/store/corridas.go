@@ -25,15 +25,18 @@ const corridaCols = `id::text, usuario_id::text, problema_ref, lenguaje, veredic
 
 // CrearCorrida registra el resultado de una calificación para un usuario y
 // devuelve el registro creado.
-func (s *CorridasStore) CrearCorrida(ctx context.Context, usuarioID string, envio judge.EnvioCodigo, r judge.Resultado) (judge.Corrida, error) {
+//
+// area es el área del problema (de MongoDB), denormalizada en la corrida para
+// calcular "problemas resueltos por área" directo de Postgres (plano operativo).
+func (s *CorridasStore) CrearCorrida(ctx context.Context, usuarioID string, envio judge.EnvioCodigo, r judge.Resultado, area string) (judge.Corrida, error) {
 	var c judge.Corrida
 	err := s.pool.QueryRow(ctx,
 		`insert into judge.corridas
-		   (usuario_id, problema_ref, lenguaje, veredicto, casos_pasados, casos_total, duracion_ms)
-		 values ($1, $2, $3, $4, $5, $6, $7)
+		   (usuario_id, problema_ref, lenguaje, veredicto, casos_pasados, casos_total, duracion_ms, area)
+		 values ($1, $2, $3, $4, $5, $6, $7, $8)
 		 returning `+corridaCols,
 		usuarioID, envio.ProblemaRef, envio.Lenguaje, string(r.Veredicto),
-		r.CasosPasados, r.CasosTotal, r.DuracionMs,
+		r.CasosPasados, r.CasosTotal, r.DuracionMs, area,
 	).Scan(&c.ID, &c.UsuarioID, &c.ProblemaRef, &c.Lenguaje, &c.Veredicto, &c.CasosPasados, &c.CasosTotal, &c.DuracionMs, &c.CreadoEn)
 	if err != nil {
 		return judge.Corrida{}, err

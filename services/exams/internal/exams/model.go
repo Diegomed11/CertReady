@@ -62,10 +62,16 @@ type Sesion struct {
 }
 
 // Intento es la respuesta registrada a una pregunta dentro de una sesión.
+//
+// Tema y Dificultad se denormalizan desde la pregunta (MongoDB) al registrar el
+// intento, para calcular la analítica por-usuario directo de Postgres (plano
+// operativo, sin OLAP). Quedan en "desconocido" si la pregunta ya no existe.
 type Intento struct {
 	PreguntaRef string   `json:"pregunta_ref"`
 	Correcto    bool     `json:"correcto"`
 	Seleccion   []string `json:"seleccion"`
+	Tema        string   `json:"tema"`
+	Dificultad  string   `json:"dificultad"`
 }
 
 // ResultadoPregunta es el detalle por pregunta tras calificar (incluye la

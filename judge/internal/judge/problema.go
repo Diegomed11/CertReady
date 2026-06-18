@@ -24,6 +24,7 @@ type Caso struct {
 // solo viven aquí, del lado del servidor; nunca se exponen al cliente.
 type Problema struct {
 	ID                  string   `bson:"_id"`
+	Area                string   `bson:"area"` // se denormaliza en la corrida (analítica por área, plano operativo)
 	LenguajesPermitidos []string `bson:"lenguajes_permitidos"`
 	LimiteTiempoMs      int      `bson:"limite_tiempo_ms"`
 	LimiteMemoriaMB     int      `bson:"limite_memoria_mb"`

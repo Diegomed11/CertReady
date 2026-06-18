@@ -165,8 +165,18 @@ func (a *API) enviar(w http.ResponseWriter, r *http.Request) {
 
 	intentos := make([]exams.Intento, 0, len(resultado.Resultados))
 	for _, rp := range resultado.Resultados {
+		p := preguntas[rp.Ref] // si la ref ya no existe, queda vacío -> "desconocido"
+		tema := p.Tema
+		if tema == "" {
+			tema = "desconocido"
+		}
+		dificultad := p.Dificultad
+		if dificultad == "" {
+			dificultad = "desconocido"
+		}
 		intentos = append(intentos, exams.Intento{
 			PreguntaRef: rp.Ref, Correcto: rp.Correcto, Seleccion: rp.Seleccion,
+			Tema: tema, Dificultad: dificultad,
 		})
 	}
 

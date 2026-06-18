@@ -160,9 +160,9 @@ func finalizarEnTx(ctx context.Context, tx pgx.Tx, usuarioID, id string, puntaje
 			return err
 		}
 		if _, err := tx.Exec(ctx,
-			`insert into exams.intentos (sesion_id, usuario_id, pregunta_ref, correcto, seleccion)
-			 values ($1, $2, $3, $4, $5::jsonb)`,
-			id, usuarioID, it.PreguntaRef, it.Correcto, string(selJSON),
+			`insert into exams.intentos (sesion_id, usuario_id, pregunta_ref, correcto, seleccion, tema, dificultad)
+			 values ($1, $2, $3, $4, $5::jsonb, $6, $7)`,
+			id, usuarioID, it.PreguntaRef, it.Correcto, string(selJSON), it.Tema, it.Dificultad,
 		); err != nil {
 			return err
 		}

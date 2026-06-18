@@ -64,7 +64,11 @@ func (a *API) enviar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	corrida, err := a.corridas.CrearCorrida(r.Context(), identidad.Subject, in, resultado)
+	area := problema.Area
+	if area == "" {
+		area = "desconocido"
+	}
+	corrida, err := a.corridas.CrearCorrida(r.Context(), identidad.Subject, in, resultado, area)
 	if err != nil {
 		a.errorInterno(w, r, "registrar corrida", err)
 		return

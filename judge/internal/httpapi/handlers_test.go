@@ -29,14 +29,14 @@ func (f fakeProblemas) ObtenerProblema(ctx context.Context, id string) (judge.Pr
 }
 
 type fakeCorridas struct {
-	crear func(context.Context, string, judge.EnvioCodigo, judge.Resultado) (judge.Corrida, error)
+	crear func(context.Context, string, judge.EnvioCodigo, judge.Resultado, string) (judge.Corrida, error)
 	get   func(context.Context, string, string) (judge.Corrida, error)
 	list  func(context.Context, string, int, int) ([]judge.Corrida, error)
 }
 
 func (f fakeCorridas) PingPostgres(context.Context) error { return nil }
-func (f fakeCorridas) CrearCorrida(ctx context.Context, u string, e judge.EnvioCodigo, r judge.Resultado) (judge.Corrida, error) {
-	return f.crear(ctx, u, e, r)
+func (f fakeCorridas) CrearCorrida(ctx context.Context, u string, e judge.EnvioCodigo, r judge.Resultado, area string) (judge.Corrida, error) {
+	return f.crear(ctx, u, e, r, area)
 }
 func (f fakeCorridas) ObtenerCorrida(ctx context.Context, u, id string) (judge.Corrida, error) {
 	return f.get(ctx, u, id)
@@ -81,7 +81,7 @@ func withAuth(t *testing.T) (http.Handler, func(groups ...string) string, *fakeP
 		return problemaConOculto(), nil
 	}}
 	fc := &fakeCorridas{
-		crear: func(_ context.Context, u string, e judge.EnvioCodigo, r judge.Resultado) (judge.Corrida, error) {
+		crear: func(_ context.Context, u string, e judge.EnvioCodigo, r judge.Resultado, _ string) (judge.Corrida, error) {
 			return judge.Corrida{ID: "c1", UsuarioID: u, ProblemaRef: e.ProblemaRef, Veredicto: string(r.Veredicto)}, nil
 		},
 	}

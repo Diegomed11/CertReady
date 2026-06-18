@@ -24,7 +24,9 @@ export async function GET(req: Request) {
     session.email = result.email
     session.nombre = result.nombre
     session.roles = result.roles
-    session.accessToken = result.accessToken
+    // A los servicios se les manda el id token (trae email/nombre y aud = client_id;
+    // el access token de Cognito no). Con el emisor local el id token también sirve.
+    session.accessToken = result.idToken ?? result.accessToken
     session.refreshToken = result.refreshToken
     session.expiresAt = result.expiresAt
     delete session.pkce

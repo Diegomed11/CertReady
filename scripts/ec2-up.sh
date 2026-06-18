@@ -21,7 +21,30 @@ LOGS="$ROOT/.devlogs"; mkdir -p "$LOGS"
 
 DSN='postgres://postgres@localhost:5432/certready_dev?sslmode=disable'
 MONGO='mongodb://localhost:27017'
-PUBLIC_HOST="${PUBLIC_HOST:-$(curl -s --max-time 3 http://169.254.169.254/latest/meta-data/public-hostname || echo localhost)}"
+# IP/host público vía metadata IMDSv2 (token requerido). Cae a localhost si no hay.
+_imds_token="$(curl -s --max-time 3 -X PUT 'http://169.254.169.254/latest/api/token' -H 'X-aws-ec2-metadata-token-ttl-seconds: 120' 2>/dev/null || true)"
+PUBLIC_HOST="${PUBLIC_HOST:-$(curl -s --max-time 3 -H "X-aws-ec2-metadata-token: ${_imds_token}" http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo localhost)}"
+[ -z "$PUBLIC_HOST" ] && PUBLIC_HOST=localhost
+
+# --- Modo de autenticación: Cognito (si existe .cognito.env) o emisor local -----
+# Para ACTIVAR Cognito: crea "$ROOT/.cognito.env" con COGNITO_ISSUER,
+# COGNITO_CLIENT_ID y COGNITO_CLIENT_SECRET. Sin ese archivo usa el emisor local
+# (oidc-mock). Para REVERTIR: borra/renombra el archivo y vuelve a correr el script.
+[ -f "$ROOT/.cognito.env" ] && . "$ROOT/.cognito.env"
+PUBLIC_URL="https://certready.duckdns.org"
+if [ -n "${COGNITO_ISSUER:-}" ]; then
+  AUTH_ISSUER="$COGNITO_ISSUER"; AUTH_AUDIENCE="${COGNITO_CLIENT_ID:-}"
+  WEB_OIDC_ISSUER="$COGNITO_ISSUER"; WEB_OIDC_CLIENT_ID="${COGNITO_CLIENT_ID:-}"
+  WEB_OIDC_SECRET_LINE="OIDC_CLIENT_SECRET=${COGNITO_CLIENT_SECRET:-}"
+  WEB_REDIRECT="$PUBLIC_URL/api/auth/callback"; WEB_LOGOUT="$PUBLIC_URL/"
+  echo "==> Autenticación: COGNITO ($COGNITO_ISSUER)"
+else
+  AUTH_ISSUER='http://localhost:9099'; AUTH_AUDIENCE='certready-web'
+  WEB_OIDC_ISSUER="$AUTH_ISSUER"; WEB_OIDC_CLIENT_ID='certready-web'
+  WEB_OIDC_SECRET_LINE=''
+  WEB_REDIRECT="http://${PUBLIC_HOST}:3000/api/auth/callback"; WEB_LOGOUT="http://${PUBLIC_HOST}:3000/"
+  echo "==> Autenticación: emisor local (oidc-mock)"
+fi
 
 wait_url() { for _ in $(seq 1 "${2:-60}"); do curl -fsS --max-time 4 "$1" >/dev/null 2>&1 && return 0; sleep 1; done; return 1; }
 
@@ -77,13 +100,13 @@ export MONGO_URI="$MONGO"
 # --- 7) Variables de los servicios + emisor OIDC -------------------------------
 export OIDC_MOCK_ADDR=':9099' OIDC_MOCK_DB_DSN="$DSN" OIDC_MOCK_ADMIN_EMAILS='admin@certready.local'
 export CATALOG_ADDR=':18090'
-export USERS_ADDR=':18091'        USERS_OIDC_ISSUER='http://localhost:9099'        USERS_OIDC_AUDIENCE='certready-web'
-export ENROLLMENTS_ADDR=':18092'  ENROLLMENTS_OIDC_ISSUER='http://localhost:9099'  ENROLLMENTS_OIDC_AUDIENCE='certready-web'
-export CONTENT_ADDR=':18094'      CONTENT_MONGO_URI="$MONGO" CONTENT_MONGO_DB='certready' CONTENT_OIDC_ISSUER='http://localhost:9099' CONTENT_OIDC_AUDIENCE='certready-web'
-export EXAMS_ADDR=':18095'        EXAMS_MONGO_URI="$MONGO"   EXAMS_MONGO_DB='certready'   EXAMS_OIDC_ISSUER='http://localhost:9099'   EXAMS_OIDC_AUDIENCE='certready-web'
-export PROBLEMS_ADDR=':18096'     PROBLEMS_MONGO_URI="$MONGO" PROBLEMS_MONGO_DB='certready' PROBLEMS_OIDC_ISSUER='http://localhost:9099' PROBLEMS_OIDC_AUDIENCE='certready-web'
-export JUDGE_ADDR=':18097'        JUDGE_MONGO_URI="$MONGO"   JUDGE_MONGO_DB='certready'   JUDGE_OIDC_ISSUER='http://localhost:9099'   JUDGE_OIDC_AUDIENCE='certready-web'
-export PROGRESS_ADDR=':18093'     PROGRESS_OIDC_ISSUER='http://localhost:9099'     PROGRESS_OIDC_AUDIENCE='certready-web'
+export USERS_ADDR=':18091'        USERS_OIDC_ISSUER="$AUTH_ISSUER"        USERS_OIDC_AUDIENCE="$AUTH_AUDIENCE"
+export ENROLLMENTS_ADDR=':18092'  ENROLLMENTS_OIDC_ISSUER="$AUTH_ISSUER"  ENROLLMENTS_OIDC_AUDIENCE="$AUTH_AUDIENCE"
+export CONTENT_ADDR=':18094'      CONTENT_MONGO_URI="$MONGO" CONTENT_MONGO_DB='certready' CONTENT_OIDC_ISSUER="$AUTH_ISSUER" CONTENT_OIDC_AUDIENCE="$AUTH_AUDIENCE"
+export EXAMS_ADDR=':18095'        EXAMS_MONGO_URI="$MONGO"   EXAMS_MONGO_DB='certready'   EXAMS_OIDC_ISSUER="$AUTH_ISSUER"   EXAMS_OIDC_AUDIENCE="$AUTH_AUDIENCE"
+export PROBLEMS_ADDR=':18096'     PROBLEMS_MONGO_URI="$MONGO" PROBLEMS_MONGO_DB='certready' PROBLEMS_OIDC_ISSUER="$AUTH_ISSUER" PROBLEMS_OIDC_AUDIENCE="$AUTH_AUDIENCE"
+export JUDGE_ADDR=':18097'        JUDGE_MONGO_URI="$MONGO"   JUDGE_MONGO_DB='certready'   JUDGE_OIDC_ISSUER="$AUTH_ISSUER"   JUDGE_OIDC_AUDIENCE="$AUTH_AUDIENCE"
+export PROGRESS_ADDR=':18093'     PROGRESS_OIDC_ISSUER="$AUTH_ISSUER"     PROGRESS_OIDC_AUDIENCE="$AUTH_AUDIENCE"
 export CLICKHOUSE_HOST='localhost' CLICKHOUSE_PORT='8123' CLICKHOUSE_USER='certready' CLICKHOUSE_PASSWORD='certready' CLICKHOUSE_DB='analytics'
 
 run() { nohup "$1" >"$LOGS/$2.log" 2>&1 & echo "    $2 (pid $!)"; }
@@ -108,10 +131,11 @@ SEED_USER_EMAIL="${SEED_USER_EMAIL:-demo@certready.app}" "$PY" "$ROOT/scripts/se
 # --- 10) Web (Next.js) ---------------------------------------------------------
 echo "==> Web (Next.js en :3000)"
 cat > "$ROOT/web/.env.local" <<EOF
-OIDC_ISSUER=http://localhost:9099
-OIDC_CLIENT_ID=certready-web
-OIDC_REDIRECT_URI=http://${PUBLIC_HOST}:3000/api/auth/callback
-OIDC_POST_LOGOUT_REDIRECT_URI=http://${PUBLIC_HOST}:3000/
+OIDC_ISSUER=$WEB_OIDC_ISSUER
+OIDC_CLIENT_ID=$WEB_OIDC_CLIENT_ID
+${WEB_OIDC_SECRET_LINE}
+OIDC_REDIRECT_URI=$WEB_REDIRECT
+OIDC_POST_LOGOUT_REDIRECT_URI=$WEB_LOGOUT
 SESSION_PASSWORD=$(openssl rand -hex 32)
 SESSION_COOKIE_NAME=certready_session
 CATALOG_BASE_URL=http://localhost:18090
@@ -124,10 +148,13 @@ JUDGE_BASE_URL=http://localhost:18097
 DSS_BASE_URL=http://localhost:18098
 PROGRESS_BASE_URL=http://localhost:18093
 EOF
-( cd "$ROOT/web" && npm ci --no-audit --no-fund )
-# Modo dev: NODE_ENV=development → la cookie de sesión NO exige HTTPS (funciona sobre http
-# en la demo). Para HTTPS de verdad: dominio + Caddy delante y `next start` (ver runbook).
-( cd "$ROOT/web" && nohup npx next dev -H 0.0.0.0 -p 3000 >"$LOGS/web.log" 2>&1 & )
+( cd "$ROOT/web" && npm install --no-audit --no-fund )
+# Build de producción (NODE_ENV=production → la cookie de sesión es Secure; va
+# detrás de Caddy/HTTPS). Más rápido y estable que `next dev` en el móvil.
+echo "    compilando web (next build)..."
+( cd "$ROOT/web" && rm -rf .next && npx next build >"$LOGS/web-build.log" 2>&1 ) \
+  || echo "    [aviso] el build de la web falló (revisa .devlogs/web-build.log)"
+( cd "$ROOT/web" && nohup npx next start -H 0.0.0.0 -p 3000 >"$LOGS/web.log" 2>&1 & )
 wait_url 'http://localhost:3000/' 90 && ok=1 || ok=0
 
 echo ""

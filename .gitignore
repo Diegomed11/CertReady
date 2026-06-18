@@ -49,6 +49,7 @@ crash.log
 .env
 .env.*
 !.env.example
+.cognito.env
 *.pem
 *.key
 

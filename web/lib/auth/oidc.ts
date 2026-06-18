@@ -75,6 +75,13 @@ export interface CallbackResult {
   nombre: string | undefined
   roles: string[]
   accessToken: string
+  /**
+   * id_token: JWT con email/nombre/aud (= client_id) y cognito:groups. Es el que
+   * se reenvía como Bearer a los servicios Go (el access token de Cognito no trae
+   * `aud` ni email/nombre, así que el id token es el correcto para validar y
+   * aprovisionar). Con el emisor local también es válido.
+   */
+  idToken: string | undefined
   refreshToken: string | undefined
   expiresAt: number
 }
@@ -120,6 +127,7 @@ export async function exchangeCallback(
     nombre,
     roles,
     accessToken: tokens.access_token,
+    idToken: tokens.id_token,
     refreshToken: tokens.refresh_token,
     expiresAt: Math.floor(Date.now() / 1000) + expiresIn,
   }

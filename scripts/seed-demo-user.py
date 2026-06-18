@@ -299,7 +299,10 @@ def main() -> None:
 
     print(f"Sembrando demo para {EMAIL} en {PG_DSN}")
     with psycopg.connect(PG_DSN) as conn:
-        sub = resolver_sub(conn, EMAIL)
+        # Con Cognito el `sub` no se deriva del email: se pasa explícito el de
+        # Cognito (Consola → Users → el usuario → "sub"). Sin él, se resuelve como
+        # antes (idp_users del emisor local, o derivado del email).
+        sub = os.getenv("SEED_USER_SUB") or resolver_sub(conn, EMAIL)
         cert_id, temas = cargar_catalogo(conn, CERT)
         limpiar(conn, sub, cert_id)
         n_int = sembrar_examenes(conn, sub, preguntas)

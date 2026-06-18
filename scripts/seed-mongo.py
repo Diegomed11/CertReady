@@ -1757,6 +1757,220 @@ PROBLEMAS = [
         ["mapas", "conteo"],
         area="estructuras-datos",
     ),
+    # --- matemáticas (añadidos) ---------------------------------------------
+    problema(
+        "p_potencia",
+        "Potencia entera",
+        "Lee dos enteros B y E (E ≥ 0) separados por espacio y escribe B elevado a E.",
+        "facil",
+        [caso("2 3", "8"), caso("5 0", "1"), caso("3 4", "81", oculto=True)],
+        ["matematicas"],
+        area="matematicas",
+    ),
+    problema(
+        "p_primo",
+        "¿Es primo?",
+        "Lee un entero N (N ≥ 2) y escribe `si` si es primo o `no` si no lo es.",
+        "media",
+        [caso("7", "si"), caso("9", "no"), caso("13", "si", oculto=True)],
+        ["matematicas"],
+        area="matematicas",
+    ),
+    problema(
+        "p_mcm",
+        "Mínimo común múltiplo",
+        "Lee dos enteros positivos separados por espacio y escribe su mínimo común múltiplo.",
+        "media",
+        [caso("4 6", "12"), caso("3 5", "15"), caso("8 12", "24", oculto=True)],
+        ["matematicas"],
+        area="matematicas",
+    ),
+    problema(
+        "p_promedio",
+        "Promedio entero",
+        "La primera línea trae N; la segunda, N enteros. Escribe el promedio redondeado "
+        "hacia abajo (división entera de la suma entre N).",
+        "facil",
+        [
+            caso("3\n1 2 3", "2"),
+            caso("4\n10 20 30 40", "25"),
+            caso("2\n5 8", "6", oculto=True),
+        ],
+        ["matematicas"],
+        area="matematicas",
+    ),
+    # --- algoritmos (añadidos) ----------------------------------------------
+    problema(
+        "p_suma_rango",
+        "Suma de 1 a N",
+        "Lee un entero N (N ≥ 1) y escribe la suma de todos los enteros de 1 a N.",
+        "facil",
+        [caso("5", "15"), caso("1", "1"), caso("100", "5050", oculto=True)],
+        ["matematicas", "bucles"],
+        area="algoritmos",
+    ),
+    problema(
+        "p_minimo",
+        "Mínimo de una lista",
+        "La primera línea trae N; la segunda, N enteros separados por espacio. Escribe el "
+        "menor.",
+        "facil",
+        [
+            caso("3\n4 9 2", "2"),
+            caso("4\n-1 -7 -3 -9", "-9"),
+            caso("1\n42", "42", oculto=True),
+        ],
+        ["listas"],
+        area="algoritmos",
+    ),
+    problema(
+        "p_busqueda",
+        "¿Está el valor?",
+        "La primera línea trae N y X separados por espacio; la segunda, N enteros. Escribe "
+        "`si` si X aparece entre ellos o `no` si no.",
+        "media",
+        [
+            caso("4 3\n1 2 3 4", "si"),
+            caso("3 9\n1 2 3", "no"),
+            caso("5 5\n5 4 3 2 1", "si", oculto=True),
+        ],
+        ["busqueda", "listas"],
+        area="algoritmos",
+    ),
+    problema(
+        "p_contar_pares",
+        "Contar números pares",
+        "La primera línea trae N; la segunda, N enteros. Escribe cuántos son pares.",
+        "facil",
+        [
+            caso("5\n1 2 3 4 5", "2"),
+            caso("3\n2 4 6", "3"),
+            caso("4\n1 3 5 7", "0", oculto=True),
+        ],
+        ["listas", "condicionales"],
+        area="algoritmos",
+    ),
+    # --- cadenas (añadidos) --------------------------------------------------
+    problema(
+        "p_mayusculas",
+        "A mayúsculas",
+        "Lee una palabra en minúsculas (sin acentos ni espacios) y escríbela en mayúsculas.",
+        "facil",
+        [caso("hola", "HOLA"), caso("python", "PYTHON"), caso("abc", "ABC", oculto=True)],
+        ["cadenas"],
+        area="cadenas",
+    ),
+    problema(
+        "p_longitud",
+        "Longitud de palabra",
+        "Lee una palabra (sin espacios) y escribe cuántos caracteres tiene.",
+        "facil",
+        [caso("hola", "4"), caso("a", "1"), caso("certready", "9", oculto=True)],
+        ["cadenas"],
+        area="cadenas",
+    ),
+    problema(
+        "p_contar_letra",
+        "Contar una letra",
+        "La primera línea trae una palabra (sin espacios); la segunda, una sola letra. "
+        "Escribe cuántas veces aparece esa letra en la palabra.",
+        "media",
+        [
+            caso("banana\na", "3"),
+            caso("cielo\nz", "0"),
+            caso("mississippi\ns", "4", oculto=True),
+        ],
+        ["cadenas", "conteo"],
+        area="cadenas",
+    ),
+    problema(
+        "p_anagrama",
+        "¿Anagramas?",
+        "Lee dos palabras (minúsculas, sin espacios), una por línea, y escribe `si` si una "
+        "es anagrama de la otra (mismas letras y cantidades) o `no` si no.",
+        "media",
+        [
+            caso("roma\namor", "si"),
+            caso("hola\nadios", "no"),
+            caso("listen\nsilent", "si", oculto=True),
+        ],
+        ["cadenas", "conteo"],
+        area="cadenas",
+    ),
+    # --- ordenamiento (añadidos) --------------------------------------------
+    problema(
+        "p_ordenar_desc",
+        "Ordenar descendente",
+        "La primera línea trae N; la segunda, N enteros. Escríbelos ordenados de mayor a "
+        "menor, separados por espacio.",
+        "media",
+        [
+            caso("3\n1 3 2", "3 2 1"),
+            caso("1\n5", "5"),
+            caso("4\n9 -1 0 2", "9 2 0 -1", oculto=True),
+        ],
+        ["ordenamiento"],
+        area="ordenamiento",
+    ),
+    problema(
+        "p_mediana",
+        "Mediana (N impar)",
+        "La primera línea trae N (impar); la segunda, N enteros. Escribe la mediana (el "
+        "valor central tras ordenar).",
+        "media",
+        [
+            caso("3\n3 1 2", "2"),
+            caso("5\n10 2 8 4 6", "6"),
+            caso("1\n7", "7", oculto=True),
+        ],
+        ["ordenamiento"],
+        area="ordenamiento",
+    ),
+    problema(
+        "p_fusionar",
+        "Fusionar dos listas ordenadas",
+        "La primera línea trae A; la segunda, A enteros ya ordenados. La tercera trae B; la "
+        "cuarta, B enteros ya ordenados. Escribe todos los valores ordenados de menor a "
+        "mayor, separados por espacio.",
+        "dificil",
+        [
+            caso("2\n1 4\n3\n2 3 5", "1 2 3 4 5"),
+            caso("1\n9\n1\n1", "1 9"),
+            caso("3\n1 2 3\n2\n0 4", "0 1 2 3 4", oculto=True),
+        ],
+        ["ordenamiento", "fusion"],
+        area="ordenamiento",
+    ),
+    # --- estructuras de datos (añadidos) ------------------------------------
+    problema(
+        "p_interseccion",
+        "Elementos en común",
+        "La primera línea trae A; la segunda, A enteros. La tercera trae B; la cuarta, B "
+        "enteros. Escribe cuántos valores **distintos** aparecen en ambas listas.",
+        "media",
+        [
+            caso("3\n1 2 3\n3\n2 3 4", "2"),
+            caso("2\n5 6\n2\n7 8", "0"),
+            caso("4\n1 1 2 2\n2\n2 1", "2", oculto=True),
+        ],
+        ["conjuntos"],
+        area="estructuras-datos",
+    ),
+    problema(
+        "p_balanceo",
+        "Paréntesis balanceados",
+        "Lee una línea con solo los caracteres `(` y `)` y escribe `si` si están "
+        "correctamente balanceados o `no` si no.",
+        "dificil",
+        [
+            caso("(())", "si"),
+            caso("(()", "no"),
+            caso("()()", "si", oculto=True),
+            caso(")(", "no", oculto=True),
+        ],
+        ["pilas"],
+        area="estructuras-datos",
+    ),
 ]
 
 QA = [
@@ -2195,6 +2409,460 @@ QA = [
         "instantáneo). **Canary** envía el cambio a un **pequeño %** de usuarios y lo amplía si las "
         "métricas están sanas. Ambos reducen el riesgo de un despliegue.",
         ["blue-green: dos entornos", "canary: % gradual", "reducen riesgo + rollback"],
+    ),
+    # ====================== AÑADIDOS ========================================
+    # --- sistemas (añadidos) -------------------------------------------------
+    qa(
+        "qa_cola_mensajes",
+        "backend",
+        "sistemas",
+        "mensajeria",
+        "¿Para qué sirve una cola de mensajes entre servicios?",
+        "Desacopla productor y consumidor: el productor publica y sigue su trabajo sin "
+        "esperar. La cola **amortigua** picos de carga, permite procesar a ritmo propio y "
+        "reintentar mensajes fallidos. A cambio, introduce latencia y consistencia eventual.",
+        ["desacopla productor/consumidor", "amortigua picos", "procesa asíncrono y reintenta"],
+    ),
+    qa(
+        "qa_balanceo_carga",
+        "backend",
+        "sistemas",
+        "escalabilidad",
+        "¿Qué hace un balanceador de carga?",
+        "Reparte las peticiones entrantes entre varias instancias para evitar saturar una "
+        "sola y mejorar disponibilidad. Usa estrategias como *round-robin* o *least "
+        "connections* y suele hacer *health checks* para sacar instancias caídas.",
+        ["reparte tráfico", "evita saturar una instancia", "health checks + alta disponibilidad"],
+    ),
+    qa(
+        "qa_rate_limit",
+        "backend",
+        "sistemas",
+        "APIs",
+        "¿Por qué aplicar rate limiting a una API?",
+        "Limita cuántas peticiones puede hacer un cliente en un intervalo. Protege contra "
+        "abuso y picos accidentales, reparte la capacidad de forma justa y contiene costos. "
+        "Suele implementarse con *token bucket* y devolver 429 al excederse.",
+        ["limita peticiones por cliente", "protege de abuso/picos", "token bucket + 429"],
+    ),
+    qa(
+        "qa_circuit_breaker",
+        "backend",
+        "sistemas",
+        "resiliencia",
+        "¿Qué problema resuelve un circuit breaker?",
+        "Evita que las llamadas a un servicio caído se acumulen y arrastren al resto. Tras "
+        "varios fallos **abre** el circuito y falla rápido sin llamar; luego prueba con "
+        "cautela (*half-open*) y **cierra** si se recupera. Mejora la resiliencia.",
+        ["corta llamadas a servicio caído", "falla rápido", "abierto/half-open/cerrado"],
+    ),
+    qa(
+        "qa_stateless",
+        "backend",
+        "sistemas",
+        "escalabilidad",
+        "¿Por qué conviene que un servicio web sea stateless?",
+        "Si no guarda estado de sesión en memoria local, cualquier instancia puede atender "
+        "cualquier petición, así escala horizontalmente y tolera caídas. El estado va a un "
+        "almacén compartido (Redis, BD) o viaja en el token.",
+        ["cualquier instancia atiende", "escala horizontal", "estado en almacén/token"],
+    ),
+    # --- bases-de-datos (añadidos) -------------------------------------------
+    qa(
+        "qa_pk_fk",
+        "backend",
+        "bases-de-datos",
+        "modelado",
+        "¿Diferencia entre clave primaria y clave foránea?",
+        "La **primaria** identifica de forma única cada fila de una tabla (única y no nula). "
+        "La **foránea** referencia la primaria de otra tabla y garantiza **integridad "
+        "referencial**: no puedes apuntar a una fila que no existe.",
+        ["PK: identifica fila", "FK: referencia otra tabla", "integridad referencial"],
+    ),
+    qa(
+        "qa_transaccion_aislamiento",
+        "ingeniero-datos",
+        "bases-de-datos",
+        "transacciones",
+        "¿Qué problema resuelven los niveles de aislamiento?",
+        "Controlan qué efectos de otras transacciones ve la tuya (lecturas sucias, no "
+        "repetibles, fantasmas). A mayor aislamiento, más consistencia pero menos "
+        "concurrencia. *Read committed* y *serializable* son extremos típicos del trade-off.",
+        ["controlan lecturas concurrentes", "evitan dirty/phantom reads", "consistencia vs concurrencia"],
+    ),
+    qa(
+        "qa_join",
+        "data-scientist",
+        "bases-de-datos",
+        "consultas",
+        "¿Diferencia entre INNER JOIN y LEFT JOIN?",
+        "**INNER JOIN** devuelve solo las filas con coincidencia en ambas tablas. **LEFT "
+        "JOIN** devuelve todas las de la izquierda y rellena con nulos donde no hay "
+        "coincidencia a la derecha. Útil para encontrar registros sin relación.",
+        ["inner: solo coincidencias", "left: todas las de la izquierda", "left rellena con NULL"],
+    ),
+    qa(
+        "qa_n_mas_uno",
+        "backend",
+        "bases-de-datos",
+        "rendimiento",
+        "¿Qué es el problema N+1 de consultas?",
+        "Ocurre cuando haces una consulta para una lista y luego **una consulta por cada** "
+        "elemento (1 + N). Multiplica los viajes a la BD y degrada el rendimiento. Se "
+        "resuelve con *joins* o *eager loading* para traer todo en pocas consultas.",
+        ["1 consulta + N por fila", "muchos viajes a la BD", "resuelve con join/eager load"],
+    ),
+    # --- pipelines-datos (añadidos) ------------------------------------------
+    qa(
+        "qa_batch_streaming",
+        "ingeniero-datos",
+        "pipelines-datos",
+        "procesamiento",
+        "¿Batch vs streaming: cuándo cada uno?",
+        "**Batch** procesa lotes grandes en intervalos (reportes diarios): simple y "
+        "eficiente cuando la latencia no apremia. **Streaming** procesa eventos según "
+        "llegan (fraude, monitoreo): baja latencia a cambio de más complejidad operativa.",
+        ["batch: lotes periódicos", "streaming: evento a evento", "latencia vs simplicidad"],
+    ),
+    qa(
+        "qa_esquema_evolucion",
+        "ingeniero-datos",
+        "pipelines-datos",
+        "confiabilidad",
+        "¿Por qué importa la evolución de esquema en datos?",
+        "Las fuentes cambian: se añaden o renombran campos. Si el pipeline no lo tolera, se "
+        "rompe o pierde datos. Conviene formatos con esquema (Avro/Parquet), reglas de "
+        "compatibilidad y validación temprana para detectar cambios antes de producción.",
+        ["las fuentes cambian", "compatibilidad hacia atrás", "valida esquema temprano"],
+    ),
+    qa(
+        "qa_calidad_datos",
+        "ingeniero-datos",
+        "pipelines-datos",
+        "calidad",
+        "¿Cómo aseguras la calidad de los datos en un pipeline?",
+        "Con **validaciones automáticas**: no nulos donde se espera, rangos válidos, "
+        "unicidad de claves, conteos esperados y frescura. Si una regla falla, cortas o "
+        "alertas antes de propagar datos malos aguas abajo (*fail fast*).",
+        ["checks de nulos/rangos/unicidad", "frescura y conteos", "fail fast ante datos malos"],
+    ),
+    # --- machine-learning (añadidos) -----------------------------------------
+    qa(
+        "qa_supervisado",
+        "data-scientist",
+        "machine-learning",
+        "fundamentos",
+        "¿Diferencia entre aprendizaje supervisado y no supervisado?",
+        "**Supervisado** aprende de ejemplos **etiquetados** (entrada → salida conocida) "
+        "para predecir. **No supervisado** busca estructura en datos **sin etiquetas** "
+        "(agrupamiento, reducción de dimensión). La clave es si tienes etiquetas.",
+        ["supervisado: datos etiquetados", "no supervisado: sin etiquetas", "agrupa/reduce vs predice"],
+    ),
+    qa(
+        "qa_precision_recall",
+        "data-scientist",
+        "machine-learning",
+        "evaluacion",
+        "¿Qué son precisión y recall?",
+        "**Precisión** = de lo que predije positivo, cuánto acerté (evita falsos positivos). "
+        "**Recall** = de los positivos reales, cuántos capturé (evita falsos negativos). Hay "
+        "un trade-off; F1 los combina. La métrica clave depende del costo del error.",
+        ["precisión: pocos falsos positivos", "recall: pocos falsos negativos", "F1 los combina"],
+    ),
+    qa(
+        "qa_feature_engineering",
+        "data-scientist",
+        "machine-learning",
+        "datos",
+        "¿Qué es feature engineering y por qué importa?",
+        "Es transformar datos crudos en variables útiles para el modelo (escalar, codificar "
+        "categóricas, crear ratios, extraer fechas). Suele aportar más al desempeño que "
+        "cambiar de algoritmo: buenos *features* superan a modelos sofisticados con datos pobres.",
+        ["crear variables útiles", "escalar/codificar/derivar", "a menudo > cambiar de modelo"],
+    ),
+    qa(
+        "qa_desbalance",
+        "data-scientist",
+        "machine-learning",
+        "datos",
+        "¿Cómo tratar clases desbalanceadas?",
+        "Cuando una clase es rara (p. ej. fraude), la exactitud engaña. Ayuda usar métricas "
+        "como recall/F1/AUC, **re-muestrear** (oversampling de la minoría o undersampling), "
+        "pesos por clase y un umbral de decisión ajustado.",
+        ["exactitud engaña", "métricas: recall/F1/AUC", "re-muestreo + pesos por clase"],
+    ),
+    # --- estadistica (añadidos) ----------------------------------------------
+    qa(
+        "qa_correlacion_causalidad",
+        "data-scientist",
+        "estadistica",
+        "inferencia",
+        "¿Por qué correlación no implica causalidad?",
+        "Dos variables pueden moverse juntas por **azar**, por una **causa común** (variable "
+        "de confusión) o por causalidad inversa. Para afirmar causa hace falta diseño "
+        "experimental (aleatorización) o controlar las confusoras, no solo observar correlación.",
+        ["pueden mover juntas sin causar", "variable de confusión", "causa requiere experimento"],
+    ),
+    qa(
+        "qa_distribucion_normal",
+        "data-scientist",
+        "estadistica",
+        "descriptiva",
+        "¿Qué describe la desviación estándar?",
+        "Mide cuánto se **dispersan** los datos alrededor de la media: pequeña = datos "
+        "agrupados; grande = muy esparcidos. A diferencia de la varianza, está en las "
+        "mismas unidades que el dato, por eso es más interpretable.",
+        ["dispersión alrededor de la media", "pequeña = agrupados", "mismas unidades que el dato"],
+    ),
+    qa(
+        "qa_muestreo",
+        "data-scientist",
+        "estadistica",
+        "inferencia",
+        "¿Por qué importa que una muestra sea representativa?",
+        "Si la muestra no refleja la población (sesgo de selección), las conclusiones no "
+        "generalizan. El **muestreo aleatorio** reduce el sesgo y permite estimar el error; "
+        "una muestra grande pero sesgada sigue siendo engañosa.",
+        ["debe reflejar la población", "sesgo de selección invalida", "aleatorio > solo grande"],
+    ),
+    # --- frontend / web-performance (añadidos) -------------------------------
+    qa(
+        "qa_css_box_model",
+        "frontend",
+        "frontend",
+        "maquetacion",
+        "¿Qué es el box model de CSS?",
+        "Cada elemento es una caja con **contenido**, **padding**, **borde** y **margen**. "
+        "Con `box-sizing: border-box` el ancho declarado incluye padding y borde, lo que "
+        "hace los tamaños más predecibles al maquetar.",
+        ["contenido/padding/borde/margen", "border-box incluye padding y borde", "tamaños predecibles"],
+    ),
+    qa(
+        "qa_event_loop",
+        "frontend",
+        "frontend",
+        "javascript",
+        "¿Cómo maneja JavaScript la asincronía con un solo hilo?",
+        "JS ejecuta en un hilo con un **event loop**: las tareas asíncronas (timers, fetch) "
+        "se delegan y al terminar sus *callbacks* van a una cola que el loop atiende cuando "
+        "la pila está libre. Las *microtasks* (promesas) tienen prioridad sobre las macrotasks.",
+        ["un hilo + event loop", "callbacks a la cola", "microtasks antes que macrotasks"],
+    ),
+    qa(
+        "qa_csr_ssr",
+        "frontend",
+        "frontend",
+        "render",
+        "¿Diferencia entre renderizado en cliente (CSR) y servidor (SSR)?",
+        "En **CSR** el navegador descarga JS y construye la página: primera carga más lenta "
+        "pero navegación fluida. En **SSR** el servidor manda HTML ya armado: mejor primer "
+        "pintado y SEO, a costa de más trabajo en el servidor. Se pueden combinar.",
+        ["CSR: arma en el navegador", "SSR: HTML del servidor", "SSR mejora primer pintado/SEO"],
+    ),
+    qa(
+        "qa_critical_path",
+        "frontend",
+        "web-performance",
+        "carga",
+        "¿Qué es el critical rendering path y cómo optimizarlo?",
+        "Es la secuencia de pasos (HTML, CSS, JS) que el navegador hace para pintar la "
+        "primera vista. Se optimiza minimizando y priorizando CSS crítico, difiriendo JS no "
+        "esencial y reduciendo recursos bloqueantes para que el primer pintado llegue antes.",
+        ["pasos hasta el primer pintado", "CSS crítico + diferir JS", "menos recursos bloqueantes"],
+    ),
+    qa(
+        "qa_caching_http",
+        "frontend",
+        "web-performance",
+        "red",
+        "¿Cómo ayuda el caché HTTP del navegador al rendimiento?",
+        "Con cabeceras como `Cache-Control` y `ETag`, el navegador reutiliza recursos ya "
+        "descargados y evita pedirlos de nuevo (o solo valida si cambiaron). Reduce latencia "
+        "y ancho de banda; el reto es invalidar bien cuando el recurso cambia.",
+        ["reutiliza recursos descargados", "Cache-Control / ETag", "reto: invalidar al cambiar"],
+    ),
+    # --- accesibilidad (añadidos) --------------------------------------------
+    qa(
+        "qa_alt_text",
+        "frontend",
+        "accesibilidad",
+        "contenido",
+        "¿Cuándo y cómo usar texto alternativo en imágenes?",
+        "El `alt` describe la imagen para lectores de pantalla y cuando no carga. Debe ser "
+        "**conciso y significativo**; si la imagen es puramente decorativa, se deja vacío "
+        "(`alt=\"\"`) para que la asistencia la ignore.",
+        ["alt describe la imagen", "conciso y con propósito", "decorativa → alt vacío"],
+    ),
+    qa(
+        "qa_navegacion_teclado",
+        "frontend",
+        "accesibilidad",
+        "interaccion",
+        "¿Por qué importa la navegación por teclado?",
+        "Muchas personas no usan ratón (motricidad, lectores de pantalla). Todo lo "
+        "interactivo debe ser alcanzable con Tab, operable con Enter/Espacio y tener un "
+        "**foco visible**. Evita trampas de foco y respeta el orden lógico de tabulación.",
+        ["operable sin ratón", "foco visible y orden lógico", "sin trampas de foco"],
+    ),
+    # --- seguridad-app (añadidos) --------------------------------------------
+    qa(
+        "qa_csrf",
+        "seguridad",
+        "seguridad-app",
+        "vulnerabilidades",
+        "¿Qué es CSRF y cómo se previene?",
+        "**Cross-Site Request Forgery** engaña al navegador de un usuario autenticado para "
+        "que envíe una petición no deseada a un sitio donde tiene sesión. Se previene con "
+        "**tokens anti-CSRF**, cookies `SameSite` y verificando el origen de la petición.",
+        ["abusa de la sesión activa", "token anti-CSRF", "cookies SameSite + check de origen"],
+    ),
+    qa(
+        "qa_secretos",
+        "seguridad",
+        "seguridad-app",
+        "gestion",
+        "¿Por qué no poner secretos en el código?",
+        "Las credenciales en el repositorio quedan en el historial y se filtran fácil. Deben "
+        "ir en un **gestor de secretos** o variables de entorno, con rotación y mínimo "
+        "privilegio. Si un secreto se expone, hay que **rotarlo** de inmediato.",
+        ["no versionar credenciales", "secrets manager / env vars", "rotación + mínimo privilegio"],
+    ),
+    qa(
+        "qa_validacion_entrada",
+        "seguridad",
+        "seguridad-app",
+        "defensa",
+        "¿Por qué validar y nunca confiar en la entrada del usuario?",
+        "Toda entrada externa puede ser maliciosa o malformada. Validar tipo, rango y "
+        "formato en el **servidor** (no solo en el cliente) previene inyecciones, "
+        "desbordes y datos corruptos. Regla: valida en la frontera, escapa al usar.",
+        ["entrada externa = no confiable", "validar en el servidor", "valida en la frontera"],
+    ),
+    # --- criptografia (añadidos) ---------------------------------------------
+    qa(
+        "qa_firma_digital",
+        "seguridad",
+        "criptografia",
+        "integridad",
+        "¿Qué garantiza una firma digital?",
+        "Usando la llave **privada** del emisor para firmar y la **pública** para verificar, "
+        "garantiza **autenticidad** (lo firmó quien dice) e **integridad** (no se alteró), "
+        "y aporta **no repudio**. No oculta el contenido: eso es cifrado.",
+        ["firma con privada, verifica con pública", "autenticidad + integridad", "no repudio (no cifra)"],
+    ),
+    qa(
+        "qa_salt_hash",
+        "seguridad",
+        "criptografia",
+        "contrasenas",
+        "¿Por qué añadir salt al hashear contraseñas?",
+        "Un **salt** es un valor aleatorio único por usuario que se mezcla antes de hashear. "
+        "Evita que contraseñas iguales den el mismo hash y rompe los ataques con tablas "
+        "precalculadas (*rainbow tables*). Conviene un algoritmo lento como bcrypt/argon2.",
+        ["aleatorio por usuario", "rompe rainbow tables", "usar bcrypt/argon2"],
+    ),
+    # --- redes (añadidos) ----------------------------------------------------
+    qa(
+        "qa_tcp_udp",
+        "cloud-devops",
+        "redes",
+        "transporte",
+        "¿Diferencia entre TCP y UDP?",
+        "**TCP** es orientado a conexión y **fiable** (ordena, reintenta, controla flujo): "
+        "ideal para web y archivos. **UDP** no garantiza entrega ni orden pero es **ligero "
+        "y rápido**: bueno para video/juegos en tiempo real donde un paquete perdido importa poco.",
+        ["TCP: fiable y ordenado", "UDP: ligero, sin garantías", "elegir por tolerancia a pérdida"],
+    ),
+    qa(
+        "qa_http_codigos",
+        "backend",
+        "redes",
+        "http",
+        "¿Qué indican las familias de códigos de estado HTTP?",
+        "**2xx** éxito, **3xx** redirección, **4xx** error del cliente (mala petición, no "
+        "autorizado, no encontrado) y **5xx** error del servidor. Distinguirlos ayuda a "
+        "saber de qué lado está el fallo y cómo reaccionar.",
+        ["2xx éxito / 3xx redirige", "4xx cliente / 5xx servidor", "ubica el lado del fallo"],
+    ),
+    qa(
+        "qa_cdn",
+        "cloud-devops",
+        "redes",
+        "distribucion",
+        "¿Qué es una CDN y qué problema resuelve?",
+        "Una **red de distribución de contenido** cachea recursos en servidores cercanos al "
+        "usuario (edge). Reduce latencia y descarga al origen, mejora la disponibilidad y "
+        "absorbe picos de tráfico. Ideal para estáticos e incluso contenido dinámico cacheable.",
+        ["cachea cerca del usuario", "menos latencia y carga al origen", "edge + alta disponibilidad"],
+    ),
+    # --- contenedores (añadidos) ---------------------------------------------
+    qa(
+        "qa_imagen_capas",
+        "cloud-devops",
+        "contenedores",
+        "imagenes",
+        "¿Por qué una imagen de contenedor se construye en capas?",
+        "Cada instrucción del *Dockerfile* crea una capa cacheable y reutilizable entre "
+        "imágenes. Acelera builds (solo se rehace lo que cambió) y ahorra espacio/descarga. "
+        "Conviene ordenar de lo más estable a lo más cambiante para aprovechar la caché.",
+        ["capas cacheables y compartidas", "build incremental", "ordenar estable → cambiante"],
+    ),
+    qa(
+        "qa_orquestacion",
+        "cloud-devops",
+        "contenedores",
+        "orquestacion",
+        "¿Qué problema resuelve un orquestador de contenedores?",
+        "Cuando tienes muchos contenedores en varios nodos, el orquestador (p. ej. "
+        "Kubernetes) los **programa**, los reinicia si caen, escala según carga, balancea "
+        "tráfico y gestiona despliegues. Pasa de 'correr un contenedor' a 'operar un sistema'.",
+        ["programa y reinicia contenedores", "escala + balancea", "automatiza despliegues"],
+    ),
+    # --- observabilidad (añadidos) -------------------------------------------
+    qa(
+        "qa_alertas",
+        "cloud-devops",
+        "observabilidad",
+        "alertas",
+        "¿Qué hace una buena alerta?",
+        "Debe ser **accionable** y basada en síntomas que afectan al usuario (latencia, "
+        "errores), no en cualquier métrica. Pocas alertas relevantes evitan la **fatiga**; "
+        "demasiado ruido hace que se ignoren las importantes.",
+        ["accionable y por síntomas", "ligada al impacto al usuario", "evitar fatiga de alertas"],
+    ),
+    qa(
+        "qa_correlacion_id",
+        "cloud-devops",
+        "observabilidad",
+        "trazabilidad",
+        "¿Para qué sirve un correlation id en sistemas distribuidos?",
+        "Es un identificador único que viaja con la petición por todos los servicios. "
+        "Permite **enlazar** logs y trazas de un mismo flujo y seguir el camino completo "
+        "cuando algo falla, en vez de mirar cada servicio por separado.",
+        ["id único por petición", "viaja entre servicios", "enlaza logs y trazas"],
+    ),
+    # --- ci-cd (añadidos) ----------------------------------------------------
+    qa(
+        "qa_pipeline_etapas",
+        "cloud-devops",
+        "ci-cd",
+        "fundamentos",
+        "¿Qué etapas típicas tiene un pipeline de CI/CD?",
+        "Suele encadenar: **build** (compilar/empacar), **test** (unitarios e integración), "
+        "**análisis** (lint/seguridad), **artefacto** (imagen/paquete) y **deploy** a un "
+        "entorno. Si una etapa falla, el pipeline se detiene y avisa rápido.",
+        ["build → test → análisis", "artefacto → deploy", "falla detiene el pipeline"],
+    ),
+    qa(
+        "qa_rollback",
+        "cloud-devops",
+        "ci-cd",
+        "despliegue",
+        "¿Por qué planear un rollback antes de desplegar?",
+        "Ningún despliegue es infalible. Tener una forma rápida de **volver a la versión "
+        "anterior** (versionar artefactos, migraciones reversibles, feature flags) acota el "
+        "impacto de un fallo y reduce el tiempo de recuperación.",
+        ["volver a versión estable", "artefactos versionados", "migraciones reversibles / flags"],
     ),
 ]
 

@@ -40,7 +40,9 @@ export async function GET(req: Request) {
     // A los servicios se les manda el id token (trae email/nombre y aud = client_id;
     // el access token de Cognito no). Con el emisor local el id token también sirve.
     session.accessToken = result.idToken ?? result.accessToken
-    session.refreshToken = result.refreshToken
+    // No guardamos el refresh_token: la web no lo usa y los tokens de Cognito son
+    // grandes — incluirlo hacía que la cookie de sesión superara el límite (~4 KB).
+    session.refreshToken = undefined
     session.expiresAt = result.expiresAt
     delete session.pkce
 

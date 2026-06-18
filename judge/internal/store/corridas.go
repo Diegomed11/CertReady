@@ -82,3 +82,27 @@ func (s *CorridasStore) ListarCorridas(ctx context.Context, usuarioID string, li
 	}
 	return out, rows.Err()
 }
+
+// ResumenCodigoPorArea cuenta, para un usuario, los problemas que intentó y los
+// que resolvió en las áreas dadas. Un problema cuenta como resuelto si alguna de
+// sus corridas fue 'accepted' (el mejor veredicto manda). Sirve a la analítica
+// operativa de "preparación por puesto" (señal de código), directo de Postgres.
+//
+// Returns (0, 0, nil) si no se dan áreas.
+func (s *CorridasStore) ResumenCodigoPorArea(ctx context.Context, usuarioID string, areas []string) (problemas, resueltos int, err error) {
+	if len(areas) == 0 {
+		return 0, 0, nil
+	}
+	err = s.pool.QueryRow(ctx,
+		`select count(*)::int, coalesce(sum(resuelto), 0)::int
+		 from (
+		   select problema_ref,
+		          max(case when veredicto = 'accepted' then 1 else 0 end) as resuelto
+		   from judge.corridas
+		   where usuario_id::text = $1 and area = any($2)
+		   group by problema_ref
+		 ) t`,
+		usuarioID, areas,
+	).Scan(&problemas, &resueltos)
+	return problemas, resueltos, err
+}

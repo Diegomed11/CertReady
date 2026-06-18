@@ -18,4 +18,5 @@ type CorridasStore interface {
 	CrearCorrida(ctx context.Context, usuarioID string, envio judge.EnvioCodigo, r judge.Resultado, area string) (judge.Corrida, error)
 	ObtenerCorrida(ctx context.Context, usuarioID, id string) (judge.Corrida, error)
 	ListarCorridas(ctx context.Context, usuarioID string, limit, offset int) ([]judge.Corrida, error)
+	ResumenCodigoPorArea(ctx context.Context, usuarioID string, areas []string) (problemas, resueltos int, err error)
 }

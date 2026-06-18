@@ -44,6 +44,9 @@ func (f fakeCorridas) ObtenerCorrida(ctx context.Context, u, id string) (judge.C
 func (f fakeCorridas) ListarCorridas(ctx context.Context, u string, l, o int) ([]judge.Corrida, error) {
 	return f.list(ctx, u, l, o)
 }
+func (f fakeCorridas) ResumenCodigoPorArea(context.Context, string, []string) (int, int, error) {
+	return 0, 0, nil
+}
 
 type fakeRunner struct {
 	por func(stdin string) runner.RunResult

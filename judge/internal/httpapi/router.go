@@ -41,6 +41,7 @@ type Options struct {
 //	POST /v1/judge/runs          enviar código y calificar (auth)
 //	GET  /v1/judge/runs/{id}     consultar una corrida propia (auth)
 //	GET  /v1/me/judge/runs       historial de corridas propio (auth)
+//	GET  /v1/me/code/summary     problemas resueltos por área (auth)
 func NewRouter(opts Options) http.Handler {
 	api := &API{
 		problemas: opts.Problemas,
@@ -61,6 +62,7 @@ func NewRouter(opts Options) http.Handler {
 	mux.Handle("POST /v1/judge/runs", authGate(opts.Auth, http.HandlerFunc(api.enviar)))
 	mux.Handle("GET /v1/judge/runs/{id}", authGate(opts.Auth, http.HandlerFunc(api.obtener)))
 	mux.Handle("GET /v1/me/judge/runs", authGate(opts.Auth, http.HandlerFunc(api.listarMias)))
+	mux.Handle("GET /v1/me/code/summary", authGate(opts.Auth, http.HandlerFunc(api.resumenCodigo)))
 
 	return httpx.Chain(mux,
 		httpx.Recover(opts.Logger),

@@ -41,6 +41,7 @@ type Options struct {
 //	POST /v1/progress/quizzes    registrar el resultado del quiz de un tema (auth)
 //	POST /v1/progress/qa         autoevaluación de una pregunta de entrevista (auth)
 //	GET  /v1/me/progress         progreso del usuario en una certificación (auth)
+//	GET  /v1/puestos             catálogo de puestos/especialidades (público)
 //
 // Toda la autorización es por **pertenencia**: el handler usa el `sub` del JWT
 // para acotar consultas y mutaciones (defensa IDOR/BOLA).
@@ -55,6 +56,7 @@ func NewRouter(opts Options) http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /v1/health", health.Liveness)
 	mux.HandleFunc("GET /v1/ready", health.Readiness)
+	mux.HandleFunc("GET /v1/puestos", api.listarPuestos)
 
 	// RLS por petición (no-op si RLSEnabled=false): por dentro del auth (de ahí el sub).
 	rls := postgres.RLSTx(opts.Pool, opts.RLSEnabled, subjectOf)

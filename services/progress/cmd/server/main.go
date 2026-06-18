@@ -63,10 +63,12 @@ func run(cfg config.Config, logger *slog.Logger) error {
 		Service:    cfg.ServiceName,
 		Version:    cfg.Version,
 		Logger:     logger,
-		Store:      store.New(pool),
-		Auth:       authn,
-		Pool:       pool,
-		RLSEnabled: cfg.RLSEnabled,
+		Store:        store.New(pool),
+		Auth:         authn,
+		Pool:         pool,
+		RLSEnabled:   cfg.RLSEnabled,
+		ExamsBaseURL: cfg.ExamsBaseURL,
+		JudgeBaseURL: cfg.JudgeBaseURL,
 	})
 
 	srv := &http.Server{

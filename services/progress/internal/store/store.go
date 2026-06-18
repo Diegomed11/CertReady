@@ -36,11 +36,40 @@ func (s *Store) MarcarLeccion(ctx context.Context, usuarioID string, n progress.
 // GuardarRevisionQA registra una autoevaluación de una pregunta de entrevista
 // (evento append-only; alimenta la señal de Q&A del DSS vía el ETL).
 func (s *Store) GuardarRevisionQA(ctx context.Context, usuarioID string, n progress.NuevaRevisionQA) error {
+	area := n.Area
+	if area == "" {
+		area = "desconocido"
+	}
 	_, err := postgres.Q(ctx, s.pool).Exec(ctx,
-		`insert into progress.qa_revisiones (usuario_id, qa_ref, nivel)
-		 values ($1, $2, $3)`,
-		usuarioID, n.QaRef, n.Nivel)
+		`insert into progress.qa_revisiones (usuario_id, qa_ref, nivel, area)
+		 values ($1, $2, $3, $4)`,
+		usuarioID, n.QaRef, n.Nivel, area)
 	return err
+}
+
+// ResumenQAPorArea agrega la autoevaluación de Q&A del usuario en las áreas dadas.
+//
+// Por cada pregunta toma su mejor nivel (max), lo mapea a un score {1,2,3} ->
+// {0, 0.5, 1} y promedia sobre las preguntas distintas. Es la señal de Q&A de la
+// "preparación por puesto", calculada directo de Postgres.
+//
+// Returns la cobertura (nº de preguntas con datos) y el score promedio en [0,1];
+// (0, 0, nil) si no se dan áreas.
+func (s *Store) ResumenQAPorArea(ctx context.Context, usuarioID string, areas []string) (cobertura int, score float64, err error) {
+	if len(areas) == 0 {
+		return 0, 0, nil
+	}
+	err = postgres.Q(ctx, s.pool).QueryRow(ctx,
+		`select count(*)::int, coalesce(avg(score), 0)::float8
+		 from (
+		   select qa_ref, (max(nivel) - 1) / 2.0 as score
+		   from progress.qa_revisiones
+		   where usuario_id::text = $1 and area = any($2)
+		   group by qa_ref
+		 ) t`,
+		usuarioID, areas,
+	).Scan(&cobertura, &score)
+	return cobertura, score, err
 }
 
 // GuardarQuiz registra el resultado del quiz de un tema y devuelve el estado

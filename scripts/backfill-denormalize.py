@@ -66,6 +66,25 @@ def backfill_corridas(conn: psycopg.Connection, db) -> int:
     return n
 
 
+def backfill_qa(conn: psycopg.Connection, db) -> int:
+    """Rellena el área de progress.qa_revisiones según la Q&A en MongoDB."""
+    refs = [r[0] for r in conn.execute("select distinct qa_ref from progress.qa_revisiones").fetchall()]
+    if not refs:
+        return 0
+    meta = {
+        d["_id"]: (d.get("area") or DESCONOCIDO)
+        for d in db.qa.find({"_id": {"$in": refs}}, {"area": 1})
+    }
+    n = 0
+    for ref, area in meta.items():
+        cur = conn.execute(
+            "update progress.qa_revisiones set area = %s where qa_ref = %s",
+            (area, ref),
+        )
+        n += cur.rowcount
+    return n
+
+
 def main() -> None:
     mongo = MongoClient(MONGO_URI)
     try:
@@ -73,10 +92,13 @@ def main() -> None:
         with psycopg.connect(PG_DSN) as conn:
             ni = backfill_intentos(conn, db)
             nc = backfill_corridas(conn, db)
+            nq = backfill_qa(conn, db)
             conn.commit()
     finally:
         mongo.close()
-    print(f"Backfill listo. intentos actualizados: {ni} · corridas actualizadas: {nc}")
+    print(
+        f"Backfill listo. intentos: {ni} · corridas: {nc} · q&a: {nq} (filas actualizadas)."
+    )
 
 
 if __name__ == "__main__":

@@ -16,4 +16,5 @@ type ProgresoStore interface {
 	GuardarQuiz(ctx context.Context, usuarioID string, n progress.NuevoQuiz, aprobado bool) (progress.TemaProgreso, error)
 	GuardarRevisionQA(ctx context.Context, usuarioID string, n progress.NuevaRevisionQA) error
 	ObtenerDeUsuario(ctx context.Context, usuarioID, certificacion string) (progress.ProgresoCert, error)
+	ResumenQAPorArea(ctx context.Context, usuarioID string, areas []string) (cobertura int, score float64, err error)
 }

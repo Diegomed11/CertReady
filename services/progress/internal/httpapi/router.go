@@ -5,6 +5,7 @@ import (
 	"context"
 	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
@@ -15,8 +16,11 @@ import (
 
 // API agrupa las dependencias de los handlers.
 type API struct {
-	store  ProgresoStore
-	logger *slog.Logger
+	store        ProgresoStore
+	logger       *slog.Logger
+	examsBaseURL string       // servicio exams (señal de preparación por certificación)
+	judgeBaseURL string       // servicio judge (señal de código por área)
+	http         *http.Client // cliente para el agregador de "preparación por puesto"
 }
 
 // Options son las dependencias del router. Auth es opcional: si es nil, las rutas
@@ -26,9 +30,11 @@ type Options struct {
 	Version    string
 	Logger     *slog.Logger
 	Store      ProgresoStore
-	Auth       *auth.Authenticator
-	Pool       *pgxpool.Pool // pool para la transacción RLS por petición
-	RLSEnabled bool          // interruptor de Row Level Security (defensa en profundidad)
+	Auth         *auth.Authenticator
+	Pool         *pgxpool.Pool // pool para la transacción RLS por petición
+	RLSEnabled   bool          // interruptor de Row Level Security (defensa en profundidad)
+	ExamsBaseURL string        // URL del servicio exams (agregador de preparación por puesto)
+	JudgeBaseURL string        // URL del servicio judge (agregador de preparación por puesto)
 }
 
 // NewRouter construye el http.Handler raíz del servicio.
@@ -41,12 +47,19 @@ type Options struct {
 //	POST /v1/progress/quizzes    registrar el resultado del quiz de un tema (auth)
 //	POST /v1/progress/qa         autoevaluación de una pregunta de entrevista (auth)
 //	GET  /v1/me/progress         progreso del usuario en una certificación (auth)
+//	GET  /v1/me/job-readiness    preparación por puesto (combina exámenes+código+Q&A) (auth)
 //	GET  /v1/puestos             catálogo de puestos/especialidades (público)
 //
 // Toda la autorización es por **pertenencia**: el handler usa el `sub` del JWT
 // para acotar consultas y mutaciones (defensa IDOR/BOLA).
 func NewRouter(opts Options) http.Handler {
-	api := &API{store: opts.Store, logger: opts.Logger}
+	api := &API{
+		store:        opts.Store,
+		logger:       opts.Logger,
+		examsBaseURL: opts.ExamsBaseURL,
+		judgeBaseURL: opts.JudgeBaseURL,
+		http:         &http.Client{Timeout: 5 * time.Second},
+	}
 
 	health := httpx.NewHealth(opts.Service, opts.Version, httpx.Check{
 		Name:  "postgres",
@@ -65,6 +78,7 @@ func NewRouter(opts Options) http.Handler {
 	mux.Handle("POST /v1/progress/quizzes", authGate(opts.Auth, rls(http.HandlerFunc(api.guardarQuiz))))
 	mux.Handle("POST /v1/progress/qa", authGate(opts.Auth, rls(http.HandlerFunc(api.guardarRevisionQA))))
 	mux.Handle("GET /v1/me/progress", authGate(opts.Auth, rls(http.HandlerFunc(api.obtenerMio))))
+	mux.Handle("GET /v1/me/job-readiness", authGate(opts.Auth, rls(http.HandlerFunc(api.jobReadiness))))
 
 	return httpx.Chain(mux,
 		httpx.Recover(opts.Logger),

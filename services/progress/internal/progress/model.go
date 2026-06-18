@@ -65,6 +65,10 @@ func (n NuevaLeccion) Validar() []string {
 type NuevaRevisionQA struct {
 	QaRef string `json:"qa_ref"`
 	Nivel int    `json:"nivel"` // 1=me costó · 2=regular · 3=bien
+	// Area de la pregunta (la envía el cliente, que ya la tiene a la vista). Se
+	// denormaliza para agrupar la señal de Q&A por área sin tocar MongoDB. Opcional:
+	// si falta, queda "desconocido".
+	Area string `json:"area"`
 }
 
 // Validar comprueba las reglas básicas de la entrada.

@@ -19,6 +19,8 @@ type Config struct {
 	DatabaseURL   string
 	OIDCIssuer    string
 	OIDCAudience  string
+	ExamsBaseURL  string // para el agregador de "preparación por puesto" (señal exámenes)
+	JudgeBaseURL  string // para el agregador de "preparación por puesto" (señal código)
 	AutoMigrate   bool
 	RLSEnabled    bool // activa Row Level Security (requiere conectar con rol sin superusuario)
 	ReadTimeout   time.Duration
@@ -57,6 +59,8 @@ func Load() (Config, error) {
 
 	cfg.OIDCIssuer = platformcfg.Getenv("PROGRESS_OIDC_ISSUER", os.Getenv("OIDC_ISSUER"))
 	cfg.OIDCAudience = platformcfg.Getenv("PROGRESS_OIDC_AUDIENCE", os.Getenv("OIDC_AUDIENCE"))
+	cfg.ExamsBaseURL = platformcfg.Getenv("PROGRESS_EXAMS_BASE_URL", os.Getenv("EXAMS_BASE_URL"))
+	cfg.JudgeBaseURL = platformcfg.Getenv("PROGRESS_JUDGE_BASE_URL", os.Getenv("JUDGE_BASE_URL"))
 
 	if v := os.Getenv("PROGRESS_AUTO_MIGRATE"); v != "" {
 		b, err := strconv.ParseBool(v)

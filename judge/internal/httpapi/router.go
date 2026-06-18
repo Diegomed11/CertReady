@@ -15,7 +15,7 @@ import (
 // API agrupa las dependencias de los handlers.
 type API struct {
 	problemas ProblemasStore
-	corridas  CorridasStore
+	ejecuciones  EjecucionesStore
 	runner    runner.Runner
 	logger    *slog.Logger
 }
@@ -27,7 +27,7 @@ type Options struct {
 	Version   string
 	Logger    *slog.Logger
 	Problemas ProblemasStore
-	Corridas  CorridasStore
+	Ejecuciones  EjecucionesStore
 	Runner    runner.Runner
 	Auth      *auth.Authenticator
 }
@@ -39,20 +39,20 @@ type Options struct {
 //	GET  /v1/health              liveness
 //	GET  /v1/ready               readiness (ping a MongoDB y Postgres)
 //	POST /v1/judge/runs          enviar código y calificar (auth)
-//	GET  /v1/judge/runs/{id}     consultar una corrida propia (auth)
-//	GET  /v1/me/judge/runs       historial de corridas propio (auth)
+//	GET  /v1/judge/runs/{id}     consultar una ejecucion propia (auth)
+//	GET  /v1/me/judge/runs       historial de ejecuciones propio (auth)
 //	GET  /v1/me/code/summary     problemas resueltos por área (auth)
 func NewRouter(opts Options) http.Handler {
 	api := &API{
 		problemas: opts.Problemas,
-		corridas:  opts.Corridas,
+		ejecuciones:  opts.Ejecuciones,
 		runner:    opts.Runner,
 		logger:    opts.Logger,
 	}
 
 	health := httpx.NewHealth(opts.Service, opts.Version,
 		httpx.Check{Name: "mongodb", Probe: func(ctx context.Context) error { return opts.Problemas.PingMongo(ctx) }},
-		httpx.Check{Name: "postgres", Probe: func(ctx context.Context) error { return opts.Corridas.PingPostgres(ctx) }},
+		httpx.Check{Name: "postgres", Probe: func(ctx context.Context) error { return opts.Ejecuciones.PingPostgres(ctx) }},
 	)
 
 	mux := http.NewServeMux()

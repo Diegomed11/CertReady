@@ -1,5 +1,5 @@
 /**
- * POST /api/judge — Envía código al juez para una corrida del usuario autenticado.
+ * POST /api/judge — Envía código al juez para una ejecucion del usuario autenticado.
  *
  * El BFF reenvía el envío al servicio judge con el token de la sesión. El juez
  * ejecuta el código en un sandbox aislado y devuelve el veredicto sin revelar los

@@ -692,7 +692,7 @@ frontend (editor) pospuesto. Formalizado en **ADR-11**.
 - Interfaz `Runner` conectable (extensible a más lenguajes).
 - Calificación contra casos del problema (leídos de Mongo, con ocultos);
   veredicto global + por caso; **anti-fuga** (casos ocultos sin entrada/salida).
-- Corridas persistidas en Postgres (esquema `judge`); historial propio; BOLA.
+- Ejecuciones persistidas en Postgres (esquema `judge`); historial propio; BOLA.
 - Endpoints: `POST /v1/judge/runs`, `GET /v1/judge/runs/{id}`, `GET /v1/me/judge/runs`.
 - El juez se despliega en **Fargate** (no Lambda): es la excepción a ADR-07.
 
@@ -700,7 +700,7 @@ frontend (editor) pospuesto. Formalizado en **ADR-11**.
 - `gofmt` ✓ · `go vet` ✓ · `go build` ✓ · barrido de los **10 módulos** en verde.
 - `problems`: unit de `VistaPublica`/`Validar`, store Mongo (CRUD problemas + Q&A),
   y test de API (RBAC 401/403/201 + **anti-fuga** vía router real).
-- `judge`: calificación con runner falso (veredicto + anti-fuga), store de corridas
+- `judge`: calificación con runner falso (veredicto + anti-fuga), store de ejecuciones
   en Postgres (crear/obtener/listar + **BOLA**), y API (sin auth 501, sin token
   401, problema inexistente 404, lenguaje no permitido 422, **anti-fuga** vía HTTP,
   BOLA 404).
@@ -715,7 +715,7 @@ frontend (editor) pospuesto. Formalizado en **ADR-11**.
 - **E2E en vivo del juez** (oidc-mock + problems + judge + Mongo + Postgres +
   Docker): solución correcta → `accepted` (2/2, sin fuga); incorrecta →
   `wrong_answer` (sin fuga del caso oculto); bucle → `time_limit_exceeded`; sin
-  token → 401; corrida ajena → 404 (BOLA); historial propio OK.
+  token → 401; ejecucion ajena → 404 (BOLA); historial propio OK.
 - **Hallazgo y ajuste:** con `timeout -s KILL`, en este Docker la salida al
   expirar era 137 (igual que un OOM), confundible con MLE. Se cambió a SIGTERM
   (salida 124 limpia para timeout) con SIGKILL de respaldo (`-k`), y el 137 se
@@ -742,7 +742,7 @@ hechos de **exámenes + código**. Capa de datos en Python (único lugar permiti
 
 **Hecho — Incremento 4a · ETL + esquema estrella (`data/`):**
 - Modelo dimensional en ClickHouse, **estrella plana** (hecho denormaliza
-  dimensiones como columnas): `fact_intento` y `fact_corrida` (`ReplacingMergeTree`).
+  dimensiones como columnas): `fact_intento` y `fact_ejecucion` (`ReplacingMergeTree`).
 - ETL en Python (`etl/`): `config` (12-factor), `schema.sql`, `sources`
   (Postgres parametrizado + enriquecimiento desde Mongo), `transform` (puro),
   `load` (clickhouse-connect + watermark), `run` (CLI). **Incremental por
@@ -750,7 +750,7 @@ hechos de **exámenes + código**. Capa de datos en Python (único lugar permiti
   psycopg), sin pandas. `docker-compose` del stack OLAP local.
 
 **Hecho — Incremento 4b · capa semántica (Cube):**
-- Cubos `intentos` y `corridas` sobre los hechos: medidas (`accuracy`,
+- Cubos `intentos` y `ejecuciones` sobre los hechos: medidas (`accuracy`,
   `tasa_aceptacion`, conteos, duración media) y dimensiones (certificación, tema,
   dificultad, tipo, modo / área, lenguaje, veredicto, tiempo). Expone API REST.
 
@@ -759,7 +759,7 @@ hechos de **exámenes + código**. Capa de datos en Python (único lugar permiti
 - Integración contra ClickHouse real (gated `DATA_ETL_IT=1`): esquema, inserción,
   **accuracy**, idempotencia (ReplacingMergeTree) y roundtrip del watermark.
 - **ETL en vivo de extremo a extremo** (Postgres con esquemas reales vía las
-  migraciones de exams/judge + Mongo + ClickHouse): carga 2 intentos y 1 corrida;
+  migraciones de exams/judge + Mongo + ClickHouse): carga 2 intentos y 1 ejecucion;
   `accuracy` redes = 0.5; `tasa_aceptacion` python = 1.0; **idempotencia**
   confirmada (segunda pasada: 0 nuevos, sin duplicar).
 - **Cube en vivo:** `accuracy` por tema y `tasa_aceptacion` por lenguaje vía la
@@ -1250,7 +1250,7 @@ La imagen **API 35 (Pixel 9)** arranca confiable (la 37 se colgaba).
 
 **Hecho (`mobile/`):**
 - **Core**: DTOs nuevos en `core/api/models.dart` (SesionExamen, Problema/CasoProblema,
-  PreguntaQA, ResultadoJuez/ResultadoCaso/RespuestaCorrida, Readiness/CeldaDominio/
+  PreguntaQA, ResultadoJuez/ResultadoCaso/RespuestaEjecucion, Readiness/CeldaDominio/
   SiguienteAccion, Analitica/TemaAcierto/PuntoTendencia, Recomendaciones/PerfilCV/Camino/
   PasoCamino). Métodos en `core/api/services.dart` (listMyExams, createSimulacro,
   getExamResultado, listProblems/getProblem, listQA/getQA, submitJudge[30s], getReadiness/
@@ -1426,7 +1426,7 @@ fondo base en `surface` (no blanco) para que tarjetas/bordes resalten en todas l
   con su watermark e idempotencia (ReplacingMergeTree). `sources`/`transform`/`load`/`run`
   extendidos.
 - **Inc B — DSS.** `data/dss/puestos.json` (catálogo curado: cada puesto declara qué
-  señales lo componen —exámenes/código/Q&A— y con qué peso). `repo` lee `fact_corrida`
+  señales lo componen —exámenes/código/Q&A— y con qué peso). `repo` lee `fact_ejecucion`
   (problemas resueltos por área) y `fact_qa` (autoevaluación por área). Modelo puro:
   `nivel_a_score` (1–3 → 0/.5/1) y `combinar_readiness` (media ponderada que **ignora
   señales sin datos y renormaliza**). Endpoints `GET /v1/puestos` y

@@ -64,7 +64,7 @@ def limpiar(conn: psycopg.Connection) -> None:
     subs = [pop_sub(i) for i in range(CLEAN_MAX)]
     conn.execute("delete from exams.intentos where usuario_id = any(%s)", (subs,))
     conn.execute("delete from exams.sesiones where usuario_id = any(%s)", (subs,))
-    conn.execute("delete from judge.corridas where usuario_id = any(%s)", (subs,))
+    conn.execute("delete from judge.ejecuciones where usuario_id = any(%s)", (subs,))
     conn.execute("delete from progress.qa_revisiones where usuario_id = any(%s)", (subs,))
 
 
@@ -123,7 +123,7 @@ def sembrar_usuario(
         else:
             ver, pasados = random.choice(VEREDICTOS_FALLO), random.randint(0, total - 1)
         conn.execute(
-            """insert into judge.corridas
+            """insert into judge.ejecuciones
                    (usuario_id, problema_ref, lenguaje, veredicto,
                     casos_pasados, casos_total, duracion_ms, creado_en)
                values (%s, %s, 'python', %s, %s, %s, %s, %s)""",
@@ -185,7 +185,7 @@ def main() -> None:
         conn.commit()
 
     print(
-        f"Listo. {N} usuarios · {tot_int} intentos · {tot_cod} corridas · {tot_qa} Q&A.\n"
+        f"Listo. {N} usuarios · {tot_int} intentos · {tot_cod} ejecuciones · {tot_qa} Q&A.\n"
         "Ahora resetea el watermark y corre el ETL para volcarlo a ClickHouse:\n"
         "  curl -s 'http://localhost:8123/?user=certready&password=certready' "
         "--data-binary 'TRUNCATE TABLE analytics.etl_estado'\n"

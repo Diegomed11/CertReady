@@ -1,5 +1,5 @@
 """Backfill de denormalización: tema/dificultad (exams.intentos) y área
-(judge.corridas) desde MongoDB hacia PostgreSQL.
+(judge.ejecuciones) desde MongoDB hacia PostgreSQL.
 
 La analítica por-usuario se movió al plano OPERATIVO: el "acierto por tema" y los
 "problemas por área" se calculan directo de Postgres (tiempo real, sin OLAP). Las
@@ -47,9 +47,9 @@ def backfill_intentos(conn: psycopg.Connection, db) -> int:
     return n
 
 
-def backfill_corridas(conn: psycopg.Connection, db) -> int:
-    """Rellena el área de judge.corridas según el problema en MongoDB."""
-    refs = [r[0] for r in conn.execute("select distinct problema_ref from judge.corridas").fetchall()]
+def backfill_ejecuciones(conn: psycopg.Connection, db) -> int:
+    """Rellena el área de judge.ejecuciones según el problema en MongoDB."""
+    refs = [r[0] for r in conn.execute("select distinct problema_ref from judge.ejecuciones").fetchall()]
     if not refs:
         return 0
     meta = {
@@ -59,7 +59,7 @@ def backfill_corridas(conn: psycopg.Connection, db) -> int:
     n = 0
     for ref, area in meta.items():
         cur = conn.execute(
-            "update judge.corridas set area = %s where problema_ref = %s",
+            "update judge.ejecuciones set area = %s where problema_ref = %s",
             (area, ref),
         )
         n += cur.rowcount
@@ -91,13 +91,13 @@ def main() -> None:
         db = mongo[MONGO_DB]
         with psycopg.connect(PG_DSN) as conn:
             ni = backfill_intentos(conn, db)
-            nc = backfill_corridas(conn, db)
+            nc = backfill_ejecuciones(conn, db)
             nq = backfill_qa(conn, db)
             conn.commit()
     finally:
         mongo.close()
     print(
-        f"Backfill listo. intentos: {ni} · corridas: {nc} · q&a: {nq} (filas actualizadas)."
+        f"Backfill listo. intentos: {ni} · ejecuciones: {nc} · q&a: {nq} (filas actualizadas)."
     )
 
 

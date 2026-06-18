@@ -10,61 +10,61 @@ import (
 	"github.com/certready/certready/judge/internal/judge"
 )
 
-// CorridasStore persiste las corridas (calificaciones) en PostgreSQL.
-type CorridasStore struct {
+// EjecucionesStore persiste las ejecuciones (calificaciones) en PostgreSQL.
+type EjecucionesStore struct {
 	pool *pgxpool.Pool
 }
 
-// NewCorridas construye el store de corridas sobre el pool dado.
-func NewCorridas(pool *pgxpool.Pool) *CorridasStore { return &CorridasStore{pool: pool} }
+// NewEjecuciones construye el store de ejecuciones sobre el pool dado.
+func NewEjecuciones(pool *pgxpool.Pool) *EjecucionesStore { return &EjecucionesStore{pool: pool} }
 
 // PingPostgres verifica la conectividad con Postgres (sonda de readiness).
-func (s *CorridasStore) PingPostgres(ctx context.Context) error { return s.pool.Ping(ctx) }
+func (s *EjecucionesStore) PingPostgres(ctx context.Context) error { return s.pool.Ping(ctx) }
 
-const corridaCols = `id::text, usuario_id::text, problema_ref, lenguaje, veredicto, casos_pasados, casos_total, duracion_ms, creado_en`
+const ejecucionCols = `id::text, usuario_id::text, problema_ref, lenguaje, veredicto, casos_pasados, casos_total, duracion_ms, creado_en`
 
-// CrearCorrida registra el resultado de una calificación para un usuario y
+// CrearEjecucion registra el resultado de una calificación para un usuario y
 // devuelve el registro creado.
 //
-// area es el área del problema (de MongoDB), denormalizada en la corrida para
+// area es el área del problema (de MongoDB), denormalizada en la ejecucion para
 // calcular "problemas resueltos por área" directo de Postgres (plano operativo).
-func (s *CorridasStore) CrearCorrida(ctx context.Context, usuarioID string, envio judge.EnvioCodigo, r judge.Resultado, area string) (judge.Corrida, error) {
-	var c judge.Corrida
+func (s *EjecucionesStore) CrearEjecucion(ctx context.Context, usuarioID string, envio judge.EnvioCodigo, r judge.Resultado, area string) (judge.Ejecucion, error) {
+	var c judge.Ejecucion
 	err := s.pool.QueryRow(ctx,
-		`insert into judge.corridas
+		`insert into judge.ejecuciones
 		   (usuario_id, problema_ref, lenguaje, veredicto, casos_pasados, casos_total, duracion_ms, area)
 		 values ($1, $2, $3, $4, $5, $6, $7, $8)
-		 returning `+corridaCols,
+		 returning `+ejecucionCols,
 		usuarioID, envio.ProblemaRef, envio.Lenguaje, string(r.Veredicto),
 		r.CasosPasados, r.CasosTotal, r.DuracionMs, area,
 	).Scan(&c.ID, &c.UsuarioID, &c.ProblemaRef, &c.Lenguaje, &c.Veredicto, &c.CasosPasados, &c.CasosTotal, &c.DuracionMs, &c.CreadoEn)
 	if err != nil {
-		return judge.Corrida{}, err
+		return judge.Ejecucion{}, err
 	}
 	return c, nil
 }
 
-// ObtenerCorrida devuelve una corrida del usuario indicado. Returns ErrNotFound
+// ObtenerEjecucion devuelve una ejecucion del usuario indicado. Returns ErrNotFound
 // si no existe o no le pertenece (defensa BOLA).
-func (s *CorridasStore) ObtenerCorrida(ctx context.Context, usuarioID, id string) (judge.Corrida, error) {
-	var c judge.Corrida
+func (s *EjecucionesStore) ObtenerEjecucion(ctx context.Context, usuarioID, id string) (judge.Ejecucion, error) {
+	var c judge.Ejecucion
 	err := s.pool.QueryRow(ctx,
-		`select `+corridaCols+` from judge.corridas where id::text = $1 and usuario_id::text = $2`,
+		`select `+ejecucionCols+` from judge.ejecuciones where id::text = $1 and usuario_id::text = $2`,
 		id, usuarioID,
 	).Scan(&c.ID, &c.UsuarioID, &c.ProblemaRef, &c.Lenguaje, &c.Veredicto, &c.CasosPasados, &c.CasosTotal, &c.DuracionMs, &c.CreadoEn)
 	if errors.Is(err, pgx.ErrNoRows) {
-		return judge.Corrida{}, ErrNotFound
+		return judge.Ejecucion{}, ErrNotFound
 	}
 	if err != nil {
-		return judge.Corrida{}, err
+		return judge.Ejecucion{}, err
 	}
 	return c, nil
 }
 
-// ListarCorridas devuelve las corridas del usuario, más recientes primero.
-func (s *CorridasStore) ListarCorridas(ctx context.Context, usuarioID string, limit, offset int) ([]judge.Corrida, error) {
+// ListarEjecuciones devuelve las ejecuciones del usuario, más recientes primero.
+func (s *EjecucionesStore) ListarEjecuciones(ctx context.Context, usuarioID string, limit, offset int) ([]judge.Ejecucion, error) {
 	rows, err := s.pool.Query(ctx,
-		`select `+corridaCols+` from judge.corridas where usuario_id::text = $1
+		`select `+ejecucionCols+` from judge.ejecuciones where usuario_id::text = $1
 		 order by creado_en desc limit $2 offset $3`,
 		usuarioID, limit, offset)
 	if err != nil {
@@ -72,9 +72,9 @@ func (s *CorridasStore) ListarCorridas(ctx context.Context, usuarioID string, li
 	}
 	defer rows.Close()
 
-	var out []judge.Corrida
+	var out []judge.Ejecucion
 	for rows.Next() {
-		var c judge.Corrida
+		var c judge.Ejecucion
 		if err := rows.Scan(&c.ID, &c.UsuarioID, &c.ProblemaRef, &c.Lenguaje, &c.Veredicto, &c.CasosPasados, &c.CasosTotal, &c.DuracionMs, &c.CreadoEn); err != nil {
 			return nil, err
 		}
@@ -85,11 +85,11 @@ func (s *CorridasStore) ListarCorridas(ctx context.Context, usuarioID string, li
 
 // ResumenCodigoPorArea cuenta, para un usuario, los problemas que intentó y los
 // que resolvió en las áreas dadas. Un problema cuenta como resuelto si alguna de
-// sus corridas fue 'accepted' (el mejor veredicto manda). Sirve a la analítica
+// sus ejecuciones fue 'accepted' (el mejor veredicto manda). Sirve a la analítica
 // operativa de "preparación por puesto" (señal de código), directo de Postgres.
 //
 // Returns (0, 0, nil) si no se dan áreas.
-func (s *CorridasStore) ResumenCodigoPorArea(ctx context.Context, usuarioID string, areas []string) (problemas, resueltos int, err error) {
+func (s *EjecucionesStore) ResumenCodigoPorArea(ctx context.Context, usuarioID string, areas []string) (problemas, resueltos int, err error) {
 	if len(areas) == 0 {
 		return 0, 0, nil
 	}
@@ -98,7 +98,7 @@ func (s *CorridasStore) ResumenCodigoPorArea(ctx context.Context, usuarioID stri
 		 from (
 		   select problema_ref,
 		          max(case when veredicto = 'accepted' then 1 else 0 end) as resuelto
-		   from judge.corridas
+		   from judge.ejecuciones
 		   where usuario_id::text = $1 and area = any($2)
 		   group by problema_ref
 		 ) t`,

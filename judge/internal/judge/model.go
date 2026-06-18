@@ -8,7 +8,7 @@ import (
 // maxFuenteBytes acota el tamaño del código enviado (defensa de disponibilidad).
 const maxFuenteBytes = 64 * 1024
 
-// Veredicto es el desenlace global de una corrida.
+// Veredicto es el desenlace global de una ejecucion.
 type Veredicto string
 
 const (
@@ -69,9 +69,9 @@ type Resultado struct {
 	Casos        []ResultadoCaso `json:"casos"`
 }
 
-// Corrida es el registro persistido (PostgreSQL) de una calificación. Alimenta el
+// Ejecucion es el registro persistido (PostgreSQL) de una calificación. Alimenta el
 // historial del estudiante y, más adelante, la capa analítica (Fase 4).
-type Corrida struct {
+type Ejecucion struct {
 	ID           string    `json:"id"`
 	UsuarioID    string    `json:"usuario_id"`
 	ProblemaRef  string    `json:"problema_ref"`

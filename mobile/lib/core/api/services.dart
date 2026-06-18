@@ -333,7 +333,7 @@ class ApiService {
 
   // --- judge ---------------------------------------------------------------
 
-  Future<RespuestaCorrida> submitJudge({
+  Future<RespuestaEjecucion> submitJudge({
     required String problemaRef,
     required String lenguaje,
     required String fuente,
@@ -347,7 +347,7 @@ class ApiService {
       },
       timeout: const Duration(seconds: 30),
     );
-    return RespuestaCorrida.fromJson(data ?? const {});
+    return RespuestaEjecucion.fromJson(data ?? const {});
   }
 
   // --- dss: readiness + analítica (degradan a null si el DSS no responde) --

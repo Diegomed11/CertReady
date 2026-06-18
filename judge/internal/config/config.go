@@ -16,7 +16,7 @@ type Config struct {
 	Version       string
 	Env           string
 	Addr          string
-	DatabaseURL   string // Postgres (corridas).
+	DatabaseURL   string // Postgres (ejecuciones).
 	MongoURI      string // MongoDB (problemas, solo lectura).
 	MongoDB       string
 	OIDCIssuer    string

@@ -21,7 +21,7 @@ func (a *API) resumenCodigo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	areas := parseAreas(r.URL.Query().Get("areas"))
-	problemas, resueltos, err := a.corridas.ResumenCodigoPorArea(r.Context(), identidad.Subject, areas)
+	problemas, resueltos, err := a.ejecuciones.ResumenCodigoPorArea(r.Context(), identidad.Subject, areas)
 	if err != nil {
 		a.errorInterno(w, r, "resumen de código por área", err)
 		return

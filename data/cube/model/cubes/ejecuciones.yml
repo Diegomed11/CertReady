@@ -1,20 +1,20 @@
 cubes:
-  - name: corridas
-    sql_table: fact_corrida
-    description: Corridas del juez de código (hecho fact_corrida).
+  - name: ejecuciones
+    sql_table: fact_ejecucion
+    description: Ejecuciones del juez de código (hecho fact_ejecucion).
 
     measures:
       - name: count
         type: count
-        description: Número de corridas.
+        description: Número de ejecuciones.
       - name: aceptadas
         type: sum
         sql: aceptado
-        description: Corridas aceptadas.
+        description: Ejecuciones aceptadas.
       - name: tasa_aceptacion
         type: number
         sql: "{aceptadas} * 1.0 / nullif({count}, 0)"
-        description: Proporción de corridas aceptadas [0,1].
+        description: Proporción de ejecuciones aceptadas [0,1].
       - name: duracion_media
         type: avg
         sql: duracion_ms

@@ -54,33 +54,33 @@ def fila_intento(intento: dict[str, Any], preguntas: dict[str, dict[str, Any]]) 
     }
 
 
-def fila_corrida(corrida: dict[str, Any], problemas: dict[str, dict[str, Any]]) -> dict[str, Any]:
-    """Construye una fila de ``fact_corrida`` a partir de una corrida del juez.
+def fila_ejecucion(ejecucion: dict[str, Any], problemas: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    """Construye una fila de ``fact_ejecucion`` a partir de una ejecucion del juez.
 
     Parameters
     ----------
-    corrida : fila de ``judge.corridas`` (id, usuario_id, problema_ref, lenguaje,
+    ejecucion : fila de ``judge.ejecuciones`` (id, usuario_id, problema_ref, lenguaje,
         veredicto, casos_pasados, casos_total, duracion_ms, creado_en).
     problemas : mapa ``problema_ref -> {area, dificultad}`` desde MongoDB.
 
     Returns
     -------
-    dict : fila lista para insertar en ``analytics.fact_corrida``.
+    dict : fila lista para insertar en ``analytics.fact_ejecucion``.
     """
-    meta = problemas.get(corrida["problema_ref"], {})
-    creado = _utc(corrida["creado_en"])
+    meta = problemas.get(ejecucion["problema_ref"], {})
+    creado = _utc(ejecucion["creado_en"])
     return {
-        "corrida_id": corrida["id"],
-        "usuario_id": corrida["usuario_id"],
-        "problema_ref": corrida["problema_ref"],
+        "ejecucion_id": ejecucion["id"],
+        "usuario_id": ejecucion["usuario_id"],
+        "problema_ref": ejecucion["problema_ref"],
         "area": meta.get("area") or DESCONOCIDO,
         "dificultad": meta.get("dificultad") or DESCONOCIDO,
-        "lenguaje": corrida.get("lenguaje") or DESCONOCIDO,
-        "veredicto": corrida["veredicto"],
-        "aceptado": 1 if corrida["veredicto"] == "accepted" else 0,
-        "casos_pasados": corrida["casos_pasados"],
-        "casos_total": corrida["casos_total"],
-        "duracion_ms": corrida["duracion_ms"],
+        "lenguaje": ejecucion.get("lenguaje") or DESCONOCIDO,
+        "veredicto": ejecucion["veredicto"],
+        "aceptado": 1 if ejecucion["veredicto"] == "accepted" else 0,
+        "casos_pasados": ejecucion["casos_pasados"],
+        "casos_total": ejecucion["casos_total"],
+        "duracion_ms": ejecucion["duracion_ms"],
         "fecha": creado.date(),
         "creado_en": creado,
     }

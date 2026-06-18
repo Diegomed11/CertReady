@@ -119,8 +119,8 @@ erDiagram
     <div class="card">
       <pre class="mermaid">
 erDiagram
-  PROBLEMAS ||--o{ CORRIDAS : "ref logica (problema_ref)"
-  CORRIDAS { uuid id PK
+  PROBLEMAS ||--o{ EJECUCIONES : "ref logica (problema_ref)"
+  EJECUCIONES { uuid id PK
     uuid usuario_id
     text problema_ref
     text lenguaje
@@ -137,18 +137,18 @@ erDiagram
       </pre>
     </div>
 
-    <h2>Problema 2 — Juez de código · Diagrama dimensional (estrella fact_corrida)</h2>
+    <h2>Problema 2 — Juez de código · Diagrama dimensional (estrella fact_ejecucion)</h2>
     <div class="card">
       <pre class="mermaid">
 erDiagram
-  DIM_FECHA ||--o{ FACT_CORRIDA : ""
-  DIM_USUARIO ||--o{ FACT_CORRIDA : ""
-  DIM_PROBLEMA ||--o{ FACT_CORRIDA : ""
-  DIM_AREA ||--o{ FACT_CORRIDA : ""
-  DIM_DIFICULTAD ||--o{ FACT_CORRIDA : ""
-  DIM_LENGUAJE ||--o{ FACT_CORRIDA : ""
-  DIM_VEREDICTO ||--o{ FACT_CORRIDA : ""
-  FACT_CORRIDA { string corrida_id PK
+  DIM_FECHA ||--o{ FACT_EJECUCION : ""
+  DIM_USUARIO ||--o{ FACT_EJECUCION : ""
+  DIM_PROBLEMA ||--o{ FACT_EJECUCION : ""
+  DIM_AREA ||--o{ FACT_EJECUCION : ""
+  DIM_DIFICULTAD ||--o{ FACT_EJECUCION : ""
+  DIM_LENGUAJE ||--o{ FACT_EJECUCION : ""
+  DIM_VEREDICTO ||--o{ FACT_EJECUCION : ""
+  FACT_EJECUCION { string ejecucion_id PK
     date fecha FK
     string usuario_id FK
     string problema_ref FK
@@ -175,12 +175,12 @@ erDiagram
       <pre class="mermaid">
 flowchart TD
   A([Inicio: python -m etl.run]) --> B[Leer watermark por fuente&lt;br/&gt;tabla etl_estado en ClickHouse]
-  B --> C[/EXTRACT - PostgreSQL&lt;br/&gt;intentos + sesiones y corridas&lt;br/&gt;creado_en posterior al watermark/]
+  B --> C[/EXTRACT - PostgreSQL&lt;br/&gt;intentos + sesiones y ejecuciones&lt;br/&gt;creado_en posterior al watermark/]
   C --> D{Hay filas nuevas?}
   D -- No --> Z([Fin: no-op])
   D -- Si --> E[/EXTRACT - MongoDB&lt;br/&gt;preguntas: tema, dificultad, tipo&lt;br/&gt;problemas: area, dificultad/]
   E --> F[TRANSFORM - funciones puras&lt;br/&gt;denormaliza dimensiones - UTC&lt;br/&gt;deriva es_correcto / aceptado y fecha]
-  F --> G[(LOAD - ClickHouse&lt;br/&gt;fact_intento / fact_corrida&lt;br/&gt;ReplacingMergeTree = idempotente)]
+  F --> G[(LOAD - ClickHouse&lt;br/&gt;fact_intento / fact_ejecucion&lt;br/&gt;ReplacingMergeTree = idempotente)]
   G --> H[Avanzar watermark&lt;br/&gt;max creado_en por fuente]
   H --> I[[Cube: capa semantica&lt;br/&gt;medidas y dimensiones]]
   I --> J([Dashboards web y DSS de readiness])

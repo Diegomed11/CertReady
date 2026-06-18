@@ -73,7 +73,7 @@ foreach ($svc in @('catalog', 'users', 'enrollments')) {
     go run ./cmd/migrate | Out-Null
   } finally { Pop-Location }
 }
-# exams y judge guardan sesiones/corridas en Postgres (problems y content son solo Mongo).
+# exams y judge guardan sesiones/ejecuciones en Postgres (problems y content son solo Mongo).
 $env:EXAMS_DATABASE_URL = $dsn; $env:JUDGE_DATABASE_URL = $dsn
 foreach ($svc in @('exams', 'judge')) {
   Push-Location (Join-Path $root (@{ exams = 'services\exams'; judge = 'judge' }[$svc]))

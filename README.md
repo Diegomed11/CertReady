@@ -322,7 +322,7 @@ La interfaz `Runner` permite añadir lenguajes (hoy **Python**; luego Go, JS) **
 | `--security-opt` | `no-new-privileges` | Sin escalada |
 | `timeout -k 3 <s>` + *backstop* por contexto | +8 s de holgura | Corte de tiempo robusto |
 
-**Anti-fuga:** los casos ocultos y sus salidas esperadas viven en Mongo; el juez los lee del lado del servidor para calificar y **jamás** los devuelve al cliente. La corrida se registra en Postgres (`judge.corridas`) para historial y analítica. La Fase 3 incluyó una **suite de escape** (red, FS, fork-bomb, memoria, tiempo) que corre en CI con Docker.
+**Anti-fuga:** los casos ocultos y sus salidas esperadas viven en Mongo; el juez los lee del lado del servidor para calificar y **jamás** los devuelve al cliente. La ejecucion se registra en Postgres (`judge.ejecuciones`) para historial y analítica. La Fase 3 incluyó una **suite de escape** (red, FS, fork-bomb, memoria, tiempo) que corre en CI con Docker.
 
 ### Cómo corre una entrega
 
@@ -343,7 +343,7 @@ sequenceDiagram
     D-->>J: stdout / stderr / estado / duracion
   end
   J->>J: normaliza y compara vs salida esperada
-  J->>PG: guarda corrida (veredicto, casos, ms)
+  J->>PG: guarda ejecucion (veredicto, casos, ms)
   J-->>BFF: veredicto (solo casos visibles + pass/fail de ocultos)
   BFF-->>Web: resultado
 ```
@@ -356,31 +356,31 @@ Todo Python vive aquí (`data/`). Tres piezas: el **ETL** que arma el modelo dim
 
 ### 7.1 ETL — operacional → dimensional (`data/etl`)
 
-Lleva los **hechos operativos** (intentos de examen, corridas del juez, autoevaluaciones de Q&A) desde Postgres a un **esquema estrella plano en ClickHouse**, enriqueciendo cada hecho con metadatos de MongoDB (tema, dificultad, área, …). Es **incremental por *watermark*** e **idempotente**.
+Lleva los **hechos operativos** (intentos de examen, ejecuciones del juez, autoevaluaciones de Q&A) desde Postgres a un **esquema estrella plano en ClickHouse**, enriqueciendo cada hecho con metadatos de MongoDB (tema, dificultad, área, …). Es **incremental por *watermark*** e **idempotente**.
 
 ```mermaid
 flowchart LR
   subgraph ops["Operacional"]
-    pg[("Postgres - exams.intentos, judge.corridas, progress.qa_revisiones")]
+    pg[("Postgres - exams.intentos, judge.ejecuciones, progress.qa_revisiones")]
     mongo[("Mongo - preguntas, problemas, qa")]
   end
   pg --> etl["ETL Python - lee > watermark, denormaliza"]
   mongo --> etl
-  etl --> star[("ClickHouse - fact_intento, fact_corrida, fact_qa")]
+  etl --> star[("ClickHouse - fact_intento, fact_ejecucion, fact_qa")]
   etl --> wm[("etl_estado - watermark por fuente")]
   star --> cube["Cube - medidas y dimensiones"]
   cube --> dss["DSS - readiness + analitica"]
   cube --> dash["Dashboards web"]
 ```
 
-- **Hechos:** `fact_intento`, `fact_corrida`, `fact_qa` (motor `ReplacingMergeTree` → re-ejecutar deduplica por id = idempotencia). Un cuarto registro, `etl_estado`, guarda el *watermark* (`ultimo_ts`) por fuente.
+- **Hechos:** `fact_intento`, `fact_ejecucion`, `fact_qa` (motor `ReplacingMergeTree` → re-ejecutar deduplica por id = idempotencia). Un cuarto registro, `etl_estado`, guarda el *watermark* (`ultimo_ts`) por fuente.
 - **Watermark:** filtra `where creado_en > ultimo_ts`; las marcas de tiempo usan `DateTime64(6)` (microsegundos) para no reprocesar filas del mismo segundo.
 - **Dependencias mínimas:** solo *drivers* (`clickhouse-connect`, `psycopg`, `pymongo`); sin pandas/numpy en el ETL. Las transformaciones son **funciones puras** testeables.
 
 ### 7.2 OLAP — Cube sobre ClickHouse (`data/cube`)
 Cube define los cubos como capa semántica y los expone como API:
 - **`intentos`** (sobre `fact_intento`): medidas `count`, `correctos`, **`accuracy`**; dimensiones certificación, tema, dificultad, tipo de pregunta, modo, tiempo.
-- **`corridas`** (sobre `fact_corrida`): `count`, `aceptadas`, **`tasa_aceptacion`**, `duracion_media`; dimensiones área, dificultad, lenguaje, veredicto, tiempo.
+- **`ejecuciones`** (sobre `fact_ejecucion`): `count`, `aceptadas`, **`tasa_aceptacion`**, `duracion_media`; dimensiones área, dificultad, lenguaje, veredicto, tiempo.
 
 Las pre-agregaciones materializadas quedan diferidas (requieren Cube Store en el despliegue gestionado); el modelo semántico ya es funcional sin ellas.
 
@@ -414,7 +414,7 @@ FastAPI que lee ClickHouse (con degradación elegante: si ClickHouse no está, d
 - `scripts/seed-mongo.py` — contenido profundo de `aws-saa` (material + ~50 preguntas originales por los 4 dominios) + problemas de código + Q&A.
 - `scripts/catalog/*.json` + `scripts/seed-catalog.py` — el catálogo de **~50 certificaciones** (AWS/Azure/GCP/CompTIA/Cisco/CNCF/HashiCorp/…), con temas, material y quizzes ligeros.
 - `scripts/build-reco-dataset.py` — compila `data/dss/certificaciones.json` (el dataset del recomendador) a partir de los manifiestos.
-- `scripts/seed-demo-user.py` — siembra actividad realista de un usuario demo (exámenes, corridas, Q&A, inscripciones y avance) para que la analítica y la readiness muestren números.
+- `scripts/seed-demo-user.py` — siembra actividad realista de un usuario demo (exámenes, ejecuciones, Q&A, inscripciones y avance) para que la analítica y la readiness muestren números.
 
 ---
 
@@ -542,7 +542,7 @@ erDiagram
   }
 ```
 
-Esquemas reales: `catalog` (certificaciones, temas, pistas_entrevista), `users` (usuarios, perfiles), `enrollments` (inscripciones), `exams` (sesiones, intentos), `progress` (lecciones, temas, qa_revisiones), `judge` (corridas). Los que llevan `usuario_id` tienen **RLS** activable.
+Esquemas reales: `catalog` (certificaciones, temas, pistas_entrevista), `users` (usuarios, perfiles), `enrollments` (inscripciones), `exams` (sesiones, intentos), `progress` (lecciones, temas, qa_revisiones), `judge` (ejecuciones). Los que llevan `usuario_id` tienen **RLS** activable.
 
 ### 10.2 Documental — MongoDB
 Contenido heterogéneo donde el esquema cambia de forma: **preguntas** (opción/respuesta múltiple, con su explicación), **problemas** de código (enunciado, `starter_code` por lenguaje, `test_cases` con casos **ocultos** y límites), **material** de estudio (markdown), y **Q&A** por puesto/área. La **definición** vive en Mongo; el **hecho** del intento se va a la capa analítica.
@@ -563,8 +563,8 @@ erDiagram
     datetime64 creado_en
     uint8 es_correcto
   }
-  FACT_CORRIDA {
-    string corrida_id PK
+  FACT_EJECUCION {
+    string ejecucion_id PK
     string usuario_id
     string problema_ref
     string area
@@ -644,7 +644,7 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-  participant PG as Postgres (intentos/corridas/qa)
+  participant PG as Postgres (intentos/ejecuciones/qa)
   participant ETL as ETL Python
   participant CH as ClickHouse
   participant DSS as DSS FastAPI

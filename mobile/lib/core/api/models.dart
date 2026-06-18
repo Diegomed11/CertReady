@@ -513,11 +513,11 @@ class ResultadoJuez {
 }
 
 /// Response of POST /v1/judge/runs (we only need the resultado for the UI).
-class RespuestaCorrida {
-  RespuestaCorrida({required this.resultado});
+class RespuestaEjecucion {
+  RespuestaEjecucion({required this.resultado});
   final ResultadoJuez resultado;
 
-  factory RespuestaCorrida.fromJson(Map<String, dynamic> j) => RespuestaCorrida(
+  factory RespuestaEjecucion.fromJson(Map<String, dynamic> j) => RespuestaEjecucion(
     resultado: ResultadoJuez.fromJson(
       (j['resultado'] as Map<String, dynamic>?) ?? const {},
     ),

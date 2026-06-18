@@ -75,7 +75,7 @@ func run(cfg config.Config, logger *slog.Logger) error {
 		Version:   cfg.Version,
 		Logger:    logger,
 		Problemas: store.NewProblemas(mclient.Database(cfg.MongoDB)),
-		Corridas:  store.NewCorridas(pool),
+		Ejecuciones:  store.NewEjecuciones(pool),
 		Runner:    runner.NewDockerRunner(),
 		Auth:      authn,
 	})

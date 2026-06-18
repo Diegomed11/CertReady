@@ -5,7 +5,7 @@ un usuario en las tres señales del DSS:
 
 - **Exámenes**: sesiones de simulacro + intentos (acierto ponderado por dificultad)
   sobre las preguntas reales de `aws-saa` (leídas de MongoDB).
-- **Código**: corridas del juez sobre los problemas reales (`p_suma`, …), con
+- **Código**: ejecuciones del juez sobre los problemas reales (`p_suma`, …), con
   veredicto mayormente `accepted`.
 - **Q&A**: autoevaluaciones (nivel 1–3) de las preguntas de entrevista reales.
 
@@ -48,7 +48,7 @@ CERT = os.getenv("SEED_CERT_SLUG", "aws-saa")
 
 # Acierto ponderado por dificultad: un perfil sólido pero no perfecto.
 P_ACIERTO = {"facil": 0.9, "media": 0.7, "dificil": 0.45}
-# Reproducible entre corridas (combinado con el borrado previo, da un demo estable).
+# Reproducible entre ejecuciones (combinado con el borrado previo, da un demo estable).
 random.seed(7)
 
 
@@ -95,7 +95,7 @@ def limpiar(conn: psycopg.Connection, sub: str, cert_id: str | None) -> None:
     """Borra la actividad demo previa del usuario (idempotencia)."""
     conn.execute("delete from exams.intentos where usuario_id = %s", (sub,))
     conn.execute("delete from exams.sesiones where usuario_id = %s", (sub,))
-    conn.execute("delete from judge.corridas where usuario_id = %s", (sub,))
+    conn.execute("delete from judge.ejecuciones where usuario_id = %s", (sub,))
     conn.execute("delete from progress.qa_revisiones where usuario_id = %s", (sub,))
     # Panel: inscripción (a esta cert) + progreso de estudio de la cert.
     if cert_id is not None:
@@ -164,7 +164,7 @@ def sembrar_examenes(conn: psycopg.Connection, sub: str, preguntas: list[dict]) 
 
 
 def sembrar_codigo(conn: psycopg.Connection, sub: str, problemas: list[dict]) -> int:
-    """Crea ~8 corridas del juez; sesga a `accepted` y garantiza problemas resueltos."""
+    """Crea ~8 ejecuciones del juez; sesga a `accepted` y garantiza problemas resueltos."""
     if not problemas:
         print("  [aviso] no hay problemas en Mongo; omito código")
         return 0
@@ -181,7 +181,7 @@ def sembrar_codigo(conn: psycopg.Connection, sub: str, problemas: list[dict]) ->
                 ver = random.choice(veredictos_fallo)
                 pasados = random.randint(0, total - 1)
             conn.execute(
-                """insert into judge.corridas
+                """insert into judge.ejecuciones
                        (usuario_id, problema_ref, lenguaje, veredicto,
                         casos_pasados, casos_total, duracion_ms, creado_en)
                    values (%s, %s, 'python', %s, %s, %s, %s, %s)""",
@@ -197,7 +197,7 @@ def sembrar_codigo(conn: psycopg.Connection, sub: str, problemas: list[dict]) ->
             )
             n += 1
             if ronda > 0 and random.random() < 0.4:
-                break  # variar el nº de corridas por ronda
+                break  # variar el nº de ejecuciones por ronda
     return n
 
 
@@ -317,7 +317,7 @@ def main() -> None:
 
     print(
         f"Listo. usuario_id (sub) = {sub}\n"
-        f"  exámenes: {n_int} intentos · código: {n_cod} corridas · Q&A: {n_qa} revisiones\n"
+        f"  exámenes: {n_int} intentos · código: {n_cod} ejecuciones · Q&A: {n_qa} revisiones\n"
         f"  panel: {n_insc} inscripción(es) · {n_temas} temas aprobados · {n_lec} lecciones leídas\n"
         "Ahora corre el ETL para volcarlo a ClickHouse:\n"
         "  cd data\n"

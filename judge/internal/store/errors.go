@@ -1,5 +1,5 @@
 // Package store implementa el acceso a datos del juez: lectura de problemas en
-// MongoDB (con sus casos ocultos) y persistencia de corridas en PostgreSQL.
+// MongoDB (con sus casos ocultos) y persistencia de ejecuciones en PostgreSQL.
 package store
 
 import "errors"

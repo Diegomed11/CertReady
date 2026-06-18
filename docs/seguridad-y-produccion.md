@@ -100,7 +100,7 @@ zod/three están limpios), así que **no** llegan al bundle desplegado.
 
 - **RLS en el `judge`**: queda fuera del patrón RLS-por-transacción (su petición es larga:
   la transacción amarraría una conexión del pool durante la ejecución del sandbox). Si se
-  quiere cubrir, aplicar el `SET LOCAL` solo alrededor de la escritura de la corrida.
+  quiere cubrir, aplicar el `SET LOCAL` solo alrededor de la escritura de la ejecucion.
 - **CSP a enforce**: promover de Report-Only a `Content-Security-Policy` con **nonce**
   por request, tras verificar que no hay violaciones legítimas en consola.
 

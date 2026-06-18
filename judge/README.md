@@ -3,7 +3,7 @@
 Subsistema de **mayor riesgo** del proyecto: ejecuta código de terceros contra
 casos de prueba en un **sandbox aislado** y emite un veredicto. Go (orquestación)
 + contenedores Docker efímeros (ejecución) + MongoDB (problemas, solo lectura) +
-PostgreSQL (corridas).
+PostgreSQL (ejecuciones).
 
 Primera ronda: **Python**. La interfaz `Runner` permite añadir lenguajes sin
 tocar la calificación.
@@ -27,7 +27,7 @@ difieren a escala (ADR-11). El despliegue del juez va a **Fargate**, no a Lambda
 ## Anti-fuga
 
 Los problemas guardan casos **ocultos** con su salida esperada en MongoDB. El juez
-los lee del lado del servidor para calificar; la respuesta de una corrida reporta
+los lee del lado del servidor para calificar; la respuesta de una ejecucion reporta
 de cada caso oculto solo su estado (passed/wrong/tle/mle/re), nunca su entrada ni
 sus salidas. Los casos visibles sí muestran el diff.
 
@@ -38,14 +38,14 @@ sus salidas. Los casos visibles sí muestran el diff.
 | `GET`  | `/v1/health` | — | Liveness. |
 | `GET`  | `/v1/ready` | — | Readiness (ping a MongoDB y Postgres). |
 | `POST` | `/v1/judge/runs` | estudiante | Enviar código y calificar. Cuerpo: `{problema_ref, lenguaje, fuente}`. |
-| `GET`  | `/v1/judge/runs/{id}` | estudiante | Consultar una corrida propia (ajena ⇒ 404). |
-| `GET`  | `/v1/me/judge/runs` | estudiante | Historial de corridas propio. |
+| `GET`  | `/v1/judge/runs/{id}` | estudiante | Consultar una ejecucion propia (ajena ⇒ 404). |
+| `GET`  | `/v1/me/judge/runs` | estudiante | Historial de ejecuciones propio. |
 
 ## Configuración (variables de entorno)
 
 | Variable | Default | Descripción |
 |----------|---------|-------------|
-| `JUDGE_DATABASE_URL` / `DATABASE_URL` | — (**obligatoria**) | Postgres (corridas). |
+| `JUDGE_DATABASE_URL` / `DATABASE_URL` | — (**obligatoria**) | Postgres (ejecuciones). |
 | `JUDGE_MONGO_URI` / `MONGO_URI` | — (**obligatoria**) | MongoDB (problemas, lectura). |
 | `JUDGE_MONGO_DB` | `certready` | Base de datos en MongoDB. |
 | `JUDGE_OIDC_ISSUER` / `OIDC_ISSUER` | — | Emisor OIDC. Vacío ⇒ rutas protegidas 501. |

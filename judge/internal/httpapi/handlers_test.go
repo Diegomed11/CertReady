@@ -28,23 +28,23 @@ func (f fakeProblemas) ObtenerProblema(ctx context.Context, id string) (judge.Pr
 	return f.get(ctx, id)
 }
 
-type fakeCorridas struct {
-	crear func(context.Context, string, judge.EnvioCodigo, judge.Resultado, string) (judge.Corrida, error)
-	get   func(context.Context, string, string) (judge.Corrida, error)
-	list  func(context.Context, string, int, int) ([]judge.Corrida, error)
+type fakeEjecuciones struct {
+	crear func(context.Context, string, judge.EnvioCodigo, judge.Resultado, string) (judge.Ejecucion, error)
+	get   func(context.Context, string, string) (judge.Ejecucion, error)
+	list  func(context.Context, string, int, int) ([]judge.Ejecucion, error)
 }
 
-func (f fakeCorridas) PingPostgres(context.Context) error { return nil }
-func (f fakeCorridas) CrearCorrida(ctx context.Context, u string, e judge.EnvioCodigo, r judge.Resultado, area string) (judge.Corrida, error) {
+func (f fakeEjecuciones) PingPostgres(context.Context) error { return nil }
+func (f fakeEjecuciones) CrearEjecucion(ctx context.Context, u string, e judge.EnvioCodigo, r judge.Resultado, area string) (judge.Ejecucion, error) {
 	return f.crear(ctx, u, e, r, area)
 }
-func (f fakeCorridas) ObtenerCorrida(ctx context.Context, u, id string) (judge.Corrida, error) {
+func (f fakeEjecuciones) ObtenerEjecucion(ctx context.Context, u, id string) (judge.Ejecucion, error) {
 	return f.get(ctx, u, id)
 }
-func (f fakeCorridas) ListarCorridas(ctx context.Context, u string, l, o int) ([]judge.Corrida, error) {
+func (f fakeEjecuciones) ListarEjecuciones(ctx context.Context, u string, l, o int) ([]judge.Ejecucion, error) {
 	return f.list(ctx, u, l, o)
 }
-func (f fakeCorridas) ResumenCodigoPorArea(context.Context, string, []string) (int, int, error) {
+func (f fakeEjecuciones) ResumenCodigoPorArea(context.Context, string, []string) (int, int, error) {
 	return 0, 0, nil
 }
 
@@ -71,7 +71,7 @@ func problemaConOculto() judge.Problema {
 
 const marcadorSecreto = "SECRETO_30"
 
-func withAuth(t *testing.T) (http.Handler, func(groups ...string) string, *fakeProblemas, *fakeCorridas) {
+func withAuth(t *testing.T) (http.Handler, func(groups ...string) string, *fakeProblemas, *fakeEjecuciones) {
 	t.Helper()
 	const issuer, aud = "https://issuer.test", "judge-api"
 	signer, err := authtest.NewSigner(issuer)
@@ -83,9 +83,9 @@ func withAuth(t *testing.T) (http.Handler, func(groups ...string) string, *fakeP
 	fp := &fakeProblemas{get: func(context.Context, string) (judge.Problema, error) {
 		return problemaConOculto(), nil
 	}}
-	fc := &fakeCorridas{
-		crear: func(_ context.Context, u string, e judge.EnvioCodigo, r judge.Resultado, _ string) (judge.Corrida, error) {
-			return judge.Corrida{ID: "c1", UsuarioID: u, ProblemaRef: e.ProblemaRef, Veredicto: string(r.Veredicto)}, nil
+	fc := &fakeEjecuciones{
+		crear: func(_ context.Context, u string, e judge.EnvioCodigo, r judge.Resultado, _ string) (judge.Ejecucion, error) {
+			return judge.Ejecucion{ID: "c1", UsuarioID: u, ProblemaRef: e.ProblemaRef, Veredicto: string(r.Veredicto)}, nil
 		},
 	}
 	run := fakeRunner{por: func(stdin string) runner.RunResult {
@@ -96,7 +96,7 @@ func withAuth(t *testing.T) (http.Handler, func(groups ...string) string, *fakeP
 	router := NewRouter(Options{
 		Service: "judge", Version: "test",
 		Logger:    slog.New(slog.NewJSONHandler(io.Discard, nil)),
-		Problemas: fp, Corridas: fc, Runner: run, Auth: authn,
+		Problemas: fp, Ejecuciones: fc, Runner: run, Auth: authn,
 	})
 	token := func(groups ...string) string {
 		tok, err := signer.Token(authtest.Claims{Subject: "u-est", Audience: aud, Groups: groups})
@@ -115,7 +115,7 @@ func TestEnviarSinAuthDevuelve501(t *testing.T) {
 	router := NewRouter(Options{
 		Service: "judge", Version: "test",
 		Logger:    slog.New(slog.NewJSONHandler(io.Discard, nil)),
-		Problemas: fakeProblemas{}, Corridas: fakeCorridas{}, Runner: fakeRunner{},
+		Problemas: fakeProblemas{}, Ejecuciones: fakeEjecuciones{}, Runner: fakeRunner{},
 	})
 	req := httptest.NewRequest(http.MethodPost, "/v1/judge/runs", strings.NewReader(`{}`))
 	rec := httptest.NewRecorder()
@@ -183,12 +183,12 @@ func TestEnviarLenguajeNoPermitidoDevuelve422(t *testing.T) {
 	}
 }
 
-// TestObtenerCorridaAjenaDevuelve404 verifica la defensa BOLA: el store no
-// encuentra la corrida para otro usuario.
-func TestObtenerCorridaAjenaDevuelve404(t *testing.T) {
+// TestObtenerEjecucionAjenaDevuelve404 verifica la defensa BOLA: el store no
+// encuentra la ejecucion para otro usuario.
+func TestObtenerEjecucionAjenaDevuelve404(t *testing.T) {
 	router, token, _, fc := withAuth(t)
-	fc.get = func(context.Context, string, string) (judge.Corrida, error) {
-		return judge.Corrida{}, store.ErrNotFound
+	fc.get = func(context.Context, string, string) (judge.Ejecucion, error) {
+		return judge.Ejecucion{}, store.ErrNotFound
 	}
 	req := httptest.NewRequest(http.MethodGet, "/v1/judge/runs/otra", nil)
 	req.Header.Set("Authorization", "Bearer "+token("estudiante"))
@@ -203,7 +203,7 @@ func TestReadinessOK(t *testing.T) {
 	router := NewRouter(Options{
 		Service: "judge", Version: "test",
 		Logger:    slog.New(slog.NewJSONHandler(io.Discard, nil)),
-		Problemas: fakeProblemas{}, Corridas: fakeCorridas{}, Runner: fakeRunner{},
+		Problemas: fakeProblemas{}, Ejecuciones: fakeEjecuciones{}, Runner: fakeRunner{},
 	})
 	req := httptest.NewRequest(http.MethodGet, "/v1/ready", nil)
 	rec := httptest.NewRecorder()

@@ -10,7 +10,7 @@ import { ApiError, fetchJSON } from './client'
 import type {
   Analitica,
   Certificacion,
-  Corrida,
+  Ejecucion,
   Cuenta,
   Inscripcion,
   JobReadiness,
@@ -22,7 +22,7 @@ import type {
   PuestoResumen,
   Readiness,
   Recomendaciones,
-  RespuestaCorrida,
+  RespuestaEjecucion,
   ResultadoExamen,
   RevisionSesion,
   SesionConPreguntas,
@@ -454,7 +454,7 @@ export interface EnvioCodigo {
 }
 
 /**
- * submitJudge envía código al juez y devuelve la corrida con su resultado.
+ * submitJudge envía código al juez y devuelve la ejecucion con su resultado.
  *
  * El juez ejecuta el código en un sandbox (un contenedor por caso), así que la
  * latencia puede superar el timeout por defecto: se usa uno amplio (30 s).
@@ -462,8 +462,8 @@ export interface EnvioCodigo {
 export async function submitJudge(
   accessToken: string,
   body: EnvioCodigo,
-): Promise<RespuestaCorrida> {
-  const data = await fetchJSON<RespuestaCorrida>({
+): Promise<RespuestaEjecucion> {
+  const data = await fetchJSON<RespuestaEjecucion>({
     baseURL: requireUrl('JUDGE_BASE_URL', env().JUDGE_BASE_URL),
     path: '/v1/judge/runs',
     method: 'POST',
@@ -475,18 +475,18 @@ export async function submitJudge(
   return data
 }
 
-/** listMyRuns devuelve el historial de corridas del usuario autenticado. */
+/** listMyRuns devuelve el historial de ejecuciones del usuario autenticado. */
 export async function listMyRuns(
   accessToken: string,
   opts: { limit?: number; offset?: number } = {},
-): Promise<PaginatedList<Corrida>> {
+): Promise<PaginatedList<Ejecucion>> {
   const suffix = querystring({ limit: opts.limit, offset: opts.offset })
-  const data = await fetchJSON<PaginatedList<Corrida>>({
+  const data = await fetchJSON<PaginatedList<Ejecucion>>({
     baseURL: requireUrl('JUDGE_BASE_URL', env().JUDGE_BASE_URL),
     path: `/v1/me/judge/runs${suffix}`,
     accessToken,
   })
-  return data ?? listaVacia<Corrida>()
+  return data ?? listaVacia<Ejecucion>()
 }
 
 // --- dss / readiness -------------------------------------------------------

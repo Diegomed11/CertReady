@@ -83,7 +83,7 @@ estudio SAA-C03" más abajo): ruta de estudio, simulacro con formato real y repa
 - **Servicio `judge`** (Go + Docker + MongoDB + PostgreSQL): el subsistema de
   mayor riesgo. Ejecuta código no confiable en **contenedores Docker efímeros
   endurecidos** (sin red, FS de solo lectura, límites de CPU/memoria/PIDs/tiempo,
-  sin privilegios), califica contra los casos del problema y registra la corrida.
+  sin privilegios), califica contra los casos del problema y registra la ejecucion.
   Primer lenguaje: Python (interfaz `Runner` extensible). Decisiones en ADR-11.
 
 Verificado de extremo a extremo: build y pruebas de los diez módulos, calificación,
@@ -99,8 +99,8 @@ código** que corre contra los casos vía el juez, y banco de **Q&A** por puesto
 ## Fase 4 — Capa analítica / OLAP (backend construido)
 
 - **`data/`** (Python, única capa con Python): ETL que lleva los hechos operativos
-  (`exams.intentos`, `judge.corridas`) a un **modelo dimensional en ClickHouse**
-  (estrella plana: `fact_intento`, `fact_corrida`), enriquecidos desde MongoDB.
+  (`exams.intentos`, `judge.ejecuciones`) a un **modelo dimensional en ClickHouse**
+  (estrella plana: `fact_intento`, `fact_ejecucion`), enriquecidos desde MongoDB.
   Incremental por watermark e idempotente.
 - **Cube**: capa semántica sobre ClickHouse con medidas (`accuracy`,
   `tasa_aceptacion`, …) y dimensiones, expuesta como API. Decisiones en ADR-12.

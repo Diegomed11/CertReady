@@ -19,7 +19,7 @@ const (
 )
 
 // enviar recibe un envío de código, lo califica en el sandbox contra los casos
-// del problema y persiste la corrida. La respuesta no revela los casos ocultos.
+// del problema y persiste la ejecucion. La respuesta no revela los casos ocultos.
 func (a *API) enviar(w http.ResponseWriter, r *http.Request) {
 	identidad, ok := auth.IdentityFromContext(r.Context())
 	if !ok {
@@ -68,38 +68,38 @@ func (a *API) enviar(w http.ResponseWriter, r *http.Request) {
 	if area == "" {
 		area = "desconocido"
 	}
-	corrida, err := a.corridas.CrearCorrida(r.Context(), identidad.Subject, in, resultado, area)
+	ejecucion, err := a.ejecuciones.CrearEjecucion(r.Context(), identidad.Subject, in, resultado, area)
 	if err != nil {
-		a.errorInterno(w, r, "registrar corrida", err)
+		a.errorInterno(w, r, "registrar ejecucion", err)
 		return
 	}
 
 	httpx.WriteJSON(w, http.StatusCreated, map[string]any{
-		"corrida":   corrida,
+		"ejecucion":   ejecucion,
 		"resultado": resultado,
 	})
 }
 
-// obtener devuelve una corrida del usuario autenticado (ajena ⇒ 404, BOLA).
+// obtener devuelve una ejecucion del usuario autenticado (ajena ⇒ 404, BOLA).
 func (a *API) obtener(w http.ResponseWriter, r *http.Request) {
 	identidad, ok := auth.IdentityFromContext(r.Context())
 	if !ok {
 		httpx.WriteError(w, http.StatusUnauthorized, "no_autenticado", "se requiere autenticación")
 		return
 	}
-	c, err := a.corridas.ObtenerCorrida(r.Context(), identidad.Subject, r.PathValue("id"))
+	c, err := a.ejecuciones.ObtenerEjecucion(r.Context(), identidad.Subject, r.PathValue("id"))
 	if errors.Is(err, store.ErrNotFound) {
-		httpx.WriteError(w, http.StatusNotFound, "no_encontrado", "corrida no encontrada")
+		httpx.WriteError(w, http.StatusNotFound, "no_encontrado", "ejecucion no encontrada")
 		return
 	}
 	if err != nil {
-		a.errorInterno(w, r, "obtener corrida", err)
+		a.errorInterno(w, r, "obtener ejecucion", err)
 		return
 	}
 	httpx.WriteJSON(w, http.StatusOK, c)
 }
 
-// listarMias devuelve el historial de corridas del usuario autenticado.
+// listarMias devuelve el historial de ejecuciones del usuario autenticado.
 func (a *API) listarMias(w http.ResponseWriter, r *http.Request) {
 	identidad, ok := auth.IdentityFromContext(r.Context())
 	if !ok {
@@ -111,13 +111,13 @@ func (a *API) listarMias(w http.ResponseWriter, r *http.Request) {
 		httpx.WriteError(w, http.StatusBadRequest, "parametros_invalidos", err.Error())
 		return
 	}
-	items, err := a.corridas.ListarCorridas(r.Context(), identidad.Subject, limit, offset)
+	items, err := a.ejecuciones.ListarEjecuciones(r.Context(), identidad.Subject, limit, offset)
 	if err != nil {
-		a.errorInterno(w, r, "listar corridas", err)
+		a.errorInterno(w, r, "listar ejecuciones", err)
 		return
 	}
 	if items == nil {
-		items = []judge.Corrida{}
+		items = []judge.Ejecucion{}
 	}
 	var next *int
 	if len(items) == limit {

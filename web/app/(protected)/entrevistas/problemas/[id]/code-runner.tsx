@@ -6,7 +6,7 @@ import { Badge, type BadgeTone } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { CodeEditor } from '@/components/ui/code-editor'
-import type { Problema, RespuestaCorrida, VeredictoJuez } from '@/lib/api/types'
+import type { Problema, RespuestaEjecucion, VeredictoJuez } from '@/lib/api/types'
 
 /** Etiqueta y tono de cada veredicto global. */
 const VEREDICTO: Record<VeredictoJuez, { label: string; tone: BadgeTone }> = {
@@ -37,7 +37,7 @@ export function CodeRunner({ problema }: { problema: Problema }) {
   const [fuente, setFuente] = useState(plantilla(lenguajes[0] ?? 'python'))
   const [corriendo, setCorriendo] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [respuesta, setRespuesta] = useState<RespuestaCorrida | null>(null)
+  const [respuesta, setRespuesta] = useState<RespuestaEjecucion | null>(null)
 
   function cambiarLenguaje(l: string) {
     setLenguaje(l)
@@ -65,7 +65,7 @@ export function CodeRunner({ problema }: { problema: Problema }) {
         setError('No se pudo ejecutar el código. Inténtalo de nuevo.')
         return
       }
-      setRespuesta((await res.json()) as RespuestaCorrida)
+      setRespuesta((await res.json()) as RespuestaEjecucion)
     } catch {
       setError('No se pudo ejecutar el código. Inténtalo de nuevo.')
     } finally {

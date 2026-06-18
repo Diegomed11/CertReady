@@ -1,7 +1,7 @@
 """Lectura de los hechos operativos y su enriquecimiento.
 
 Los hechos viven en PostgreSQL (``exams.intentos`` + ``exams.sesiones`` y
-``judge.corridas``); la definición que los enriquece (tema/dificultad/tipo de la
+``judge.ejecuciones``); la definición que los enriquece (tema/dificultad/tipo de la
 pregunta, área/dificultad del problema) vive en MongoDB. Todas las consultas son
 parametrizadas (defensa contra inyección).
 """
@@ -31,7 +31,7 @@ _SQL_INTENTOS = """
     order by i.creado_en
 """
 
-_SQL_CORRIDAS = """
+_SQL_EJECUCIONES = """
     select id::text         as id,
            usuario_id::text as usuario_id,
            problema_ref     as problema_ref,
@@ -41,7 +41,7 @@ _SQL_CORRIDAS = """
            casos_total      as casos_total,
            duracion_ms      as duracion_ms,
            creado_en        as creado_en
-    from judge.corridas
+    from judge.ejecuciones
     where creado_en > %s
     order by creado_en
 """
@@ -65,10 +65,10 @@ def leer_intentos(conn: psycopg.Connection, desde: datetime) -> list[dict[str, A
         return cur.fetchall()
 
 
-def leer_corridas(conn: psycopg.Connection, desde: datetime) -> list[dict[str, Any]]:
-    """Devuelve las corridas del juez creadas después de ``desde``."""
+def leer_ejecuciones(conn: psycopg.Connection, desde: datetime) -> list[dict[str, Any]]:
+    """Devuelve las ejecuciones del juez creadas después de ``desde``."""
     with conn.cursor(row_factory=dict_row) as cur:
-        cur.execute(_SQL_CORRIDAS, (desde,))
+        cur.execute(_SQL_EJECUCIONES, (desde,))
         return cur.fetchall()
 
 

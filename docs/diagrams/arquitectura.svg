@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="a2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#5B5C70"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="900" height="700" fill="#FFFFFF"/>
+  <text x="450" y="36" text-anchor="middle" font-size="23" font-weight="700" fill="#1C1B29">Arquitectura por capas — CertReady</text>
+  <text x="450" y="57" text-anchor="middle" font-size="12.5" fill="#5B5C70">De arriba (lo que ve el usuario) hacia abajo (lo que lo sostiene). La seguridad es transversal.</text>
+
+  <!-- flechas verticales -->
+  <g stroke="#5B5C70" stroke-width="2">
+    <line x1="360" y1="171" x2="360" y2="181" marker-end="url(#a2)"/>
+    <line x1="360" y1="255" x2="360" y2="265" marker-end="url(#a2)"/>
+    <line x1="360" y1="389" x2="360" y2="399" marker-end="url(#a2)"/>
+    <line x1="360" y1="487" x2="360" y2="497" marker-end="url(#a2)"/>
+  </g>
+
+  <!-- Banda 1: Clientes -->
+  <rect x="40" y="85" width="640" height="84" rx="12" fill="#EEF0FF" stroke="#4B5BF0" stroke-width="1.5"/>
+  <text x="58" y="108" font-size="12" font-weight="700" fill="#3839B0">CLIENTES</text>
+  <rect x="180" y="100" width="220" height="52" rx="10" fill="#FFFFFF" stroke="#CDD0E6"/>
+  <text x="290" y="123" text-anchor="middle" font-size="13" font-weight="700" fill="#1C1B29">Web — Next.js + TS</text>
+  <text x="290" y="141" text-anchor="middle" font-size="10.5" fill="#5B5C70">patrón BFF</text>
+  <rect x="420" y="100" width="200" height="52" rx="10" fill="#FFFFFF" stroke="#CDD0E6"/>
+  <text x="520" y="123" text-anchor="middle" font-size="13" font-weight="700" fill="#1C1B29">Móvil — Flutter</text>
+  <text x="520" y="141" text-anchor="middle" font-size="10.5" fill="#5B5C70">Android / iOS</text>
+
+  <!-- Banda 2: Borde -->
+  <rect x="40" y="183" width="640" height="70" rx="12" fill="#F4F5FB" stroke="#CDD0E6" stroke-width="1.5"/>
+  <text x="58" y="206" font-size="12" font-weight="700" fill="#5B5C70">BORDE · HTTPS</text>
+  <rect x="180" y="198" width="220" height="42" rx="10" fill="#FFFFFF" stroke="#CDD0E6"/>
+  <text x="290" y="224" text-anchor="middle" font-size="12" fill="#1C1B29">Caddy + DuckDNS <tspan fill="#5B5C70">(demo)</tspan></text>
+  <rect x="420" y="198" width="200" height="42" rx="10" fill="#FFFFFF" stroke="#CDD0E6"/>
+  <text x="520" y="224" text-anchor="middle" font-size="11.5" fill="#1C1B29">CloudFront·WAF·ALB <tspan fill="#5B5C70">(prod)</tspan></text>
+
+  <!-- Banda 3: Aplicación -->
+  <rect x="40" y="267" width="640" height="122" rx="12" fill="#F3EEFF" stroke="#9C8CFA" stroke-width="1.5"/>
+  <text x="58" y="290" font-size="12" font-weight="700" fill="#7C5CD6">APLICACIÓN</text>
+  <rect x="150" y="284" width="160" height="44" rx="10" fill="#FFFFFF" stroke="#CDD0E6"/>
+  <text x="230" y="304" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1C1B29">Web BFF</text>
+  <text x="230" y="320" text-anchor="middle" font-size="10" fill="#5B5C70">Next.js (server)</text>
+  <rect x="324" y="284" width="200" height="44" rx="10" fill="#FFFFFF" stroke="#CDD0E6"/>
+  <text x="424" y="304" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1C1B29">Microservicios en Go</text>
+  <text x="424" y="320" text-anchor="middle" font-size="10" fill="#5B5C70">APIs REST/JSON /v1</text>
+  <rect x="150" y="334" width="160" height="44" rx="10" fill="#FFFFFF" stroke="#E0892B"/>
+  <text x="230" y="354" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1C1B29">Juez de código</text>
+  <text x="230" y="370" text-anchor="middle" font-size="10" fill="#5B5C70">sandbox Docker</text>
+  <rect x="324" y="334" width="200" height="44" rx="10" fill="#FFFFFF" stroke="#CDD0E6"/>
+  <text x="424" y="354" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1C1B29">Capa de datos — Python</text>
+  <text x="424" y="370" text-anchor="middle" font-size="10" fill="#5B5C70">FastAPI · ETL · DSS</text>
+
+  <!-- Banda 4: Datos -->
+  <rect x="40" y="401" width="640" height="84" rx="12" fill="#F4F5FB" stroke="#CDD0E6" stroke-width="1.5"/>
+  <text x="58" y="424" font-size="12" font-weight="700" fill="#5B5C70">DATOS</text>
+  <rect x="150" y="416" width="150" height="54" rx="10" fill="#FFFFFF" stroke="#2D6CDF"/>
+  <text x="225" y="438" text-anchor="middle" font-size="12.5" font-weight="700" fill="#2D6CDF">PostgreSQL</text>
+  <text x="225" y="455" text-anchor="middle" font-size="9.5" fill="#5B5C70">transaccional</text>
+  <rect x="312" y="416" width="150" height="54" rx="10" fill="#FFFFFF" stroke="#16A34A"/>
+  <text x="387" y="438" text-anchor="middle" font-size="12.5" font-weight="700" fill="#16A34A">MongoDB</text>
+  <text x="387" y="455" text-anchor="middle" font-size="9.5" fill="#5B5C70">contenido/preguntas</text>
+  <rect x="474" y="416" width="160" height="54" rx="10" fill="#FFFFFF" stroke="#E0892B"/>
+  <text x="554" y="438" text-anchor="middle" font-size="12.5" font-weight="700" fill="#E0892B">ClickHouse + Cube</text>
+  <text x="554" y="455" text-anchor="middle" font-size="9.5" fill="#5B5C70">OLAP / dimensional</text>
+
+  <!-- Banda 5: Nube -->
+  <rect x="40" y="499" width="640" height="92" rx="12" fill="#FBF6EE" stroke="#E0892B" stroke-width="1.5"/>
+  <text x="58" y="522" font-size="12" font-weight="700" fill="#B5701F">NUBE · INFRA (AWS)</text>
+  <text x="360" y="540" text-anchor="middle" font-size="11.5" fill="#1C1B29">ECS Fargate · CloudFront · WAF · ALB · Cognito · S3 · Secrets Manager</text>
+  <text x="360" y="560" text-anchor="middle" font-size="11.5" fill="#1C1B29">Terraform (infraestructura como código)</text>
+  <text x="360" y="580" text-anchor="middle" font-size="10.5" font-style="italic" fill="#5B5C70">Demo hoy: 1 instancia EC2 con todo dentro · arquitectura gestionada parqueada en Terraform</text>
+
+  <!-- Ribbon Seguridad -->
+  <rect x="700" y="183" width="160" height="408" rx="12" fill="#FDECEC" stroke="#E84C4C" stroke-width="1.5"/>
+  <text x="780" y="210" text-anchor="middle" font-size="12.5" font-weight="700" fill="#C0392B">SEGURIDAD</text>
+  <text x="780" y="226" text-anchor="middle" font-size="10.5" fill="#9B3535">(transversal)</text>
+  <g font-size="11.5" fill="#1C1B29">
+    <text x="780" y="270" text-anchor="middle">OAuth2 / OIDC</text>
+    <text x="780" y="300" text-anchor="middle">JWT (corto + refresh)</text>
+    <text x="780" y="330" text-anchor="middle">RBAC (roles)</text>
+    <text x="780" y="360" text-anchor="middle">RLS (nivel de fila)</text>
+    <text x="780" y="390" text-anchor="middle">rate limit</text>
+    <text x="780" y="420" text-anchor="middle">anti-IDOR</text>
+    <text x="780" y="450" text-anchor="middle">sandbox del juez</text>
+    <text x="780" y="480" text-anchor="middle">CSP / HSTS</text>
+    <text x="780" y="510" text-anchor="middle">secretos fuera</text>
+    <text x="780" y="527" text-anchor="middle">del código</text>
+  </g>
+
+  <text x="360" y="625" text-anchor="middle" font-size="12" fill="#5B5C70">El cliente nunca toca la base directo: siempre pasa por la aplicación (servicios/BFF).</text>
+</svg>

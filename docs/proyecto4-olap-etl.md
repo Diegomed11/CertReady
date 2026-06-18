@@ -15,14 +15,14 @@ flujo del proceso ETL**.
 | Requisito | En CertReady |
 |-----------|--------------|
 | **ETL** | `data/etl/` en Python: extrae los hechos nuevos de PostgreSQL, los enriquece con MongoDB, transforma (funciones puras) y carga en ClickHouse. **Incremental por watermark** e **idempotente** (ReplacingMergeTree). |
-| **Modelado dimensional** | Esquema **estrella**: hechos `fact_intento` y `fact_corrida`; dimensiones (fecha, usuario, certificación, tema, dificultad, área, lenguaje, veredicto…) modeladas en **Cube**. Grano = una fila por evento atómico (un intento de pregunta / una corrida del juez). |
+| **Modelado dimensional** | Esquema **estrella**: hechos `fact_intento` y `fact_ejecucion`; dimensiones (fecha, usuario, certificación, tema, dificultad, área, lenguaje, veredicto…) modeladas en **Cube**. Grano = una fila por evento atómico (un intento de pregunta / una ejecucion del juez). |
 | **OLAP** | **ClickHouse** (motor columnar) como almacén analítico + **Cube** como capa semántica (medidas y dimensiones) que alimenta dashboards y el DSS de *readiness*. |
 
 **Las dos fuentes operativas = los dos problemas (data marts):**
 
 1. **Desempeño en exámenes** — cada intento de pregunta en un simulacro/práctica.
    Mide **acierto** por certificación, tema, dificultad y tiempo.
-2. **Práctica de código (juez)** — cada corrida de código evaluada por el juez.
+2. **Práctica de código (juez)** — cada ejecucion de código evaluada por el juez.
    Mide **tasa de aceptación**, casos pasados y duración por área y lenguaje.
 
 ---
@@ -140,15 +140,15 @@ erDiagram
 
 ### 3.1 Diagrama relacional (origen OLTP)
 
-Las corridas (resultados de calificación) viven en **PostgreSQL** (`judge.corridas`);
+Las ejecuciones (resultados de calificación) viven en **PostgreSQL** (`judge.ejecuciones`);
 la definición del problema (área, dificultad) vive en **MongoDB** (colección
 `problemas`), referenciada por `problema_ref`.
 
 ```mermaid
 erDiagram
-  PROBLEMAS ||--o{ CORRIDAS : "ref lógica (problema_ref)"
+  PROBLEMAS ||--o{ EJECUCIONES : "ref lógica (problema_ref)"
 
-  CORRIDAS {
+  EJECUCIONES {
     uuid id PK
     uuid usuario_id
     text problema_ref
@@ -168,23 +168,23 @@ erDiagram
   }
 ```
 
-- **Hecho atómico:** `CORRIDAS` (una corrida evaluada por el juez).
+- **Hecho atómico:** `EJECUCIONES` (una ejecucion evaluada por el juez).
 - `veredicto` ∈ {accepted, wrong_answer, time_limit_exceeded, …}.
 
-### 3.2 Diagrama dimensional (estrella `fact_corrida`)
+### 3.2 Diagrama dimensional (estrella `fact_ejecucion`)
 
 ```mermaid
 erDiagram
-  DIM_FECHA       ||--o{ FACT_CORRIDA : ""
-  DIM_USUARIO     ||--o{ FACT_CORRIDA : ""
-  DIM_PROBLEMA    ||--o{ FACT_CORRIDA : ""
-  DIM_AREA        ||--o{ FACT_CORRIDA : ""
-  DIM_DIFICULTAD  ||--o{ FACT_CORRIDA : ""
-  DIM_LENGUAJE    ||--o{ FACT_CORRIDA : ""
-  DIM_VEREDICTO   ||--o{ FACT_CORRIDA : ""
+  DIM_FECHA       ||--o{ FACT_EJECUCION : ""
+  DIM_USUARIO     ||--o{ FACT_EJECUCION : ""
+  DIM_PROBLEMA    ||--o{ FACT_EJECUCION : ""
+  DIM_AREA        ||--o{ FACT_EJECUCION : ""
+  DIM_DIFICULTAD  ||--o{ FACT_EJECUCION : ""
+  DIM_LENGUAJE    ||--o{ FACT_EJECUCION : ""
+  DIM_VEREDICTO   ||--o{ FACT_EJECUCION : ""
 
-  FACT_CORRIDA {
-    string corrida_id PK
+  FACT_EJECUCION {
+    string ejecucion_id PK
     date   fecha FK
     string usuario_id FK
     string problema_ref FK
@@ -206,7 +206,7 @@ erDiagram
   DIM_VEREDICTO { string veredicto }
 ```
 
-- **Grano:** una corrida del juez.
+- **Grano:** una ejecucion del juez.
 - **Medidas:** `aceptado` (0/1), `casos_pasados`, `casos_total`, `duracion_ms`.
   Cube deriva **`tasa_aceptacion`** = `sum(aceptado)/count()`.
 - **Dimensiones:** fecha, usuario, problema, área, dificultad, lenguaje, veredicto.
@@ -221,12 +221,12 @@ desde el *watermark*) e **idempotente** (reejecutar sin datos nuevos no cambia n
 ```mermaid
 flowchart TD
   A([Inicio: python -m etl.run]) --> B[Leer watermark por fuente<br/>tabla etl_estado en ClickHouse]
-  B --> C[/EXTRACT · PostgreSQL<br/>intentos + sesiones y corridas<br/>creado_en posterior al watermark/]
+  B --> C[/EXTRACT · PostgreSQL<br/>intentos + sesiones y ejecuciones<br/>creado_en posterior al watermark/]
   C --> D{¿Hay filas nuevas?}
   D -- No --> Z([Fin: no-op])
   D -- Sí --> E[/EXTRACT · MongoDB<br/>preguntas → tema, dificultad, tipo<br/>problemas → área, dificultad/]
   E --> F[TRANSFORM · funciones puras<br/>denormaliza dimensiones · UTC<br/>deriva es_correcto / aceptado y fecha]
-  F --> G[(LOAD · ClickHouse<br/>fact_intento / fact_corrida<br/>ReplacingMergeTree = idempotente)]
+  F --> G[(LOAD · ClickHouse<br/>fact_intento / fact_ejecucion<br/>ReplacingMergeTree = idempotente)]
   G --> H[Avanzar watermark<br/>max creado_en por fuente]
   H --> I[[Cube: capa semántica<br/>medidas y dimensiones]]
   I --> J([Dashboards web y DSS de readiness])
@@ -235,14 +235,14 @@ flowchart TD
 **Pasos:**
 
 1. **Watermark** — lee el último timestamp procesado por fuente (`intentos`,
-   `corridas`) desde `etl_estado`.
+   `ejecuciones`) desde `etl_estado`.
 2. **Extract (PostgreSQL)** — hechos nuevos: `exams.intentos ⋈ exams.sesiones` y
-   `judge.corridas`, filtrando `creado_en > watermark` (consultas parametrizadas).
+   `judge.ejecuciones`, filtrando `creado_en > watermark` (consultas parametrizadas).
 3. **Extract (MongoDB)** — enriquecimiento: `preguntas` (tema/dificultad/tipo) y
    `problemas` (área/dificultad), solo de las refs que aparecen en los hechos.
 4. **Transform** — funciones **puras** (sin I/O, testeables): normaliza a UTC,
    denormaliza las dimensiones en el hecho, deriva `es_correcto`/`aceptado` y `fecha`.
-5. **Load (ClickHouse)** — inserta en `fact_intento`/`fact_corrida`
+5. **Load (ClickHouse)** — inserta en `fact_intento`/`fact_ejecucion`
    (`ReplacingMergeTree` → idempotente por id).
 6. **Avanzar watermark** — guarda el `max(creado_en)` cargado por fuente.
 7. **Cube** expone las medidas/dimensiones; los **dashboards** y el **DSS** las consumen.

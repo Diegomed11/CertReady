@@ -11,7 +11,7 @@ class Repo:
     """Acceso de solo lectura a los hechos analíticos en ClickHouse.
 
     Cubre las tres señales de preparación: exámenes (``fact_intento``), código
-    (``fact_corrida``) y preguntas de entrevista (``fact_qa``).
+    (``fact_ejecucion``) y preguntas de entrevista (``fact_qa``).
     """
 
     def __init__(self, client: Client, database: str = "analytics") -> None:
@@ -78,13 +78,13 @@ class Repo:
         Returns
         -------
         list : ``(problema_ref, area, mejor_aceptado, intentos)`` por problema
-        distinto; lista vacía si no hay áreas o corridas.
+        distinto; lista vacía si no hay áreas o ejecuciones.
         """
         if not areas:
             return []
         res = self.client.query(
             f"select problema_ref, any(area), max(aceptado), count() "  # noqa: S608 (db es interno)
-            f"from {self.db}.fact_corrida "
+            f"from {self.db}.fact_ejecucion "
             f"where usuario_id = {{u:String}} and area in {{a:Array(String)}} "
             f"group by problema_ref",
             parameters={"u": usuario_id, "a": list(areas)},

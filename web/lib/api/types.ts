@@ -237,8 +237,8 @@ export interface ResultadoJuez {
   casos: ResultadoCaso[]
 }
 
-/** Registro persistido de una corrida (historial). */
-export interface Corrida {
+/** Registro persistido de una ejecucion (historial). */
+export interface Ejecucion {
   id: string
   usuario_id: string
   problema_ref: string
@@ -251,8 +251,8 @@ export interface Corrida {
 }
 
 /** Respuesta de POST /v1/judge/runs. */
-export interface RespuestaCorrida {
-  corrida: Corrida
+export interface RespuestaEjecucion {
+  ejecucion: Ejecucion
   resultado: ResultadoJuez
 }
 

@@ -26,8 +26,8 @@ COLUMNAS_INTENTO = [
     "intentos_n",
 ]
 
-COLUMNAS_CORRIDA = [
-    "corrida_id",
+COLUMNAS_EJECUCION = [
+    "ejecucion_id",
     "usuario_id",
     "problema_ref",
     "area",

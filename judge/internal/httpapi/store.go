@@ -12,11 +12,11 @@ type ProblemasStore interface {
 	ObtenerProblema(ctx context.Context, id string) (judge.Problema, error)
 }
 
-// CorridasStore persiste y consulta las corridas del estudiante.
-type CorridasStore interface {
+// EjecucionesStore persiste y consulta las ejecuciones del estudiante.
+type EjecucionesStore interface {
 	PingPostgres(ctx context.Context) error
-	CrearCorrida(ctx context.Context, usuarioID string, envio judge.EnvioCodigo, r judge.Resultado, area string) (judge.Corrida, error)
-	ObtenerCorrida(ctx context.Context, usuarioID, id string) (judge.Corrida, error)
-	ListarCorridas(ctx context.Context, usuarioID string, limit, offset int) ([]judge.Corrida, error)
+	CrearEjecucion(ctx context.Context, usuarioID string, envio judge.EnvioCodigo, r judge.Resultado, area string) (judge.Ejecucion, error)
+	ObtenerEjecucion(ctx context.Context, usuarioID, id string) (judge.Ejecucion, error)
+	ListarEjecuciones(ctx context.Context, usuarioID string, limit, offset int) ([]judge.Ejecucion, error)
 	ResumenCodigoPorArea(ctx context.Context, usuarioID string, areas []string) (problemas, resueltos int, err error)
 }

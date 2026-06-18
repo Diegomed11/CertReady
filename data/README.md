@@ -5,14 +5,14 @@ del proyecto). Lleva los hechos operativos a un modelo dimensional en **ClickHou
 y los expone con una capa semántica en **Cube**.
 
 ```
-PostgreSQL (exams.intentos, judge.corridas)  ─┐
+PostgreSQL (exams.intentos, judge.ejecuciones)  ─┐
                                               ├─►  ETL (Python)  ─►  ClickHouse (estrella)  ─►  Cube (API)
 MongoDB (preguntas, problemas) [enriquece]   ─┘
 ```
 
 El modelo es una **estrella plana** (los atributos de dimensión son columnas del
 hecho), idiomática de ClickHouse. Hechos: `fact_intento` (intentos de examen) y
-`fact_corrida` (corridas del juez). Decisiones en **ADR-12**.
+`fact_ejecucion` (ejecuciones del juez). Decisiones en **ADR-12**.
 
 ## Componentes
 

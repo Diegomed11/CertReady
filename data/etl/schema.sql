@@ -28,9 +28,9 @@ create table if not exists {db}.fact_intento
 engine = ReplacingMergeTree
 order by (fecha, certificacion, tema, usuario_id, intento_id);
 
-create table if not exists {db}.fact_corrida
+create table if not exists {db}.fact_ejecucion
 (
-    corrida_id    String,
+    ejecucion_id    String,
     usuario_id    String,
     problema_ref  String,
     area          LowCardinality(String),
@@ -45,7 +45,7 @@ create table if not exists {db}.fact_corrida
     creado_en     DateTime
 )
 engine = ReplacingMergeTree
-order by (fecha, area, lenguaje, usuario_id, corrida_id);
+order by (fecha, area, lenguaje, usuario_id, ejecucion_id);
 
 create table if not exists {db}.fact_qa
 (

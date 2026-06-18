@@ -47,8 +47,8 @@ def test_fila_intento_incorrecto_y_sin_enriquecimiento():
     assert fila["tipo_pregunta"] == transform.DESCONOCIDO
 
 
-def test_fila_corrida_aceptado():
-    corrida = {
+def test_fila_ejecucion_aceptado():
+    ejecucion = {
         "id": "c1",
         "usuario_id": "u1",
         "problema_ref": "p1",
@@ -61,15 +61,15 @@ def test_fila_corrida_aceptado():
     }
     problemas = {"p1": {"area": "algoritmos", "dificultad": "facil"}}
 
-    fila = transform.fila_corrida(corrida, problemas)
+    fila = transform.fila_ejecucion(ejecucion, problemas)
 
     assert fila["aceptado"] == 1
     assert fila["area"] == "algoritmos"
     assert fila["lenguaje"] == "python"
 
 
-def test_fila_corrida_no_aceptado_y_sin_enriquecimiento():
-    corrida = {
+def test_fila_ejecucion_no_aceptado_y_sin_enriquecimiento():
+    ejecucion = {
         "id": "c2",
         "usuario_id": "u1",
         "problema_ref": "huerfano",
@@ -80,7 +80,7 @@ def test_fila_corrida_no_aceptado_y_sin_enriquecimiento():
         "duracion_ms": 10,
         "creado_en": datetime(2026, 6, 7, 12, 5, 0),
     }
-    fila = transform.fila_corrida(corrida, {})
+    fila = transform.fila_ejecucion(ejecucion, {})
 
     assert fila["aceptado"] == 0
     assert fila["area"] == transform.DESCONOCIDO

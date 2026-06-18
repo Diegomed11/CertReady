@@ -18,11 +18,11 @@ const (
 	usuarioB = "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"
 )
 
-func testCorridas(t *testing.T) *store.CorridasStore {
+func testEjecuciones(t *testing.T) *store.EjecucionesStore {
 	t.Helper()
 	dsn := os.Getenv("JUDGE_TEST_DATABASE_URL")
 	if dsn == "" {
-		t.Skip("define JUDGE_TEST_DATABASE_URL para los tests de corridas")
+		t.Skip("define JUDGE_TEST_DATABASE_URL para los tests de ejecuciones")
 	}
 	ctx := context.Background()
 	pool, err := postgres.Connect(ctx, dsn)
@@ -33,10 +33,10 @@ func testCorridas(t *testing.T) *store.CorridasStore {
 	if err := store.Migrate(ctx, pool, migrations.FS); err != nil {
 		t.Fatalf("migrar: %v", err)
 	}
-	if _, err := pool.Exec(ctx, `truncate judge.corridas`); err != nil {
+	if _, err := pool.Exec(ctx, `truncate judge.ejecuciones`); err != nil {
 		t.Fatalf("truncar: %v", err)
 	}
-	return store.NewCorridas(pool)
+	return store.NewEjecuciones(pool)
 }
 
 func envioYResultado() (judge.EnvioCodigo, judge.Resultado) {
@@ -44,28 +44,28 @@ func envioYResultado() (judge.EnvioCodigo, judge.Resultado) {
 		judge.Resultado{Veredicto: judge.Accepted, CasosTotal: 2, CasosPasados: 2, DuracionMs: 42}
 }
 
-func TestCorridaCrearObtenerListar(t *testing.T) {
-	st := testCorridas(t)
+func TestEjecucionCrearObtenerListar(t *testing.T) {
+	st := testEjecuciones(t)
 	ctx := context.Background()
 	envio, res := envioYResultado()
 
-	c, err := st.CrearCorrida(ctx, usuarioA, envio, res, "arrays")
+	c, err := st.CrearEjecucion(ctx, usuarioA, envio, res, "arrays")
 	if err != nil {
 		t.Fatalf("crear: %v", err)
 	}
 	if c.Veredicto != "accepted" || c.CasosPasados != 2 || c.DuracionMs != 42 {
-		t.Fatalf("corrida creada inesperada: %+v", c)
+		t.Fatalf("ejecucion creada inesperada: %+v", c)
 	}
 
-	got, err := st.ObtenerCorrida(ctx, usuarioA, c.ID)
+	got, err := st.ObtenerEjecucion(ctx, usuarioA, c.ID)
 	if err != nil {
 		t.Fatalf("obtener: %v", err)
 	}
 	if got.ID != c.ID || got.ProblemaRef != "p_sum" {
-		t.Fatalf("corrida obtenida inesperada: %+v", got)
+		t.Fatalf("ejecucion obtenida inesperada: %+v", got)
 	}
 
-	lista, err := st.ListarCorridas(ctx, usuarioA, 10, 0)
+	lista, err := st.ListarEjecuciones(ctx, usuarioA, 10, 0)
 	if err != nil {
 		t.Fatalf("listar: %v", err)
 	}
@@ -74,22 +74,22 @@ func TestCorridaCrearObtenerListar(t *testing.T) {
 	}
 }
 
-func TestCorridaPertenencia(t *testing.T) {
-	st := testCorridas(t)
+func TestEjecucionPertenencia(t *testing.T) {
+	st := testEjecuciones(t)
 	ctx := context.Background()
 	envio, res := envioYResultado()
 
-	c, err := st.CrearCorrida(ctx, usuarioA, envio, res, "arrays")
+	c, err := st.CrearEjecucion(ctx, usuarioA, envio, res, "arrays")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// usuarioB no puede ver la corrida de usuarioA (BOLA -> ErrNotFound).
-	if _, err := st.ObtenerCorrida(ctx, usuarioB, c.ID); !errors.Is(err, store.ErrNotFound) {
+	// usuarioB no puede ver la ejecucion de usuarioA (BOLA -> ErrNotFound).
+	if _, err := st.ObtenerEjecucion(ctx, usuarioB, c.ID); !errors.Is(err, store.ErrNotFound) {
 		t.Fatalf("obtener ajena: err = %v; quería ErrNotFound", err)
 	}
 	// Y su historial está vacío.
-	lista, err := st.ListarCorridas(ctx, usuarioB, 10, 0)
+	lista, err := st.ListarEjecuciones(ctx, usuarioB, 10, 0)
 	if err != nil {
 		t.Fatal(err)
 	}

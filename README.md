@@ -43,7 +43,7 @@ CertReady tiene **dos superficies de producto** sobre una misma base:
 1. **Preparación de certificaciones.** El estudiante elige una o varias certificaciones, recibe **material de estudio** organizado como ruta de aprendizaje (estilo Duolingo) y presenta **simulacros cronometrados** con formato real (muestreo ponderado por dominio, corte de aprobación, repaso con explicaciones).
 2. **Preparación de entrevistas técnicas.** Ejercicios tipo **LeetCode** evaluados automáticamente por un **juez de código en sandbox**, más un banco de **preguntas (Q&A) por puesto y área**.
 
-Encima de todo eso corre **analítica dimensional (OLAP)** que mide el desempeño y un **DSS** (sistema de apoyo a decisiones) que estima la *readiness* —probabilidad de aprobar— con un modelo psicométrico (IRT), recomienda la siguiente mejor acción y, a partir de tu CV, propone qué certificaciones te convienen.
+Encima de todo eso, la analítica vive en **dos planos** (ver §3): el **operativo** —los servicios Go estiman, en tiempo real desde Postgres, tu *readiness* (probabilidad de aprobar, con un modelo psicométrico IRT), tu acierto por tema y tu preparación por puesto— y el **analítico de negocio** —un pipeline OLAP (ETL → ClickHouse → DSS) que agrega a toda la población para KPIs, *gaps* de contenido y retención—. El DSS también, a partir de tu CV, propone qué certificaciones te convienen.
 
 El contenido es **original** (sin copiar guías oficiales ni "brain dumps") y la identidad es **propia** (sin logos de terceros). El detalle de la política de marcas está en [`docs/contenido-y-marcas.md`](docs/contenido-y-marcas.md) (y en las reglas locales `.claude/rules/marcas-certificaciones.md`).
 
@@ -78,13 +78,16 @@ El navegador **solo** habla con la web (Next.js). La web es un *Backend for Fron
 ### 2.6 Modelo dimensional + OLAP sin MDX (ADR-12)
 La analítica usa un **esquema estrella plano** en **ClickHouse** (el hecho denormaliza sus dimensiones como columnas, idiomático de ClickHouse) y **Cube** como capa semántica que expone medidas y dimensiones como **API SQL/REST**. Se descartó MDX a propósito: las pre-agregaciones de Cube cumplen el rol del cubo pre-computado, pero todo se consulta con SQL.
 
-### 2.7 DSS con psicometría real (ADR-13)
-La *readiness* no es un porcentaje inventado: se calcula con **IRT Rasch (1PL)** calibrado por población (numpy puro, sin scipy). Es un modelo de teoría de respuesta al ítem que separa **dificultad** del ítem y **habilidad** del estudiante, lo que da una estimación defendible de "probabilidad de aprobar". El recomendador de CV usa **embeddings locales (ONNX)** —sin enviar datos personales a un tercero—, lo que respeta la privacidad y el $0.
+### 2.7 Dos planos de datos: operativo (Go) vs analítico (DSS)
+La analítica **por-usuario en tiempo real** (acierto por tema, tendencia, *readiness* por certificación y por puesto) es **operativa**, no por lotes: la sirven los **servicios Go sobre PostgreSQL**, denormalizando las dimensiones necesarias en las tablas de hechos (`exams.intentos`, `judge.ejecuciones`, `progress.qa_revisiones`). El **OLAP/ETL/DSS** se reserva para la analítica de **negocio agregada** (KPIs, gaps de contenido, churn) que sí es por lotes. Antes esto se mezclaba —la readiness individual salía del DSS leyendo ClickHouse—; se separó porque era forzar maquinaria analítica a un caso operativo. Detalle en §3.
 
-### 2.8 Seguridad por diseño (Fase 7)
+### 2.8 DSS con psicometría real (ADR-13)
+La *readiness* no es un porcentaje inventado: se calcula con **IRT Rasch (1PL)** calibrado por población (numpy puro, sin scipy). Es un modelo de teoría de respuesta al ítem que separa **dificultad** del ítem y **habilidad** del estudiante, lo que da una estimación defendible de "probabilidad de aprobar". Hoy el IRT vive en dos lugares según el plano: en **Go** para la readiness por-usuario en vivo, y en el **DSS** para alimentar los agregados de negocio. El recomendador de CV usa **embeddings locales (ONNX)** —sin enviar datos personales a un tercero—, lo que respeta la privacidad y el $0.
+
+### 2.9 Seguridad por diseño (Fase 7)
 OIDC/JWT desde el día uno, RBAC, autorización a nivel de objeto (anti-IDOR/BOLA), validación de entrada, secretos fuera del código, *security headers*, *rate limiting*, RLS en PostgreSQL como defensa en profundidad, sanitización de archivos y un **sandbox endurecido** para el código del usuario. Ver §12.
 
-### 2.9 Verificación por fase y convenciones estrictas
+### 2.10 Verificación por fase y convenciones estrictas
 Cada fase se cierra con pruebas reales (unitarias + integración contra Postgres/Mongo/ClickHouse de verdad, y la suite de escape del sandbox con Docker). Convenciones por lenguaje (`gofmt`/`golangci-lint`, `ruff`/`black`, `eslint`/`prettier`, `dart format`), **commits convencionales**, y reglas scopeadas por carpeta en [`.claude/rules/`](.claude/rules/). Detalle en [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ---
@@ -92,6 +95,15 @@ Cada fase se cierra con pruebas reales (unitarias + integración contra Postgres
 ## 3. Arquitectura de alto nivel
 
 Conviven **dos topologías** a propósito: la **real desplegada hoy** (una sola caja EC2, para la demo a bajo costo) y la **objetivo de producción** (AWS gestionado, escrita en Terraform y validada, parqueada hasta tener presupuesto). El **mismo código** sirve a ambas: cada servicio Go expone un único `http.Handler` con dos *entrypoints* (`cmd/server` para HTTP/contenedor y `cmd/lambda` para Lambda).
+
+### Dos planos de datos (operativo vs analítico)
+
+Transversal a ambas topologías, el sistema separa **dos planos** según la naturaleza de la pregunta —no según la tecnología:
+
+- **Plano operativo (tiempo real, por-usuario).** Lo que el estudiante ve **de sí mismo en vivo**: acierto por tema, tendencia, *readiness* por certificación y por puesto, resumen de problemas por área. Lo sirven los **servicios Go directamente sobre PostgreSQL** (su base transaccional), sin pasar por el almacén analítico. Es inmediato, siempre fresco y aislado por dueño (RLS). Se logró **denormalizando** las dimensiones que antes solo vivían en Mongo hacia las tablas operativas: tema/dificultad en `exams.intentos`, área en `judge.ejecuciones` y área en `progress.qa_revisiones`.
+- **Plano analítico (por lotes, agregado, de negocio).** Decisiones de **plataforma** sobre **toda** la población: KPIs y actividad, *gaps* de contenido (temas difíciles con volumen) y retención/churn. Va por el pipeline **ETL → ClickHouse (OLAP) → DSS**, que ahora expone **solo endpoints de negocio** (`/v1/business/*`) más el recomendador de CV. Se consume desde un **dashboard de administración** en la web.
+
+> **Replanteo (ADR):** antes la analítica por-usuario (readiness, acierto por tema, preparación por puesto) se servía desde el **DSS leyendo ClickHouse**. Era usar maquinaria **analítica y por lotes** para un caso **operativo y en tiempo real** de una sola persona. Se reubicó cada cosa en su plano: lo por-usuario es ahora **Go/Postgres**; el OLAP/ETL/DSS quedó para **agregación y decisiones de negocio**. El recomendador de CV **no es OLAP** (es inferencia con embeddings) y se mantiene aparte en el DSS.
 
 ### Topología real (demo en producción)
 
@@ -182,7 +194,7 @@ flowchart TB
 | `exams` | Go | 18095 | Mongo + Postgres (`exams`) | Banco de preguntas, simulacros, intentos |
 | `problems` | Go | 18096 | MongoDB | Problemas tipo LeetCode + Q&A |
 | `judge` | Go + Docker | 18097 | Mongo + Postgres (`judge`) | Ejecuta código en sandbox y califica |
-| `DSS` | Python (FastAPI) | 18098 | ClickHouse + Mongo | Readiness (IRT), analítica, recomendador |
+| `DSS` | Python (FastAPI) | 18098 | ClickHouse + Mongo | Analítica de **negocio** (KPIs, gaps, churn) + recomendador de CV |
 | `web` | Next.js | 3000 | — (BFF) | App web; única superficie que ve el navegador |
 | `health` | Go | 8080 | — | Servicio de referencia (plantilla mínima) |
 | PostgreSQL | — | 5432 | — | Transaccional |
@@ -244,6 +256,7 @@ Inscripciones del estudiante a objetivos del catálogo. Valida que el objetivo e
 #### `progress` — Postgres (`progress`, con **RLS**)
 Avance real del estudiante: lecciones leídas, resultado de quizzes por tema y autoevaluaciones de Q&A (nivel 1–3, *append-only* para analítica).
 - `POST /v1/progress/lessons` · `POST /v1/progress/quizzes` · `POST /v1/progress/qa` · `GET /v1/me/progress`
+- **Plano operativo (agregador por-usuario):** `GET /v1/me/job-readiness?puesto=` combina exámenes + código + Q&A llamando por HTTP a `exams` y `judge` (en tiempo real, no por ETL); `GET /v1/puestos` sirve el catálogo de puestos (antes en el DSS, ahora en Go).
 
 #### `content` — MongoDB
 Sirve material de estudio. Lectura pública, creación admin.
@@ -252,6 +265,7 @@ Sirve material de estudio. Lectura pública, creación admin.
 #### `exams` — Mongo (preguntas) + Postgres (`exams`, con **RLS**)
 Banco de preguntas en Mongo; sesiones, intentos y calificación en Postgres. Genera simulacros, califica del lado del servidor (**nunca** filtra la respuesta correcta al cliente) y registra el intento (que luego alimenta la analítica).
 - `POST /v1/exams/sessions` · `POST /v1/exams/sessions/{id}/submit` · `GET /v1/exams/sessions/{id}` · `GET /v1/me/exams` · `POST /v1/questions` *(admin)*
+- **Plano operativo (analítica por-usuario en vivo, desde Postgres):** `GET /v1/me/analytics?certificacion=` (acierto por tema y tendencia) y `GET /v1/me/readiness?certificacion=` (preparación), apoyados en `tema`/`dificultad` denormalizados en `exams.intentos`.
 
 #### `problems` — MongoDB
 Banco de problemas tipo LeetCode (con casos de prueba **ocultos** y límites) y banco de **Q&A** por puesto/área. La lectura pública **nunca** expone los casos ocultos ni las salidas esperadas.
@@ -261,6 +275,7 @@ Banco de problemas tipo LeetCode (con casos de prueba **ocultos** y límites) y 
 #### `judge` — Mongo (problemas) + Postgres (`judge`) + Docker
 El subsistema crítico. Ver §6.
 - `POST /v1/judge/runs` · `GET /v1/judge/runs/{id}` · `GET /v1/me/judge/runs`
+- **Plano operativo:** `GET /v1/me/code/summary` (problemas resueltos por **área**, en vivo desde Postgres con el `area` denormalizado en `judge.ejecuciones`).
 
 #### `health` — sin estado
 Plantilla mínima desplegable: `GET /v1/health`, `GET /v1/ready`. Sirvió para validar el pipeline end-to-end en Fase 0.
@@ -322,7 +337,7 @@ La interfaz `Runner` permite añadir lenguajes (hoy **Python**; luego Go, JS) **
 | `--security-opt` | `no-new-privileges` | Sin escalada |
 | `timeout -k 3 <s>` + *backstop* por contexto | +8 s de holgura | Corte de tiempo robusto |
 
-**Anti-fuga:** los casos ocultos y sus salidas esperadas viven en Mongo; el juez los lee del lado del servidor para calificar y **jamás** los devuelve al cliente. La ejecucion se registra en Postgres (`judge.ejecuciones`) para historial y analítica. La Fase 3 incluyó una **suite de escape** (red, FS, fork-bomb, memoria, tiempo) que corre en CI con Docker.
+**Anti-fuga:** los casos ocultos y sus salidas esperadas viven en Mongo; el juez los lee del lado del servidor para calificar y **jamás** los devuelve al cliente. La ejecución se registra en Postgres (`judge.ejecuciones`, con el `area` denormalizada) para historial y para la analítica operativa por-usuario (`/v1/me/code/summary`). La Fase 3 incluyó una **suite de escape** (red, FS, fork-bomb, memoria, tiempo) que corre en CI con Docker.
 
 ### Cómo corre una entrega
 
@@ -384,18 +399,21 @@ Cube define los cubos como capa semántica y los expone como API:
 
 Las pre-agregaciones materializadas quedan diferidas (requieren Cube Store en el despliegue gestionado); el modelo semántico ya es funcional sin ellas.
 
-### 7.3 DSS — readiness, analítica y recomendador (`data/dss`)
+### 7.3 DSS — analítica de negocio y recomendador (`data/dss`)
 
 FastAPI que lee ClickHouse (con degradación elegante: si ClickHouse no está, devuelve 200 "sin datos" en vez de 5xx). La conexión es **perezosa** (no conecta al importar), y la lógica numérica es **pura** (testeable sin DB).
+
+Tras el replanteo de planos (ver §3), el DSS expone **solo endpoints de negocio** (agregados sobre toda la población, para el dashboard de administración) más el recomendador de CV. La analítica **por-usuario en vivo** (readiness, acierto por tema, job-readiness, catálogo de puestos) **migró al plano operativo en Go** sobre Postgres (ver §5.2) y **ya no vive aquí**.
 
 | Método | Endpoint | Qué devuelve |
 |---|---|---|
 | GET | `/v1/health` | Liveness |
-| GET | `/v1/readiness/{usuario_id}?certificacion=` | readiness %, probabilidad de aprobar, habilidad θ, dominio por celda, siguiente acción |
+| GET | `/v1/business/overview` | KPIs de plataforma + actividad mensual |
+| GET | `/v1/business/areas` | Gaps de contenido: temas difíciles con volumen (dónde reforzar material) |
+| GET | `/v1/business/churn` | Retención: vida útil por usuario, abandono |
 | POST | `/v1/recommendations` | Sube CV (multipart) → perfil + caminos + certificaciones recomendadas |
-| GET | `/v1/analytics/{usuario_id}?certificacion=` | total/aciertos/%, acierto por tema, tendencia por fecha |
-| GET | `/v1/puestos` | Catálogo de puestos (con sus áreas de Q&A y de código) |
-| GET | `/v1/job-readiness/{usuario_id}?puesto=` | Readiness combinada por puesto (exámenes + código + Q&A) |
+
+El **modelo IRT** sigue en el DSS pero ahora alimenta los **agregados de negocio** (p. ej. dificultad poblacional por celda para detectar *gaps*), no la readiness individual del estudiante.
 
 **El modelo IRT Rasch (1PL)**, tal como está codificado:
 
@@ -407,7 +425,7 @@ FastAPI que lee ClickHouse (con degradación elegante: si ClickHouse no está, d
 
 **El recomendador de CV** (`recomendador.py`): extrae texto del PDF/DOCX/plano (con límite de páginas, anti *zip-bomb* y `422` ante archivos corruptos), calcula **embeddings locales** con `fastembed` (modelo ONNX multilingüe `paraphrase-multilingual-MiniLM-L12-v2`, ~120 MB, se cachea), y rankea las ~50 certificaciones del dataset curado combinando **similitud semántica + solape de habilidades + bonus por área**. El CV se procesa **en memoria y no se persiste** (ADR-14).
 
-**Job-readiness** combina tres señales con pesos por puesto (renormaliza si falta alguna): exámenes (IRT), código (mejor `aceptado` por problema) y Q&A (mejor `nivel` por pregunta).
+> **Nota:** el **job-readiness por-usuario** (combinar exámenes + código + Q&A con pesos por puesto) ya **no** se calcula aquí: lo hace el servicio Go `progress` en `GET /v1/me/job-readiness`, agregando en tiempo real por HTTP contra `exams` y `judge` (plano operativo, §5.2).
 
 ### 7.4 Los *seeders* (de dónde sale el contenido)
 - `scripts/seed-temas.sql` — los 12 temas del temario AWS SAA-C03 (idempotente).
@@ -441,14 +459,15 @@ Next.js 15 (App Router, *server components* por defecto). El navegador solo habl
 | `/estudiar` · `/estudiar/[cert]` · `/estudiar/[cert]/[tema]` | Ruta de aprendizaje (estilo Duolingo): temas con estado bloqueado/disponible/completado, lector de hojas + mini-quiz que desbloquea el siguiente |
 | `/examenes` · `/examenes/[id]` | Lista/historial de simulacros; *runner* cronometrado con envío y repaso |
 | `/entrevistas` · `/problemas/[id]` · `/preguntas/[id]` | Hub de entrevistas: problemas con **editor de código** evaluado por el juez, y banco de **Q&A** por puesto |
-| `/progreso` | Avance real + dashboards de analítica (acierto por dominio vía DSS) |
-| `/preparacion` | Readiness por **puesto** (exámenes + código + Q&A combinados) |
+| `/progreso` | Avance real + analítica **por-usuario en vivo** (acierto por tema y tendencia desde `exams /v1/me/analytics`; readiness desde `exams /v1/me/readiness`) |
+| `/preparacion` | Readiness por **puesto** (exámenes + código + Q&A combinados por `progress /v1/me/job-readiness`) |
+| `/admin` (dashboard) | Analítica de **negocio** desde el DSS (`/v1/business/overview`, `/areas`, `/churn`) |
 | `/recomendaciones` | "Mi camino": sube tu CV → recomendaciones del DSS |
 | `/certifications` | Catálogo con inscripción |
 | `/perfil` · `/admin` | Perfil propio; panel de admin (gated por rol) |
 
 ### 8.3 Rutas BFF (`app/api`)
-`auth/login` (POST nativo · GET inicia OIDC), `auth/register`, `auth/callback` (intercambia el código y sella la sesión), `auth/logout`, `me` (GET/PATCH), `enrollments` (+`[id]`), `examenes` (+`[id]/submit`), `judge`, `progress/{lessons,quizzes,qa}`, `recommendations`. Cada una proxea al servicio correspondiente con el token de la sesión.
+`auth/login` (POST nativo · GET inicia OIDC), `auth/register`, `auth/callback` (intercambia el código y sella la sesión), `auth/logout`, `me` (GET/PATCH), `enrollments` (+`[id]`), `examenes` (+`[id]/submit`), `judge`, `progress/{lessons,quizzes,qa}`, `recommendations`. Cada una proxea al servicio correspondiente con el token de la sesión. La analítica **por-usuario en vivo** (`exams /v1/me/{analytics,readiness}`, `judge /v1/me/code/summary`, `progress /v1/me/job-readiness`, `progress /v1/puestos`) se consume igual vía BFF; y el **dashboard de admin** proxea los `/v1/business/*` del DSS.
 
 ### 8.4 Sistema de diseño y animaciones
 Identidad propia azul→morado, fuentes Fredoka/Nunito/IBM Plex Mono. Componentes: `sidebar` (menú con íconos **Lottie**), `landing` (hero con shaders WebGL + título "gooey" + secciones con *scroll reveal*), `quiz-runner`, `code-editor`, `gauge`, `cv-recommender`, sistema de tarjetas con borde *beam* y CTA arcoíris.
@@ -637,10 +656,31 @@ sequenceDiagram
   E->>E: califica del lado servidor, guarda intentos
   E-->>W: puntaje + desglose por seccion
   W-->>B: resultado + repaso
-  Note over E: los intentos alimentan el ETL -> readiness
+  Note over E: los intentos quedan en Postgres (con tema/dificultad denormalizados)
 ```
 
-### 11.3 De la actividad a la readiness (analítica)
+### 11.3 Plano operativo — readiness por-usuario en vivo (Go/Postgres)
+
+Lo que el estudiante ve de sí mismo no pasa por el ETL ni por ClickHouse: lo sirve `exams` directo desde su Postgres.
+
+```mermaid
+sequenceDiagram
+  participant B as Navegador
+  participant W as Web /progreso (BFF)
+  participant E as exams :18095
+  participant PG as Postgres exams
+
+  B->>W: GET /progreso (cookie)
+  W->>E: GET /v1/me/readiness?certificacion= (Bearer)
+  E->>PG: lee intentos del usuario + accuracy poblacional (tema/dificultad denormalizados)
+  E->>E: IRT Rasch -> theta, readiness, prob. aprobar
+  E-->>W: readiness % + acierto por tema + tendencia
+  W-->>B: dashboard personal en vivo
+```
+
+### 11.4 Plano analítico — KPIs de negocio (ETL → ClickHouse → DSS)
+
+En paralelo y por lotes, los mismos hechos alimentan la analítica agregada para el dashboard de administración.
 
 ```mermaid
 sequenceDiagram
@@ -648,15 +688,14 @@ sequenceDiagram
   participant ETL as ETL Python
   participant CH as ClickHouse
   participant DSS as DSS FastAPI
-  participant W as Web /progreso
+  participant W as Web /admin (dashboard)
 
   ETL->>PG: lee filas con creado_en > watermark
   ETL->>CH: inserta en fact_* (ReplacingMergeTree)
   ETL->>CH: actualiza etl_estado (watermark)
-  W->>DSS: GET /v1/readiness/{usuario}?certificacion=
-  DSS->>CH: accuracy poblacional + respuestas del usuario
-  DSS->>DSS: IRT Rasch -> theta, readiness, prob. aprobar
-  DSS-->>W: readiness % + siguiente accion
+  W->>DSS: GET /v1/business/overview (y /areas, /churn)
+  DSS->>CH: agrega KPIs, gaps de contenido, retencion
+  DSS-->>W: KPIs + actividad + gaps + churn
 ```
 
 ---

@@ -36,7 +36,7 @@ Lleva este orden; en cada paso tienes la frase para acompañar.
 4. **Estudiar (ruta tipo Duolingo).** "Cada tema tiene material y un mini-quiz que desbloquea el siguiente. El contenido es **original** (no copiamos guías oficiales)."
 5. **Simulacro de examen.** "65 preguntas, cronometrado, con muestreo ponderado por dominio igual que el examen real, y al final te da el desglose por sección."
 6. **Entrevistas → correr código.** "Escribes código en el editor, le das *Correr*, y el sistema lo ejecuta en una **caja aislada (sandbox)** y lo califica contra casos de prueba. Esto es lo más delicado en seguridad y lo resolvimos con contenedores endurecidos."
-7. **Progreso / Preparación.** "Aquí está la analítica: aciertos por dominio y una estimación de **qué tan listo estás para aprobar**, calculada con un modelo psicométrico (IRT)."
+7. **Progreso / Preparación.** "Aquí está tu analítica **personal en vivo**: aciertos por tema, tendencia y qué tan listo estás (por certificación y por puesto). Esto es **plano operativo** y lo sirven los servicios Go directo sobre Postgres, al instante — no pasa por el almacén analítico." *(Si hay panel de admin: "y por separado, un dashboard de negocio con KPIs de toda la plataforma, ese sí desde el OLAP.")*
 8. **Mi camino (CV).** "Subes tu CV y el sistema, con inteligencia artificial **local** (sin mandar tus datos a terceros), detecta tu perfil y te recomienda certificaciones."
 9. **Móvil.** "La misma experiencia en una app Flutter para Android/iOS."
 
@@ -82,7 +82,7 @@ Usamos **la herramienta correcta para cada tipo de dato**:
 
 - **PostgreSQL (SQL / relacional).** Como una **hoja de Excel muy estricta**: columnas fijas y reglas para que los datos **siempre cuadren**. La usamos para lo que **no puede fallar**: cuentas, inscripciones, intentos de examen. Garantiza **transacciones** (o se hace todo o no se hace nada — como una transferencia bancaria).
 - **MongoDB (NoSQL / documental).** Como una **caja de fichas** donde cada ficha puede tener campos diferentes. La usamos para el **contenido variado**: preguntas de opción múltiple, problemas de código con sus casos de prueba, material de estudio. No todas las preguntas tienen la misma forma, por eso encaja mejor que Excel.
-- **ClickHouse (columnar / analítica).** Una base de datos **especializada en analítica** que suma y promedia **millones de filas en un parpadeo**. La usamos para los **reportes** (aciertos por tema, tendencias), no para el día a día.
+- **ClickHouse (columnar / analítica).** Una base de datos **especializada en analítica** que suma y promedia **millones de filas en un parpadeo**. La usamos para los **reportes de negocio** (KPIs de plataforma, gaps de contenido, retención de toda la población), no para el día a día ni para la vista personal del alumno (eso es operativo, ver 3.17).
 
 **¿Qué es ClickHouse exactamente y por qué es tan rápida?** (en simple). Las bases normales como Postgres guardan los datos **por filas**: toda la información de un registro junta (ideal para "dame este intento completo"). ClickHouse guarda los datos **por columnas**: todos los "aciertos" juntos, todas las "fechas" juntas. Cuando quieres "el promedio de aciertos de la semana", solo necesita leer **esa columna** y procesarla de golpe, sin cargar lo demás — por eso vuela en reportes sobre millones de registros. A eso se le llama **base columnar**. Encima va **Cube**, que traduce esos números crudos a medidas de negocio listas para usar (accuracy = aciertos/total, tasa de aceptación, etc.). Es **OLAP**: pensada para analizar, no para el ajetreo transaccional del día a día. *(El diagrama de su modelo está en la sección 12.)*
 
@@ -181,7 +181,32 @@ Un **contenedor** es una **cajita** que empaqueta un programa con **todo** lo qu
 
 > Frase: "Caddy nos da HTTPS automático y DuckDNS el dominio; por eso la demo abre con candado y sin números raros."
 
-### 3.17 Seguridad: RBAC, RLS, rate limit, IDOR
+### 3.17 Los dos planos: operativo (en vivo) vs analítico (de negocio)
+
+Este es el concepto **más importante de toda la presentación** y el que más te hace ganar puntos: el sistema separa a propósito **dos mundos de datos** que parecen lo mismo pero no lo son.
+
+- **Plano operativo (tiempo real, por-usuario).** Es **lo que el alumno ve de sí mismo en vivo**: su acierto por tema, su tendencia, qué tan listo está para una certificación, qué tan listo está para un puesto. Tiene que responder **al instante** y ser **siempre tuyo y al día**. Por eso lo sirven los **servicios Go directamente sobre PostgreSQL** (la base transaccional). Endpoints: `exams /v1/me/analytics` y `exams /v1/me/readiness` (acierto por tema, tendencia, preparación), `judge /v1/me/code/summary` (tus problemas por área), `progress /v1/me/job-readiness` (combina exámenes + código + Q&A llamando por HTTP a exams y judge) y `progress /v1/puestos` (catálogo de puestos).
+- **Plano analítico (por lotes, agregado, para el negocio).** Es **lo que la plataforma necesita para tomar decisiones**: cuántos usuarios activos hay, qué temas son un cuello de botella para **todos**, dónde se está yendo la gente (retención). No es de una persona ni necesita ser al instante: se calcula **en bloque, periódicamente**. Por eso vive en el pipeline **ETL → ClickHouse (OLAP) → DSS**, y el DSS expone **solo endpoints de negocio**: `/v1/business/overview` (KPIs + actividad mensual), `/v1/business/areas` (gaps de contenido: temas difíciles con volumen) y `/v1/business/churn` (retención y abandono). Se consume desde un **dashboard de administración** en la web. El DSS también conserva `/v1/recommendations` (el recomendador de CV).
+
+**La analogía clave (dila así):** el plano operativo es como **tu reloj deportivo**: te dice tu ritmo cardiaco **ahora**, al segundo, solo el tuyo. El plano analítico es como el **reporte que el dueño del gimnasio revisa cada mes**: cuántos socios vinieron, qué clases se llenan, quiénes dejaron de venir. Son **dos preguntas distintas** y por eso usan **máquinas distintas**.
+
+**¿Por qué este replanteo?** Antes, esa analítica por-usuario (readiness, acierto por tema, preparación por puesto) se servía desde el **DSS leyendo ClickHouse**. Era un **error de diseño**: usábamos maquinaria **analítica y por lotes** (pensada para agregar millones de filas) para algo **operativo y en tiempo real** de **una sola persona**. Lo movimos al plano correcto: lo por-usuario ahora es **Go sobre Postgres** (rápido, fresco, dueño de sus datos), y el OLAP/ETL/DSS quedó **donde sí aporta**: agregación masiva para decisiones de plataforma.
+
+> **Frase para defender:** "Separamos dos planos. El operativo —lo que el alumno ve de sí mismo en vivo— lo sirven los servicios Go sobre Postgres, al instante. El analítico —decisiones de negocio sobre todos los usuarios— va por ETL a ClickHouse y lo expone el DSS solo como KPIs. Antes mezclábamos los dos; ahora cada cosa corre en la máquina correcta."
+
+**Cómo se logró técnicamente (por si preguntan):** se **denormalizó** la información que antes solo estaba en Mongo hacia las tablas operativas de Postgres: **tema y dificultad** en `exams.intentos`, **área** en `judge.ejecuciones` y **área** en `progress.qa_revisiones`. Así los servicios Go calculan acierto-por-tema y resúmenes-por-área **sin salir de su propia base**, sin tocar ClickHouse.
+
+**Guion corto (30 segundos, defendible):**
+> "Un alumno que mira su progreso no debería esperar a un proceso por lotes ni depender del almacén analítico: eso es operativo y en tiempo real, así que lo sirve Go directo sobre Postgres. En cambio, saber qué temas frenan a *toda* la población, o cuánta gente abandona, sí es agregación masiva: eso es lo que hace bien un OLAP. Por eso ahora el DSS solo expone KPIs de negocio para un dashboard de admin, y el recomendador de CV —que no es OLAP sino inferencia con embeddings— se queda aparte. La herramienta correcta para cada trabajo."
+
+**Banco mini de preguntas tipo examen (sección 3.17):**
+- **¿Por qué la readiness del alumno ya no sale del DSS/ClickHouse?** → Porque es un dato **operativo, por-usuario y en tiempo real**, no una agregación masiva. Usar el OLAP para eso era forzar una máquina por lotes a un caso de uso instantáneo. Ahora lo sirve Go sobre Postgres.
+- **¿Qué sigue haciendo ClickHouse/ETL/DSS, entonces?** → El **plano analítico**: agregar a **todos** los usuarios para **decisiones de negocio** (KPIs, gaps de contenido, retención), que sí es por lotes y agregado. Ahí el OLAP brilla.
+- **¿Qué endpoints son operativos y cuáles analíticos?** → Operativos (Go/Postgres): `exams /v1/me/analytics`, `exams /v1/me/readiness`, `judge /v1/me/code/summary`, `progress /v1/me/job-readiness`, `progress /v1/puestos`. Analíticos (DSS): `/v1/business/overview`, `/v1/business/areas`, `/v1/business/churn` (+ `/v1/recommendations`).
+- **¿Cómo calcula Go el acierto por tema sin ClickHouse?** → Se **denormalizaron** tema/dificultad en `exams.intentos` y el área en `judge.ejecuciones` y `progress.qa_revisiones`; así cada servicio agrega sobre su propia base Postgres.
+- **¿El recomendador de CV es OLAP?** → No. Es **inferencia ML** (embeddings), no agregación analítica; por eso es un servicio aparte (sigue en el DSS como `/v1/recommendations`), no parte del cubo.
+
+### 3.18 Seguridad: RBAC, RLS, rate limit, IDOR
 - **RBAC** = permisos **por rol**: un *estudiante* ve lo suyo; un *admin* puede crear contenido.
 - **RLS** (*Row Level Security*) = que **la propia base de datos** solo te devuelva **tus** filas, **aunque el programa se equivocara**. Doble candado.
 - **Rate limit** = **tope de peticiones** por minuto, para frenar abusos/fuerza bruta.
@@ -217,9 +242,9 @@ Tres ejemplos que puedes contar como historia.
 
 **A. "Inicio sesión":** escribes correo/contraseña → la **web (BFF)** los manda al emisor **OIDC** → te regresa un **JWT** → la web lo guarda en una **cookie cifrada** → al entrar al panel, la web pide tus datos al servicio **users** con ese token (y si es tu primer login, te **crea** la cuenta automáticamente).
 
-**B. "Presento un examen":** la web pide a **exams** un simulacro → exams **muestrea** preguntas de **Mongo** ponderando por dominio y crea la sesión en **Postgres** (sin mandarte las respuestas correctas) → respondes → exams **califica del lado del servidor** y guarda tus intentos → esos intentos luego viajan por el **ETL** a **ClickHouse** y alimentan tu **readiness** en el **DSS**.
+**B. "Presento un examen":** la web pide a **exams** un simulacro → exams **muestrea** preguntas de **Mongo** ponderando por dominio y crea la sesión en **Postgres** (sin mandarte las respuestas correctas) → respondes → exams **califica del lado del servidor** y guarda tus intentos → cuando entras a **Progreso**, exams calcula tu **acierto por tema, tendencia y readiness** desde **Postgres** y te lo da **en vivo** (`/v1/me/analytics`, `/v1/me/readiness`). En paralelo, esos mismos intentos viajan por el **ETL** a **ClickHouse** para la **analítica de negocio** (no para tu vista personal).
 
-**C. "Corro código":** escribes en el editor → va al **juez** → el juez lee el problema y sus casos de **Mongo** → ejecuta tu código en un **contenedor sandbox** por cada caso → compara con la salida esperada → te da el veredicto (sin filtrar los casos ocultos) y guarda la ejecucion en **Postgres**.
+**C. "Corro código":** escribes en el editor → va al **juez** → el juez lee el problema y sus casos de **Mongo** → ejecuta tu código en un **contenedor sandbox** por cada caso → compara con la salida esperada → te da el veredicto (sin filtrar los casos ocultos) y guarda la **ejecución** en **Postgres** (con su **área**, denormalizada). Tu resumen de problemas por área lo da el juez en vivo (`/v1/me/code/summary`).
 
 ---
 
@@ -240,7 +265,7 @@ Para responder "¿en dónde va tal cosa?". Carpeta → qué hace.
 | `tools/oidc-mock/` | El **emisor de login** para desarrollo (sustituye a Cognito en local). |
 | `data/etl/` | El **ETL** (mover hechos a ClickHouse). |
 | `data/cube/` | La **capa semántica** Cube (medidas/dimensiones). |
-| `data/dss/` | El **DSS**: `api.py` (endpoints), el modelo **IRT**, y `recomendador.py` (CV con IA). |
+| `data/dss/` | El **DSS** (plano analítico de negocio): `api.py` (endpoints `/v1/business/*` de KPIs/gaps/retención), el modelo **IRT** que alimenta esos agregados, y `recomendador.py` (CV con IA). |
 | `web/app/` | Las **páginas** de la web (landing, panel, estudiar, exámenes…). |
 | `web/app/api/` | Las **rutas BFF** (lo que el navegador llama; la web proxea a los servicios). |
 | `web/lib/` | Sesión cifrada, validación de entorno, clientes tipados de los servicios. |
@@ -288,10 +313,10 @@ Para responder "¿en dónde va tal cosa?". Carpeta → qué hace.
 
 Go y Python **no se llaman entre sí** ni comparten código. Se conectan de **dos formas**:
 
-1. **Por las bases de datos.** Los servicios **Go** guardan los hechos en Postgres (`exams.intentos`, `judge.ejecuciones`, `progress.qa_revisiones`). El **ETL de Python** (`data/etl`) los **lee** de ahí (y de Mongo) y los lleva a ClickHouse.
-2. **Por HTTP.** La **web (BFF)** llama al **DSS de Python** igual que llama a los servicios Go (variable `DSS_BASE_URL`). Es decir, Python es **otro servicio** más que la web consume.
+1. **Por las bases de datos.** Los servicios **Go** guardan los hechos en Postgres (`exams.intentos`, `judge.ejecuciones`, `progress.qa_revisiones`, con tema/dificultad/área **denormalizados**). El **ETL de Python** (`data/etl`) los **lee** de ahí (y de Mongo) y los lleva a ClickHouse para la **analítica de negocio**.
+2. **Por HTTP.** La **web (BFF)** llama al **DSS de Python** igual que llama a los servicios Go (variable `DSS_BASE_URL`), pero ahora **solo para el dashboard de negocio** (`/v1/business/*`) y el **recomendador de CV** (`/v1/recommendations`). La analítica **por-usuario en vivo** ya **no** pasa por el DSS: la sirve Go directo.
 
-> Frase: *"Go **produce** los datos; Python los **analiza**. Se comunican por la base (vía el ETL) y la web habla con ambos por HTTP — nunca se llaman directo."*
+> Frase: *"Go **produce** los datos y además sirve la analítica **por-usuario en vivo** desde Postgres; Python los **agrega** para decisiones de negocio. Se comunican por la base (vía el ETL) y la web habla con ambos por HTTP — nunca se llaman directo."*
 
 ### 6.5 ¿Dónde están los contenedores y dónde está el sandbox?
 
@@ -339,7 +364,8 @@ Respuestas cortas y seguras. Practica decirlas en voz alta.
 - **¿Cómo funciona Mongo aquí?** → Guarda contenido heterogéneo (preguntas de distintos tipos, problemas con casos, material) como documentos flexibles.
 - **¿Qué es OLAP / el modelo dimensional?** → OLAP es analítica; usamos **esquema estrella**: una tabla de **hechos** (cada intento) rodeada de **dimensiones** (quién, tema, fecha…). Permite reportes rápidos.
 - **¿Qué es ETL?** → Extraer-Transformar-Cargar: mueve los hechos de Postgres a ClickHouse, etiquetándolos; incremental e idempotente.
-- **¿Qué es el DSS?** → Sistema de apoyo a decisiones: convierte los datos en "qué tan listo estás" y "qué estudiar", con un modelo **IRT (Rasch)**.
+- **¿Qué es el DSS?** → Sistema de apoyo a decisiones del **plano analítico**: agrega a **todos** los usuarios (desde ClickHouse) para **decisiones de negocio** —KPIs, gaps de contenido, retención— y expone el **recomendador de CV**. La readiness **por-usuario en vivo** ya **no** la sirve el DSS, sino Go sobre Postgres (ver 3.17).
+- **¿Por qué la analítica por-usuario salió del DSS?** → Porque es **operativa y en tiempo real**, no agregación por lotes. El OLAP/DSS quedó solo para **decisiones de plataforma**; cada cosa en su plano (ver 3.17).
 - **¿Qué es IRT en una frase?** → Matemática de exámenes que separa la **dificultad** de la pregunta de la **habilidad** del alumno para predecir su desempeño.
 
 ### Seguridad

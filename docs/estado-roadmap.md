@@ -124,6 +124,30 @@ Verificado: `ruff`/`black`/`pytest` (modelo puro); integración con ClickHouse
 (readiness y probabilidad sensatas, 404 sin historial). La integración en el panel
 del estudiante (frontend) queda diferida.
 
+## Replanteo — reposicionar OLAP/DSS; analítica por-usuario ahora operativa en Go
+
+Corrección de diseño sobre las Fases 4–5: la analítica **por-usuario** (readiness,
+acierto por tema, preparación por puesto) se servía desde el **DSS leyendo
+ClickHouse**, es decir, usábamos maquinaria **analítica y por lotes** para algo
+**operativo y en tiempo real** de una sola persona. Se separaron **dos planos**:
+
+- **Operativo (tiempo real, por-usuario):** servicios **Go sobre PostgreSQL**.
+  Endpoints nuevos: `exams /v1/me/analytics` y `/v1/me/readiness` (acierto por
+  tema, tendencia, preparación), `judge /v1/me/code/summary` (problemas por área),
+  `progress /v1/me/job-readiness` (combina exámenes + código + Q&A por HTTP a
+  exams/judge) y `progress /v1/puestos` (catálogo, movido del DSS a Go). Se logró
+  **denormalizando** tema/dificultad en `exams.intentos`, área en
+  `judge.ejecuciones` y área en `progress.qa_revisiones`.
+- **Analítico (por lotes, agregado, decisiones de negocio):** ETL → ClickHouse
+  (estrella: `fact_intento`, `fact_ejecucion`, `fact_qa`) → **DSS**, que ahora
+  expone **solo** endpoints de negocio: `/v1/business/overview` (KPIs + actividad),
+  `/v1/business/areas` (gaps de contenido) y `/v1/business/churn` (retención).
+  Conserva `/v1/recommendations` (recomendador de CV por embeddings — es inferencia
+  ML, **no** OLAP). Se consume desde un **dashboard de administración** en la web.
+
+Nota de nombres: "corrida" se renombró a **"ejecución"** en todo (tabla
+`judge.ejecuciones`, hecho `fact_ejecucion`).
+
 ## Frontend (web Next.js) — MVP completo y sólido
 
 La web (patrón BFF, App Router) cubre toda la experiencia del estudiante para **AWS

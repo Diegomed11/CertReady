@@ -54,7 +54,9 @@ def fila_intento(intento: dict[str, Any], preguntas: dict[str, dict[str, Any]]) 
     }
 
 
-def fila_ejecucion(ejecucion: dict[str, Any], problemas: dict[str, dict[str, Any]]) -> dict[str, Any]:
+def fila_ejecucion(
+    ejecucion: dict[str, Any], problemas: dict[str, dict[str, Any]]
+) -> dict[str, Any]:
     """Construye una fila de ``fact_ejecucion`` a partir de una ejecucion del juez.
 
     Parameters

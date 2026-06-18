@@ -9,6 +9,9 @@ import { env } from '@/lib/env'
 import { ApiError, fetchJSON } from './client'
 import type {
   Analitica,
+  BusinessAreas,
+  BusinessChurn,
+  BusinessOverview,
   Certificacion,
   Ejecucion,
   Cuenta,
@@ -608,6 +611,60 @@ export async function getJobReadiness(
     })
   } catch (e) {
     if (e instanceof ApiError && e.status === 404) return null
+    return null
+  }
+}
+
+// --- dss / negocio (admin) -------------------------------------------------
+
+/**
+ * getBusinessOverview devuelve las métricas globales de la plataforma (usuarios,
+ * exámenes, código, Q&A y actividad mensual), o `null` si el DSS no está
+ * disponible. Son datos agregados sin PII; el DSS no exige token, el gating de
+ * admin lo hace el BFF en la página. Degrada en silencio como getAnalytics.
+ */
+export async function getBusinessOverview(): Promise<BusinessOverview | null> {
+  try {
+    return await fetchJSON<BusinessOverview>({
+      baseURL: requireUrl('DSS_BASE_URL', env().DSS_BASE_URL),
+      path: '/v1/business/overview',
+      timeoutMs: 8000,
+    })
+  } catch {
+    return null
+  }
+}
+
+/**
+ * getBusinessAreas devuelve el desglose por área/tema de la plataforma (acierto
+ * por tema, aceptación de código y nivel de Q&A), o `null` si el DSS no está
+ * disponible. Agregado sin token; gating de admin en el BFF.
+ */
+export async function getBusinessAreas(): Promise<BusinessAreas | null> {
+  try {
+    return await fetchJSON<BusinessAreas>({
+      baseURL: requireUrl('DSS_BASE_URL', env().DSS_BASE_URL),
+      path: '/v1/business/areas',
+      timeoutMs: 8000,
+    })
+  } catch {
+    return null
+  }
+}
+
+/**
+ * getBusinessChurn devuelve las métricas de retención/abandono de la plataforma
+ * (activos por mes, vida útil, días activo promedio y % de abandono), o `null` si
+ * el DSS no está disponible. Agregado sin token; gating de admin en el BFF.
+ */
+export async function getBusinessChurn(): Promise<BusinessChurn | null> {
+  try {
+    return await fetchJSON<BusinessChurn>({
+      baseURL: requireUrl('DSS_BASE_URL', env().DSS_BASE_URL),
+      path: '/v1/business/churn',
+      timeoutMs: 8000,
+    })
+  } catch {
     return null
   }
 }

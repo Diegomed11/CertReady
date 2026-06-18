@@ -1,8 +1,8 @@
-"""Integración del DSS contra ClickHouse real vía FastAPI TestClient.
+"""Integración del DSS (analítica de negocio) contra ClickHouse real.
 
 Gated por ``DATA_ETL_IT=1`` (requiere ClickHouse; usa la base ``analytics``).
-Verifica que un estudiante fuerte obtiene mayor readiness que uno débil y que la
-salida es coherente.
+Inserta hechos sintéticos en las tres tablas y verifica que los endpoints de
+negocio agregan de forma coherente y respetan el contrato.
 """
 
 from __future__ import annotations
@@ -24,22 +24,55 @@ from dss.api import app  # noqa: E402
 from etl import load  # noqa: E402
 
 CERT = "dss-e2e"
+AREA = "dss-e2e-area"
 DT = datetime(2026, 6, 7, 10, 0, 0, tzinfo=UTC)
 
 
-def _fila(intento_id, usuario, dificultad, b_tema, ok):
+def _intento(intento_id, usuario, tema, ok):
     return {
         "intento_id": intento_id,
         "usuario_id": usuario,
         "certificacion": CERT,
-        "tema": b_tema,
-        "dificultad": dificultad,
+        "tema": tema,
+        "dificultad": "facil",
         "tipo_pregunta": "opcion_multiple",
         "modo": "simulacro",
         "fecha": DT.date(),
         "creado_en": DT,
         "es_correcto": 1 if ok else 0,
         "intentos_n": 1,
+    }
+
+
+def _ejecucion(ejecucion_id, usuario, aceptado):
+    return {
+        "ejecucion_id": ejecucion_id,
+        "usuario_id": usuario,
+        "problema_ref": f"p-{ejecucion_id}",
+        "area": AREA,
+        "dificultad": "facil",
+        "lenguaje": "python",
+        "veredicto": "ok" if aceptado else "fail",
+        "aceptado": 1 if aceptado else 0,
+        "casos_pasados": 10 if aceptado else 5,
+        "casos_total": 10,
+        "duracion_ms": 100,
+        "fecha": DT.date(),
+        "creado_en": DT,
+    }
+
+
+def _qa(qa_id, usuario, nivel):
+    return {
+        "qa_id": qa_id,
+        "usuario_id": usuario,
+        "qa_ref": f"q-{qa_id}",
+        "puesto": "backend",
+        "area": AREA,
+        "categoria": "conceptual",
+        "nivel": nivel,
+        "fecha": DT.date(),
+        "creado_en": DT,
     }
 
 
@@ -54,43 +87,78 @@ def cliente():
     cargador = load.Cargador(ch, "analytics")
     cargador.aplicar_schema(load.leer_schema())
     ch.command(f"alter table analytics.fact_intento delete where certificacion = '{CERT}'")
+    ch.command(f"alter table analytics.fact_ejecucion delete where area = '{AREA}'")
+    ch.command(f"alter table analytics.fact_qa delete where area = '{AREA}'")
 
-    filas = [
-        # fuerte: acierta fácil y difícil.
-        _fila("s1", "u_fuerte", "facil", "redes", True),
-        _fila("s2", "u_fuerte", "dificil", "redes", True),
-        # débil: acierta fácil, falla difícil.
-        _fila("w1", "u_debil", "facil", "redes", True),
-        _fila("w2", "u_debil", "dificil", "redes", False),
-    ]
-    cargador.insertar("fact_intento", load.COLUMNAS_INTENTO, filas)
+    cargador.insertar(
+        "fact_intento",
+        load.COLUMNAS_INTENTO,
+        [
+            _intento("i1", "u_a", "redes", True),
+            _intento("i2", "u_a", "redes", True),
+            _intento("i3", "u_b", "redes", False),
+        ],
+    )
+    cargador.insertar(
+        "fact_ejecucion",
+        load.COLUMNAS_EJECUCION,
+        [_ejecucion("e1", "u_a", True), _ejecucion("e2", "u_c", False)],
+    )
+    cargador.insertar(
+        "fact_qa",
+        load.COLUMNAS_QA,
+        [_qa("q1", "u_b", 3), _qa("q2", "u_d", 1)],
+    )
     yield TestClient(app)
     ch.command(f"alter table analytics.fact_intento delete where certificacion = '{CERT}'")
-
-
-def _readiness(cliente, usuario):
-    r = cliente.get(f"/v1/readiness/{usuario}", params={"certificacion": CERT})
-    assert r.status_code == 200, r.text
-    return r.json()
+    ch.command(f"alter table analytics.fact_ejecucion delete where area = '{AREA}'")
+    ch.command(f"alter table analytics.fact_qa delete where area = '{AREA}'")
 
 
 def test_health(cliente):
     assert cliente.get("/v1/health").json()["status"] == "ok"
 
 
-def test_fuerte_supera_a_debil(cliente):
-    fuerte = _readiness(cliente, "u_fuerte")
-    debil = _readiness(cliente, "u_debil")
+def test_overview_contrato_y_coherencia(cliente):
+    r = cliente.get("/v1/business/overview")
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert set(body) == {"usuarios", "examenes", "codigo", "qa", "actividad_mensual"}
+    # u_a, u_b, u_c, u_d -> al menos 4 usuarios distintos.
+    assert body["usuarios"] >= 4
+    assert body["examenes"]["intentos"] >= 3
+    assert 0.0 <= body["examenes"]["acierto_pct"] <= 100.0
+    assert body["codigo"]["ejecuciones"] >= 2
+    assert body["qa"]["autoevaluaciones"] >= 2
+    # actividad_mensual ordenada por mes ascendente.
+    meses = [p["mes"] for p in body["actividad_mensual"]]
+    assert meses == sorted(meses)
+    for p in body["actividad_mensual"]:
+        assert set(p) == {"mes", "intentos", "ejecuciones", "qa", "usuarios"}
 
-    assert fuerte["readiness_pct"] > debil["readiness_pct"]
-    assert fuerte["habilidad_theta"] > debil["habilidad_theta"]
-    for resp in (fuerte, debil):
-        assert 0.0 <= resp["readiness_pct"] <= 100.0
-        assert 0.0 <= resp["probabilidad_aprobar"] <= 1.0
-        assert resp["por_celda"]
-        assert resp["siguiente_accion"] is not None
+
+def test_areas_contrato_y_orden(cliente):
+    r = cliente.get("/v1/business/areas")
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert set(body) == {"examenes_por_tema", "codigo_por_area", "qa_por_area"}
+    # examenes_por_tema ordenado por acierto ascendente (gaps arriba).
+    aciertos = [e["acierto_pct"] for e in body["examenes_por_tema"]]
+    assert aciertos == sorted(aciertos)
+    for e in body["examenes_por_tema"]:
+        assert e["estado"] in {"ok", "facil", "dificil", "poco_volumen"}
 
 
-def test_usuario_sin_intentos_404(cliente):
-    r = cliente.get("/v1/readiness/u_inexistente", params={"certificacion": CERT})
-    assert r.status_code == 404
+def test_churn_contrato(cliente):
+    r = cliente.get("/v1/business/churn")
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert set(body) == {
+        "activos_por_mes",
+        "vida_util",
+        "dias_activo_promedio",
+        "abandono_pct",
+    }
+    rangos = [v["rango"] for v in body["vida_util"]]
+    assert rangos == ["1 día", "2-7 días", "8-30 días", ">30 días"]
+    assert 0.0 <= body["abandono_pct"] <= 100.0

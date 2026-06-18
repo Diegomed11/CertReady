@@ -401,3 +401,76 @@ export interface Analitica {
   por_tema: TemaAcierto[]
   tendencia: PuntoTendencia[]
 }
+
+// --- dss: analítica de negocio (admin) -------------------------------------
+
+/** Un mes de actividad agregada de la plataforma. */
+export interface MesActividad {
+  mes: string
+  intentos: number
+  ejecuciones: number
+  qa: number
+  usuarios: number
+}
+
+/** Métricas globales de la plataforma para el panel de administración. */
+export interface BusinessOverview {
+  usuarios: number
+  examenes: { intentos: number; acierto_pct: number }
+  codigo: { ejecuciones: number; aceptacion_pct: number }
+  qa: { autoevaluaciones: number; nivel_promedio_pct: number }
+  actividad_mensual: MesActividad[]
+}
+
+/** Estado de un tema según su acierto y volumen agregados. */
+export type EstadoTema = 'ok' | 'facil' | 'dificil' | 'poco_volumen'
+
+/** Acierto agregado de un tema de examen en toda la plataforma. */
+export interface TemaNegocio {
+  certificacion: string
+  tema: string
+  acierto_pct: number
+  intentos: number
+  estado: EstadoTema
+}
+
+/** Aceptación agregada del código por área. */
+export interface CodigoAreaNegocio {
+  area: string
+  aceptacion_pct: number
+  ejecuciones: number
+}
+
+/** Nivel promedio agregado de autoevaluación de Q&A por área. */
+export interface QaAreaNegocio {
+  area: string
+  nivel_promedio_pct: number
+  autoevaluaciones: number
+}
+
+/** Desglose por área/tema de la plataforma para el panel de administración. */
+export interface BusinessAreas {
+  examenes_por_tema: TemaNegocio[]
+  codigo_por_area: CodigoAreaNegocio[]
+  qa_por_area: QaAreaNegocio[]
+}
+
+/** Usuarios activos en un mes. */
+export interface ActivosMes {
+  mes: string
+  usuarios: number
+}
+
+/** Distribución de usuarios por rango de vida útil. */
+export interface VidaUtilRango {
+  rango: string
+  usuarios: number
+}
+
+/** Métricas de retención y abandono de la plataforma. */
+export interface BusinessChurn {
+  activos_por_mes: ActivosMes[]
+  vida_util: VidaUtilRango[]
+  dias_activo_promedio: number
+  abandono_pct: number
+}

@@ -37,11 +37,14 @@ class _QAScreenState extends ConsumerState<QAScreen> {
   }
 
   /// Envía la autoevaluación (1=me costó · 2=regular · 3=bien) al servicio
-  /// progress; alimenta la señal de Q&A del DSS de preparación por puesto.
-  Future<void> _autoevaluar(String qaRef, int nivel) async {
+  /// progress; alimenta la señal de Q&A de la preparación por puesto. Se manda
+  /// el `area` de la pregunta para desglosar la señal por área del puesto.
+  Future<void> _autoevaluar(String qaRef, int nivel, {String? area}) async {
     setState(() => _enviando = true);
     try {
-      await ref.read(apiProvider).submitQARevision(qaRef: qaRef, nivel: nivel);
+      await ref
+          .read(apiProvider)
+          .submitQARevision(qaRef: qaRef, nivel: nivel, area: area);
       if (!mounted) return;
       setState(() => _nivel = nivel);
     } catch (_) {
@@ -185,7 +188,11 @@ class _QAScreenState extends ConsumerState<QAScreen> {
                         ),
                         onSelected: _enviando
                             ? null
-                            : (_) => _autoevaluar(q.id, o.nivel),
+                            : (_) => _autoevaluar(
+                                q.id,
+                                o.nivel,
+                                area: q.area.isEmpty ? null : q.area,
+                              ),
                       ),
                   ],
                 ),

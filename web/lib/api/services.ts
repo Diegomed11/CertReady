@@ -493,24 +493,25 @@ export async function listMyRuns(
 
 /**
  * getReadiness devuelve la preparación estimada del usuario para una
- * certificación, o null si aún no hay datos/intentos (404). El DSS es un servicio
- * de análisis sin auth; el BFF le pasa el subject de la sesión como usuario_id.
+ * certificación, o null si aún no hay datos/intentos (404). Lo sirve el servicio
+ * exams en tiempo real; el usuario sale del JWT (no de la ruta).
  */
 export async function getReadiness(
-  usuarioId: string,
+  accessToken: string,
   certificacion: string,
 ): Promise<Readiness | null> {
   const suffix = querystring({ certificacion })
   try {
     return await fetchJSON<Readiness>({
-      baseURL: requireUrl('DSS_BASE_URL', env().DSS_BASE_URL),
-      path: `/v1/readiness/${encodeURIComponent(usuarioId)}${suffix}`,
+      baseURL: requireUrl('EXAMS_BASE_URL', env().EXAMS_BASE_URL),
+      path: `/v1/me/readiness${suffix}`,
+      accessToken,
       timeoutMs: 8000,
     })
   } catch (e) {
-    // 404: aún no hay datos/intentos. Si el DSS no está levantado (servicio de
-    // análisis opcional, requiere ClickHouse), degradamos a "sin datos" en vez
-    // de romper la página: el resto de la app no depende de él.
+    // 404: aún no hay datos/intentos. Si el servicio no está disponible,
+    // degradamos a "sin datos" en vez de romper la página: el resto de la app
+    // no depende de él.
     if (e instanceof ApiError) {
       if (e.status === 404) return null
       throw e
@@ -547,18 +548,20 @@ export async function getRecommendations(file: File): Promise<Recomendaciones> {
 
 /**
  * getAnalytics devuelve el desempeño del usuario (acierto por tema + tendencia)
- * para los dashboards, o `null` si el DSS/ClickHouse no está disponible. Igual que
- * `getReadiness`, degrada en silencio para no romper la página.
+ * para los dashboards, o `null` si el servicio no está disponible. Lo sirve exams
+ * en tiempo real (usuario desde el JWT). Igual que `getReadiness`, degrada en
+ * silencio para no romper la página.
  */
 export async function getAnalytics(
-  usuarioId: string,
+  accessToken: string,
   certificacion: string,
 ): Promise<Analitica | null> {
   const suffix = querystring({ certificacion })
   try {
     return await fetchJSON<Analitica>({
-      baseURL: requireUrl('DSS_BASE_URL', env().DSS_BASE_URL),
-      path: `/v1/analytics/${encodeURIComponent(usuarioId)}${suffix}`,
+      baseURL: requireUrl('EXAMS_BASE_URL', env().EXAMS_BASE_URL),
+      path: `/v1/me/analytics${suffix}`,
+      accessToken,
       timeoutMs: 8000,
     })
   } catch (e) {
@@ -569,12 +572,13 @@ export async function getAnalytics(
 
 /**
  * listPuestos devuelve el catálogo de puestos para la preparación por rol, o []
- * si el DSS no está disponible (degrada en silencio, como readiness/analytics).
+ * si el servicio no está disponible (degrada en silencio, como readiness/analytics).
+ * Endpoint público de progress (sin token).
  */
 export async function listPuestos(): Promise<PuestoResumen[]> {
   try {
     const data = await fetchJSON<PuestoResumen[]>({
-      baseURL: requireUrl('DSS_BASE_URL', env().DSS_BASE_URL),
+      baseURL: requireUrl('PROGRESS_BASE_URL', env().PROGRESS_BASE_URL),
       path: '/v1/puestos',
       timeoutMs: 8000,
     })
@@ -587,18 +591,19 @@ export async function listPuestos(): Promise<PuestoResumen[]> {
 /**
  * getJobReadiness devuelve qué tan preparado está el usuario para un puesto,
  * combinando exámenes + código + Q&A. Devuelve null si el puesto no existe (404)
- * o si el DSS no está disponible. El DSS no lleva auth; el BFF le pasa el subject
- * de la sesión como usuario_id.
+ * o si el servicio no está disponible. Lo sirve progress en tiempo real; el
+ * usuario sale del JWT (no de la ruta).
  */
 export async function getJobReadiness(
-  usuarioId: string,
+  accessToken: string,
   puesto: string,
 ): Promise<JobReadiness | null> {
   const suffix = querystring({ puesto })
   try {
     return await fetchJSON<JobReadiness>({
-      baseURL: requireUrl('DSS_BASE_URL', env().DSS_BASE_URL),
-      path: `/v1/job-readiness/${encodeURIComponent(usuarioId)}${suffix}`,
+      baseURL: requireUrl('PROGRESS_BASE_URL', env().PROGRESS_BASE_URL),
+      path: `/v1/me/job-readiness${suffix}`,
+      accessToken,
       timeoutMs: 8000,
     })
   } catch (e) {
@@ -688,7 +693,7 @@ export async function completeQuiz(
  */
 export async function submitQARevision(
   accessToken: string,
-  body: { qa_ref: string; nivel: number },
+  body: { qa_ref: string; nivel: number; area?: string },
 ): Promise<void> {
   await fetchJSON({
     baseURL: requireUrl('PROGRESS_BASE_URL', env().PROGRESS_BASE_URL),

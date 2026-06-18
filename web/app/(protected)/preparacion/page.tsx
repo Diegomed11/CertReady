@@ -32,12 +32,12 @@ export default async function PreparacionPage({
 }: {
   searchParams: Promise<{ puesto?: string }>
 }) {
-  const { subject } = await requireSession()
+  const { accessToken } = await requireSession()
   const sp = await searchParams
   const puestos = await listPuestos()
 
   const activo = puestos.find((p) => p.slug === sp.puesto) ?? puestos[0]
-  const datos = activo ? await getJobReadiness(subject, activo.slug) : null
+  const datos = activo ? await getJobReadiness(accessToken, activo.slug) : null
 
   return (
     <div className="space-y-8">

@@ -74,9 +74,8 @@ class _PuestoViewState extends ConsumerState<_PuestoView> {
   }
 
   Future<JobReadiness?> _load() {
-    final sub = jwtSubject(ref.read(tokenStoreProvider).accessToken);
-    if (sub == null) return Future.value(null);
-    return ref.read(apiProvider).getJobReadiness(sub, _sel);
+    // El `sub` lo saca el backend del JWT; ya no se manda en la ruta.
+    return ref.read(apiProvider).getJobReadiness(_sel);
   }
 
   void _select(String slug) {

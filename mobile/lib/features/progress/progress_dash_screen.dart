@@ -50,14 +50,10 @@ class _ProgressDashScreenState extends ConsumerState<ProgressDashScreen> {
     final aprob = prog.temasAprobados;
     final hechos = temas.where((t) => aprob.contains(t.slug)).length;
 
-    // DSS: keyed by JWT subject; degrades to null if off / no data.
-    final sub = jwtSubject(ref.read(tokenStoreProvider).accessToken);
-    Analitica? analitica;
-    Readiness? readiness;
-    if (sub != null) {
-      analitica = await api.getAnalytics(sub, widget.slug);
-      readiness = await api.getReadiness(sub, widget.slug);
-    }
+    // Analítica por usuario (servicio Go; el `sub` lo saca el backend del JWT).
+    // Degrada a null si no hay intentos o el servicio está apagado.
+    final analitica = await api.getAnalytics(widget.slug);
+    final readiness = await api.getReadiness(widget.slug);
     return _Dash(
       cert: cert,
       hechos: hechos,

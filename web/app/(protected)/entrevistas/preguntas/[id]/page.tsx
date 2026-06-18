@@ -48,7 +48,9 @@ export default async function PreguntaPage({ params }: { params: Promise<{ id: s
         </Card>
       ) : null}
 
-      {q.respuesta_modelo ? <Reveal respuesta={q.respuesta_modelo} qaRef={q.id} /> : null}
+      {q.respuesta_modelo ? (
+        <Reveal respuesta={q.respuesta_modelo} qaRef={q.id} area={q.area} />
+      ) : null}
 
       {q.etiquetas.length > 0 ? (
         <p className="font-mono text-xs text-faint">{q.etiquetas.map((e) => `#${e}`).join('  ')}</p>

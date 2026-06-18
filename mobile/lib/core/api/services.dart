@@ -194,12 +194,17 @@ class ApiService {
   }
 
   /// submitQARevision registra la autoevaluación de una pregunta de entrevista
-  /// (nivel 1=me costó · 2=regular · 3=bien). Alimenta la señal de Q&A del DSS.
-  Future<void> submitQARevision({required String qaRef, required int nivel}) =>
-      _send(
-        '${AppConfig.progress}/v1/progress/qa',
-        body: {'qa_ref': qaRef, 'nivel': nivel},
-      );
+  /// (nivel 1=me costó · 2=regular · 3=bien). Alimenta la señal de Q&A de la
+  /// preparación por puesto (servicio progress). El `area` de la pregunta deja
+  /// que la señal se desglose por área del puesto.
+  Future<void> submitQARevision({
+    required String qaRef,
+    required int nivel,
+    String? area,
+  }) => _send(
+    '${AppConfig.progress}/v1/progress/qa',
+    body: {'qa_ref': qaRef, 'nivel': nivel, if (area != null) 'area': area},
+  );
 
   // --- exams (quiz por tema) ----------------------------------------------
 
@@ -350,30 +355,28 @@ class ApiService {
     return RespuestaEjecucion.fromJson(data ?? const {});
   }
 
-  // --- dss: readiness + analítica (degradan a null si el DSS no responde) --
+  // --- analítica por usuario (Go en tiempo real; el `sub` lo saca el backend
+  // del JWT). Degradan a null si el servicio no responde. ---------------------
 
-  Future<Readiness?> getReadiness(
-    String usuarioId,
-    String certificacion,
-  ) async {
+  /// getReadiness: preparación estimada para una certificación. Servicio exams,
+  /// ruta `/v1/me/...` (sin `usuario_id`: el backend usa el `sub` del JWT).
+  Future<Readiness?> getReadiness(String certificacion) async {
     try {
       return await _get(
-        '${AppConfig.dss}/v1/readiness/${Uri.encodeComponent(usuarioId)}',
+        '${AppConfig.exams}/v1/me/readiness',
         Readiness.fromJson,
         query: {'certificacion': certificacion},
       );
     } catch (_) {
-      return null; // 404 sin datos o DSS/ClickHouse apagado
+      return null; // 404 sin intentos o servicio apagado
     }
   }
 
-  Future<Analitica?> getAnalytics(
-    String usuarioId,
-    String certificacion,
-  ) async {
+  /// getAnalytics: acierto por tema y tendencia. Servicio exams, ruta `/v1/me/...`.
+  Future<Analitica?> getAnalytics(String certificacion) async {
     try {
       return await _get(
-        '${AppConfig.dss}/v1/analytics/${Uri.encodeComponent(usuarioId)}',
+        '${AppConfig.exams}/v1/me/analytics',
         Analitica.fromJson,
         query: {'certificacion': certificacion},
       );
@@ -382,13 +385,16 @@ class ApiService {
     }
   }
 
-  // --- dss: preparación por puesto (degrada a [] / null si el DSS no responde) -
+  // --- preparación por puesto (servicio progress) ----------------------------
 
-  /// listPuestos devuelve el catálogo de puestos (el endpoint responde un arreglo
-  /// JSON de nivel superior, no un objeto, así que se llama a `dio` directo).
+  /// listPuestos devuelve el catálogo de puestos (endpoint público; responde un
+  /// arreglo JSON de nivel superior, no un objeto, así que se llama a `dio`
+  /// directo).
   Future<List<PuestoResumen>> listPuestos() async {
     try {
-      final res = await _dio.get<List<dynamic>>('${AppConfig.dss}/v1/puestos');
+      final res = await _dio.get<List<dynamic>>(
+        '${AppConfig.progress}/v1/puestos',
+      );
       return (res.data ?? const [])
           .map((e) => PuestoResumen.fromJson(e as Map<String, dynamic>))
           .toList();
@@ -397,15 +403,17 @@ class ApiService {
     }
   }
 
-  Future<JobReadiness?> getJobReadiness(String usuarioId, String puesto) async {
+  /// getJobReadiness: readiness combinada del puesto. Servicio progress, ruta
+  /// `/v1/me/...` (el `sub` lo saca el backend del JWT).
+  Future<JobReadiness?> getJobReadiness(String puesto) async {
     try {
       return await _get(
-        '${AppConfig.dss}/v1/job-readiness/${Uri.encodeComponent(usuarioId)}',
+        '${AppConfig.progress}/v1/me/job-readiness',
         JobReadiness.fromJson,
         query: {'puesto': puesto},
       );
     } catch (_) {
-      return null; // 404 puesto desconocido o DSS/ClickHouse apagado
+      return null; // 404 puesto desconocido o servicio apagado
     }
   }
 

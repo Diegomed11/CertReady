@@ -41,7 +41,7 @@ export async function POST(req: Request) {
   }
 }
 
-function esRevision(v: unknown): v is { qa_ref: string; nivel: number } {
+function esRevision(v: unknown): v is { qa_ref: string; nivel: number; area?: string } {
   if (typeof v !== 'object' || v === null) return false
   const o = v as Record<string, unknown>
   return (
@@ -50,6 +50,7 @@ function esRevision(v: unknown): v is { qa_ref: string; nivel: number } {
     typeof o.nivel === 'number' &&
     Number.isInteger(o.nivel) &&
     o.nivel >= 1 &&
-    o.nivel <= 3
+    o.nivel <= 3 &&
+    (o.area === undefined || typeof o.area === 'string')
   )
 }

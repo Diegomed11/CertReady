@@ -18,7 +18,15 @@ const NIVELES: { nivel: number; etiqueta: string; tono: string }[] = [
  * revelarla, registra una autoevaluación (1=me costó · 2=regular · 3=bien) que
  * alimenta la señal de Q&A del DSS de preparación por puesto.
  */
-export function Reveal({ respuesta, qaRef }: { respuesta: string; qaRef: string }) {
+export function Reveal({
+  respuesta,
+  qaRef,
+  area,
+}: {
+  respuesta: string
+  qaRef: string
+  area?: string
+}) {
   const [visible, setVisible] = useState(false)
   const [nivel, setNivel] = useState<number | null>(null)
   const [enviando, setEnviando] = useState(false)
@@ -31,7 +39,7 @@ export function Reveal({ respuesta, qaRef }: { respuesta: string; qaRef: string 
       const res = await fetch('/api/progress/qa', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ qa_ref: qaRef, nivel: n }),
+        body: JSON.stringify({ qa_ref: qaRef, nivel: n, area }),
       })
       if (!res.ok) throw new Error('no se pudo guardar')
       setNivel(n)

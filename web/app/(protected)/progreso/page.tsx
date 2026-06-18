@@ -62,7 +62,7 @@ export default async function ProgresoPage({
 }: {
   searchParams: Promise<{ cert?: string }>
 }) {
-  const { accessToken, subject } = await requireSession()
+  const { accessToken } = await requireSession()
   const sp = await searchParams
   const [inscripciones, certs] = await Promise.all([
     listMyEnrollments(accessToken),
@@ -98,12 +98,7 @@ export default async function ProgresoPage({
           para empezar a ver tu avance.
         </EmptyState>
       ) : (
-        <ProgresoCert
-          activa={activa}
-          opciones={opciones}
-          accessToken={accessToken}
-          subject={subject}
-        />
+        <ProgresoCert activa={activa} opciones={opciones} accessToken={accessToken} />
       )}
     </div>
   )
@@ -114,19 +109,17 @@ async function ProgresoCert({
   activa,
   opciones,
   accessToken,
-  subject,
 }: {
   activa: { slug: string; id: string; nombre: string }
   opciones: { slug: string; id: string; nombre: string }[]
   accessToken: string
-  subject: string
 }) {
   const [progreso, temas, historial, readiness, analitica] = await Promise.all([
     getMyProgress(accessToken, activa.slug),
     listTopics(activa.id, accessToken),
     listMyExams(accessToken, { limit: 100 }),
-    getReadiness(subject, activa.slug), // opcional: null si el DSS no está disponible
-    getAnalytics(subject, activa.slug), // opcional: null si el DSS/ClickHouse no está
+    getReadiness(accessToken, activa.slug), // opcional: null si el servicio no está disponible
+    getAnalytics(accessToken, activa.slug), // opcional: null si el servicio no está disponible
   ])
 
   const aprobadosSet = new Set(progreso.temas.filter((t) => t.quiz_aprobado).map((t) => t.tema))

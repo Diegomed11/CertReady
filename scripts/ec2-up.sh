@@ -46,6 +46,21 @@ else
   echo "==> Autenticación: emisor local (oidc-mock)"
 fi
 
+# --- Re-ejecución limpia: matar instancias previas para liberar los puertos -------
+# Sin esto, al re-correr el script los procesos viejos siguen vivos y los nuevos
+# fallan con "address already in use" (y siguen respondiendo los viejos, p. ej. con
+# el emisor anterior → 401 con tokens de Cognito).
+echo "==> Deteniendo instancias previas (si las hay)"
+pkill -f "/oidc-mock/build/oidc-mock" 2>/dev/null || true
+for s in catalog users enrollments content exams problems progress; do
+  pkill -f "/services/$s/build/$s" 2>/dev/null || true
+done
+pkill -f "/judge/build/judge" 2>/dev/null || true
+pkill -f 'uvicorn dss.api:app' 2>/dev/null || true
+pkill -f 'next start' 2>/dev/null || true
+pkill -f 'next dev' 2>/dev/null || true
+sleep 2
+
 wait_url() { for _ in $(seq 1 "${2:-60}"); do curl -fsS --max-time 4 "$1" >/dev/null 2>&1 && return 0; sleep 1; done; return 1; }
 
 # --- 1) Infra por Docker: Postgres, Mongo, ClickHouse + Cube --------------------

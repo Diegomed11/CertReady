@@ -197,14 +197,14 @@ function Oportunidades({ areas }: { areas: BusinessAreas }) {
       <Card className="p-6">
         <h2 className="font-display text-lg font-semibold">Temas con más oportunidad</h2>
         <p className="mt-1 text-sm text-muted">
-          Acierto agregado por tema de examen. Los temas difíciles y los de poco volumen son dónde
-          conviene reforzar contenido.
+          Los 15 temas con menor acierto agregado: dónde más conviene reforzar contenido (los
+          difíciles) o revisar el banco (los de poco volumen).
         </p>
         <div className="mt-5 space-y-4">
           {areas.examenes_por_tema.length === 0 ? (
             <p className="text-sm text-muted">Aún no hay datos de exámenes por tema.</p>
           ) : (
-            areas.examenes_por_tema.map((t) => {
+            areas.examenes_por_tema.slice(0, 15).map((t) => {
               const e = ESTADO_TEMA[t.estado]
               return (
                 <div key={`${t.certificacion}-${t.tema}`}>

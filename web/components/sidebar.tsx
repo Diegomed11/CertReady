@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
 import { LottieIcon } from './lottie-icon'
@@ -38,7 +38,6 @@ export function Sidebar({
   esAdmin?: boolean
 }) {
   const pathname = usePathname()
-  const router = useRouter()
   const navRef = useRef<HTMLElement>(null)
   const [open, setOpen] = useState(false)
   const [hover, setHover] = useState<string | null>(null)
@@ -109,11 +108,14 @@ export function Sidebar({
   async function salir() {
     setSaliendo(true)
     try {
-      await fetch('/api/auth/logout', { method: 'POST' })
-      router.push('/')
-      router.refresh()
-    } finally {
-      setSaliendo(false)
+      const res = await fetch('/api/auth/logout', { method: 'POST' })
+      const data = (await res.json().catch(() => null)) as { redirect?: string } | null
+      // Navega al destino: con Cognito es su /logout (cierra la sesión del IdP);
+      // con el emisor local, la home. Navegación completa (no router.push) para que
+      // el cierre del IdP ocurra de verdad.
+      window.location.href = data?.redirect ?? '/'
+    } catch {
+      window.location.href = '/'
     }
   }
 

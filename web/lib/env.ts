@@ -14,6 +14,9 @@ const Schema = z.object({
   OIDC_CLIENT_SECRET: z.string().optional(),
   OIDC_REDIRECT_URI: z.string().url(),
   OIDC_POST_LOGOUT_REDIRECT_URI: z.string().url(),
+  // Endpoint de logout del IdP (Cognito: https://<dominio>/logout). Si está, el
+  // logout es federado (cierra también la sesión de Cognito). Opcional (el mock no lo usa).
+  OIDC_LOGOUT_URL: z.string().url().optional(),
 
   SESSION_PASSWORD: z.string().min(32, 'SESSION_PASSWORD debe medir al menos 32 caracteres'),
   SESSION_COOKIE_NAME: z.string().min(1).default('certready_session'),
